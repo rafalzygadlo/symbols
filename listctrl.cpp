@@ -1,267 +1,335 @@
+#include <wx/mstream.h>
 #include "listctrl.h"
 #include "conf.h"
 #include "tools.h"
-#include "info.h"
-#include <wx/strconv.h>
-#include <algorithm>
-#include <wx/mstream.h>
+#include "images/up_sort.img"
+#include "images/down_sort.img"
+#include "db.h"
+#include "db_actions.h"
+#include "db_right.h"
+#include "area.h"
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
 BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(ID_LIST,CListCtrl::OnActivate)
 	EVT_CONTEXT_MENU(CListCtrl::OnContextMenu)
-	EVT_MENU(ID_SHIP_CONFIG ,CListCtrl::OnShipConfig)
-	EVT_MENU(ID_SHIP_DATA ,CListCtrl::OnShipData)
-	EVT_MENU(ID_SHIP_REPORT,CListCtrl::OnShipReport)
-	EVT_MENU(ID_SHIP_SHOW_TRACK,CListCtrl::OnShipShowTrack)
-
 	EVT_LIST_ITEM_SELECTED(ID_LIST,CListCtrl::OnSelected)
-	EVT_LIST_ITEM_ACTIVATED(ID_LIST,CListCtrl::OnActivate)
-	EVT_PAINT(CListCtrl::OnPaint)
-	//EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,CListCtrl::OnSetItem)
 	EVT_LIST_COL_CLICK(ID_LIST,CListCtrl::OnColClick)
+	EVT_MENU(ID_NEW,CListCtrl::OnNew)
+	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
+	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
 END_EVENT_TABLE()
-
-
-CListCtrl::CListCtrl( wxWindow *Parent,CDisplayPlugin *DspPlugin, int type, long style )
-:wxListCtrl( Parent,ID_LIST,wxDefaultPosition,wxDefaultSize, style )
+ 
+CListCtrl::CListCtrl( wxWindow *Parent, int style )
+:wxListCtrl( Parent, ID_LIST, wxDefaultPosition, wxDefaultSize, style )
 {
-	ThisPtr = this;
-	Menu = NULL;
-	Plugin = DspPlugin;
-		
-	selected.SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-	selected.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-		
-	deselected.SetTextColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-	deselected.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-
-	SetDoubleBuffered(true);
-	Type = type;
-	ImageListSmall = new wxImageList(24, 24, true);
 	
-	//this->SetImageList(ImageListSmall,1);
-	//wxMemoryInputStream in_1((const unsigned char*)ship,ship_size);
-    //wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-    //ImageListSmall->Add(myImage_1);
+	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
+	//SetDoubleBuffered(true);
+	m_FieldCount = 0;
+	m_SelectedItem = -1;
+	SetItemCount(0);
+	m_Control = NULL;
+	m_ColumnWithId = 0;
+	
+	m_ImageListSmall = new wxImageList(10, 10, true);
 
-	//wxMemoryInputStream in_2((const unsigned char*)down_sort,down_sort_size);
-    //wxImage myImage_2(in_2, wxBITMAP_TYPE_PNG);
-    //ImageListSmall->Add(myImage_2);
+	wxMemoryInputStream in_1((const unsigned char*)up_sort,up_sort_size);
+    wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
+    m_ImageListSmall->Add(myImage_1);
 
+	wxMemoryInputStream in_2((const unsigned char*)down_sort,down_sort_size);
+    wxImage myImage_2(in_2, wxBITMAP_TYPE_PNG);
+    m_ImageListSmall->Add(myImage_2);
+		
+	SetImageList(m_ImageListSmall, wxIMAGE_LIST_SMALL);
+	
 }
 
 CListCtrl::~CListCtrl()
 {
-	delete ImageListSmall;
+	delete m_ImageListSmall;
+
+	for(size_t i = 0; i < m_ColumnArray.size(); i++)
+	{	
+		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
+		ptr->Clear();
+		delete ptr;
+	}
+
 }
 
-void CListCtrl::OnEraseBackground(wxEraseEvent &event)
+void CListCtrl::SetColumnWithId(int id)
 {
+	m_ColumnWithId = id;
+}
+
+void CListCtrl::_AddColumn(int id,wxString field_name)
+{
+	m_ColumnIds.Add(id);
+	m_ColumnFields.Add(field_name);
+}
+
+void CListCtrl::SetControlType(int id, void *ptr)
+{
+	m_ControlType = id;
+	m_Control = ptr;
+}
+
+void CListCtrl::InitColumns()
+{
+	if(m_ColumnArray.size() == 0)
+	{
+		for(size_t i = 0; i < m_ColumnIds.size(); i++)
+		{
+			wxArrayString *Data = new wxArrayString();
+			m_ColumnArray.Add(Data);
+		}
+	}
+}
+
+void CListCtrl::Clear()
+{
+	SetItemCount(0);
+	for(size_t i = 0; i < m_ColumnArray.size(); i++)
+	{
+		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
+		ptr->Clear();
+	}
 
 }
 
-void CListCtrl::OnPaint(wxPaintEvent &event)
+void CListCtrl::Select()
 {
-	event.Skip();
+	EnsureVisible(m_SelectedItem);
+	SetItemState( m_SelectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
 
-void CListCtrl::OnSetItem(wxCommandEvent &event)
+void CListCtrl::Read(wxString query)
 {
-	int i = event.GetInt();
-	wxString str = event.GetString();
+	if(!my_query(query))
+		return;
+	
+	m_FieldCount = db_field_count();
+	int rows = 0;
+	void *result = db_result();
+	char **row;
 		
-	long item = InsertItem(i,str);
-	SetItemPtrData(item,(wxUIntPtr)event.GetClientData());
+
+	while(row = (char**)db_fetch_row(result))
+	{
+		for(size_t i = 0; i < m_FieldCount; i++)
+		{
+			for(size_t j = 0; j < m_ColumnIds.size(); j++)
+			{
+				if(i == m_ColumnIds.Item(j))
+				{
+					wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(j);
+					wxString str(row[i],wxConvUTF8);
+					ptr->Add(str);
+				}
+			}
+		}
+		
+		rows++;
+	}
+
+	db_free_result(result);
+	SetItemCount(rows);
 }
 
 void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 {
-	MenuAll();
-}
-
-void CListCtrl::MenuAll()
-{
 		
 	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	if(n_item == -1)
-		return;
-	SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-	wxMenu *Menu = new wxMenu(Ship->name);
+	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	
-//	Menu->AppendCheckItem(ID_SHIP_SHOW_TRACK,GetMsg(MSG_SHOW_SHIP_TRACK));
-	//Menu->Check(ID_SHIP_SHOW_TRACK,Ship->GetShowTrack());
-	Menu->AppendSeparator();
-//	Menu->Append(ID_SHIP_REPORT,GetMsg(MSG_GET_SHIP_REPORT));
-//	Menu->Append(ID_SHIP_CHART,GetMsg(MSG_GET_SHIP_CHART));
-	//Menu->Append(ID_SHIP_TRACK,GetMsg(MSG_GET_SHIP_TRACK));
-	Menu->AppendSeparator();
-//	Menu->Append(ID_SHIP_NAME,GetMsg(MSG_SET_SHIP_NAME));
-//	Menu->Append(ID_SHIP_CONFIG,GetMsg(MSG_SET_SHIP_CONFIG));
-//	Menu->Append(ID_SHIP_DATA,GetMsg(MSG_SET_SHIP_DATA_DEFINITION));
+	wxMenu *Menu = NULL;
+
+	switch(m_ControlType)
+	{	
+		case CONTROL_AREA:	Menu = MenuArea(m_SelectedItem);	break;
+		//case CONTROL_GROUP:	Menu = MenuGroup(m_SelectedItem);	break;
+	}
 	
+	if(Menu)
+	{
+		PopupMenu(Menu);
+		delete Menu;
+	}
+
+}
+
+wxMenu *CListCtrl::MenuArea(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_AREA ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_AREA,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
 		
-	PopupMenu(Menu);
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_AREA,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+	}
+		
 	
-	delete Menu;
+	return Menu;
 	
 }
 
-void CListCtrl::OnShipData(wxCommandEvent  &event)
-{
-	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-	Plugin->ShipData(Ship);	
-}
 
-
-void CListCtrl::OnShipReport(wxCommandEvent  &event)
-{
-	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-	Plugin->ShipReport(Ship);	
-}
-
-void CListCtrl::OnShipConfig(wxCommandEvent  &event)
-{
-	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-	Plugin->ShipConfig(Ship);	
-}
-
-void CListCtrl::OnShipShowTrack(wxCommandEvent  &event)
-{
-	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-	//Ship->SetShowTrack(event.IsChecked());
-
-}
 
 void CListCtrl::OnSelected(wxListEvent &event)
 {
 	
 	long n_item = -1;
-	for(;;)
-	{
-		n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-
-        if (n_item < 0)	break;
-		
-		if(GetMutex()->TryLock())
-			return;
-		
-		SMarker *Ship = (SMarker*)ShipList->Item(n_item);
-		Plugin->SetSelectedShip(Ship);
-		GetMutex()->Unlock();
-	}
+	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	
-		
 }
+
 
 void CListCtrl::OnActivate(wxListEvent &event)
 {
-	long n_item = -1;
-	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(n_item);
-	
-//	Plugin->ShowProperties(Geometry);
+
 }
 
-void CListCtrl::ClearList()
+void CListCtrl::OnEdit(wxCommandEvent &event)
 {
-	SetItemCount(0);
-}
-
-
-void CListCtrl::SetList(wxArrayPtrVoid *ships)
-{	
-	if(ships == NULL)
-		return;
-	
-	ShipList = ships;
-	SetItemCount(ships->size());
-		
-	
-}
-
-void CListCtrl::SetSelection(SMarker *ship)
-{
-	
-	for(size_t i = 0; i < ShipList->size(); i++)
+	switch(m_ControlType)
 	{
-		SMarker *Ship = (SMarker*)ShipList->Item(i);
+		case CONTROL_AREA:	((CArea*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 		
-		if(Ship == ship)
-		{
-			EnsureVisible(i);
-			break;
-		}
 	}
-	
+}
 
-	Refresh();
-	return;
+void CListCtrl::OnNew(wxCommandEvent &event)
+{
+	switch(m_ControlType)
+	{
+		case CONTROL_AREA:	((CArea*)m_Control)->OnNew();	break;
+		
+	}
+
+}
+
+void CListCtrl::OnDelete(wxCommandEvent &event)
+{
+	switch(m_ControlType)
+	{
+		case CONTROL_AREA:	((CArea*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
+		
+	}
+
+}
+
+wxArrayString *CListCtrl::GetColumn(int column)
+{
+	return (wxArrayString*)m_ColumnArray.Item(column);
+}
+
+wxString CListCtrl::GetValue(wxArrayString *ptr, int record)
+{
+	return ptr->Item(record);
 }
 
 wxString CListCtrl::OnGetItemText(long item, long column) const
-{
-	if(ShipList->size() <= item)
-	{
-		GetMutex()->Unlock();
-		return wxEmptyString;
-	}
-	
-	SMarker *Ship = (SMarker*)ShipList->Item(item);
-	wxString str;
-		
-	switch (column)
-	{
-		case 0:	str = wxString::Format(_("%s"),Ship->name);		break;
-		case 1:	str = wxString::Format(_("%4.2f"),Ship->x);		break;
-		case 2:	str = wxString::Format(_("%4.2f"),Ship->y);		break;
-		
-	}
-	
-	return str;
+{		
+	wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(column);
+	return ptr->Item(item);
 }
 
+/*
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
 {
 	
-	SMarker *ship = (SMarker*)ShipList->Item(item);
-	if(Plugin->ShipIsSelected(ship))
+	//if(Plugin->IsLoading())
+		return NULL;
+	
+	//if(GetMutex()->TryLock())
+//		return NULL;
+	
+	//if(CatalogGeometryGroup->Length() == 0 || CatalogGeometryGroup->Length() < item )
+		//return NULL;
+	
+	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(item);
+	
+	 //je¿eli geometria zainstalowana to sprawdz czy plik geometri istnieje 
+	//CNaviGeometry *Installed = Plugin->IsInstalled(Geometry); 
+	//GetMutex()->Unlock();
+	
+	//if(Installed != NULL)
+	//{
+		//if(!wxFileExists(Installed->GetAttributes()->GetValueAsString(GEOMETRY_ATTRIBUTE_9)))
+			//return (wxListItemAttr *)&error;
+	//}
+		
+
+//	if(Installed && Plugin->ChartCheckUpdate(Installed) != NULL)				// geometria potrzebuje update
+		//return (wxListItemAttr *)&error;
+	
+	//if (last_selected_item == item && Installed)								// zainstalowana
+		//return (wxListItemAttr *)&selected_and_installed;				
+		
+	if (last_selected_item == item)
 		return (wxListItemAttr *)&selected;
-	else
-		return (wxListItemAttr *)&deselected;
-			
+		
+	//if(Installed && Type == LIST_TYPE_ALL)
+		//return (wxListItemAttr *)&installed;
+		    
+
     return NULL;
+}
+*/
+
+int wxCALLBACK
+MyCompareFunction(wxIntPtr item1, wxIntPtr item2, wxIntPtr WXUNUSED(sortData))
+{
+    // inverse the order
+    if (item1 < item2)
+        return 1;
+    if (item1 > item2)
+        return -1;
+
+    return 0;
 }
 
 void CListCtrl::OnColClick(wxListEvent& event)
 {
-	
 	static bool x = false;
-    x = !x;
-
-	for(size_t i = 0; i < GetColumnCount(); i++)
-	{
-		int col = event.GetColumn();
-		
-		//if(event.GetColumn() == i)
-			//SetColumnImage(i, x ? 0 : 1);
-		//else
-			//SetColumnImage(i, -1 );
-	}			
+    	
+	static int col = -1;
+	static int old_col;
 	
-	Order = x;
-	SelectedColumn = event.GetColumn();
-	Sort();
+	for(size_t i = 0; i < this->GetColumnCount(); i++)
+	{
+		SetColumnImage(i,-1);
+	}
+
+	col = event.GetColumn();
+	
+	if(old_col == col)
+		x = !x;
+	else
+		x = false;
+
+	SetColumnImage(col, x ? 0 : 1);
+
+	old_col = col;
+	
+	switch(m_ControlType)
+	{	
+		case CONTROL_AREA:	((CArea*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);		break;
+		//case CONTROL_:	((CGroup*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
+	}
 
 }
 
@@ -273,61 +341,30 @@ void CListCtrl::SetColumnImage(int col, int image)
     SetColumn(col, item);
 }
 
-bool CListCtrl::GetSortOrder()
-{
-	return Order;
-}
-
-int CListCtrl::GetSelectedColumn()
-{
-	return SelectedColumn;
-}
-
-
 void CListCtrl::Sort()
 {
-	myCompareClass a(this);
-	std::sort(ShipList->begin(),ShipList->end(),a);
+//	CatalogGeometryGroup->First();	
+//	std::vector<CNaviGeometry*> *it = (std::vector<CNaviGeometry*>*)CatalogGeometryGroup;
+//	myCompareClass a(this);
+//	std::sort(it->begin(),it->end(),a);
 	Refresh();
 }
 
+int CListCtrl::OnGetItemColumnImage(long item, long column) const
+{
+	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(item);
+	//CNaviGeometry *Installed = Plugin->IsInstalled(Geometry);
+	//if(Installed && column == 0)
+	//{
+		//if(!wxFileExists(Installed->GetAttributes()->GetValueAsString(GEOMETRY_ATTRIBUTE_9)))
+			//return 0;
+	//}
+	
+	return -1;
+}
+
+
 int CListCtrl::OnGetItemImage(long item) const
 {
-	return 0;
+	return -1;
 }
-
- myCompareClass::myCompareClass(CListCtrl *parent) 
-{
-	Parent = parent;
-}
-  
-bool myCompareClass::operator() (void *g1, void *g2) 
-{ 
-	int a = 0;
-	
-	switch(Parent->GetSelectedColumn())
-	{
-		//case 0:	 a = ((CShip*)g1)->GetId() - ((CShip*)g2)->GetId();				break;
-		//case 1:	 a = wcscmp(((CShip*)g1)->GetName(), ((CShip*)g2)->GetName());	break;
-		//case 2:	 a = wcscmp(((CShip*)g1)->date, ((SShip*)g2)->date);	break;
-	}	
-	
-	if(Parent->GetSortOrder())
-	{
-		if(a < 0)
-			return true;
-		else
-			return false;
-	 
-	}else{
-	 	
-		if(a > 0)
-			return true;
-		else
-			return false;
-	 }
-
-
-}
-
-  

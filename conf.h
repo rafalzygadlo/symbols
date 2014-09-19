@@ -1,24 +1,22 @@
 #ifndef __CONF
 #define __CONF
-//#include <vector>
 
 #if defined(_WIN32) || defined(_WIN64)
 #define DIR_SEPARATOR "\\"
 #endif
 
-#if defined(_LINUX32) || defined(_LINUX64)
-#define DIR_SEPARATOR "/"
-#endif
-
 #define DIR_WORKDIR "workdir"
 #define CONFIG_FILE "objects.conf"
 #define DATA_FILE "objects.data"
-//#define MARKER_ICONSET_FILE_NAME "marker.icons"
 
 #define PRODUCT_NAME "Objects"
 #define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"
 #define PRODUCT_VERSION "1.0"
 
+#define DB_HOST "212.160.178.24"
+#define DB_USER "navi_vts"
+#define DB_PASSWORD "navi_vts"
+#define DB_DB "navi_vts"
 
 #define BUTTON_TYPE_ANY -1
 #define BUTTON_TYPE_NEW 0
@@ -36,12 +34,7 @@
 #define DEFAULT_FACTOR 50.0
 #define FONT_SIZE 14
 
-#if defined(_LINUX32) || defined(_LINUX64)
-	#define FONT_NAME "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
-#endif
-
 #define PLUGIN_ID 4
-#define MARKER_HEADER_VERSION 1
 
 #define MARKER_NAME_SIZE 32
 #define MARKER_DESCRIPTION_SIZE 255
@@ -60,7 +53,7 @@
 // . . . . . . . . . . . . . . . .
 #define MSG_MANAGER				0
 #define MSG_NEW_MARKER			1
-#define MSG_DELETE_MARKER		2	
+#define MSG_DELETE_MARKER		2
 #define MSG_PROPERTIES_MARKER	3
 #define MSG_NAME				4
 #define MSG_DESCRIPTION			5
@@ -71,8 +64,11 @@
 #define MSG_OK					10
 #define MSG_CANCEL				11
 #define MSG_POSITION_INFO		12
-#define MSG_POWER_ON			13
-#define MSG_POWER_OFF			14
+#define MSG_AREA				13
+#define MSG_NEW					14
+#define MSG_DELETE_AREA			15
+#define MSG_EDIT				16
+#define MSG_DELETE				17
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -82,11 +78,10 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-typedef struct
-{
-	int version;
+#define CONTROL_AREA 0
 
-}SMarkerHeader;
+#define ORDER_ASC	0
+#define ORDER_DESC	1
 
 
 typedef struct Marker
@@ -98,7 +93,7 @@ typedef struct Marker
 		
 }SMarker;
 
-//......................................
+
 
 
 

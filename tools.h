@@ -22,5 +22,10 @@ bool SetLat(char *text, float *val);
 bool SetLon(char *text, float *val);
 wxString GetWorkDir();
 wxString GetConfigFile();
+int _GetUID();
+void _SetUID(int uid);
+void SetLanguageId(int id);
+int GetLanguageId();
+
 #endif
 

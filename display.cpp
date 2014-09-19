@@ -116,11 +116,7 @@ void CDisplayPlugin::ShowControls()
 	ControlPanel->SetSizer(ControlPanelSizer);
 	ControlPanel->Hide();
 	//ControlPanel->SetBackgroundColour(wxColor(200,200,200));
-	
-	wxButton *ButtonOn = new wxButton(ControlPanel,ID_ON,GetMsg(MSG_POWER_ON));
-	ControlPanelSizer->Add(ButtonOn,1,wxALL|wxEXPAND|wxCENTER,10);
-	wxButton *ButtonOff = new wxButton(ControlPanel,ID_OFF,GetMsg(MSG_POWER_OFF),wxDefaultPosition,wxSize(-1,50));
-	ControlPanelSizer->Add(ButtonOff,1,wxALL|wxEXPAND|wxCENTER,10);
+
 	
 	//wxBitmapToggleButton *Button = new wxBitmapToggleButton();
 	

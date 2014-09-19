@@ -76,7 +76,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SetButtonAction(int action);
 	void Menu(int type);
 	void WritecConfig();
-	void ReadConfig();
+	void Read();
 	void CreateTextures(void);
 	void WriteConfig();
 	std::vector <SMarker*> GetPoints();
@@ -93,7 +93,6 @@ class CMapPlugin :public CNaviMapIOApi
 	
 	void New();	
 	void RenderIcons();
-	void RenderPoints();
 	void RenderMarkers();
 	void RenderSelected();
 	void RenderHighlighted();
@@ -102,9 +101,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
 	void RenderText(double x, double y, wchar_t *text);
 	bool IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2); 
-	void RenderMenu(float x , float y);
 	void RenderPositionMarker(double x, double y);
-	void RenderDistance();
 	void SetValues();
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void SetSmoothScaleFactor(double _Scale);
@@ -113,7 +110,6 @@ class CMapPlugin :public CNaviMapIOApi
 	void HideInfo();
 	void Move();
 	void ReadHeader();
-	void WriteHeader();
 	int Count();
 	SMarker *Get(int id);
 	double Distance();
@@ -164,6 +160,8 @@ public:
 	virtual void Mouse(int x, int y, bool lmb, bool mmb, bool rmb );
 	virtual void MouseDBLClick(int x, int y);
 	virtual void OnInitGL();
+	virtual void SetUID(int uid);
+	virtual void SetLanguage(int LanguageID);					
 	
 	static void *GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params);
 	static void *SetSelectedShipFunc(void *NaviMapIOApiPtr, void *Params);

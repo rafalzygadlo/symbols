@@ -4,6 +4,7 @@
 #include "tools.h"
 #include "positiondialog.h"
 #include "icon.h"
+#include "db.h"
 
 
 unsigned char PluginInfoBlock[] = {
@@ -92,6 +93,16 @@ CMapPlugin::~CMapPlugin()
 		delete PositionDialog;
 }
 
+void CMapPlugin::SetUID(int uid)
+{
+	_SetUID(uid);
+}					
+
+void CMapPlugin::SetLanguage(int LanguageID)
+{
+	SetLanguageId(LanguageID);
+}					
+
 void *CMapPlugin::GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params)
 {
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -144,14 +155,15 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 		SmoothScaleFactor = Factor;
 }
 
-void CMapPlugin::ReadConfig()
+void CMapPlugin::Read()
 {
+	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_OBJECT);
+	my_query(sql);
 
 	if(_file.Exists(PointsPath))
 	{
 		if(_file.Open(PointsPath))
 		{	
-			ReadHeader();
 			while(!_file.Eof())
 			{	
 				SMarker *buffer = (SMarker*)malloc(sizeof(SMarker));
@@ -169,12 +181,6 @@ void CMapPlugin::ReadConfig()
 	SendInsertSignal();
 }
 
-void CMapPlugin::ReadHeader()
-{
-	SMarkerHeader *header = (SMarkerHeader*)malloc(sizeof(SMarkerHeader));
-	_file.Read(header,sizeof(SMarkerHeader));
-	free(header);
-}
 
 bool CMapPlugin::ShipIsSelected(SMarker *ship)
 {
@@ -190,21 +196,13 @@ void CMapPlugin::WriteConfig()
 		
 	if(_file.Open(PointsPath,wxFile::write))
 	{
-		WriteHeader();
-			
+				
 		for(unsigned int i = 0; i < ShipList->size();i++)
 			_file.Write(ShipList->Item(i),sizeof(SMarker));
 
 		_file.Close();
 	}
 	
-}
-
-void CMapPlugin::WriteHeader()
-{
-	SMarkerHeader Header;
-	Header.version = MARKER_HEADER_VERSION;
-	_file.Write(&Header,sizeof(SMarkerHeader));
 }
 
 void CMapPlugin::SendInsertSignal()
@@ -248,9 +246,13 @@ void CMapPlugin::SetButtonAction(int action)
 
 void CMapPlugin::Run(void *Params)
 {
-	//_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF );
-//	ThisPtr = (CNaviMapIOApi*)this;
-	
+	if(!db_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_DB))
+	{
+		wxString str(db_error());
+		wxMessageBox(str);
+	}	
+
+	Read();
 	// refresh dla wywolania renderu zeby skreowac ikony
 	Broker->Refresh(Broker->GetParentPtr());
 }
@@ -799,7 +801,7 @@ void CMapPlugin::Render(void)
 	if(FirstTime)
 	{
 		CreateTextures();
-		ReadConfig();
+		
 		FirstTime = false;
 	}
 		

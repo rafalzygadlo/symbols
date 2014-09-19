@@ -1,101 +1,84 @@
-#ifndef __LISTCTRL
-#define __LISTCTRL
+#ifndef __LIST
+#define __LIST
 
 #include <wx/wx.h>
 #include <wx/listctrl.h>
-#include "NaviBroker.h"
-#include "display.h"
-#include "frame.h"
+
 
 class CDisplayPlugin;
+class CAisList;
 class CListCtrl: public wxListCtrl
 {
-	wxImageList *ImageListSmall;
-	bool Order;
-	int SelectedColumn;
-	CListCtrl *ThisPtr;
-	int VisibleChartType;
-	int Type;
-	wxMutex mutex;
-	int item_count;
-	wxMenu *Menu;
-	wxListItemAttr selected, deselected;
-	CDisplayPlugin *Plugin;
-	wxArrayPtrVoid *ShipList;
-	wxArrayPtrVoid *SelectedShipList;
-		
-	wxString CatalogPath;
-	//static bool SortFunction(CNaviGeometry *a, CNaviGeometry *b);
-	//int IsInstalled(CNaviGeometry *geometry,CNaviGeometryGroup *installed); // -1 nie ma na liscie zainstalowanych (0/1 jest zainstalowany 0 nie pobrany do koñca 1 pobrany)
-	void MenuInstalled();
-	void MenuVisible();
-	void MenuAll();
-	void MenuQueue();
-	//void ShowProperties();
-	void OnActivate(wxListEvent &event);
-	void OnEraseBackground(wxEraseEvent &event);
-	void OnShipProperties(wxCommandEvent &event);
-	void OnShipConfig(wxCommandEvent  &event);
-	void OnShipData(wxCommandEvent  &event);
-	void OnShipReport(wxCommandEvent  &event);
-	void OnContextMenu(wxContextMenuEvent &event);
-	void OnSelected(wxListEvent &event);
-	void OnPaint(wxPaintEvent &event);
-	void OnSetItem(wxCommandEvent &event);
-	void OnColClick(wxListEvent& event);
-	void OnShipShowTrack(wxCommandEvent  &event);
-	long GetLastSelectedItem();
-	//int Compare(SShip *g1, SShip *g2);
-	void SetColumnImage(int col, int image);
+	wxArrayPtrVoid m_ColumnArray;
+	wxArrayString m_DataArray;
+	wxArrayInt m_ColumnIds;
+	wxArrayString m_ColumnFields;
+	int m_FieldCount;
+	wxMenu *m_Menu;
+	int m_ControlType;
+	void *m_Control;
+	int m_SelectedItem;
+	int m_ColumnWithId;
+	wxImageList *m_ImageListSmall;
+	
+	wxMenu *MenuArea(int id);
 		
 	void Sort();
+	void NewUser();
+	void NewGroup();
+	wxArrayString *GetColumn(int column);
+	wxString GetValue(wxArrayString *ptr, int record);
+
+	
+	void OnActivate(wxListEvent &event);
+	void OnSelected(wxListEvent &event);
+	void OnContextMenu(wxContextMenuEvent &event);
+	void OnColClick(wxListEvent &event);
+	void OnEdit(wxCommandEvent &event);
+	void OnDelete(wxCommandEvent &event);
+	void OnNew(wxCommandEvent &event);
+	void OnProperties(wxCommandEvent &event);
+	void OnChangePassword(wxCommandEvent &event);
+	void OnRight(wxCommandEvent &event);
+	void OnChangeGroup(wxCommandEvent &event);
 	
 	wxString OnGetItemText(long item, long column) const;
-	wxListItemAttr *OnGetItemAttr(long item) const;
+	//wxListItemAttr *OnGetItemAttr(long item) const;
+	int OnGetItemColumnImage(long item, long column) const; 
 	int OnGetItemImage(long item) const;
 
 public:
 	
-	
-	CListCtrl(wxWindow *Parent, CDisplayPlugin *DspPlugin, int type, long style);
-	~CListCtrl();
 		
-	void SetList(wxArrayPtrVoid *ships);
-	void SetSelection(SMarker *ship);
-	void ClearList();
-	void Insert();
-	wxString GetItemValue(long item, long column);
-	int GetSelectedColumn();
-	bool GetSortOrder();
-	
+	CListCtrl( wxWindow *Parent, int style );
+	~CListCtrl();
+
+	void SetControlType(int id, void *ptr);
+	void _AddColumn(int id,wxString field_name);
+	void InitColumns();
+	void Clear();
+	void Select();
+	void Read(wxString query);
+	void SetColumnWithId(int id);
+	void SetColumnImage(int col, int image);
+
 	DECLARE_EVENT_TABLE();
 
 	enum
 	{
-		ID_LIST = 1334,
-		ID_SHIP_NAME,
-		ID_SHIP_CONFIG,
-		ID_SHIP_DATA,
-		ID_SHIP_REPORT,
-		ID_SHIP_REPORT_CONFIG,
-		ID_SHIP_CHART,
-		ID_SHIP_SHOW_TRACK
+		ID_LIST,
+		ID_DELETE,
+		ID_EDIT,
+		ID_NEW,
+		ID_PROPERTIES,
+		ID_CHANGE_PASSWORD,
+		ID_GROUP,
+		ID_RIGHT,
+		
 	};
 
 };
 
-class myCompareClass 
-{
-	CListCtrl *Parent;
-  
-public:
-	
-	myCompareClass(CListCtrl *parent);
-	bool operator() (void *g1, void *g2); 
-	//bool operator();
-
-  
-};
 
 
 #endif

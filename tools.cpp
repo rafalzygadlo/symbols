@@ -7,6 +7,8 @@
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
 int GlobalLanguageID;
+int GlobalUID;
+
 const wchar_t *nvLanguage[2][19] = 
 { 
 	//en
@@ -24,8 +26,11 @@ const wchar_t *nvLanguage[2][19] =
 		L"Ok",
 		L"Cancel",
 		L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",
-		L"Power ON",
-		L"Power OFF",
+		L"Area",
+		L"New",
+		L"Edit",
+		L"Delete",
+		
 	},
 	//pl
 	{
@@ -42,7 +47,10 @@ const wchar_t *nvLanguage[2][19] =
 		L"Latitude",
 		L"Ikona",
 		L"Zamknij",
-		L"Zmieñ½",
+		L"Akwen",
+		L"Nowy",
+		L"Edycja",
+		L"Usuñ",
 	}
 
 };
@@ -274,4 +282,24 @@ bool SetLon(char *text, float *val)
 	}
 
 	return true;
+}
+
+int _GetUID()
+{
+	return GlobalUID;
+}
+
+void _SetUID(int uid)
+{
+	GlobalUID = uid;
+}
+
+void SetLanguageId(int id)
+{
+	GlobalLanguageID = id;
+}
+
+int GetLanguageId()
+{
+	return GlobalLanguageID;
 }
