@@ -2,8 +2,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "listctrl.h"
-//#include "group_new.h"
-//#include "group_right.h"
+#include "area_new.h"
 #include "db.h"
 
 BEGIN_EVENT_TABLE(CArea, wxDialog)
@@ -28,7 +27,7 @@ CArea::CArea()
 	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
 	PanelSizer->AddStretchSpacer();
 	PanelSizer->Add(ButtonClose,0,wxALL,5);
-	SetLabel(GetMsg(MSG_AREA));
+	SetLabel(GetMsg(MSG_OBJECT_AREA));
 	Center();
 	
 }
@@ -46,11 +45,12 @@ wxPanel *CArea::GetPanel(wxWindow *Parent)
 	m_List = new CListCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL );
 	wxListItem item;
 	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-			
+	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
+
 	m_List->_AddColumn(FID_OBJECT_AREA_NAME,FNAME_OBJECT_AREA_NAME);
-	m_List->_AddColumn(FID_GROUP_INFO,FNAME_GROUP_INFO);
+	m_List->_AddColumn(FID_OBJECT_AREA_INFO,FNAME_OBJECT_AREA_INFO);
 	
-	m_List->_AddColumn(FID_GROUP_ID,FNAME_GROUP_NAME);
+	m_List->_AddColumn(FID_OBJECT_AREA_ID,FNAME_OBJECT_AREA_ID);
 	m_List->SetColumnWithId(2); // id kolumny z id pól bazy danych
 	
 	m_List->InitColumns();
@@ -69,9 +69,9 @@ void CArea::Read()
 	wxString sql;
 
 	if(m_Field == wxEmptyString)		
-		sql = wxString::Format(_("SELECT * FROM %s"),TABLE_GROUP);
+		sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_OBJECT_AREA);
 	else
-		sql = wxString::Format(_("SELECT * FROM %s ORDER BY %s %s"),TABLE_GROUP,m_Field,m_Order);
+		sql = wxString::Format(_("SELECT * FROM %s ORDER BY %s %s"),TABLE_OBJECT_AREA,m_Field,m_Order);
 
 	m_List->Read(sql);
 	m_List->Refresh(false);
@@ -89,16 +89,16 @@ void CArea::Select()
 
 void CArea::OnNew()
 {
-	/*
-	CGroupNew *GroupNew = new CGroupNew();
-	if(GroupNew->ShowModal() == wxID_OK)
+	
+	CAreaNew *ptr = new CAreaNew();
+	if(ptr->ShowModal() == wxID_OK)
 	{
 		wxDateTime time = wxDateTime::Now();
-		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_GROUP,GroupNew->GetName(),GroupNew->GetInfo());
+		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_OBJECT_AREA,ptr->GetName(),ptr->GetInfo());
 		
 		if(!my_query(sql))
 		{
-			delete GroupNew;
+			delete ptr;
 			return;
 		}
 			
@@ -107,41 +107,40 @@ void CArea::OnNew()
 		
 	}
 	
-	delete GroupNew;
-	*/
+	delete ptr;
+	
 }
 
 void CArea::OnEdit(wxString id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_GROUP,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_OBJECT_AREA,id);
 	
 	if(!my_query(sql))
 		return;
-	/*	
-	CGroupNew *GroupNew = new CGroupNew();
+		
+	CAreaNew *ptr = new CAreaNew();
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	GroupNew->SetName(Convert(row[FID_GROUP_NAME]));
-	GroupNew->SetInfo(Convert(row[FID_GROUP_INFO]));
+	ptr->SetName(Convert(row[FID_OBJECT_AREA_NAME]));
+	ptr->SetInfo(Convert(row[FID_OBJECT_AREA_INFO]));
 	
 	db_free_result(result);
 
-	if(GroupNew->ShowModal() == wxID_OK)
+	if(ptr->ShowModal() == wxID_OK)
 	{
 
 		wxDateTime time = wxDateTime::Now();
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_GROUP,GroupNew->GetName(),GroupNew->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_OBJECT_AREA,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
 		Select();
 	}
 
-	delete GroupNew;
-	*/
-
+	delete ptr;
+	
 }
 
 void CArea::OnDelete(wxString id)
@@ -149,12 +148,8 @@ void CArea::OnDelete(wxString id)
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_AREA),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
 	{
-		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_GROUP,id);
+		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_OBJECT_AREA,id);
 		my_query(sql);
-		
-		sql = wxString::Format(_("DELETE FROM %s WHERE id_group = '%s'"),TABLE_GROUP_RIGHT,id);
-		my_query(sql);
-		
 		Clear();
 		Read();
 		Select();

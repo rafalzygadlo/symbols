@@ -9,48 +9,54 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[2][19] = 
+const wchar_t *nvLanguage[2][20] = 
 { 
 	//en
 	{
 		L"Manager",
 		L"New",
-		L"Delete",
-		L"Properties",
 		L"Name",
 		L"Description",
 		L"Longitude",
 		L"Latitude",
 		L"Close",
-		L"Marker Settings",
 		L"Ok",
 		L"Cancel",
 		L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",
 		L"Area",
 		L"New",
+		L"Delete Area ?",
 		L"Edit",
 		L"Delete",
+		L"Seaway",
+		L"Type",
+		L"Name can not be empty",
+		L"Name",
+		L"Info",
 		
 	},
 	//pl
 	{
 		L"Marker",
-		L"Markery",
 		L"Dodaj Marker",
-		L"Usuï¿½ Marker",
-		L"Przesuï¿½ Marker tutaj",
-		L"Ustawienia Markera",
-		L"Zaznacz najpierw marker",
-	    L"Nazwa",
+		L"Nazwa",
 		L"Opis",
 		L"Longitude",
 		L"Latitude",
-		L"Ikona",
 		L"Zamknij",
+		L"Ok",
+		L"Anuluj",
+		L"Kliknij na mapie ¿eby ustaliæ pozycjê.",
 		L"Akwen",
 		L"Nowy",
+		L"Usun¹æ akwen ?",
 		L"Edycja",
 		L"Usuñ",
+		L"Tor wodny",
+		L"Typ",
+		L"Nazwa nie mo¿e byæ pusta",
+		L"Nazwa",
+		L"Opis",
 	}
 
 };
@@ -302,4 +308,10 @@ void SetLanguageId(int id)
 int GetLanguageId()
 {
 	return GlobalLanguageID;
+}
+
+wxString Convert(char *v)
+{
+	wxString str(v,wxConvUTF8);
+	return str;
 }

@@ -18,11 +18,13 @@
 #define DB_PASSWORD "navi_vts"
 #define DB_DB "navi_vts"
 
-#define BUTTON_TYPE_ANY -1
-#define BUTTON_TYPE_NEW 0
-#define BUTTON_TYPE_DELETE 1
-#define BUTTON_TYPE_PROPERTIES 2
-#define BUTTON_TYPE_MOVE 3
+#define BUTTON_TYPE_ANY		   -1
+#define BUTTON_TYPE_NEW			0
+#define BUTTON_TYPE_DELETE		1
+#define BUTTON_TYPE_PROPERTIES	2
+#define BUTTON_TYPE_AREA		3
+#define BUTTON_TYPE_SEAWAY		4
+#define BUTTON_TYPE_TYPE		5
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -52,23 +54,25 @@
 // Languages
 // . . . . . . . . . . . . . . . .
 #define MSG_MANAGER				0
-#define MSG_NEW_MARKER			1
-#define MSG_DELETE_MARKER		2
-#define MSG_PROPERTIES_MARKER	3
-#define MSG_NAME				4
-#define MSG_DESCRIPTION			5
-#define MSG_LONGITUDE			6
-#define MSG_LATITUDE			7
-#define MSG_CLOSE				8
-#define MSG_SETTINGS_MARKER		9
-#define MSG_OK					10
-#define MSG_CANCEL				11
-#define MSG_POSITION_INFO		12
-#define MSG_AREA				13
-#define MSG_NEW					14
-#define MSG_DELETE_AREA			15
-#define MSG_EDIT				16
-#define MSG_DELETE				17
+#define MSG_NEW_OBJECT			1
+#define MSG_NAME				2
+#define MSG_DESCRIPTION			3
+#define MSG_LONGITUDE			4
+#define MSG_LATITUDE			5
+#define MSG_CLOSE				6
+#define MSG_OK					7
+#define MSG_CANCEL				8
+#define MSG_POSITION_INFO		9
+#define MSG_OBJECT_AREA			10
+#define MSG_NEW					11
+#define MSG_DELETE_AREA			12
+#define MSG_EDIT				13
+#define MSG_DELETE				14
+#define MSG_OBJECT_SEAWAY		15
+#define MSG_OBJECT_TYPE			16
+#define MSG_NAME_EMPTY			17
+#define MSG_NAME				18
+#define MSG_INFO				19
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"

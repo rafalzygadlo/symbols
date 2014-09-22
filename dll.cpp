@@ -4,6 +4,7 @@
 #include "tools.h"
 #include "positiondialog.h"
 #include "icon.h"
+
 #include "db.h"
 
 
@@ -30,11 +31,11 @@ unsigned char PluginInfoBlock[] = {
 
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
-
+	m_Area = NULL;
 	NewPtr = NULL;
 	PositionDialog = NULL;	
-	Broker = NaviBroker;
-	FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
+	m_Broker = NaviBroker;
+	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
 	PointsPath = wxString::Format(wxT("%s%s%s"),GetWorkDir(),wxT(DIR_SEPARATOR),_(DATA_FILE));
 	
 	HotSpotX = HotSpotY = 0;
@@ -85,7 +86,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 
 CMapPlugin::~CMapPlugin()
 {
-	delete FileConfig;
+	delete m_Area;
+	delete m_FileConfig;
 	delete MyFrame;
 	delete DisplaySignal;
 	delete ShipList;
@@ -123,7 +125,7 @@ void CMapPlugin::SetSelectedShip(SMarker *ship)
 {
 	SelectedPtr = ship;
 	SendSelectSignal();
-	Broker->Refresh(Broker->GetParentPtr());
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
 
@@ -157,9 +159,10 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 
 void CMapPlugin::Read()
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_OBJECT);
-	my_query(sql);
-
+	//wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_OBJECT);
+	//my_query(sql);
+	//void *result = db_result();
+		
 	if(_file.Exists(PointsPath))
 	{
 		if(_file.Open(PointsPath))
@@ -226,7 +229,7 @@ void CMapPlugin::SetDisplaySignal(int type)
 
 CNaviBroker *CMapPlugin::GetBroker()
 {
-	return Broker;
+	return m_Broker;
 }
 
 wxString CMapPlugin::GetFilePath()
@@ -254,7 +257,7 @@ void CMapPlugin::Run(void *Params)
 
 	Read();
 	// refresh dla wywolania renderu zeby skreowac ikony
-	Broker->Refresh(Broker->GetParentPtr());
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
 void CMapPlugin::Kill(void)
@@ -288,9 +291,9 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		
 	double mom[2];
 	double _x,_y;
-	Broker->GetMouseOM(mom);
-	MapScale = Broker->GetMapScale();
-	Broker->Unproject(mom[0],mom[1],&_x,&_y);
+	m_Broker->GetMouseOM(mom);
+	MapScale = m_Broker->GetMapScale();
+	m_Broker->Unproject(mom[0],mom[1],&_x,&_y);
 	
 	MouseX = mom[0];
 	MouseY = mom[0];
@@ -300,7 +303,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	MapX = _x;
 	MapY = _y;
 	// . . . . . . . . . . . . . . . . . . . . 	
-	Broker->Refresh(Broker->GetParentPtr());
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 		
 	bool add = false;
 	SMarker *ptr = NULL;
@@ -308,7 +311,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	if(ptr = SetMarker(MapX,MapY))
 	{
 		add = true;
-		((wxWindow*)Broker->GetParentPtr())->SetCursor(wxCURSOR_HAND);
+		((wxWindow*)m_Broker->GetParentPtr())->SetCursor(wxCURSOR_HAND);
 		HighlightedPtr = ptr;
 	
 	}else{
@@ -365,7 +368,7 @@ void CMapPlugin::ShowPopupMenu(bool show)
 void CMapPlugin::ShowFrameWindow(bool show)
 {
 	if(MyFrame == NULL)
-		MyFrame = new CMyFrame(this,(wxWindow*)Broker->GetParentPtr());
+		MyFrame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
 	MyFrame->ShowWindow(show);
 }
 
@@ -382,16 +385,21 @@ void CMapPlugin::ShowProperties()
 	ShowFrameWindow(true);
 }
 
+void CMapPlugin::Area()
+{
+	if(m_Area == NULL)
+		m_Area = new CArea();
+	m_Area->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_MARKER),this, MenuNew, false );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_DELETE_MARKER),this, MenuDelete, true );
-	//NaviApiMenu->AddItem( GetMsg(MSG_MOVE_MARKER).wchar_str(),this, MenuMove, true );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_PROPERTIES_MARKER),this, MenuProperties, true );
-	//NaviApiMenu->AddItem( GetMsg(MSG_SETTINGS_MARKER).wchar_str(),this, MenuConfig, false );
-	
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
+	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_OBJECT_AREA),this,MenuArea);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OBJECT_SEAWAY),this, MenuSeaway);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OBJECT_TYPE),this, MenuSeaway);
 }
 
 void *CMapPlugin::MenuConfig(void *NaviMapIOApiPtr, void *Input) 
@@ -429,41 +437,38 @@ void *CMapPlugin::MenuProperties(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
-void *CMapPlugin::MenuMove(void *NaviMapIOApiPtr, void *Input)
+void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_MOVE);
+	ThisPtr->Menu(BUTTON_TYPE_AREA);
 	
 	return NULL;	
 }
 
+void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_SEAWAY);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuType(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_TYPE);
+	
+	return NULL;	
+}
+
+
+
 void CMapPlugin::Menu(int type)
 {
-	
-	if(SelectedPtr == NULL && type != BUTTON_TYPE_NEW)
-	{
-	//	wxMessageBox(GetMsg(MSG_SELECT_MARKER_FIRST));
-		return;
-	}
-	
-	
 	switch(type)
 	{
-		case BUTTON_TYPE_NEW:
-			New(); // punkty na mapie
-		break;
-
-		case BUTTON_TYPE_DELETE:
-			Delete(); // punkty na mapie
-		break;
-
-		case BUTTON_TYPE_PROPERTIES:
-			ShowProperties();
-		break;
-
-		case BUTTON_TYPE_MOVE:
-			Move();
-		break;
+		case BUTTON_TYPE_NEW:			New();				break;
+		case BUTTON_TYPE_AREA:			Area();				break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());
@@ -544,10 +549,10 @@ void CMapPlugin::SetPosition(double x, double y)
 		NewPtr->y = y;
 	}
 	double to_x,to_y;
-	Broker->Project(x,y,&to_x,&to_y);
+	m_Broker->Project(x,y,&to_x,&to_y);
 	
 	PositionDialog->_SetPosition(to_x,to_y * -1);
-	Broker->Refresh(Broker->GetParentPtr());
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }
 
@@ -566,14 +571,14 @@ void CMapPlugin::New()
 		return;
 
 	double vm[4];
-	Broker->GetVisibleMap(vm);
+	m_Broker->GetVisibleMap(vm);
 	
 	nvMidPoint(vm[0],vm[1],vm[2],vm[3],&CenterX,&CenterY);
 	Add(CenterX,CenterY,text,NULL,true);
 		
 	SetPosition(CenterX,CenterY);
 	PositionDialog->Show();
-	Broker->Refresh(Broker->GetParentPtr());
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 	
 }
 
@@ -661,8 +666,7 @@ void CMapPlugin::SetValues()
 	HotSpotY = (RECT_HEIGHT/2)/SmoothScaleFactor;
 	InfoMargin = INFO_MARGIN/SmoothScaleFactor;
 
-	Broker->GetVisibleMap(VisibleMap);
-
+	m_Broker->GetVisibleMap(VisibleMap);
 	
 }
 
@@ -794,7 +798,7 @@ void CMapPlugin::Render(void)
 	glEnable(GL_BLEND);
 	Font->Clear();
 	
-	MapScale = Broker->GetMapScale();
+	MapScale = m_Broker->GetMapScale();
 	Angle = GetBroker()->GetAngle();
 	SetValues();
 		

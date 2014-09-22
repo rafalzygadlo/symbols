@@ -10,6 +10,7 @@
 #include "conf.h"
 #include "positiondialog.h"
 #include "nvFastFont.h"
+#include "area.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -19,6 +20,9 @@ class CMyFrame;
 class CPositionDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
+
+	CArea *m_Area;
+
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
 	CPositionDialog *PositionDialog;
@@ -45,9 +49,9 @@ class CMapPlugin :public CNaviMapIOApi
 	double MapX,MapY;
 	bool FirstRun;
 	wxString FilePath;
-	wxFileConfig *FileConfig;
+	wxFileConfig *m_FileConfig;
 	wxString ConfigPath;		
-	CNaviBroker *Broker;
+	CNaviBroker *m_Broker;
 	wxArrayString DataArray;
 	wxString PointsPath;
 	//std::vector <SMarker*> vPoints;
@@ -118,13 +122,20 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderNew();
 	void RenderTest();
 	void SetSelectedShip(SMarker *ship);
+
+
+	void Area();
 	
 	static void *MenuConfig(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuDelete(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuProperties(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuMove(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSettings(void *NaviMapIOApiPtr, void *Input);
+	
+	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuType(void *NaviMapIOApiPtr, void *Input);
+	
 				
 public:
 	
