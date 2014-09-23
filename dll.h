@@ -11,6 +11,8 @@
 #include "positiondialog.h"
 #include "nvFastFont.h"
 #include "area.h"
+#include "seaway.h"
+#include "light.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -22,6 +24,8 @@ class CMapPlugin :public CNaviMapIOApi
 {	
 
 	CArea *m_Area;
+	CSeaway *m_Seaway;
+	CLight *m_Light;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -123,8 +127,9 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderTest();
 	void SetSelectedShip(SMarker *ship);
 
-
 	void Area();
+	void Seaway();
+	void Light();
 	
 	static void *MenuConfig(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
@@ -135,7 +140,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuType(void *NaviMapIOApiPtr, void *Input);
-	
+	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
 				
 public:
 	

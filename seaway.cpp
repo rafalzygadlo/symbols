@@ -1,17 +1,17 @@
-#include "area.h"
+#include "seaway.h"
+#include "seaway_new.h"
 #include "conf.h"
 #include "tools.h"
 #include "listctrl.h"
-#include "area_new.h"
 #include "db.h"
 
-BEGIN_EVENT_TABLE(CArea, wxDialog)
+BEGIN_EVENT_TABLE(CSeaway, wxDialog)
 //	EVT_RADIOBUTTON(ID_RADIO_COMPANY,CUser::OnCompanyRadio)
 //	EVT_RADIOBUTTON(ID_RADIO_USER,CUser::OnUserRadio)
 //	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
 END_EVENT_TABLE()
 
-CArea::CArea()
+CSeaway::CSeaway()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
 
@@ -27,17 +27,17 @@ CArea::CArea()
 	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
 	PanelSizer->AddStretchSpacer();
 	PanelSizer->Add(ButtonClose,0,wxALL,5);
-	SetLabel(GetMsg(MSG_AREA));
+	SetLabel(GetMsg(MSG_SEAWAY));
 	Center();
 	
 }
 
-CArea::~CArea()
+CSeaway::~CSeaway()
 {
 
 }
 
-wxPanel *CArea::GetPanel(wxWindow *Parent)
+wxPanel *CSeaway::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
@@ -47,16 +47,16 @@ wxPanel *CArea::GetPanel(wxWindow *Parent)
 	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
 	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
 
-	m_List->_AddColumn(FID_AREA_NAME,FNAME_AREA_NAME);
-	m_List->_AddColumn(FID_AREA_INFO,FNAME_AREA_INFO);
+	m_List->_AddColumn(FID_SEAWAY_NAME,FNAME_SEAWAY_NAME);
+	m_List->_AddColumn(FID_SEAWAY_INFO,FNAME_SEAWAY_INFO);
 	
-	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
+	m_List->_AddColumn(FID_SEAWAY_ID,FNAME_SEAWAY_ID);
 	m_List->SetColumnWithId(2); // id kolumny z id pól bazy danych
 	
 	m_List->InitColumns();
 	Read();
 	
-	m_List->SetControlType(CONTROL_AREA,this);
+	m_List->SetControlType(CONTROL_SEAWAY,this);
 
 	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
 
@@ -64,37 +64,37 @@ wxPanel *CArea::GetPanel(wxWindow *Parent)
 
 }
 
-void CArea::Read()
+void CSeaway::Read()
 {
 	wxString sql;
 
 	if(m_Field == wxEmptyString)		
-		sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_AREA);
+		sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_SEAWAY);
 	else
-		sql = wxString::Format(_("SELECT * FROM %s ORDER BY %s %s"),TABLE_AREA,m_Field,m_Order);
+		sql = wxString::Format(_("SELECT * FROM %s ORDER BY %s %s"),TABLE_SEAWAY,m_Field,m_Order);
 
 	m_List->Read(sql);
 	m_List->Refresh(false);
 }
 
-void CArea::Clear()
+void CSeaway::Clear()
 {
 	m_List->Clear();
 }
 	
-void CArea::Select()
+void CSeaway::Select()
 {
 	m_List->Select();
 }
 
-void CArea::OnNew()
+void CSeaway::OnNew()
 {
 	
-	CAreaNew *ptr = new CAreaNew();
+	CSeawayNew *ptr = new CSeawayNew();
 	if(ptr->ShowModal() == wxID_OK)
 	{
 		wxDateTime time = wxDateTime::Now();
-		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo());
+		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo());
 		
 		if(!my_query(sql))
 		{
@@ -111,20 +111,20 @@ void CArea::OnNew()
 	
 }
 
-void CArea::OnEdit(wxString id)
+void CSeaway::OnEdit(wxString id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_AREA,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SEAWAY,id);
 	
 	if(!my_query(sql))
 		return;
 		
-	CAreaNew *ptr = new CAreaNew();
+	CSeawayNew *ptr = new CSeawayNew();
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_AREA_NAME]));
-	ptr->SetInfo(Convert(row[FID_AREA_INFO]));
+	ptr->SetName(Convert(row[FID_SEAWAY_NAME]));
+	ptr->SetInfo(Convert(row[FID_SEAWAY_INFO]));
 	
 	db_free_result(result);
 
@@ -132,7 +132,7 @@ void CArea::OnEdit(wxString id)
 	{
 
 		wxDateTime time = wxDateTime::Now();
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -143,12 +143,12 @@ void CArea::OnEdit(wxString id)
 	
 }
 
-void CArea::OnDelete(wxString id)
+void CSeaway::OnDelete(wxString id)
 {
-	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_AREA),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_SEAWAY),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
 	{
-		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_AREA,id);
+		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_SEAWAY,id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -159,7 +159,7 @@ void CArea::OnDelete(wxString id)
 }
 
 
-void CArea::OnColumnCLick(wxString field, int order)
+void CSeaway::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");

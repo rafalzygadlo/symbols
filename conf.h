@@ -25,6 +25,7 @@
 #define BUTTON_TYPE_AREA		3
 #define BUTTON_TYPE_SEAWAY		4
 #define BUTTON_TYPE_TYPE		5
+#define BUTTON_TYPE_LIGHT		6
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -63,16 +64,19 @@
 #define MSG_OK					7
 #define MSG_CANCEL				8
 #define MSG_POSITION_INFO		9
-#define MSG_OBJECT_AREA			10
+#define MSG_AREA				10
 #define MSG_NEW					11
 #define MSG_DELETE_AREA			12
 #define MSG_EDIT				13
 #define MSG_DELETE				14
-#define MSG_OBJECT_SEAWAY		15
-#define MSG_OBJECT_TYPE			16
+#define MSG_SEAWAY				15
+#define MSG_TYPE				16
 #define MSG_NAME_EMPTY			17
 #define MSG_NAME				18
 #define MSG_INFO				19
+#define MSG_DELETE_SEAWAY		20
+#define MSG_DELETE_LIGHT		21
+#define MSG_LIGHT				22
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -82,7 +86,9 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-#define CONTROL_AREA 0
+#define CONTROL_AREA	0
+#define CONTROL_SEAWAY	1
+#define CONTROL_LIGHT	2
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1

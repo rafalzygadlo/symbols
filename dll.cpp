@@ -4,7 +4,6 @@
 #include "tools.h"
 #include "positiondialog.h"
 #include "icon.h"
-
 #include "db.h"
 
 
@@ -32,6 +31,8 @@ unsigned char PluginInfoBlock[] = {
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	m_Area = NULL;
+	m_Seaway = NULL;
+	m_Light = NULL;
 	NewPtr = NULL;
 	PositionDialog = NULL;	
 	m_Broker = NaviBroker;
@@ -80,13 +81,16 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 		
 	MyFrame = NULL;
 	FromLMB = false;
-	CreateApiMenu();
+	
 
 }
 
 CMapPlugin::~CMapPlugin()
 {
 	delete m_Area;
+	delete m_Seaway;
+	delete m_Light;
+
 	delete m_FileConfig;
 	delete MyFrame;
 	delete DisplaySignal;
@@ -256,6 +260,7 @@ void CMapPlugin::Run(void *Params)
 	}	
 
 	Read();
+	CreateApiMenu(); // jezyki
 	// refresh dla wywolania renderu zeby skreowac ikony
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 }
@@ -392,14 +397,31 @@ void CMapPlugin::Area()
 	m_Area->Show();
 }
 
+void CMapPlugin::Seaway()
+{
+	if(m_Seaway == NULL)
+		m_Seaway = new CSeaway();
+	m_Seaway->Show();
+}
+
+void CMapPlugin::Light()
+{
+	if(m_Light == NULL)
+		m_Light = new CLight();
+	m_Light->Show();
+}
+
+
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
-	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_OBJECT_AREA),this,MenuArea);
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OBJECT_SEAWAY),this, MenuSeaway);
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OBJECT_TYPE),this, MenuSeaway);
+	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_TYPE),this, MenuType);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LIGHT),this, MenuLight);
 }
 
 void *CMapPlugin::MenuConfig(void *NaviMapIOApiPtr, void *Input) 
@@ -461,14 +483,22 @@ void *CMapPlugin::MenuType(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
-
+void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_LIGHT);
+	
+	return NULL;	
+}
 
 void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case BUTTON_TYPE_NEW:			New();				break;
-		case BUTTON_TYPE_AREA:			Area();				break;
+		case BUTTON_TYPE_NEW:		New();		break;
+		case BUTTON_TYPE_AREA:		Area();		break;
+		case BUTTON_TYPE_SEAWAY:	Seaway();	break;
+		case BUTTON_TYPE_LIGHT:		Light();	break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());

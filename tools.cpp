@@ -9,7 +9,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[2][20] = 
+const wchar_t *nvLanguage[2][23] = 
 { 
 	//en
 	{
@@ -33,6 +33,9 @@ const wchar_t *nvLanguage[2][20] =
 		L"Name can not be empty",
 		L"Name",
 		L"Info",
+		L"Delete Seaway ?",
+		L"Delete Light ?",
+		L"Light",
 		
 	},
 	//pl
@@ -57,6 +60,9 @@ const wchar_t *nvLanguage[2][20] =
 		L"Nazwa nie mo¿e byæ pusta",
 		L"Nazwa",
 		L"Opis",
+		L"Usun¹æ tor wodny ?",
+		L"Usun¹æ œwiat³o ?",
+		L"Œwiat³o",
 	}
 
 };

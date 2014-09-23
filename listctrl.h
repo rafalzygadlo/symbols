@@ -22,6 +22,8 @@ class CListCtrl: public wxListCtrl
 	wxImageList *m_ImageListSmall;
 	
 	wxMenu *MenuArea(int id);
+	wxMenu *MenuSeaway(int id);
+	wxMenu *MenuLight(int id);
 		
 	void Sort();
 	void NewUser();
