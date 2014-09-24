@@ -2,7 +2,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "listctrl.h"
-#include "area_new.h"
+#include "light_new.h"
 #include "db.h"
 
 BEGIN_EVENT_TABLE(CLight, wxDialog)
@@ -90,10 +90,9 @@ void CLight::Select()
 void CLight::OnNew()
 {
 	
-	CAreaNew *ptr = new CAreaNew();
+	CLightNew *ptr = new CLightNew();
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_LIGHT,ptr->GetName(),ptr->GetInfo());
 		
 		if(!my_query(sql))
@@ -118,7 +117,7 @@ void CLight::OnEdit(wxString id)
 	if(!my_query(sql))
 		return;
 		
-	CAreaNew *ptr = new CAreaNew();
+	CLightNew *ptr = new CLightNew();
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
@@ -130,8 +129,6 @@ void CLight::OnEdit(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_LIGHT,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();

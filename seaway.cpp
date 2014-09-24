@@ -93,7 +93,6 @@ void CSeaway::OnNew()
 	CSeawayNew *ptr = new CSeawayNew();
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo());
 		
 		if(!my_query(sql))
@@ -130,8 +129,6 @@ void CSeaway::OnEdit(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();

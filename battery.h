@@ -1,10 +1,10 @@
-#ifndef __AREA_H
-#define __AREA_H
+#ifndef __BATTERY_H
+#define __BATTERY_H
 
 #include <wx/wx.h>
 #include "listctrl.h"
 
-class CArea: public wxDialog
+class CBattery: public wxDialog
 {
 	wxString m_Field;	
 	wxString m_Order;
@@ -16,9 +16,9 @@ class CArea: public wxDialog
 
 public:
 
-	CArea();
-	CArea(int style);
-	~CArea();
+	CBattery();
+	CBattery(int style);
+	~CBattery();
 	
 	void OnNew();
 	void OnEdit(wxString id);

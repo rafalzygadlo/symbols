@@ -9,7 +9,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[2][23] = 
+const wchar_t *nvLanguage[2][30] = 
 { 
 	//en
 	{
@@ -36,6 +36,13 @@ const wchar_t *nvLanguage[2][23] =
 		L"Delete Seaway ?",
 		L"Delete Light ?",
 		L"Light",
+		L"Bulb",
+		L"Add color",
+		L"Color",
+		L"Delete color",
+		L"Battery",
+		L"Delete Battery ?",
+		L"Capacity",
 		
 	},
 	//pl
@@ -63,6 +70,13 @@ const wchar_t *nvLanguage[2][23] =
 		L"Usun¹æ tor wodny ?",
 		L"Usun¹æ œwiat³o ?",
 		L"Œwiat³o",
+		L"¯arówka",
+		L"Dodaj kolor",
+		L"Kolor",
+		L"Usuñ kolor",
+		L"Akumulator",
+		L"Usun¹æ akumulator ?",
+		L"Pojemnoœæ",
 	}
 
 };

@@ -1,10 +1,9 @@
-#include "light_new.h"
+#include "battery_new.h"
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
-#include "color.h"
 
-CLightNew::CLightNew()
+CBatteryNew::CBatteryNew()
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -21,19 +20,27 @@ CLightNew::CLightNew()
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-	
-	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CColorPanel *Color = new CColorPanel(Panel);
-	FlexGridSizer->Add(Color,0,wxALL|wxEXPAND,5);
+
+	wxStaticText *LabelType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
+	FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	FlexGridSizer->Add(m_TextType,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 
+	wxStaticText *LabelCapacity = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CAPACITY));
+	FlexGridSizer->Add(LabelCapacity,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextCapacity = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	FlexGridSizer->Add(m_TextCapacity,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+
+	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
 	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-		
+	
+	
 	FlexGridSizer->AddSpacer(1);
 	//FlexGridSizer->AddSpacer(1);
 	
@@ -56,12 +63,12 @@ CLightNew::CLightNew()
 	
 }
 
-CLightNew::~CLightNew()
+CBatteryNew::~CBatteryNew()
 {
 
 }
 
-bool CLightNew::Validate()
+bool CBatteryNew::Validate()
 {
 	wxString err;
 	bool result = true;
@@ -83,23 +90,44 @@ bool CLightNew::Validate()
 }
 
 
-wxString CLightNew::GetName()
+wxString CBatteryNew::GetName()
 {
 	return m_TextName->GetValue();
 }
 
-wxString CLightNew::GetInfo()
+wxString CBatteryNew::GetInfo()
 {
 	return m_TextInfo->GetValue();
 }
 
+wxString CBatteryNew::GetType()
+{
+	return m_TextType->GetValue();
+}
+
+wxString CBatteryNew::GetCapacity()
+{
+	return m_TextCapacity->GetValue();
+}
+
+
 //SET
-void CLightNew::SetName(wxString v)
+void CBatteryNew::SetName(wxString v)
 {
 	m_TextName->SetValue(v);
 }
 
-void CLightNew::SetInfo(wxString v)
+void CBatteryNew::SetInfo(wxString v)
 {
 	m_TextInfo->SetValue(v);
+}
+
+void CBatteryNew::SetType(wxString v)
+{
+	m_TextType->SetValue(v);
+}
+
+void CBatteryNew::SetCapacity(wxString v)
+{
+	m_TextCapacity->SetValue(v);
 }

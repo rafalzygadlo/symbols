@@ -26,6 +26,7 @@
 #define BUTTON_TYPE_SEAWAY		4
 #define BUTTON_TYPE_TYPE		5
 #define BUTTON_TYPE_LIGHT		6
+#define BUTTON_TYPE_BATTERY		7
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -77,6 +78,13 @@
 #define MSG_DELETE_SEAWAY		20
 #define MSG_DELETE_LIGHT		21
 #define MSG_LIGHT				22
+#define MSG_BULB				23
+#define MSG_ADD_COLOR			24
+#define MSG_COLOR				25
+#define MSG_DELETE_COLOR		26
+#define MSG_BATTERY				27
+#define MSG_DELETE_BATTERY		28
+#define MSG_CAPACITY			29
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -88,7 +96,8 @@
 
 #define CONTROL_AREA	0
 #define CONTROL_SEAWAY	1
-#define CONTROL_LIGHT	2
+#define CONTROL_BATTERY 2
+#define CONTROL_LIGHT	3
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1

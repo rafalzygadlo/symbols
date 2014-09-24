@@ -23,6 +23,7 @@ class CListCtrl: public wxListCtrl
 	
 	wxMenu *MenuArea(int id);
 	wxMenu *MenuSeaway(int id);
+	wxMenu *MenuBattery(int id);
 	wxMenu *MenuLight(int id);
 		
 	void Sort();

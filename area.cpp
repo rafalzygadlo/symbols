@@ -11,6 +11,11 @@ BEGIN_EVENT_TABLE(CArea, wxDialog)
 //	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
 END_EVENT_TABLE()
 
+CArea::CArea(int style)
+{
+
+}
+
 CArea::CArea()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
@@ -93,7 +98,6 @@ void CArea::OnNew()
 	CAreaNew *ptr = new CAreaNew();
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo());
 		
 		if(!my_query(sql))
@@ -130,8 +134,6 @@ void CArea::OnEdit(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-
-		wxDateTime time = wxDateTime::Now();
 		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();

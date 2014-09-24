@@ -10,6 +10,7 @@
 #include "area.h"
 #include "seaway.h"
 #include "light.h"
+#include "battery.h"
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
@@ -154,6 +155,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_AREA:		Menu = MenuArea(m_SelectedItem);	break;
 		case CONTROL_SEAWAY:	Menu = MenuSeaway(m_SelectedItem);	break;
 		case CONTROL_LIGHT:		Menu = MenuLight(m_SelectedItem);	break;
+		case CONTROL_BATTERY:	Menu = MenuBattery(m_SelectedItem);	break;
 	}
 	
 	if(Menu)
@@ -239,6 +241,31 @@ wxMenu *CListCtrl::MenuLight(int id)
 	
 }
 
+wxMenu *CListCtrl::MenuBattery(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_BATTERY ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_BATTERY,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_BATTERY,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+	}
+		
+	
+	return Menu;
+	
+}
+
 
 void CListCtrl::OnSelected(wxListEvent &event)
 {
@@ -261,6 +288,7 @@ void CListCtrl::OnEdit(wxCommandEvent &event)
 		case CONTROL_AREA:		((CArea*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 		case CONTROL_SEAWAY:	((CSeaway*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 		case CONTROL_LIGHT:		((CLight*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
+		case CONTROL_BATTERY:	((CBattery*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 	}
 }
 
@@ -268,9 +296,10 @@ void CListCtrl::OnNew(wxCommandEvent &event)
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_AREA:		((CArea*)m_Control)->OnNew();	break;
-		case CONTROL_SEAWAY:	((CSeaway*)m_Control)->OnNew();	break;
-		case CONTROL_LIGHT:		((CLight*)m_Control)->OnNew();	break;
+		case CONTROL_AREA:		((CArea*)m_Control)->OnNew();		break;
+		case CONTROL_SEAWAY:	((CSeaway*)m_Control)->OnNew();		break;
+		case CONTROL_LIGHT:		((CLight*)m_Control)->OnNew();		break;
+		case CONTROL_BATTERY:	((CBattery*)m_Control)->OnNew();	break;
 	}
 
 }
@@ -282,6 +311,7 @@ void CListCtrl::OnDelete(wxCommandEvent &event)
 		case CONTROL_AREA:		((CArea*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));		break;
 		case CONTROL_SEAWAY:	((CSeaway*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 		case CONTROL_LIGHT:		((CLight*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));		break;
+		case CONTROL_BATTERY:	((CBattery*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
 	}
 
 }
@@ -385,6 +415,7 @@ void CListCtrl::OnColClick(wxListEvent& event)
 		case CONTROL_AREA:		((CArea*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);		break;
 		case CONTROL_SEAWAY:	((CSeaway*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
 		case CONTROL_LIGHT:		((CLight*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
+		case CONTROL_BATTERY:	((CBattery*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
 	}
 
 }

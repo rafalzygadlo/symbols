@@ -13,6 +13,7 @@
 #include "area.h"
 #include "seaway.h"
 #include "light.h"
+#include "battery.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -26,6 +27,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CArea *m_Area;
 	CSeaway *m_Seaway;
 	CLight *m_Light;
+	CBattery *m_Battery;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -130,17 +132,15 @@ class CMapPlugin :public CNaviMapIOApi
 	void Area();
 	void Seaway();
 	void Light();
-	
-	static void *MenuConfig(void *NaviMapIOApiPtr, void *Input);
+	void Battery();
+		
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuDelete(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuProperties(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuSettings(void *NaviMapIOApiPtr, void *Input);
-	
+	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
+
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuType(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuBattery(void *NaviMapIOApiPtr, void *Input);
 				
 public:
 	
