@@ -5,16 +5,10 @@
 #include "light_new.h"
 #include "db.h"
 
-BEGIN_EVENT_TABLE(CLight, wxDialog)
-//	EVT_RADIOBUTTON(ID_RADIO_COMPANY,CUser::OnCompanyRadio)
-//	EVT_RADIOBUTTON(ID_RADIO_USER,CUser::OnUserRadio)
-//	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
-END_EVENT_TABLE()
-
-CLight::CLight()
+CLightDialog::CLightDialog()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
@@ -32,12 +26,12 @@ CLight::CLight()
 	
 }
 
-CLight::~CLight()
+CLightDialog::~CLightDialog()
 {
 
 }
 
-wxPanel *CLight::GetPanel(wxWindow *Parent)
+wxPanel *CLightDialog::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
@@ -58,13 +52,13 @@ wxPanel *CLight::GetPanel(wxWindow *Parent)
 	
 	m_List->SetControlType(CONTROL_LIGHT,this);
 
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
 
 }
 
-void CLight::Read()
+void CLightDialog::Read()
 {
 	wxString sql;
 
@@ -77,17 +71,17 @@ void CLight::Read()
 	m_List->Refresh(false);
 }
 
-void CLight::Clear()
+void CLightDialog::Clear()
 {
 	m_List->Clear();
 }
 	
-void CLight::Select()
+void CLightDialog::Select()
 {
 	m_List->Select();
 }
 
-void CLight::OnNew()
+void CLightDialog::OnNew()
 {
 	
 	CLightNew *ptr = new CLightNew();
@@ -110,7 +104,7 @@ void CLight::OnNew()
 	
 }
 
-void CLight::OnEdit(wxString id)
+void CLightDialog::OnEdit(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_LIGHT,id);
 	
@@ -140,7 +134,7 @@ void CLight::OnEdit(wxString id)
 	
 }
 
-void CLight::OnDelete(wxString id)
+void CLightDialog::OnDelete(wxString id)
 {
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_LIGHT),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
@@ -156,7 +150,7 @@ void CLight::OnDelete(wxString id)
 }
 
 
-void CLight::OnColumnCLick(wxString field, int order)
+void CLightDialog::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");

@@ -2,20 +2,28 @@
 #define __COLOR_H
 
 #include <wx/wx.h>
-#include <wx/hyperlink.h>
+#include <wx/wrapsizer.h>
 
+class CColor;
 class CColorPanel: public wxPanel
 {
-	wxWindow *m_Parent;
+	wxWindow *m_Parent, *m_Top;
 	wxBoxSizer *m_Sizer;
-	wxBoxSizer *m_ScrollSizer;
-	wxScrolledWindow *m_Scroll;
+	wxPanel *m_Panel;
+	wxWrapSizer *m_PanelSizer;
+	wxArrayPtrVoid m_ColorPanels;
+	
+	void New();
 			
 public:
 
-	CColorPanel(wxWindow *parent);
+	CColorPanel(wxWindow *parent, wxWindow *top);
 	~CColorPanel();
-	void OnAddColor(wxHyperlinkEvent &event);
+	void OnNew();
+	void OnEdit();
+	void OnDelete(CColor *ptr);
+	void OnEdit(CColor *ptr);
+	wxArrayPtrVoid GetColorPanels();
 
 	DECLARE_EVENT_TABLE();
 
@@ -29,20 +37,26 @@ public:
 class CColor: public wxPanel
 {
 	wxWindow *m_Parent;
+	CColorPanel *m_ColorPanel;
 	wxBoxSizer *m_Sizer;
+	wxPanel *m_Panel;
 	
 	void OnContextMenu(wxContextMenuEvent &event);
+	void OnNew(wxCommandEvent &event);
+	void OnDelete(wxCommandEvent &event);
+	void OnEdit(wxCommandEvent &event);
 
 public:
 
-	CColor(wxWindow *parent);
+	CColor(wxWindow *parent, CColorPanel *panel);
 	~CColor();
-	
+	void SetColor(wxColor color);
 	DECLARE_EVENT_TABLE();
 	
 	enum
 	{
 		ID_DELETE = 8124,
+		ID_NEW,
 		ID_EDIT,
 	};
 

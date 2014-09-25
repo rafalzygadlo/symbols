@@ -24,10 +24,10 @@ class CPositionDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
 
-	CArea *m_Area;
-	CSeaway *m_Seaway;
-	CLight *m_Light;
-	CBattery *m_Battery;
+	CAreaDialog *m_Area;
+	CSeawayDialog *m_Seaway;
+	CLightDialog *m_Light;
+	CBatteryDialog *m_Battery;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;

@@ -6,10 +6,10 @@
 #endif
 
 #define DIR_WORKDIR "workdir"
-#define CONFIG_FILE "objects.conf"
-#define DATA_FILE "objects.data"
+#define CONFIG_FILE "symbol.conf"
+#define DATA_FILE "symbol.data"
 
-#define PRODUCT_NAME "Objects"
+#define PRODUCT_NAME "Symbol Manager"
 #define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"
 #define PRODUCT_VERSION "1.0"
 
@@ -102,6 +102,9 @@
 #define ORDER_ASC	0
 #define ORDER_DESC	1
 
+#define DEFAULT_DIALOG_HEIGHT	400
+#define DEFAULT_DIALOG_WIDTH	500
+
 
 typedef struct Marker
 {
@@ -111,9 +114,6 @@ typedef struct Marker
 	wchar_t description[MARKER_DESCRIPTION_SIZE + 1];
 		
 }SMarker;
-
-
-
 
 
 

@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include "listctrl.h"
 
-class CSeaway: public wxDialog
+class CSeawayDialog: public wxDialog
 {
 	wxString m_Field;	
 	wxString m_Order;
@@ -16,15 +16,15 @@ class CSeaway: public wxDialog
 
 public:
 
-	CSeaway();
-	~CSeaway();
+	CSeawayDialog();
+	~CSeawayDialog();
 	
 	void OnNew();
 	void OnEdit(wxString id);
 	void OnDelete(wxString id);
 	void OnColumnCLick(wxString field, int order);
 		
-	DECLARE_EVENT_TABLE()
+	
 
 };
 

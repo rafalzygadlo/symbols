@@ -13,7 +13,7 @@ const wchar_t *nvLanguage[2][30] =
 { 
 	//en
 	{
-		L"Manager",
+		L"Symbol",
 		L"New",
 		L"Name",
 		L"Description",
@@ -47,8 +47,8 @@ const wchar_t *nvLanguage[2][30] =
 	},
 	//pl
 	{
-		L"Marker",
-		L"Dodaj Marker",
+		L"Symbol",
+		L"Nowy  \tCtrl+N",
 		L"Nazwa",
 		L"Opis",
 		L"Longitude",

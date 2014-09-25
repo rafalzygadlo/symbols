@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include "listctrl.h"
 
-class CArea: public wxDialog
+class CAreaDialog: public wxDialog
 {
 	wxString m_Field;	
 	wxString m_Order;
@@ -16,9 +16,9 @@ class CArea: public wxDialog
 
 public:
 
-	CArea();
-	CArea(int style);
-	~CArea();
+	CAreaDialog();
+	CAreaDialog(int style);
+	~CAreaDialog();
 	
 	void OnNew();
 	void OnEdit(wxString id);

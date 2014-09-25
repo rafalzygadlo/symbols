@@ -5,21 +5,15 @@
 #include "battery_new.h"
 #include "db.h"
 
-BEGIN_EVENT_TABLE(CBattery, wxDialog)
-//	EVT_RADIOBUTTON(ID_RADIO_COMPANY,CUser::OnCompanyRadio)
-//	EVT_RADIOBUTTON(ID_RADIO_USER,CUser::OnUserRadio)
-//	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
-END_EVENT_TABLE()
-
-CBattery::CBattery(int style)
+CBatteryDialog::CBatteryDialog(int style)
 {
 
 }
 
-CBattery::CBattery()
+CBatteryDialog::CBatteryDialog()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
@@ -37,12 +31,12 @@ CBattery::CBattery()
 	
 }
 
-CBattery::~CBattery()
+CBatteryDialog::~CBatteryDialog()
 {
 
 }
 
-wxPanel *CBattery::GetPanel(wxWindow *Parent)
+wxPanel *CBatteryDialog::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
@@ -67,13 +61,13 @@ wxPanel *CBattery::GetPanel(wxWindow *Parent)
 	
 	m_List->SetControlType(CONTROL_BATTERY,this);
 
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
 
 }
 
-void CBattery::Read()
+void CBatteryDialog::Read()
 {
 	wxString sql;
 
@@ -86,17 +80,17 @@ void CBattery::Read()
 	m_List->Refresh(false);
 }
 
-void CBattery::Clear()
+void CBatteryDialog::Clear()
 {
 	m_List->Clear();
 }
 	
-void CBattery::Select()
+void CBatteryDialog::Select()
 {
 	m_List->Select();
 }
 
-void CBattery::OnNew()
+void CBatteryDialog::OnNew()
 {
 	
 	CBatteryNew *ptr = new CBatteryNew();
@@ -119,7 +113,7 @@ void CBattery::OnNew()
 	
 }
 
-void CBattery::OnEdit(wxString id)
+void CBatteryDialog::OnEdit(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_BATTERY,id);
 	
@@ -151,7 +145,7 @@ void CBattery::OnEdit(wxString id)
 	
 }
 
-void CBattery::OnDelete(wxString id)
+void CBatteryDialog::OnDelete(wxString id)
 {
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_BATTERY),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
@@ -167,7 +161,7 @@ void CBattery::OnDelete(wxString id)
 }
 
 
-void CBattery::OnColumnCLick(wxString field, int order)
+void CBatteryDialog::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");
@@ -177,4 +171,134 @@ void CBattery::OnColumnCLick(wxString field, int order)
 	m_Field = field;
 	Clear();
 	Read();
+}
+
+
+
+BEGIN_EVENT_TABLE(CBatteryPanel, wxPanel)
+	EVT_BUTTON(ID_NEW,CBatteryPanel::OnNew)
+END_EVENT_TABLE()
+
+CBatteryPanel::CBatteryPanel(wxWindow *parent,wxWindow *top)
+	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
+{
+	m_Parent = parent;
+	m_Top = top;
+	m_Sizer = new wxBoxSizer(wxVERTICAL);
+		
+	m_Panel = new wxPanel(this);
+	m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
+	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
+	m_PanelSizer = new wxBoxSizer(wxVERTICAL);
+	m_Panel->SetSizer(m_PanelSizer);
+
+	wxButton *New = new wxButton(m_Panel,ID_NEW,GetMsg(MSG_NEW));
+	New->SetSize(25,25);
+	m_PanelSizer->Add(New,0,wxALL,1);
+
+	SetSizer(m_Sizer);
+			
+}
+
+CBatteryPanel::~CBatteryPanel()
+{
+}
+
+wxArrayPtrVoid CBatteryPanel::GetPanels()
+{
+	return m_Panels;
+}
+
+void CBatteryPanel::New()
+{
+	CBattery *ptr = new CBattery(m_Panel,this);
+	m_PanelSizer->Add(ptr,0,wxALL,1);
+	m_Panels.Add(ptr);
+}
+
+void CBatteryPanel::OnNew(wxCommandEvent &event)
+{
+	New();
+	m_Top->Layout();
+	m_Top->GetSizer()->SetSizeHints(m_Top);
+	
+}
+
+void CBatteryPanel::OnEdit(CBattery *ptr)
+{
+//	wxColourDialog dialog(this);
+//	if (dialog.ShowModal() == wxID_OK)
+//	{
+	//	wxColor color = dialog.GetColourData().GetColour();
+		//ptr->SetColor(color);
+		//ptr->Refresh();
+//	}
+
+}
+
+void CBatteryPanel::OnDelete(CBattery *ptr)
+{
+	m_PanelSizer->Detach(ptr);
+	m_Top->Layout();
+	m_Top->GetSizer()->SetSizeHints(m_Top);
+	m_Panels.Remove(ptr);
+	delete ptr;
+}
+
+BEGIN_EVENT_TABLE(CBattery, wxPanel)
+	EVT_CONTEXT_MENU(CBattery::OnContextMenu)
+	EVT_MENU(ID_DELETE,CBattery::OnDelete)
+	EVT_MENU(ID_EDIT,CBattery::OnEdit)
+END_EVENT_TABLE()
+
+CBattery::CBattery(wxWindow *parent, CBatteryPanel *panel)
+	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
+{
+	m_Parent = parent;
+	m_BatteryPanel = panel;
+	m_Sizer = new wxBoxSizer(wxHORIZONTAL);
+	
+	m_Panel = new wxPanel(this);
+	m_Panel->SetBackgroundColour(*wxWHITE);
+	m_Panel->SetMinSize(wxSize(25,25));
+	m_Sizer->Add(m_Panel,0,wxALL|wxEXPAND,2);
+	
+	int count = m_BatteryPanel->GetPanels().size();
+	
+	wxStaticText *Label = new wxStaticText(this,wxID_ANY,wxString::Format(_("Battery %d"),count));
+	m_Sizer->Add(Label,0,wxALL,2);
+		
+	wxTextCtrl *Amount = new wxTextCtrl(this,wxID_ANY);
+	m_Sizer->Add(Amount,0,wxALL,2);
+	//wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
+	//Panel->SetSizer(PanelSizer);
+
+	this->SetSizer(m_Sizer);
+}
+
+CBattery::~CBattery()
+{
+
+}
+
+void CBattery::OnContextMenu(wxContextMenuEvent &event)
+{
+	int count = m_BatteryPanel->GetPanels().size();
+
+	wxMenu *Menu = new wxMenu();
+	Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+	Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+	
+	PopupMenu(Menu);
+	delete Menu;
+}
+
+void CBattery::OnDelete(wxCommandEvent &event)
+{
+	m_BatteryPanel->OnDelete(this);
+}
+
+void CBattery::OnEdit(wxCommandEvent &event)
+{
+	m_BatteryPanel->OnEdit(this);
 }

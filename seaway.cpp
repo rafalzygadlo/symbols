@@ -5,16 +5,10 @@
 #include "listctrl.h"
 #include "db.h"
 
-BEGIN_EVENT_TABLE(CSeaway, wxDialog)
-//	EVT_RADIOBUTTON(ID_RADIO_COMPANY,CUser::OnCompanyRadio)
-//	EVT_RADIOBUTTON(ID_RADIO_USER,CUser::OnUserRadio)
-//	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
-END_EVENT_TABLE()
-
-CSeaway::CSeaway()
+CSeawayDialog::CSeawayDialog()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
@@ -32,12 +26,12 @@ CSeaway::CSeaway()
 	
 }
 
-CSeaway::~CSeaway()
+CSeawayDialog::~CSeawayDialog()
 {
 
 }
 
-wxPanel *CSeaway::GetPanel(wxWindow *Parent)
+wxPanel *CSeawayDialog::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
@@ -58,13 +52,13 @@ wxPanel *CSeaway::GetPanel(wxWindow *Parent)
 	
 	m_List->SetControlType(CONTROL_SEAWAY,this);
 
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
 
 }
 
-void CSeaway::Read()
+void CSeawayDialog::Read()
 {
 	wxString sql;
 
@@ -77,17 +71,17 @@ void CSeaway::Read()
 	m_List->Refresh(false);
 }
 
-void CSeaway::Clear()
+void CSeawayDialog::Clear()
 {
 	m_List->Clear();
 }
 	
-void CSeaway::Select()
+void CSeawayDialog::Select()
 {
 	m_List->Select();
 }
 
-void CSeaway::OnNew()
+void CSeawayDialog::OnNew()
 {
 	
 	CSeawayNew *ptr = new CSeawayNew();
@@ -110,7 +104,7 @@ void CSeaway::OnNew()
 	
 }
 
-void CSeaway::OnEdit(wxString id)
+void CSeawayDialog::OnEdit(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SEAWAY,id);
 	
@@ -140,7 +134,7 @@ void CSeaway::OnEdit(wxString id)
 	
 }
 
-void CSeaway::OnDelete(wxString id)
+void CSeawayDialog::OnDelete(wxString id)
 {
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_SEAWAY),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
@@ -156,7 +150,7 @@ void CSeaway::OnDelete(wxString id)
 }
 
 
-void CSeaway::OnColumnCLick(wxString field, int order)
+void CSeawayDialog::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");

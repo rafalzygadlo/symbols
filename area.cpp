@@ -5,21 +5,21 @@
 #include "area_new.h"
 #include "db.h"
 
-BEGIN_EVENT_TABLE(CArea, wxDialog)
+BEGIN_EVENT_TABLE(CAreaDialog, wxDialog)
 //	EVT_RADIOBUTTON(ID_RADIO_COMPANY,CUser::OnCompanyRadio)
 //	EVT_RADIOBUTTON(ID_RADIO_USER,CUser::OnUserRadio)
 //	EVT_BUTTON(ID_REGISTER,CUser::OnRegister)
 END_EVENT_TABLE()
 
-CArea::CArea(int style)
+CAreaDialog::CAreaDialog(int style)
 {
 
 }
 
-CArea::CArea()
+CAreaDialog::CAreaDialog()
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
@@ -29,20 +29,27 @@ CArea::CArea()
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(PanelSizer);
 	
+	//wxButton *ButtonNew = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_NEW));
+	//PanelSizer->Add(ButtonNew,0,wxALL,2);
+	//wxButton *ButtonEdit = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_EDIT));
+	//PanelSizer->Add(ButtonEdit,0,wxALL,2);
+	//wxButton *ButtonDelete = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_DELETE));
+	//PanelSizer->Add(ButtonDelete,0,wxALL,2);
+	
 	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
 	PanelSizer->AddStretchSpacer();
-	PanelSizer->Add(ButtonClose,0,wxALL,5);
+	PanelSizer->Add(ButtonClose,0,wxALL,2);
 	SetLabel(GetMsg(MSG_AREA));
 	Center();
 	
 }
 
-CArea::~CArea()
+CAreaDialog::~CAreaDialog()
 {
 
 }
 
-wxPanel *CArea::GetPanel(wxWindow *Parent)
+wxPanel *CAreaDialog::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
@@ -63,13 +70,13 @@ wxPanel *CArea::GetPanel(wxWindow *Parent)
 	
 	m_List->SetControlType(CONTROL_AREA,this);
 
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
 
 }
 
-void CArea::Read()
+void CAreaDialog::Read()
 {
 	wxString sql;
 
@@ -82,17 +89,17 @@ void CArea::Read()
 	m_List->Refresh(false);
 }
 
-void CArea::Clear()
+void CAreaDialog::Clear()
 {
 	m_List->Clear();
 }
 	
-void CArea::Select()
+void CAreaDialog::Select()
 {
 	m_List->Select();
 }
 
-void CArea::OnNew()
+void CAreaDialog::OnNew()
 {
 	
 	CAreaNew *ptr = new CAreaNew();
@@ -115,7 +122,7 @@ void CArea::OnNew()
 	
 }
 
-void CArea::OnEdit(wxString id)
+void CAreaDialog::OnEdit(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_AREA,id);
 	
@@ -145,7 +152,7 @@ void CArea::OnEdit(wxString id)
 	
 }
 
-void CArea::OnDelete(wxString id)
+void CAreaDialog::OnDelete(wxString id)
 {
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_AREA),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
@@ -161,7 +168,7 @@ void CArea::OnDelete(wxString id)
 }
 
 
-void CArea::OnColumnCLick(wxString field, int order)
+void CAreaDialog::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");
