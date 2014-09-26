@@ -25,16 +25,19 @@ class CListCtrl: public wxListCtrl
 	wxMenu *MenuSeaway(int id);
 	wxMenu *MenuBattery(int id);
 	wxMenu *MenuLight(int id);
-		
+	wxMenu *MenuCommunication(int id);
+
 	void Sort();
 	void NewUser();
 	void NewGroup();
 	wxArrayString *GetColumn(int column);
+	wxArrayString GetRow(int row);
 	wxString GetValue(wxArrayString *ptr, int record);
 
 	
 	void OnActivate(wxListEvent &event);
 	void OnSelected(wxListEvent &event);
+	void OnDeSelected(wxListEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnColClick(wxListEvent &event);
 	void OnEdit(wxCommandEvent &event);

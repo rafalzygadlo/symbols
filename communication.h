@@ -1,19 +1,16 @@
-#ifndef __BATTERY_H
-#define __BATTERY_H
+#ifndef __COMMUNICATION_H
+#define __COMMUNICATION_H
 
 #include <wx/wx.h>
 #include "listctrl.h"
-#include <wx/wrapsizer.h>
 
-class CBattery;
-class CBatteryDialog: public wxDialog
+class CCommunication;
+class CCommunicationDialog: public wxDialog
 {
-	wxString m_Field;
+	wxString m_Field;	
 	wxString m_Order;
+	CListCtrl *m_List;	
 	wxString m_Id,m_Name;
-	CListCtrl *m_List;
-	wxButton *ButtonOk;
-
 	wxPanel *GetPanel(wxWindow *Parent);
 	void Read();
 	void Clear();
@@ -21,22 +18,20 @@ class CBatteryDialog: public wxDialog
 
 public:
 
-	CBatteryDialog(int type = -1);
-	~CBatteryDialog();
+	CCommunicationDialog(int type = -1);
+	~CCommunicationDialog();
 	
 	void OnNew();
 	void OnEdit(wxString id);
 	void OnDelete(wxString id);
-	void OnSelect(wxArrayString row);
-	void OnDeSelect();
 	void OnColumnCLick(wxString field, int order);
-	wxString GetBatteryId();
-	wxString GetBatteryName();
-
-
+	wxString GetCommunicationId();
+	wxString GetCommunicationName();
+		
+	
 };
 
-class CBatteryPanel: public wxPanel
+class CCommunicationPanel: public wxPanel
 {
 	wxWindow *m_Parent, *m_Top;
 	wxBoxSizer *m_Sizer;
@@ -48,11 +43,11 @@ class CBatteryPanel: public wxPanel
 			
 public:
 
-	CBatteryPanel(wxWindow *parent, wxWindow *top);
-	~CBatteryPanel();
+	CCommunicationPanel(wxWindow *parent, wxWindow *top);
+	~CCommunicationPanel();
 	void OnNew(wxCommandEvent &event);
-	void OnDelete(CBattery *ptr);
-	void OnEdit(CBattery *ptr);
+	void OnDelete(CCommunication *ptr);
+	void OnEdit(CCommunication *ptr);
 	wxArrayPtrVoid GetPanels();
 
 	
@@ -65,10 +60,10 @@ public:
 
 };
 
-class CBattery: public wxPanel
+class CCommunication: public wxPanel
 {
 	wxWindow *m_Parent;
-	CBatteryPanel *m_BatteryPanel;
+	CCommunicationPanel *m_BatteryPanel;
 	wxBoxSizer *m_Sizer;
 	wxPanel *m_Panel;
 	wxStaticText *m_Name;
@@ -79,8 +74,8 @@ class CBattery: public wxPanel
 
 public:
 
-	CBattery(wxWindow *parent, CBatteryPanel *panel);
-	~CBattery();
+	CCommunication(wxWindow *parent, CCommunicationPanel *panel);
+	~CCommunication();
 	void SetBatteryId(wxString v);
 	void SetBatteryName(wxString v);
 
@@ -94,6 +89,7 @@ public:
 	};
 
 };
+
 
 
 #endif

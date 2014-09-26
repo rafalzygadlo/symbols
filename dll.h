@@ -14,6 +14,7 @@
 #include "seaway.h"
 #include "light.h"
 #include "battery.h"
+#include "communication.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -28,6 +29,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CSeawayDialog *m_Seaway;
 	CLightDialog *m_Light;
 	CBatteryDialog *m_Battery;
+	CCommunicationDialog *m_Communication;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -133,6 +135,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Seaway();
 	void Light();
 	void Battery();
+	void Communication();
 		
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
@@ -140,7 +143,9 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuType(void *NaviMapIOApiPtr, void *Input);
+
 	static void *MenuBattery(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuCommunication(void *NaviMapIOApiPtr, void *Input);
 				
 public:
 	

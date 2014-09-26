@@ -1,12 +1,9 @@
-#include "light_new.h"
+#include "communication_new.h"
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
-#include "color.h"
-#include "battery.h"
-#include "communication.h"
 
-CLightNew::CLightNew()
+CCommunicationNew::CCommunicationNew()
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -18,25 +15,6 @@ CLightNew::CLightNew()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
-	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CColorPanel *Color = new CColorPanel(Panel,this);
-	FlexGridSizer->Add(Color,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-			
-	wxStaticText *LabelBattery = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BATTERY));
-	FlexGridSizer->Add(LabelBattery,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CBatteryPanel *Battery = new CBatteryPanel(Panel,this);
-	FlexGridSizer->Add(Battery,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
-	wxStaticText *LabelCommunication = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMMUNICATION_TYPE));
-	FlexGridSizer->Add(LabelCommunication,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CCommunicationPanel *Communication = new CCommunicationPanel(Panel,this);
-	FlexGridSizer->Add(Communication,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-
-	
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -45,10 +23,11 @@ CLightNew::CLightNew()
 	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
 	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-		
+	
+	
 	FlexGridSizer->AddSpacer(1);
 	//FlexGridSizer->AddSpacer(1);
 	
@@ -71,12 +50,12 @@ CLightNew::CLightNew()
 	
 }
 
-CLightNew::~CLightNew()
+CCommunicationNew::~CCommunicationNew()
 {
 
 }
 
-bool CLightNew::Validate()
+bool CCommunicationNew::Validate()
 {
 	wxString err;
 	bool result = true;
@@ -98,23 +77,23 @@ bool CLightNew::Validate()
 }
 
 
-wxString CLightNew::GetName()
+wxString CCommunicationNew::GetName()
 {
 	return m_TextName->GetValue();
 }
 
-wxString CLightNew::GetInfo()
+wxString CCommunicationNew::GetInfo()
 {
 	return m_TextInfo->GetValue();
 }
 
 //SET
-void CLightNew::SetName(wxString v)
+void CCommunicationNew::SetName(wxString v)
 {
 	m_TextName->SetValue(v);
 }
 
-void CLightNew::SetInfo(wxString v)
+void CCommunicationNew::SetInfo(wxString v)
 {
 	m_TextInfo->SetValue(v);
 }

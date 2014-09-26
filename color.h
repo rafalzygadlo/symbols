@@ -13,13 +13,13 @@ class CColorPanel: public wxPanel
 	wxWrapSizer *m_PanelSizer;
 	wxArrayPtrVoid m_ColorPanels;
 	
-	void New();
+	void New(wxColor color);
 			
 public:
 
 	CColorPanel(wxWindow *parent, wxWindow *top);
 	~CColorPanel();
-	void OnNew();
+	void OnNew(wxCommandEvent &event);
 	void OnEdit();
 	void OnDelete(CColor *ptr);
 	void OnEdit(CColor *ptr);
@@ -29,7 +29,8 @@ public:
 
 	enum
 	{
-		ID_ADD = 8124,
+		ID_NEW = 8124,
+	
 	};
 
 };
@@ -42,7 +43,6 @@ class CColor: public wxPanel
 	wxPanel *m_Panel;
 	
 	void OnContextMenu(wxContextMenuEvent &event);
-	void OnNew(wxCommandEvent &event);
 	void OnDelete(wxCommandEvent &event);
 	void OnEdit(wxCommandEvent &event);
 

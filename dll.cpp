@@ -7,6 +7,7 @@
 #include "db.h"
 
 
+
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
 0xc3,0xa8,0x68,0xd1,0xba,0xc2,0x45,0x71,0xc7,0xbb,0x22,0xfa,0x6c,0xf4,0xc2,0x1f,0x80,0x7d,0xf3,0x92,0xd3,0x25,0x2b,0x95,0xc4,0xd0,0x4f,0xaa,0x5,0xba,0x26,0x57,0xc,0x3a,
@@ -32,6 +33,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Seaway = NULL;
 	m_Light = NULL;
 	m_Battery = NULL;
+	m_Communication = NULL;
 
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -91,6 +93,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Seaway;
 	delete m_Light;
 	delete m_Battery;
+	delete m_Communication;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -421,6 +424,13 @@ void CMapPlugin::Battery()
 	m_Battery->Show();
 }
 
+void CMapPlugin::Communication()
+{
+	if(m_Communication == NULL)
+		m_Communication = new CCommunicationDialog();
+	m_Communication->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -431,7 +441,9 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_TYPE),this, MenuType);
+	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMUNICATION_TYPE),this, MenuCommunication);
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
@@ -483,15 +495,24 @@ void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuCommunication(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_COMMUNICATION);
+	
+	return NULL;	
+}
+
 void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case BUTTON_TYPE_NEW:		New();		break;
-		case BUTTON_TYPE_AREA:		Area();		break;
-		case BUTTON_TYPE_SEAWAY:	Seaway();	break;
-		case BUTTON_TYPE_LIGHT:		Light();	break;
-		case BUTTON_TYPE_BATTERY:	Battery();	break;
+		case BUTTON_TYPE_NEW:			New();				break;
+		case BUTTON_TYPE_AREA:			Area();				break;
+		case BUTTON_TYPE_SEAWAY:		Seaway();			break;
+		case BUTTON_TYPE_LIGHT:			Light();			break;
+		case BUTTON_TYPE_BATTERY:		Battery();			break;
+		case BUTTON_TYPE_COMMUNICATION:	Communication();	break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());

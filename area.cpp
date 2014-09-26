@@ -154,7 +154,7 @@ void CAreaDialog::OnEdit(wxString id)
 
 void CAreaDialog::OnDelete(wxString id)
 {
-	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_AREA),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
 	{
 		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_AREA,id);

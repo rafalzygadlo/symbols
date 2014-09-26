@@ -116,8 +116,8 @@ void CLightDialog::OnEdit(wxString id)
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_AREA_NAME]));
-	ptr->SetInfo(Convert(row[FID_AREA_INFO]));
+	ptr->SetName(Convert(row[FID_LIGHT_NAME]));
+	ptr->SetInfo(Convert(row[FID_LIGHT_INFO]));
 	
 	db_free_result(result);
 
@@ -136,7 +136,7 @@ void CLightDialog::OnEdit(wxString id)
 
 void CLightDialog::OnDelete(wxString id)
 {
-	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_LIGHT),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
 	{
 		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),TABLE_LIGHT,id);

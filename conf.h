@@ -18,15 +18,16 @@
 #define DB_PASSWORD "navi_vts"
 #define DB_DB "navi_vts"
 
-#define BUTTON_TYPE_ANY		   -1
-#define BUTTON_TYPE_NEW			0
-#define BUTTON_TYPE_DELETE		1
-#define BUTTON_TYPE_PROPERTIES	2
-#define BUTTON_TYPE_AREA		3
-#define BUTTON_TYPE_SEAWAY		4
-#define BUTTON_TYPE_TYPE		5
-#define BUTTON_TYPE_LIGHT		6
-#define BUTTON_TYPE_BATTERY		7
+#define BUTTON_TYPE_ANY			   -1
+#define BUTTON_TYPE_NEW				0
+#define BUTTON_TYPE_DELETE			1
+#define BUTTON_TYPE_PROPERTIES		2
+#define BUTTON_TYPE_AREA			3
+#define BUTTON_TYPE_SEAWAY			4
+#define BUTTON_TYPE_TYPE			5
+#define BUTTON_TYPE_LIGHT			6
+#define BUTTON_TYPE_BATTERY			7
+#define BUTTON_TYPE_COMMUNICATION	8
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -67,24 +68,21 @@
 #define MSG_POSITION_INFO		9
 #define MSG_AREA				10
 #define MSG_NEW					11
-#define MSG_DELETE_AREA			12
-#define MSG_EDIT				13
-#define MSG_DELETE				14
-#define MSG_SEAWAY				15
-#define MSG_TYPE				16
-#define MSG_NAME_EMPTY			17
-#define MSG_NAME				18
-#define MSG_INFO				19
-#define MSG_DELETE_SEAWAY		20
-#define MSG_DELETE_LIGHT		21
-#define MSG_LIGHT				22
-#define MSG_BULB				23
-#define MSG_ADD_COLOR			24
-#define MSG_COLOR				25
-#define MSG_DELETE_COLOR		26
-#define MSG_BATTERY				27
-#define MSG_DELETE_BATTERY		28
-#define MSG_CAPACITY			29
+#define MSG_EDIT				12
+#define MSG_DELETE				13
+#define MSG_SEAWAY				14
+#define MSG_TYPE				15
+#define MSG_NAME_EMPTY			16
+#define MSG_INFO				17
+#define MSG_LIGHT				18
+#define MSG_BULB				19
+#define MSG_ADD_COLOR			20
+#define MSG_COLOR				21
+#define MSG_DELETE_COLOR		22
+#define MSG_BATTERY				23
+#define MSG_CAPACITY			24
+#define MSG_COMMUNICATION_TYPE	25
+#define MSG_DELETE_QUESTION		26
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -94,10 +92,11 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-#define CONTROL_AREA	0
-#define CONTROL_SEAWAY	1
-#define CONTROL_BATTERY 2
-#define CONTROL_LIGHT	3
+#define CONTROL_AREA			0
+#define CONTROL_SEAWAY			1
+#define CONTROL_BATTERY			2
+#define CONTROL_LIGHT			3
+#define CONTROL_COMMUNICATION	4
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -105,6 +104,8 @@
 #define DEFAULT_DIALOG_HEIGHT	400
 #define DEFAULT_DIALOG_WIDTH	500
 
+
+#define PICKER 0
 
 typedef struct Marker
 {
