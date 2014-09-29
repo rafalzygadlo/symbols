@@ -28,6 +28,7 @@
 #define BUTTON_TYPE_LIGHT			6
 #define BUTTON_TYPE_BATTERY			7
 #define BUTTON_TYPE_COMMUNICATION	8
+#define BUTTON_TYPE_SYMBOL			9
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -56,33 +57,34 @@
 
 // Languages
 // . . . . . . . . . . . . . . . .
-#define MSG_MANAGER				0
-#define MSG_NEW_OBJECT			1
-#define MSG_NAME				2
-#define MSG_DESCRIPTION			3
-#define MSG_LONGITUDE			4
-#define MSG_LATITUDE			5
-#define MSG_CLOSE				6
-#define MSG_OK					7
-#define MSG_CANCEL				8
-#define MSG_POSITION_INFO		9
-#define MSG_AREA				10
-#define MSG_NEW					11
-#define MSG_EDIT				12
-#define MSG_DELETE				13
-#define MSG_SEAWAY				14
-#define MSG_TYPE				15
-#define MSG_NAME_EMPTY			16
-#define MSG_INFO				17
-#define MSG_LIGHT				18
-#define MSG_BULB				19
-#define MSG_ADD_COLOR			20
-#define MSG_COLOR				21
-#define MSG_DELETE_COLOR		22
-#define MSG_BATTERY				23
-#define MSG_CAPACITY			24
-#define MSG_COMMUNICATION_TYPE	25
-#define MSG_DELETE_QUESTION		26
+#define MSG_MANAGER					0
+#define MSG_NEW_OBJECT				1
+#define MSG_NAME					2
+#define MSG_DESCRIPTION				3
+#define MSG_LONGITUDE				4
+#define MSG_LATITUDE				5
+#define MSG_CLOSE					6
+#define MSG_OK						7
+#define MSG_CANCEL					8
+#define MSG_POSITION_INFO			9
+#define MSG_AREA					10
+#define MSG_NEW						11
+#define MSG_EDIT					12
+#define MSG_DELETE					13
+#define MSG_SEAWAY					14
+#define MSG_TYPE					15
+#define MSG_NAME_EMPTY				16
+#define MSG_INFO					17
+#define MSG_LIGHT					18
+#define MSG_BULB					19
+#define MSG_ADD_COLOR				20
+#define MSG_COLOR					21
+#define MSG_DELETE_COLOR			22
+#define MSG_BATTERY					23
+#define MSG_CAPACITY				24
+#define MSG_COMMUNICATION_TYPE		25
+#define MSG_DELETE_QUESTION			26
+#define MSG_CHARACTER_NOT_ALLOWED	27
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -97,6 +99,7 @@
 #define CONTROL_BATTERY			2
 #define CONTROL_LIGHT			3
 #define CONTROL_COMMUNICATION	4
+#define CONTROL_SYMBOL			5
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -105,7 +108,16 @@
 #define DEFAULT_DIALOG_WIDTH	500
 
 
-#define PICKER 0
+// kolumny z id w listctrl
+#define COMMUNICATION_COLUMN_WITH_ID 2
+#define COMMUNICATION_COLUMN_WITH_NAME 0
+
+#define BATTERY_COLUMN_WITH_ID 4
+#define BATTERY_COLUMN_WITH_NAME 0
+
+#define AREA_COLUMN_WITH_ID	2
+#define SEAWAY_COLUMN_WITH_ID 2
+#define LIGHT_COLUMN_WITH_ID 2
 
 typedef struct Marker
 {

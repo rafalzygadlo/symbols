@@ -10,11 +10,7 @@
 #include "conf.h"
 #include "positiondialog.h"
 #include "nvFastFont.h"
-#include "area.h"
-#include "seaway.h"
-#include "light.h"
-#include "battery.h"
-#include "communication.h"
+#include "dialog.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -25,11 +21,11 @@ class CPositionDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
 
-	CAreaDialog *m_Area;
-	CSeawayDialog *m_Seaway;
-	CLightDialog *m_Light;
-	CBatteryDialog *m_Battery;
-	CCommunicationDialog *m_Communication;
+	CDialog *m_Area;
+	CDialog *m_Seaway;
+	CDialog *m_Light;
+	CDialog *m_Battery;
+	CDialog *m_Communication;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -142,7 +138,7 @@ class CMapPlugin :public CNaviMapIOApi
 
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuType(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSymbolType(void *NaviMapIOApiPtr, void *Input);
 
 	static void *MenuBattery(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuCommunication(void *NaviMapIOApiPtr, void *Input);

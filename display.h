@@ -3,13 +3,11 @@
 
 #include "dll.h"
 #include "listctrl.h"
-#include "htmlctrl.h"
 #include "NaviMapIOApi.h"
 #include <wx/fileconf.h>
 #include <vector>
 #include <wx/wx.h>
 #include "NaviDisplayApi.h"
-#include "htmlctrl.h"
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
 #include <wx/hyperlink.h>
@@ -24,7 +22,6 @@ extern "C" {
 #endif
 
 class CListCtrl;
-class CHtmlCtrl;
 class CMapPlugin;
 
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
@@ -32,7 +29,6 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CNaviBroker *Broker;
 	CMapPlugin *MapPlugin;
 	//CListCtrl *ShipList;
-	CHtmlCtrl *ShipList;
 	wxPanel *ControlPanel;
 		//*InfoPanel, 
 	wxBoxSizer *Page1Sizer;

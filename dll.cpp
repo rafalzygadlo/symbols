@@ -399,35 +399,35 @@ void CMapPlugin::ShowProperties()
 void CMapPlugin::Area()
 {
 	if(m_Area == NULL)
-		m_Area = new CAreaDialog();
+		m_Area = new CDialog(CONTROL_AREA);
 	m_Area->Show();
 }
 
 void CMapPlugin::Seaway()
 {
 	if(m_Seaway == NULL)
-		m_Seaway = new CSeawayDialog();
+		m_Seaway = new CDialog(CONTROL_SEAWAY);
 	m_Seaway->Show();
 }
 
 void CMapPlugin::Light()
 {
 	if(m_Light == NULL)
-		m_Light = new CLightDialog();
+		m_Light = new CDialog(CONTROL_LIGHT);
 	m_Light->Show();
 }
 
 void CMapPlugin::Battery()
 {
 	if(m_Battery == NULL)
-		m_Battery = new CBatteryDialog();
+		m_Battery = new CDialog(CONTROL_BATTERY);
 	m_Battery->Show();
 }
 
 void CMapPlugin::Communication()
 {
 	if(m_Communication == NULL)
-		m_Communication = new CCommunicationDialog();
+		m_Communication = new CDialog(CONTROL_COMMUNICATION);
 	m_Communication->Show();
 }
 
@@ -440,7 +440,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_TYPE),this, MenuType);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_TYPE),this, MenuSymbolType);
 	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMUNICATION_TYPE),this, MenuCommunication);
@@ -471,10 +471,10 @@ void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
-void *CMapPlugin::MenuType(void *NaviMapIOApiPtr, void *Input)
+void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_TYPE);
+	ThisPtr->Menu(BUTTON_TYPE_SYMBOL);
 	
 	return NULL;	
 }

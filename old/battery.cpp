@@ -24,7 +24,7 @@ CBatteryDialog::CBatteryDialog(int type)
 	Panel->SetSizer(PanelSizer);
 	ButtonOk = NULL;
 
-	if(type == PICKER)
+	if(type == 1)
 	{
 		PanelSizer->AddStretchSpacer();
 		ButtonOk = new wxButton(Panel,wxID_OK,GetMsg(MSG_OK));
@@ -70,7 +70,7 @@ wxPanel *CBatteryDialog::GetPanel(wxWindow *Parent)
 	m_List->_AddColumn(FID_BATTERY_INFO,FNAME_BATTERY_INFO);
 	
 	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
-	m_List->SetColumnWithId(4); // id kolumny z id pól bazy danych
+	m_List->SetColumnWithId(BATTERY_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 		
 	m_List->InitColumns();
 	Read();
@@ -189,12 +189,12 @@ void CBatteryDialog::OnColumnCLick(wxString field, int order)
 	Read();
 }
 
-void CBatteryDialog::OnSelect(wxArrayString row)
+void CBatteryDialog::OnSelect(wxString id,wxArrayString row)
 {
 	if(ButtonOk)
 		ButtonOk->Enable();
-	m_Id = row[0];
-	m_Name = row[1];
+	m_Id = row[BATTERY_COLUMN_WITH_ID];
+	m_Name = row[BATTERY_COLUMN_WITH_NAME];
 }
 
 void CBatteryDialog::OnDeSelect()
@@ -211,148 +211,4 @@ wxString CBatteryDialog::GetBatteryId()
 wxString CBatteryDialog::GetBatteryName()
 {
 	return m_Name;
-}
-
-
-
-BEGIN_EVENT_TABLE(CBatteryPanel, wxPanel)
-	EVT_BUTTON(ID_NEW,CBatteryPanel::OnNew)
-END_EVENT_TABLE()
-
-CBatteryPanel::CBatteryPanel(wxWindow *parent,wxWindow *top)
-	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
-{
-	m_Parent = parent;
-	m_Top = top;
-	m_Sizer = new wxBoxSizer(wxVERTICAL);
-	
-	m_Panel = new wxPanel(this);
-	m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
-	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
-	m_PanelSizer = new wxBoxSizer(wxVERTICAL);
-	m_Panel->SetSizer(m_PanelSizer);
-
-	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
-    wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-
-
-	wxButton *New = new wxBitmapButton(m_Panel,ID_NEW,wxBitmap(myImage_1));
-	m_PanelSizer->Add(New,0,wxALL,3);
-
-	SetSizer(m_Sizer);
-			
-}
-
-CBatteryPanel::~CBatteryPanel()
-{
-}
-
-wxArrayPtrVoid CBatteryPanel::GetPanels()
-{
-	return m_Panels;
-}
-
-void CBatteryPanel::New(wxString id, wxString name)
-{
-	CBattery *ptr = new CBattery(m_Panel,this);
-	ptr->SetBatteryId(id);
-	ptr->SetBatteryName(name);
-	m_PanelSizer->Add(ptr,0,wxALL,1);
-	m_Panels.Add(ptr);
-}
-
-void CBatteryPanel::OnNew(wxCommandEvent &event)
-{
-	CBatteryDialog *BatteryDialog = new CBatteryDialog(PICKER);
-	
-	if(BatteryDialog->ShowModal() == wxID_OK)
-	{
-		New(BatteryDialog->GetBatteryId(),BatteryDialog->GetBatteryName());
-		m_Top->Layout();
-		m_Top->GetSizer()->SetSizeHints(m_Top);
-	}
-	
-	delete BatteryDialog;
-}
-
-void CBatteryPanel::OnEdit(CBattery *ptr)
-{
-//	wxColourDialog dialog(this);
-//	if (dialog.ShowModal() == wxID_OK)
-//	{
-	//	wxColor color = dialog.GetColourData().GetColour();
-		//ptr->SetColor(color);
-		//ptr->Refresh();
-//	}
-
-}
-
-void CBatteryPanel::OnDelete(CBattery *ptr)
-{
-	m_PanelSizer->Detach(ptr);
-	m_Top->Layout();
-	m_Top->GetSizer()->SetSizeHints(m_Top);
-	m_Panels.Remove(ptr);
-	delete ptr;
-}
-
-
-BEGIN_EVENT_TABLE(CBattery, wxPanel)
-	EVT_CONTEXT_MENU(CBattery::OnContextMenu)
-	EVT_MENU(ID_DELETE,CBattery::OnDelete)
-	EVT_MENU(ID_EDIT,CBattery::OnEdit)
-END_EVENT_TABLE()
-
-CBattery::CBattery(wxWindow *parent, CBatteryPanel *panel)
-	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
-{
-	m_Parent = parent;
-	m_BatteryPanel = panel;
-	m_Sizer = new wxBoxSizer(wxHORIZONTAL);
-	
-	m_Panel = new wxPanel(this);
-	m_Sizer->Add(m_Panel,0,wxALL|wxEXPAND,2);
-	
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	m_Panel->SetSizer(PanelSizer);
-	
-	m_Name = new wxStaticText(m_Panel,wxID_ANY,wxEmptyString);
-	PanelSizer->Add(m_Name,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
-	
-	SetSizer(m_Sizer);
-}
-
-CBattery::~CBattery()
-{
-
-}
-
-void CBattery::OnContextMenu(wxContextMenuEvent &event)
-{
-	wxMenu *Menu = new wxMenu();
-	Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-	Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-	
-	PopupMenu(Menu);
-	delete Menu;
-}
-
-void CBattery::OnDelete(wxCommandEvent &event)
-{
-	m_BatteryPanel->OnDelete(this);
-}
-
-void CBattery::OnEdit(wxCommandEvent &event)
-{
-	m_BatteryPanel->OnEdit(this);
-}
-
-void CBattery::SetBatteryId(wxString v)
-{
-
-}
-
-void CBattery::SetBatteryName(wxString v)
-{
-	m_Name->SetLabel(v);
 }

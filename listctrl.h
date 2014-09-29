@@ -3,10 +3,10 @@
 
 #include <wx/wx.h>
 #include <wx/listctrl.h>
-
+#include "dialog.h"
 
 class CDisplayPlugin;
-class CAisList;
+class CDialog;
 class CListCtrl: public wxListCtrl
 {
 	wxArrayPtrVoid m_ColumnArray;
@@ -16,7 +16,7 @@ class CListCtrl: public wxListCtrl
 	int m_FieldCount;
 	wxMenu *m_Menu;
 	int m_ControlType;
-	void *m_Control;
+	CDialog *m_Control;
 	int m_SelectedItem;
 	int m_ColumnWithId;
 	wxImageList *m_ImageListSmall;
@@ -59,7 +59,7 @@ public:
 	CListCtrl( wxWindow *Parent, int style );
 	~CListCtrl();
 
-	void SetControlType(int id, void *ptr);
+	void SetControlType(int id, CDialog *control);
 	void _AddColumn(int id,wxString field_name);
 	void InitColumns();
 	void Clear();

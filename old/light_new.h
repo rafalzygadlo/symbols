@@ -6,6 +6,7 @@
 class CLightNew: public wxDialog
 {
 	wxTextCtrl *m_TextName;
+	wxTextCtrl *m_TextFlash; //b³yskacz
 	wxTextCtrl *m_TextInfo;
 		
 	bool Validate();

@@ -84,9 +84,9 @@ void CDisplayPlugin::ShowControls()
 	//ShipList->InsertColumn(4,item);
 	
 	// HTML
-	ShipList = new CHtmlCtrl(Page1,this);
+	//ShipList = new CHtmlCtrl(Page1,this);
 	
-	Page1Sizer->Add(ShipList,1,wxALL|wxEXPAND,0);
+	//Page1Sizer->Add(ShipList,1,wxALL|wxEXPAND,0);
 
 	//InfoPanel = new wxPanel(Page1,wxID_ANY);
 	//Page1Sizer->Add(InfoPanel,1,wxALL|wxEXPAND,5);
@@ -250,8 +250,8 @@ void CDisplayPlugin::SignalInsert()
 	if(MapPlugin == NULL)		
 		return;
 	
-	ShipList->SetList(MapPlugin->GetShipList());
-	ShipList->Refresh();
+//	ShipList->SetList(MapPlugin->GetShipList());
+//	ShipList->Refresh();
 }
 
 bool CDisplayPlugin::ShipIsSelected(SMarker *ship)
@@ -268,12 +268,12 @@ void CDisplayPlugin::SignalSelect()
 	else
 		ShowInfoPanel(true,Selected);
 	
-	ShipList->_SetSelection(Selected);
+	//ShipList->_SetSelection(Selected);
 }
 
 void CDisplayPlugin::SignalClear()
 {
-	ShipList->ClearList();
+	//ShipList->ClearList();
 }
 
 void CDisplayPlugin::SetSelectedShip(SMarker *ship)

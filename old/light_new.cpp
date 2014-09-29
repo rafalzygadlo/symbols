@@ -1,9 +1,11 @@
-#include "battery_new.h"
+#include "light_new.h"
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "color.h"
+#include "picker.h"
 
-CBatteryNew::CBatteryNew()
+CLightNew::CLightNew()
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -15,32 +17,47 @@ CBatteryNew::CBatteryNew()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
+	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
+	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	CColorPanel *Color = new CColorPanel(Panel,this);
+	FlexGridSizer->Add(Color,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+			
+	wxStaticText *LabelBattery = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BATTERY));
+	FlexGridSizer->Add(LabelBattery,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	CPickerPanel *Battery = new CPickerPanel(Panel,this);
+	FlexGridSizer->Add(Battery,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+	
+	wxStaticText *LabelCommunication = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMMUNICATION_TYPE));
+	FlexGridSizer->Add(LabelCommunication,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	CPickerPanel *Communication = new CPickerPanel(Panel,this);
+	FlexGridSizer->Add(Communication,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+		
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-
-	wxStaticText *LabelType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
-	FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	FlexGridSizer->Add(m_TextType,0,wxALL|wxEXPAND,5);
+	
+	wxStaticText *LabelFlash = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));	//b³yskacz
+	FlexGridSizer->Add(LabelFlash,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextFlash = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	FlexGridSizer->Add(m_TextFlash,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-
-	wxStaticText *LabelCapacity = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CAPACITY));
-	FlexGridSizer->Add(LabelCapacity,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextCapacity = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	FlexGridSizer->Add(m_TextCapacity,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-
+		
+	
 	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
 	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 	
-	
+
+
+
 	FlexGridSizer->AddSpacer(1);
 	//FlexGridSizer->AddSpacer(1);
 	
@@ -63,12 +80,12 @@ CBatteryNew::CBatteryNew()
 	
 }
 
-CBatteryNew::~CBatteryNew()
+CLightNew::~CLightNew()
 {
 
 }
 
-bool CBatteryNew::Validate()
+bool CLightNew::Validate()
 {
 	wxString err;
 	bool result = true;
@@ -90,44 +107,23 @@ bool CBatteryNew::Validate()
 }
 
 
-wxString CBatteryNew::GetName()
+wxString CLightNew::GetName()
 {
 	return m_TextName->GetValue();
 }
 
-wxString CBatteryNew::GetInfo()
+wxString CLightNew::GetInfo()
 {
 	return m_TextInfo->GetValue();
 }
 
-wxString CBatteryNew::GetType()
-{
-	return m_TextType->GetValue();
-}
-
-wxString CBatteryNew::GetCapacity()
-{
-	return m_TextCapacity->GetValue();
-}
-
-
 //SET
-void CBatteryNew::SetName(wxString v)
+void CLightNew::SetName(wxString v)
 {
 	m_TextName->SetValue(v);
 }
 
-void CBatteryNew::SetInfo(wxString v)
+void CLightNew::SetInfo(wxString v)
 {
 	m_TextInfo->SetValue(v);
-}
-
-void CBatteryNew::SetType(wxString v)
-{
-	m_TextType->SetValue(v);
-}
-
-void CBatteryNew::SetCapacity(wxString v)
-{
-	m_TextCapacity->SetValue(v);
 }

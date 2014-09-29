@@ -40,6 +40,7 @@ const wchar_t *nvLanguage[2][30] =
 		L"Capacity",
 		L"Communication Type",
 		L"Delete ?",
+		L"Character not allowed",
 		
 	},
 	//pl
@@ -71,6 +72,7 @@ const wchar_t *nvLanguage[2][30] =
 		L"Pojemnoœæ",
 		L"Typ ³¹cznoœci",
 		L"Usun¹æ ?",
+		L"Nie dozwolony znak",
 	}
 
 };
