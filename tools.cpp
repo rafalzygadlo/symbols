@@ -9,7 +9,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[2][30] = 
+const wchar_t *nvLanguage[2][32] = 
 { 
 	//en
 	{
@@ -41,6 +41,10 @@ const wchar_t *nvLanguage[2][30] =
 		L"Communication Type",
 		L"Delete ?",
 		L"Character not allowed",
+		L"Flash",
+		L"Voltage",
+		L"Power",
+		L"Type",
 		
 	},
 	//pl
@@ -72,7 +76,11 @@ const wchar_t *nvLanguage[2][30] =
 		L"Pojemnoœæ",
 		L"Typ ³¹cznoœci",
 		L"Usun¹æ ?",
-		L"Nie dozwolony znak",
+		L"Niedozwolony znak",
+		L"B³yskacz",
+		L"Napiêcie",
+		L"Moc",
+		L"Typ",
 	}
 
 };

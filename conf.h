@@ -28,7 +28,9 @@
 #define BUTTON_TYPE_LIGHT			6
 #define BUTTON_TYPE_BATTERY			7
 #define BUTTON_TYPE_COMMUNICATION	8
-#define BUTTON_TYPE_SYMBOL			9
+#define BUTTON_TYPE_SYMBOL_TYPE		9
+#define BUTTON_TYPE_FLASH			10
+#define BUTTON_TYPE_BULB			11
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -72,7 +74,7 @@
 #define MSG_EDIT					12
 #define MSG_DELETE					13
 #define MSG_SEAWAY					14
-#define MSG_TYPE					15
+#define MSG_SYMBOL_TYPE				15
 #define MSG_NAME_EMPTY				16
 #define MSG_INFO					17
 #define MSG_LIGHT					18
@@ -85,6 +87,10 @@
 #define MSG_COMMUNICATION_TYPE		25
 #define MSG_DELETE_QUESTION			26
 #define MSG_CHARACTER_NOT_ALLOWED	27
+#define MSG_FLASH					28
+#define MSG_VOLTAGE					29
+#define MSG_POWER					30
+#define MSG_TYPE					31
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -100,6 +106,8 @@
 #define CONTROL_LIGHT			3
 #define CONTROL_COMMUNICATION	4
 #define CONTROL_SYMBOL			5
+#define CONTROL_FLASH			6
+#define CONTROL_BULB			7
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -115,9 +123,20 @@
 #define BATTERY_COLUMN_WITH_ID 4
 #define BATTERY_COLUMN_WITH_NAME 0
 
-#define AREA_COLUMN_WITH_ID	2
-#define SEAWAY_COLUMN_WITH_ID 2
+#define AREA_COLUMN_WITH_ID		2
+#define AREA_COLUMN_WITH_NAME	1
+
+#define SEAWAY_COLUMN_WITH_ID	2
+#define SEAWAY_COLUMN_WITH_NAME 1
+
 #define LIGHT_COLUMN_WITH_ID 2
+#define LIGHT_COLUMN_WITH_NAME 1
+
+#define FLASH_COLUMN_WITH_ID 3
+#define FLASH_COLUMN_WITH_NAME 1
+
+#define BULB_COLUMN_WITH_ID 5
+#define BULB_COLUMN_WITH_NAME 1
 
 typedef struct Marker
 {
@@ -127,7 +146,6 @@ typedef struct Marker
 	wchar_t description[MARKER_DESCRIPTION_SIZE + 1];
 		
 }SMarker;
-
 
 
 

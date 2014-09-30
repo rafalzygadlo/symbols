@@ -11,12 +11,13 @@ class CPickerPanel: public wxPanel
 	wxPanel *m_Panel;
 	wxBoxSizer *m_PanelSizer;
 	wxArrayPtrVoid m_Panels;
+	int m_ControlType;
 	
 	void New(wxString id, wxString name);
 			
 public:
 
-	CPickerPanel(wxWindow *parent, wxWindow *top);
+	CPickerPanel(wxWindow *parent, wxWindow *top,int control_type);
 	~CPickerPanel();
 	void OnNew(wxCommandEvent &event);
 	void OnDelete(CPicker *ptr);

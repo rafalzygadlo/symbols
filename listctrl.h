@@ -18,7 +18,7 @@ class CListCtrl: public wxListCtrl
 	int m_ControlType;
 	CDialog *m_Control;
 	int m_SelectedItem;
-	int m_ColumnWithId;
+	int m_ColumnWithId,m_ColumnWithName;
 	wxImageList *m_ImageListSmall;
 	
 	wxMenu *MenuArea(int id);
@@ -26,6 +26,8 @@ class CListCtrl: public wxListCtrl
 	wxMenu *MenuBattery(int id);
 	wxMenu *MenuLight(int id);
 	wxMenu *MenuCommunication(int id);
+	wxMenu *MenuFlash(int id);
+	wxMenu *MenuBulb(int id);
 
 	void Sort();
 	void NewUser();
@@ -47,10 +49,11 @@ class CListCtrl: public wxListCtrl
 	void OnChangePassword(wxCommandEvent &event);
 	void OnRight(wxCommandEvent &event);
 	void OnChangeGroup(wxCommandEvent &event);
+	void OnFocused(wxListEvent &event);
 	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
-	int OnGetItemColumnImage(long item, long column) const; 
+	//int OnGetItemColumnImage(long item, long column) const; 
 	int OnGetItemImage(long item) const;
 
 public:
@@ -66,6 +69,7 @@ public:
 	void Select();
 	void Read(wxString query);
 	void SetColumnWithId(int id);
+	void SetColumnWithName(int id);
 	void SetColumnImage(int col, int image);
 
 	DECLARE_EVENT_TABLE();

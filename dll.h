@@ -26,6 +26,8 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Light;
 	CDialog *m_Battery;
 	CDialog *m_Communication;
+	CDialog *m_Flash;
+	CDialog *m_Bulb;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -132,6 +134,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void Light();
 	void Battery();
 	void Communication();
+	void Bulb();
+	void Flash();
 		
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
@@ -142,6 +146,8 @@ class CMapPlugin :public CNaviMapIOApi
 
 	static void *MenuBattery(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuCommunication(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuFlash(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuBulb(void *NaviMapIOApiPtr, void *Input);
 				
 public:
 	

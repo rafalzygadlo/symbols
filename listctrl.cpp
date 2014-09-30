@@ -20,6 +20,8 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
 	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
+	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
+	
 END_EVENT_TABLE()
  
 CListCtrl::CListCtrl( wxWindow *Parent, int style )
@@ -64,6 +66,11 @@ CListCtrl::~CListCtrl()
 void CListCtrl::SetColumnWithId(int id)
 {
 	m_ColumnWithId = id;
+}
+
+void CListCtrl::SetColumnWithName(int id)
+{
+	m_ColumnWithName = id;
 }
 
 void CListCtrl::_AddColumn(int id,wxString field_name)
@@ -155,6 +162,9 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_LIGHT:			Menu = MenuLight(m_SelectedItem);			break;
 		case CONTROL_BATTERY:		Menu = MenuBattery(m_SelectedItem);			break;
 		case CONTROL_COMMUNICATION: Menu = MenuCommunication(m_SelectedItem);	break;
+		case CONTROL_FLASH:			Menu = MenuFlash(m_SelectedItem);			break;
+		case CONTROL_BULB:			Menu = MenuBulb(m_SelectedItem);			break;
+
 	}
 	
 	if(Menu)
@@ -260,7 +270,6 @@ wxMenu *CListCtrl::MenuBattery(int id)
 		
 	}
 		
-	
 	return Menu;
 	
 }
@@ -282,13 +291,57 @@ wxMenu *CListCtrl::MenuCommunication(int id)
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
 		if(!db_check_right(MODULE_COMMUNICATION,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
-		
 	}
 		
+	return Menu;
+}
+
+wxMenu *CListCtrl::MenuFlash(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_FLASH ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_FLASH,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_FLASH,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+	}
 	
 	return Menu;
 	
 }
+
+wxMenu *CListCtrl::MenuBulb(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_BULB ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_BULB,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_BULB,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+	}
+	
+	return Menu;
+	
+}
+
 
 
 void CListCtrl::OnSelected(wxListEvent &event)
@@ -296,16 +349,11 @@ void CListCtrl::OnSelected(wxListEvent &event)
 	
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		
-	wxArrayString row = GetRow(m_SelectedItem);
+	wxArrayString row = GetRow(m_SelectedItem);	
 	wxString id = row[m_ColumnWithId];
-	
-	switch(m_ControlType)
-	{
-		case CONTROL_BATTERY:			((CDialog*)m_Control)->OnSelect(id,row);	break;
-		case CONTROL_COMMUNICATION:		((CDialog*)m_Control)->OnSelect(id,row);	break;
-	}
-	
+	wxString name = row[m_ColumnWithName];
+	m_Control->OnSelect(id,name);
+
 }
 
 void CListCtrl::OnDeSelected(wxListEvent &event)
@@ -326,40 +374,17 @@ void CListCtrl::OnActivate(wxListEvent &event)
 
 void CListCtrl::OnEdit(wxCommandEvent &event)
 {
-	switch(m_ControlType)
-	{
-		case CONTROL_AREA:			((CDialog*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-		case CONTROL_SEAWAY:		((CDialog*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-		case CONTROL_LIGHT:			((CDialog*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-		case CONTROL_BATTERY:		((CDialog*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-		case CONTROL_COMMUNICATION:	((CDialog*)m_Control)->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-	}
+	m_Control->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));
 }
 
 void CListCtrl::OnNew(wxCommandEvent &event)
 {
-	switch(m_ControlType)
-	{
-		case CONTROL_AREA:			((CDialog*)m_Control)->OnNew();	break;
-		case CONTROL_SEAWAY:		((CDialog*)m_Control)->OnNew();	break;
-		case CONTROL_LIGHT:			((CDialog*)m_Control)->OnNew();	break;
-		case CONTROL_BATTERY:		((CDialog*)m_Control)->OnNew();	break;
-		case CONTROL_COMMUNICATION:	((CDialog*)m_Control)->OnNew();	break;
-	}
-
+	m_Control->OnNew();
 }
 
 void CListCtrl::OnDelete(wxCommandEvent &event)
 {
-	switch(m_ControlType)
-	{
-		case CONTROL_AREA:			((CDialog*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));			break;
-		case CONTROL_SEAWAY:		((CDialog*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));			break;
-		case CONTROL_LIGHT:			((CDialog*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));			break;
-		case CONTROL_BATTERY:		((CDialog*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));			break;
-		case CONTROL_COMMUNICATION:	((CDialog*)m_Control)->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));	break;
-	}
-
+	m_Control->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));
 }
 
 wxArrayString *CListCtrl::GetColumn(int column)
@@ -457,7 +482,7 @@ void CListCtrl::OnColClick(wxListEvent& event)
 	{
 		SetColumnImage(i,-1);
 	}
-
+	
 	col = event.GetColumn();
 	
 	if(old_col == col)
@@ -466,17 +491,10 @@ void CListCtrl::OnColClick(wxListEvent& event)
 		x = false;
 
 	SetColumnImage(col, x ? 0 : 1);
-
-	old_col = col;
 	
-	switch(m_ControlType)
-	{	
-		case CONTROL_AREA:			((CDialog*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
-		case CONTROL_SEAWAY:		((CDialog*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
-		case CONTROL_LIGHT:			((CDialog*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
-		case CONTROL_BATTERY:		((CDialog*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
-		case CONTROL_COMMUNICATION:	((CDialog*)m_Control)->OnColumnCLick(m_ColumnFields.Item(col),x);	break;
-	}
+	old_col = col;
+	m_Control->OnColumnCLick(m_ColumnFields.Item(col),x);
+
 
 }
 
@@ -497,6 +515,7 @@ void CListCtrl::Sort()
 	Refresh();
 }
 
+/*
 int CListCtrl::OnGetItemColumnImage(long item, long column) const
 {
 	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(item);
@@ -509,9 +528,14 @@ int CListCtrl::OnGetItemColumnImage(long item, long column) const
 	
 	return -1;
 }
-
+*/
 
 int CListCtrl::OnGetItemImage(long item) const
 {
 	return -1;
+}
+
+void CListCtrl::OnFocused(wxListEvent &event)
+{
+	m_SelectedItem = GetNextItem(m_SelectedItem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 }

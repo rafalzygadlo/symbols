@@ -11,6 +11,9 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextType;
 	wxTextCtrl *m_TextCapacity;
 	wxTextCtrl *m_TextFlash;
+	wxTextCtrl *m_TextVoltage;
+	wxTextCtrl *m_TextPower;
+
 	wxString m_Exclude;
 
 	void GetPanel(int type);
@@ -20,6 +23,8 @@ class CNew: public wxDialog
 	wxPanel *CommunicationPanel();
 	wxPanel *SeawayPanel();
 	wxPanel *LightPanel();
+	wxPanel *BulbPanel();
+	wxPanel *FlashPanel();
 	
 	bool Validate();
 		
@@ -31,11 +36,17 @@ public:
 	wxString GetInfo();
 	wxString GetType();
 	wxString GetCapacity();
-	
+	wxString GetVoltage();
+	wxString GetPower();
+
 	void SetName(wxString v);
 	void SetInfo(wxString v);
 	void SetType(wxString v);
 	void SetCapacity(wxString v);
+	void SetVoltage(wxString v);
+	void SetPower(wxString v);
+	
+
 
 };
 

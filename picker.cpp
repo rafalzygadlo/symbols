@@ -1,5 +1,4 @@
 #include "picker.h"
-//#include "communication_new.h"
 #include "conf.h"
 #include "tools.h"
 #include "listctrl.h"
@@ -14,11 +13,12 @@ BEGIN_EVENT_TABLE(CPickerPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CPickerPanel::OnNew)
 END_EVENT_TABLE()
 
-CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top)
+CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
 	m_Parent = parent;
 	m_Top = top;
+	m_ControlType = control_type;
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
 	
 	m_Panel = new wxPanel(this);
@@ -58,8 +58,7 @@ void CPickerPanel::New(wxString id, wxString name)
 
 void CPickerPanel::OnNew(wxCommandEvent &event)
 {
-	/*
-	CCommunicationDialog *Dialog = new CCommunicationDialog(PICKER);
+	CDialog *Dialog = new CDialog(m_ControlType,true);
 	
 	if(Dialog->ShowModal() == wxID_OK)
 	{
@@ -69,19 +68,21 @@ void CPickerPanel::OnNew(wxCommandEvent &event)
 	}
 	
 	delete Dialog;
-	*/
+	
 }
 
 void CPickerPanel::OnEdit(CPicker *ptr)
 {
-//	wxColourDialog dialog(this);
-//	if (dialog.ShowModal() == wxID_OK)
-//	{
-	//	wxColor color = dialog.GetColourData().GetColour();
-		//ptr->SetColor(color);
-		//ptr->Refresh();
-//	}
+	CDialog *Dialog = new CDialog(m_ControlType,true);
+	
+	if(Dialog->ShowModal() == wxID_OK)
+	{
+		ptr->_SetId(Dialog->_GetId());
+		ptr->_SetName(Dialog->_GetName());
 
+	}
+	
+	delete Dialog;
 }
 
 void CPickerPanel::OnDelete(CPicker *ptr)
