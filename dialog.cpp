@@ -20,6 +20,15 @@ CDialog::CDialog(int control_type, bool picker)
 	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
+	
+	wxPanel *TopPanel = new wxPanel(this);
+	Sizer->Add(TopPanel,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *TopPanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	TopPanel->SetSizer(TopPanelSizer);
+
+	m_TopLabel = new wxStaticText(TopPanel,wxID_ANY,wxEmptyString);
+	TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
+	
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
 
 	wxPanel *Panel = new wxPanel(this);
@@ -42,8 +51,7 @@ CDialog::CDialog(int control_type, bool picker)
 		PanelSizer->Add(m_ButtonOk,0,wxALL,5);
 		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CANCEL));
 		PanelSizer->Add(ButtonClose,0,wxALL,5);
-		SetLabel(GetMsg(MSG_BATTERY));
-	
+			
 	}else{
 			
 		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
@@ -78,6 +86,7 @@ wxPanel *CDialog::GetPanel(wxWindow *Parent)
 		case CONTROL_LIGHT:			ControlLight();				break;
 		case CONTROL_BULB:			ControlBulb();				break;
 		case CONTROL_FLASH:			ControlFlash();				break;
+		case CONTROL_SYMBOL_TYPE:	ControlSymbolType();		break;
 	}
 	
 
@@ -104,7 +113,8 @@ void CDialog::ControlArea()
 	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
 	m_List->SetColumnWithId(AREA_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(AREA_COLUMN_WITH_NAME);
-	SetLabel(GetMsg(MSG_AREA));
+	//SetLabel(GetMsg(MSG_AREA));
+	m_TopLabel->SetLabel(GetMsg(MSG_AREA));
 
 }
 
@@ -125,7 +135,8 @@ void CDialog::ControlBattery()
 	m_List->SetColumnWithId(BATTERY_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(BATTERY_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_BATTERY));
+	//SetLabel(GetMsg(MSG_BATTERY));
+	m_TopLabel->SetLabel(GetMsg(MSG_BATTERY));
 }
 
 void CDialog::ControlCommunication()
@@ -141,7 +152,8 @@ void CDialog::ControlCommunication()
 	m_List->SetColumnWithId(COMMUNICATION_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(COMMUNICATION_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_COMMUNICATION_TYPE));
+	//SetLabel(GetMsg(MSG_COMMUNICATION_TYPE));
+	m_TopLabel->SetLabel(GetMsg(MSG_COMMUNICATION_TYPE));
 	
 }
 
@@ -159,7 +171,8 @@ void CDialog::ControlSeaway()
 	m_List->SetColumnWithId(SEAWAY_COLUMN_WITH_ID);		// id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(SEAWAY_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_SEAWAY));
+	//SetLabel(GetMsg(MSG_SEAWAY));
+	m_TopLabel->SetLabel(GetMsg(MSG_SEAWAY));
 }
 
 
@@ -176,7 +189,8 @@ void CDialog::ControlLight()
 	m_List->SetColumnWithId(LIGHT_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(LIGHT_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_LIGHT));
+	//SetLabel(GetMsg(MSG_LIGHT));
+	m_TopLabel->SetLabel(GetMsg(MSG_LIGHT));
 }
 
 
@@ -195,7 +209,8 @@ void CDialog::ControlFlash()
 	m_List->SetColumnWithId(FLASH_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(FLASH_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_FLASH));
+	//SetLabel(GetMsg(MSG_FLASH));
+	m_TopLabel->SetLabel(GetMsg(MSG_FLASH));
 }
 
 
@@ -219,7 +234,25 @@ void CDialog::ControlBulb()
 	m_List->SetColumnWithId(BULB_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
 	m_List->SetColumnWithName(BULB_COLUMN_WITH_NAME);
 	
-	SetLabel(GetMsg(MSG_BULB));
+	//SetLabel(GetMsg(MSG_BULB));
+	m_TopLabel->SetLabel(GetMsg(MSG_BULB));
+}
+
+void CDialog::ControlSymbolType()
+{
+	wxListItem item;
+	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
+	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
+		
+	m_List->_AddColumn(FID_SYMBOL_TYPE_NAME,FNAME_SYMBOL_TYPE_NAME);
+	m_List->_AddColumn(FID_SYMBOL_TYPE_INFO,FNAME_SYMBOL_TYPE_INFO);
+	
+	m_List->_AddColumn(FID_SYMBOL_TYPE_ID,FNAME_SYMBOL_TYPE_ID);
+	m_List->SetColumnWithId(SYMBOL_TYPE_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
+	m_List->SetColumnWithName(SYMBOL_TYPE_COLUMN_WITH_NAME);
+	//SetLabel(GetMsg(MSG_AREA));
+	m_TopLabel->SetLabel(GetMsg(MSG_SYMBOL_TYPE));
+
 }
 
 void CDialog::SetTable()
@@ -233,7 +266,7 @@ void CDialog::SetTable()
 		case CONTROL_LIGHT:			m_Table = TABLE_LIGHT;			break;
 		case CONTROL_FLASH:			m_Table = TABLE_FLASH;			break;
 		case CONTROL_BULB:			m_Table = TABLE_BULB;			break;
-		//case CONTROL_SYMBOL:		table = TABLE_t
+		case CONTROL_SYMBOL_TYPE:	m_Table	= TABLE_SYMBOL;			break;
 	}
 }
 
@@ -328,6 +361,7 @@ void CDialog::OnEdit(wxString id)
 		case CONTROL_SEAWAY:		EditSeaway(id);			break;
 		case CONTROL_LIGHT:			EditLight(id);			break;
 		case CONTROL_BULB:			EditBulb(id);			break;
+		case CONTROL_SYMBOL_TYPE:	EditSymbolType(id);		break;
 	}
 
 }
@@ -515,6 +549,37 @@ void CDialog::EditBulb(wxString id)
 
 	delete ptr;
 }
+
+void CDialog::EditSymbolType(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SYMBOL_TYPE,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(CONTROL_AREA);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetName(Convert(row[FID_AREA_NAME]));
+	ptr->SetInfo(Convert(row[FID_AREA_INFO]));
+	
+	db_free_result(result);
+
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_SYMBOL_TYPE,ptr->GetName(),ptr->GetInfo(),id);
+		my_query(sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
 
 void CDialog::OnDelete(wxString id)
 {

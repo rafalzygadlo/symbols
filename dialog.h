@@ -15,6 +15,7 @@ class CDialog: public wxDialog
 	wxString m_Table;
 	wxString m_Id, m_Name;
 	bool m_Picker;
+	wxStaticText *m_TopLabel;
 
 
 	wxPanel *GetPanel(wxWindow *Parent);
@@ -26,6 +27,8 @@ class CDialog: public wxDialog
 	void ControlLight();
 	void ControlBulb();
 	void ControlFlash();
+	void ControlSymbolType();
+
 
 	void New();
 
@@ -35,6 +38,7 @@ class CDialog: public wxDialog
 	void EditSeaway(wxString id);
 	void EditLight(wxString id);
 	void EditBulb(wxString id);
+	void EditSymbolType(wxString id);
 	
 	void Read();
 	void Clear();

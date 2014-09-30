@@ -28,6 +28,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Communication;
 	CDialog *m_Flash;
 	CDialog *m_Bulb;
+	CDialog *m_SymbolType;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -136,6 +137,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Communication();
 	void Bulb();
 	void Flash();
+	void SymbolType();
 		
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);

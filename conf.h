@@ -105,7 +105,7 @@
 #define CONTROL_BATTERY			2
 #define CONTROL_LIGHT			3
 #define CONTROL_COMMUNICATION	4
-#define CONTROL_SYMBOL			5
+#define CONTROL_SYMBOL_TYPE		5
 #define CONTROL_FLASH			6
 #define CONTROL_BULB			7
 
@@ -137,6 +137,9 @@
 
 #define BULB_COLUMN_WITH_ID 5
 #define BULB_COLUMN_WITH_NAME 1
+
+#define SYMBOL_TYPE_COLUMN_WITH_ID 2
+#define SYMBOL_TYPE_COLUMN_WITH_NAME 1
 
 typedef struct Marker
 {

@@ -164,6 +164,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_COMMUNICATION: Menu = MenuCommunication(m_SelectedItem);	break;
 		case CONTROL_FLASH:			Menu = MenuFlash(m_SelectedItem);			break;
 		case CONTROL_BULB:			Menu = MenuBulb(m_SelectedItem);			break;
+		case CONTROL_SYMBOL_TYPE:	Menu = MenuSymbolType(m_SelectedItem);		break;
 
 	}
 	
@@ -335,6 +336,29 @@ wxMenu *CListCtrl::MenuBulb(int id)
 		
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
 		if(!db_check_right(MODULE_BULB,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+	}
+	
+	return Menu;
+	
+}
+
+wxMenu *CListCtrl::MenuSymbolType(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_SYMBOL_TYPE ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_SYMBOL_TYPE,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_SYMBOL_TYPE,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
 	}
 	

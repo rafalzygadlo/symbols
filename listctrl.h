@@ -28,6 +28,7 @@ class CListCtrl: public wxListCtrl
 	wxMenu *MenuCommunication(int id);
 	wxMenu *MenuFlash(int id);
 	wxMenu *MenuBulb(int id);
+	wxMenu *MenuSymbolType(int id);
 
 	void Sort();
 	void NewUser();

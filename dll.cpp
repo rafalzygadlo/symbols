@@ -36,7 +36,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Communication = NULL;
 	m_Flash = NULL;
 	m_Bulb = NULL;
-
+	m_SymbolType = NULL;
+	
 	NewPtr = NULL;
 	PositionDialog = NULL;	
 	m_Broker = NaviBroker;
@@ -98,6 +99,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Communication;
 	delete m_Flash;
 	delete m_Bulb;
+	delete m_SymbolType;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -449,6 +451,13 @@ void CMapPlugin::Bulb()
 	m_Bulb->Show();
 }
 
+void CMapPlugin::SymbolType()
+{
+	if(m_SymbolType == NULL)
+		m_SymbolType = new CDialog(CONTROL_SYMBOL_TYPE,false);
+	m_SymbolType->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -551,6 +560,7 @@ void CMapPlugin::Menu(int type)
 		case BUTTON_TYPE_COMMUNICATION:	Communication();	break;
 		case BUTTON_TYPE_BULB:			Bulb();				break;
 		case BUTTON_TYPE_FLASH:			Flash();			break;
+		case BUTTON_TYPE_SYMBOL_TYPE:	SymbolType();		break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());
