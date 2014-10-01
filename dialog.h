@@ -32,6 +32,7 @@ class CDialog: public wxDialog
 	void EditFlash(wxString id);
 	void EditLantern(wxString id);
 	void EditChanger(wxString id);
+	void EditSolar(wxString id);
 	
 	void Read();
 	void Clear();

@@ -153,46 +153,47 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	
-	wxMenu *Menu = NULL;
+	wxMenu *_Menu = NULL;
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_AREA:			Menu = MenuArea(m_SelectedItem);			break;
-		case CONTROL_SEAWAY:		Menu = MenuSeaway(m_SelectedItem);			break;
-		case CONTROL_LIGHT:			Menu = MenuLight(m_SelectedItem);			break;
-		case CONTROL_BATTERY:		Menu = MenuBattery(m_SelectedItem);			break;
-		case CONTROL_COMMUNICATION: Menu = MenuCommunication(m_SelectedItem);	break;
-		case CONTROL_FLASH:			Menu = MenuFlash(m_SelectedItem);			break;
-		case CONTROL_BULB:			Menu = MenuBulb(m_SelectedItem);			break;
-		case CONTROL_SYMBOL_TYPE:	Menu = MenuSymbolType(m_SelectedItem);		break;
-		case CONTROL_LANTERN:		Menu = MenuLantern(m_SelectedItem);			break;
-		case CONTROL_CHANGER:		Menu = MenuChanger(m_SelectedItem);			break;
+		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);			break;
+		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);			break;
+		case CONTROL_LIGHT:			_Menu = Menu(m_SelectedItem,MODULE_LIGHT);			break;
+		case CONTROL_BATTERY:		_Menu = Menu(m_SelectedItem,MODULE_BATTERY);		break;
+		case CONTROL_COMMUNICATION: _Menu = Menu(m_SelectedItem,MODULE_COMMUNICATION );	break;
+		case CONTROL_FLASH:			_Menu = Menu(m_SelectedItem,MODULE_FLASH);			break;
+		case CONTROL_BULB:			_Menu = Menu(m_SelectedItem,MODULE_BULB);			break;
+		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);	break;
+		case CONTROL_LANTERN:		_Menu = Menu(m_SelectedItem,MODULE_LANTERN);		break;
+		case CONTROL_CHANGER:		_Menu = Menu(m_SelectedItem,MODULE_CHANGER);		break;
+		case CONTROL_SOLAR:			_Menu = Menu(m_SelectedItem,MODULE_SOLAR);			break;
 	}
 	
-	if(Menu)
+	if(_Menu)
 	{
-		PopupMenu(Menu);
-		delete Menu;
+		PopupMenu(_Menu);
+		delete _Menu;
 	}
 
 }
 
-wxMenu *CListCtrl::MenuArea(int id)
+wxMenu *CListCtrl::Menu(int id, const char *module)
 {
 	wxMenu *Menu = new wxMenu();
 	
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_AREA ,ACTION_NEW,_GetUID()))
+	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(ID_NEW)->Enable(false);
 			
 	if(id > -1)
 	{
 		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_AREA,ACTION_EDIT,_GetUID()))
+		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
 			Menu->FindItem(ID_EDIT)->Enable(false);
 		
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_AREA,ACTION_DELETE,_GetUID()))
+		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
 		
 	}
@@ -201,195 +202,6 @@ wxMenu *CListCtrl::MenuArea(int id)
 	return Menu;
 	
 }
-
-wxMenu *CListCtrl::MenuSeaway(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_SEAWAY ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_SEAWAY,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_SEAWAY,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-		
-	}
-		
-	
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuLight(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_LIGHT ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_LIGHT,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_LIGHT,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-		
-	}
-		
-	
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuBattery(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_BATTERY ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_BATTERY,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_BATTERY,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-		
-	}
-		
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuCommunication(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_COMMUNICATION ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_COMMUNICATION,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_COMMUNICATION,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-	}
-		
-	return Menu;
-}
-
-wxMenu *CListCtrl::MenuFlash(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_FLASH ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_FLASH,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_FLASH,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-	}
-	
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuBulb(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_BULB ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_BULB,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_BULB,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-	}
-	
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuSymbolType(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_SYMBOL_TYPE ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_SYMBOL_TYPE,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_SYMBOL_TYPE,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-	}
-	
-	return Menu;
-	
-}
-
-wxMenu *CListCtrl::MenuLantern(int id)
-{
-	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_LANTERN ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_LANTERN,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_LANTERN,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-	}
-	
-	return Menu;
-	
-}
-
 
 void CListCtrl::OnSelected(wxListEvent &event)
 {

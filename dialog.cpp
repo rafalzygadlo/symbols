@@ -51,6 +51,10 @@ SHeader Header[] =
 	{CONTROL_CHANGER,100,	{FID_CHANGER_TYPE , FNAME_CHANGER_TYPE, MSG_TYPE} },
 	{CONTROL_CHANGER,250,	{FID_CHANGER_INFO , FNAME_CHANGER_INFO, MSG_INFO} },
 
+	{CONTROL_SOLAR,80,	{FID_CHANGER_ID ,	FNAME_CHANGER_ID, MSG_ID} },
+	{CONTROL_SOLAR,100,	{FID_CHANGER_TYPE , FNAME_CHANGER_TYPE, MSG_TYPE} },
+	{CONTROL_SOLAR,250,	{FID_CHANGER_INFO , FNAME_CHANGER_INFO, MSG_INFO} },
+
 	{-1},
 
 };
@@ -66,7 +70,8 @@ SIds Id[] =
 	{CONTROL_BULB, BULB_COLUMN_WITH_ID, BULB_COLUMN_WITH_NAME,MSG_BULB},
 	{CONTROL_SYMBOL_TYPE, SYMBOL_TYPE_COLUMN_WITH_ID, SYMBOL_TYPE_COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
 	{CONTROL_LANTERN, LANTERN_COLUMN_WITH_ID, LANTERN_COLUMN_WITH_NAME,MSG_LANTERN},
-	{CONTROL_CHANGER, CHANGER_COLUMN_WITH_ID, CHANGER_COLUMN_WITH_NAME,MSG_LANTERN},
+	{CONTROL_CHANGER, CHANGER_COLUMN_WITH_ID, CHANGER_COLUMN_WITH_NAME,MSG_CHANGER},
+	{CONTROL_SOLAR, SOLAR_COLUMN_WITH_ID, SOLAR_COLUMN_WITH_NAME, MSG_SOLAR},
 	{-1},
 
 };
@@ -206,6 +211,7 @@ void CDialog::SetTable()
 		case CONTROL_SYMBOL_TYPE:	m_Table	= TABLE_SYMBOL_TYPE;	break;
 		case CONTROL_LANTERN:		m_Table = TABLE_LANTERN;		break;
 		case CONTROL_CHANGER:		m_Table = TABLE_CHANGER;		break;
+		case CONTROL_SOLAR:			m_Table = TABLE_SOLAR;			break;
 	}
 }
 
@@ -278,6 +284,9 @@ void CDialog::New()
 			case CONTROL_CHANGER:
 				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_CHANGER,ptr->GetType(),ptr->GetInfo());
 			break;
+			case CONTROL_SOLAR:
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_SOLAR,ptr->GetType(),ptr->GetInfo());
+			break;
 
 		}
 				
@@ -313,6 +322,7 @@ void CDialog::OnEdit(wxString id)
 		case CONTROL_FLASH:			EditFlash(id);			break;
 		case CONTROL_LANTERN:		EditLantern(id);		break;
 		case CONTROL_CHANGER:		EditChanger(id);		break;
+		case CONTROL_SOLAR:			EditSolar(id);			break;
 	}
 
 }
@@ -618,6 +628,37 @@ void CDialog::EditChanger(wxString id)
 	delete ptr;
 	
 }
+
+void CDialog::EditSolar(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SOLAR,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(CONTROL_CHANGER);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetType(Convert(row[FID_SOLAR_TYPE]));
+	ptr->SetInfo(Convert(row[FID_SOLAR_INFO]));
+	
+	db_free_result(result);
+
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_SOLAR,ptr->GetType(),ptr->GetInfo(),id);
+		my_query(sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
 
 
 

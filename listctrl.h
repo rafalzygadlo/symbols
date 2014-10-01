@@ -21,15 +21,7 @@ class CListCtrl: public wxListCtrl
 	int m_ColumnWithId,m_ColumnWithName;
 	wxImageList *m_ImageListSmall;
 	
-	wxMenu *MenuArea(int id);
-	wxMenu *MenuSeaway(int id);
-	wxMenu *MenuBattery(int id);
-	wxMenu *MenuLight(int id);
-	wxMenu *MenuCommunication(int id);
-	wxMenu *MenuFlash(int id);
-	wxMenu *MenuBulb(int id);
-	wxMenu *MenuSymbolType(int id);
-	wxMenu *MenuLantern(int id);
+	wxMenu *Menu(int id, const char *module);
 	
 	void Sort();
 	void NewUser();

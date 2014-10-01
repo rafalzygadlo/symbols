@@ -33,6 +33,7 @@
 #define BUTTON_TYPE_BULB			11
 #define BUTTON_TYPE_LANTERN			12
 #define BUTTON_TYPE_CHANGER			13
+#define BUTTON_TYPE_SOLAR			14
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -119,6 +120,7 @@
 #define CONTROL_BULB			7
 #define CONTROL_LANTERN			8
 #define CONTROL_CHANGER			9
+#define CONTROL_SOLAR			10
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -157,6 +159,10 @@
 
 #define CHANGER_COLUMN_WITH_ID 0
 #define CHANGER_COLUMN_WITH_NAME 1
+
+#define SOLAR_COLUMN_WITH_ID 0
+#define SOLAR_COLUMN_WITH_NAME 1
+
 
 typedef struct Marker
 {

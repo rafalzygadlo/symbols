@@ -31,7 +31,8 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolType;
 	CDialog *m_Lantern;
 	CDialog *m_Changer;
-
+	CDialog *m_Solar;
+	
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
 	CPositionDialog *PositionDialog;
@@ -142,6 +143,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SymbolType();
 	void Lantern();
 	void Changer();
+	void Solar();
 		
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
@@ -156,6 +158,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuBulb(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLantern(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuChanger(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSolar(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	

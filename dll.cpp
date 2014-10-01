@@ -40,6 +40,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolType = NULL;
 	m_Lantern = NULL;
 	m_Changer = NULL;
+	m_Solar = NULL;
 	
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -105,6 +106,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolType;
 	delete m_Lantern;
 	delete m_Changer;
+	delete m_Solar;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -477,6 +479,13 @@ void CMapPlugin::Changer()
 	m_Changer->Show();
 }
 
+void CMapPlugin::Solar()
+{
+	if(m_Solar == NULL)
+		m_Solar = new CDialog(CONTROL_SOLAR,false);
+	m_Solar->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -496,7 +505,7 @@ void CMapPlugin::CreateApiMenu(void)
 
 
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHANGER),this, MenuChanger);
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SOLAR),this, MenuLantern);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SOLAR),this, MenuSolar);
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_REGULATOR),this, MenuLantern);
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_AC_ADAPTER),this, MenuLantern);
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYNCHRONIZATION),this, MenuLantern);
@@ -594,6 +603,13 @@ void *CMapPlugin::MenuChanger(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuSolar(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_SOLAR);
+	
+	return NULL;	
+}
 
 void CMapPlugin::Menu(int type)
 {
@@ -610,6 +626,7 @@ void CMapPlugin::Menu(int type)
 		case BUTTON_TYPE_SYMBOL_TYPE:	SymbolType();		break;
 		case BUTTON_TYPE_LANTERN:		Lantern();			break;
 		case BUTTON_TYPE_CHANGER:		Changer();			break;
+		case BUTTON_TYPE_SOLAR:			Solar();			break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());
