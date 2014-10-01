@@ -20,7 +20,7 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
 	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
-	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
+//	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
 	
 END_EVENT_TABLE()
  
@@ -165,7 +165,8 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_FLASH:			Menu = MenuFlash(m_SelectedItem);			break;
 		case CONTROL_BULB:			Menu = MenuBulb(m_SelectedItem);			break;
 		case CONTROL_SYMBOL_TYPE:	Menu = MenuSymbolType(m_SelectedItem);		break;
-
+		case CONTROL_LANTERN:		Menu = MenuLantern(m_SelectedItem);			break;
+		case CONTROL_CHANGER:		Menu = MenuChanger(m_SelectedItem);			break;
 	}
 	
 	if(Menu)
@@ -366,6 +367,28 @@ wxMenu *CListCtrl::MenuSymbolType(int id)
 	
 }
 
+wxMenu *CListCtrl::MenuLantern(int id)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_LANTERN ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_LANTERN,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_LANTERN,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+	}
+	
+	return Menu;
+	
+}
 
 
 void CListCtrl::OnSelected(wxListEvent &event)
@@ -557,9 +580,4 @@ int CListCtrl::OnGetItemColumnImage(long item, long column) const
 int CListCtrl::OnGetItemImage(long item) const
 {
 	return -1;
-}
-
-void CListCtrl::OnFocused(wxListEvent &event)
-{
-	m_SelectedItem = GetNextItem(m_SelectedItem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 }

@@ -29,7 +29,8 @@ class CListCtrl: public wxListCtrl
 	wxMenu *MenuFlash(int id);
 	wxMenu *MenuBulb(int id);
 	wxMenu *MenuSymbolType(int id);
-
+	wxMenu *MenuLantern(int id);
+	
 	void Sort();
 	void NewUser();
 	void NewGroup();
@@ -50,7 +51,7 @@ class CListCtrl: public wxListCtrl
 	void OnChangePassword(wxCommandEvent &event);
 	void OnRight(wxCommandEvent &event);
 	void OnChangeGroup(wxCommandEvent &event);
-	void OnFocused(wxListEvent &event);
+	//void OnFocused(wxListEvent &event);
 	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;

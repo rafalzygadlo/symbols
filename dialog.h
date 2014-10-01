@@ -19,17 +19,7 @@ class CDialog: public wxDialog
 
 
 	wxPanel *GetPanel(wxWindow *Parent);
-	
-	void ControlArea();
-	void ControlBattery();
-	void ControlSeaway();
-	void ControlCommunication();
-	void ControlLight();
-	void ControlBulb();
-	void ControlFlash();
-	void ControlSymbolType();
-
-
+		
 	void New();
 
 	void EditArea(wxString id);
@@ -39,6 +29,9 @@ class CDialog: public wxDialog
 	void EditLight(wxString id);
 	void EditBulb(wxString id);
 	void EditSymbolType(wxString id);
+	void EditFlash(wxString id);
+	void EditLantern(wxString id);
+	void EditChanger(wxString id);
 	
 	void Read();
 	void Clear();

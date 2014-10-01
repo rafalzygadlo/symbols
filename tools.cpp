@@ -9,82 +9,52 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[2][32] = 
+const wchar_t *nvLanguage[39][2] = 
 { 
 	//en
-	{
-		L"Symbol",
-		L"New",
-		L"Name",
-		L"Description",
-		L"Longitude",
-		L"Latitude",
-		L"Close",
-		L"Ok",
-		L"Cancel",
-		L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",
-		L"Area",
-		L"New",
-		L"Edit",
-		L"Delete",
-		L"Seaway",
-		L"Type",
-		L"Name can not be empty",
-		L"Info",
-		L"Light",
-		L"Bulb",
-		L"Add color",
-		L"Color",
-		L"Delete color",
-		L"Battery",
-		L"Capacity",
-		L"Communication Type",
-		L"Delete ?",
-		L"Character not allowed",
-		L"Flash",
-		L"Voltage",
-		L"Power",
-		L"Type",
+	{L"Symbol",	L"Znak"},
+	{L"New", L"Nowy  \tCtrl+N"},
+	{L"Name", L"Nazwa"},
+	{L"Description",L"Opis"},
+	{L"Longitude",	L"Longitude"},
+	{L"Latitude",L"Latitude"},
+	{L"Close",	L"Zamknij"},
+	{L"Ok",L"Ok"},
+	{L"Cancel",L"Anuluj"},
+	{L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",L"Kliknij na mapie ¿eby ustaliæ pozycjê."},
+	{L"Area",L"Akwen"},
+	{L"New",L"Nowy"},
+	{L"Edit",L"Edycja"},
+	{L"Delete",L"Usuñ"},
+	{L"Seaway",L"Tor wodny"},
+	{L"Type",L"Rodzaj znaku"},
+	{L"Name can not be empty",L"Nazwa nie mo¿e byæ pusta"},
+	{L"Info",L"Opis"},
+	{L"Light",L"Œwiat³o"},
+	{L"Bulb",L"¯arówka"},
+	{L"Add color",L"Dodaj kolor"},
+	{L"Color",	L"Kolor"},
+	{L"Delete color", L"Usuñ kolor"},
+	{L"Battery",L"Akumulator"},
+	{L"Capacity",L"Pojemnoœæ"},
+	{L"Communication Type",L"Typ ³¹cznoœci"},
+	{L"Delete ?",L"Usun¹æ ?"},
+	{L"Character not allowed",L"Niedozwolony znak"},
+	{L"Flash",	L"B³yskacz"},
+	{L"Voltage",L"Napiêcie"},
+	{L"Power",L"Moc"},
+	{L"Type",L"Typ"},
+	{L"Lantern",L"Latarnia"},
+	{L"Id",	L"Id"},
+	{L"Changer",L"Zmieniacz"},
+	{L"Solar",L"Solar"},
+	{L"Regulator",L"Regulator"},
+	{L"AC adapter",L"Zasilacz"},
+	{L"Synchronzation",L"Synchronizacja"},
 		
-	},
-	//pl
-	{
-		L"Znak",
-		L"Nowy  \tCtrl+N",
-		L"Nazwa",
-		L"Opis",
-		L"Longitude",
-		L"Latitude",
-		L"Zamknij",
-		L"Ok",
-		L"Anuluj",
-		L"Kliknij na mapie ¿eby ustaliæ pozycjê.",
-		L"Akwen",
-		L"Nowy",
-		L"Edycja",
-		L"Usuñ",
-		L"Tor wodny",
-		L"Rodzaj znaku",
-		L"Nazwa nie mo¿e byæ pusta",
-		L"Opis",
-		L"Œwiat³o",
-		L"¯arówka",
-		L"Dodaj kolor",
-		L"Kolor",
-		L"Usuñ kolor",
-		L"Akumulator",
-		L"Pojemnoœæ",
-		L"Typ ³¹cznoœci",
-		L"Usun¹æ ?",
-		L"Niedozwolony znak",
-		L"B³yskacz",
-		L"Napiêcie",
-		L"Moc",
-		L"Typ",
-	}
-
 };
-
+				
+	
 const wxChar *nvDistanceN[2][3] = 
 { 
 	//en
@@ -150,7 +120,7 @@ wxString GetDistanceName(size_t id)
 
 const wchar_t *GetMsg(int id)
 {
-	return nvLanguage[GlobalLanguageID][id];
+	return nvLanguage[id][GlobalLanguageID];
 }
 void SetLangId(int id)
 {

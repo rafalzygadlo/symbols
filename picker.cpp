@@ -7,7 +7,7 @@
 
 
 extern unsigned int	add_size;
-extern unsigned char add[];
+extern unsigned char add[]; 
 
 BEGIN_EVENT_TABLE(CPickerPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CPickerPanel::OnNew)

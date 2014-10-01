@@ -29,6 +29,7 @@ unsigned char PluginInfoBlock[] = {
 
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
+	SetUID(4);
 	m_Area = NULL;
 	m_Seaway = NULL;
 	m_Light = NULL;
@@ -37,6 +38,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Flash = NULL;
 	m_Bulb = NULL;
 	m_SymbolType = NULL;
+	m_Lantern = NULL;
+	m_Changer = NULL;
 	
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -100,6 +103,8 @@ CMapPlugin::~CMapPlugin()
 	delete m_Flash;
 	delete m_Bulb;
 	delete m_SymbolType;
+	delete m_Lantern;
+	delete m_Changer;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -458,6 +463,20 @@ void CMapPlugin::SymbolType()
 	m_SymbolType->Show();
 }
 
+void CMapPlugin::Lantern()
+{
+	if(m_Lantern == NULL)
+		m_Lantern = new CDialog(CONTROL_LANTERN,false);
+	m_Lantern->Show();
+}
+
+void CMapPlugin::Changer()
+{
+	if(m_Changer == NULL)
+		m_Changer = new CDialog(CONTROL_CHANGER,false);
+	m_Changer->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -473,6 +492,17 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMUNICATION_TYPE),this, MenuCommunication);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_FLASH),this, MenuFlash);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BULB),this, MenuBulb);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LANTERN),this, MenuLantern);
+
+
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHANGER),this, MenuChanger);
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SOLAR),this, MenuLantern);
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_REGULATOR),this, MenuLantern);
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_AC_ADAPTER),this, MenuLantern);
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYNCHRONIZATION),this, MenuLantern);
+	
+	
+
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
@@ -548,6 +578,23 @@ void *CMapPlugin::MenuBulb(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuLantern(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_LANTERN);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuChanger(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(BUTTON_TYPE_CHANGER);
+	
+	return NULL;	
+}
+
+
 void CMapPlugin::Menu(int type)
 {
 	switch(type)
@@ -561,6 +608,8 @@ void CMapPlugin::Menu(int type)
 		case BUTTON_TYPE_BULB:			Bulb();				break;
 		case BUTTON_TYPE_FLASH:			Flash();			break;
 		case BUTTON_TYPE_SYMBOL_TYPE:	SymbolType();		break;
+		case BUTTON_TYPE_LANTERN:		Lantern();			break;
+		case BUTTON_TYPE_CHANGER:		Changer();			break;
 	}
 		
 	GetBroker()->Refresh(GetBroker()->GetParentPtr());

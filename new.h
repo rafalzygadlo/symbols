@@ -26,6 +26,7 @@ class CNew: public wxDialog
 	wxPanel *BulbPanel();
 	wxPanel *FlashPanel();
 	wxPanel *SymbolTypePanel();
+	wxPanel *LanternPanel();
 	
 	bool Validate();
 		

@@ -37,6 +37,7 @@ void CNew::GetPanel(int type)
 		case CONTROL_BULB:			BulbPanel();			break;
 		case CONTROL_FLASH:			FlashPanel();			break;
 		case CONTROL_SYMBOL_TYPE:	SymbolTypePanel();		break;
+		case CONTROL_LANTERN:		LanternPanel();			break;
 	}
 }
 
@@ -94,14 +95,7 @@ wxPanel *CNew::BatteryPanel()
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
-	
-	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
-	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextName->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-
+		
 	wxStaticText *LabelType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
 	FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -312,13 +306,6 @@ wxPanel *CNew::BulbPanel()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
-	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
-	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextName->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
 	wxStaticText *LabelType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
 	FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -376,14 +363,7 @@ wxPanel *CNew::FlashPanel()
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
-	
-	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
-	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextName->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-
+		
 	wxStaticText *LabelType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
 	FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -457,8 +437,55 @@ wxPanel *CNew::SymbolTypePanel()
 	
 }
 
+wxPanel *CNew::LanternPanel()
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+			
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,5);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);
+	
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextType->SetValidator(m_TextValidator);
+
+	FlexGridSizer->Add(m_TextType,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+	
+	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
+	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+	
+	wxPanel *Panel1 = new wxPanel(this);
+	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+
+	Panel1Sizer->AddStretchSpacer();
+
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+	
+	return Panel;
+	
+}
+
+
 bool CNew::Validate()
 {
+
+	return true;
+	
 	wxString err;
 	bool result = true;
 		

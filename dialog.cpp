@@ -5,6 +5,72 @@
 #include "new.h"
 #include "db.h"
 
+
+SHeader Header[] =
+{
+	{CONTROL_AREA,80,	{FID_AREA_ID ,	FNAME_AREA_ID, MSG_ID} },
+	{CONTROL_AREA,100,	{FID_AREA_NAME , FNAME_AREA_NAME, MSG_NAME} },
+	{CONTROL_AREA,250,	{FID_AREA_INFO , FNAME_AREA_INFO, MSG_INFO} },
+
+	{CONTROL_BATTERY,80,  {FID_BATTERY_ID,	FNAME_BATTERY_ID, MSG_ID }},
+	{CONTROL_BATTERY,100, {FID_BATTERY_TYPE, FNAME_BATTERY_TYPE, MSG_TYPE}},
+	{CONTROL_BATTERY,100, {FID_BATTERY_CAPACITY, FNAME_BATTERY_CAPACITY,MSG_CAPACITY }},
+	{CONTROL_BATTERY,250, {FID_BATTERY_INFO, FNAME_BATTERY_INFO,MSG_INFO}},
+	
+	{CONTROL_COMMUNICATION,80,	{FID_COMMUNICATION_ID ,	FNAME_COMMUNICATION_ID, MSG_ID} },
+	{CONTROL_COMMUNICATION,100,	{FID_COMMUNICATION_NAME , FNAME_COMMUNICATION_NAME, MSG_NAME} },
+	{CONTROL_COMMUNICATION,250,	{FID_COMMUNICATION_INFO , FNAME_COMMUNICATION_INFO, MSG_INFO} },
+	
+	{CONTROL_SEAWAY,80,	 {FID_SEAWAY_ID , FNAME_SEAWAY_ID, MSG_ID} },
+	{CONTROL_SEAWAY,100, {FID_SEAWAY_NAME , FNAME_SEAWAY_NAME, MSG_NAME} },
+	{CONTROL_SEAWAY,250, {FID_SEAWAY_INFO , FNAME_SEAWAY_INFO, MSG_INFO} },
+	
+	{CONTROL_LIGHT,80,	{FID_LIGHT_ID , FNAME_LIGHT_ID, MSG_ID} },
+	{CONTROL_LIGHT,100,	{FID_LIGHT_NAME , FNAME_LIGHT_NAME, MSG_NAME} },
+	{CONTROL_LIGHT,250,	{FID_LIGHT_INFO , FNAME_LIGHT_INFO, MSG_INFO} },
+
+	{CONTROL_FLASH,80,  {FID_FLASH_ID , FNAME_FLASH_ID, MSG_ID}  },
+	{CONTROL_FLASH,100, {FID_FLASH_TYPE , FNAME_FLASH_TYPE, MSG_TYPE}  },
+	{CONTROL_FLASH,250, {FID_FLASH_INFO , FNAME_FLASH_INFO, MSG_INFO}  },
+	
+	{CONTROL_BULB,80,  {FID_BULB_ID , FNAME_BULB_ID, MSG_ID}  },
+	{CONTROL_BULB,100, {FID_BULB_TYPE , FNAME_BULB_TYPE, MSG_TYPE}  },
+	{CONTROL_BULB,100, {FID_BULB_VOLTAGE , FNAME_BULB_VOLTAGE, MSG_VOLTAGE}  },
+	{CONTROL_BULB,100, {FID_BULB_POWER , FNAME_BULB_POWER, MSG_POWER}  },
+	{CONTROL_BULB,250, {FID_BULB_INFO , FNAME_BULB_INFO, MSG_INFO}  },
+
+	{CONTROL_SYMBOL_TYPE,80,	{FID_SYMBOL_TYPE_ID ,	FNAME_SYMBOL_TYPE_ID, MSG_ID} },
+	{CONTROL_SYMBOL_TYPE,100,	{FID_SYMBOL_TYPE_NAME , FNAME_SYMBOL_TYPE_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_TYPE,250,	{FID_SYMBOL_TYPE_INFO , FNAME_SYMBOL_TYPE_INFO, MSG_INFO} },
+	
+	{CONTROL_LANTERN,80,	{FID_LANTERN_ID ,	FNAME_LANTERN_ID, MSG_ID} },
+	{CONTROL_LANTERN,100,	{FID_LANTERN_TYPE , FNAME_LANTERN_TYPE, MSG_TYPE} },
+	{CONTROL_LANTERN,250,	{FID_LANTERN_INFO , FNAME_LANTERN_INFO, MSG_INFO} },
+	
+	{CONTROL_CHANGER,80,	{FID_CHANGER_ID ,	FNAME_CHANGER_ID, MSG_ID} },
+	{CONTROL_CHANGER,100,	{FID_CHANGER_TYPE , FNAME_CHANGER_TYPE, MSG_TYPE} },
+	{CONTROL_CHANGER,250,	{FID_CHANGER_INFO , FNAME_CHANGER_INFO, MSG_INFO} },
+
+	{-1},
+
+};
+
+SIds Id[] =
+{
+	{CONTROL_AREA, AREA_COLUMN_WITH_ID, AREA_COLUMN_WITH_NAME, MSG_AREA},
+	{CONTROL_BATTERY, BATTERY_COLUMN_WITH_ID, BATTERY_COLUMN_WITH_NAME,MSG_BATTERY},
+	{CONTROL_COMMUNICATION, COMMUNICATION_COLUMN_WITH_ID, COMMUNICATION_COLUMN_WITH_NAME,MSG_COMMUNICATION_TYPE},
+	{CONTROL_SEAWAY, SEAWAY_COLUMN_WITH_ID, SEAWAY_COLUMN_WITH_NAME,MSG_SEAWAY},
+	{CONTROL_LIGHT, LIGHT_COLUMN_WITH_ID, LIGHT_COLUMN_WITH_NAME,MSG_LIGHT},
+	{CONTROL_FLASH, FLASH_COLUMN_WITH_ID, FLASH_COLUMN_WITH_NAME,MSG_FLASH},
+	{CONTROL_BULB, BULB_COLUMN_WITH_ID, BULB_COLUMN_WITH_NAME,MSG_BULB},
+	{CONTROL_SYMBOL_TYPE, SYMBOL_TYPE_COLUMN_WITH_ID, SYMBOL_TYPE_COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
+	{CONTROL_LANTERN, LANTERN_COLUMN_WITH_ID, LANTERN_COLUMN_WITH_NAME,MSG_LANTERN},
+	{CONTROL_CHANGER, CHANGER_COLUMN_WITH_ID, CHANGER_COLUMN_WITH_NAME,MSG_LANTERN},
+	{-1},
+
+};
+
 CDialog::CDialog(int control_type)
 {
 
@@ -76,20 +142,45 @@ wxPanel *CDialog::GetPanel(wxWindow *Parent)
 	Panel->SetSizer(Sizer);
 	m_List = new CListCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL | wxLC_SINGLE_SEL | wxLC_ALIGN_LEFT );
 
-	switch(m_ControlType)
-	{
-	
-		case CONTROL_AREA:			ControlArea();				break;
-		case CONTROL_BATTERY:		ControlBattery();			break;
-		case CONTROL_COMMUNICATION:	ControlCommunication();		break;
-		case CONTROL_SEAWAY:		ControlSeaway();			break;
-		case CONTROL_LIGHT:			ControlLight();				break;
-		case CONTROL_BULB:			ControlBulb();				break;
-		case CONTROL_FLASH:			ControlFlash();				break;
-		case CONTROL_SYMBOL_TYPE:	ControlSymbolType();		break;
-	}
-	
+	int id = 0;
+	wxListItem item;
+	int counter = 0;
+	SHeader h;
 
+	while(Header[id].id_control != -1)
+	{
+		h = Header[id];
+		
+		if(h.id_control == m_ControlType)
+		{
+			h = Header[id];
+			item.SetWidth(h.width);	
+			item.SetText(GetMsg(h.column.id_msg));	
+			m_List->InsertColumn(counter,item);
+			m_List->_AddColumn(h.column.id,h.column.name);
+			counter++;
+		}
+	
+		id++;
+	}
+
+	id = 0;
+	
+	while(Id[id].id_control != -1)
+	{
+		SIds i = Id[id];
+		if(i.id_control == m_ControlType)
+		{
+			m_List->SetColumnWithId(i.col_with_id);
+			m_List->SetColumnWithName(i.col_with_name);
+			m_TopLabel->SetLabel(GetMsg(i.id_label));
+			break;
+		} 
+	
+		id++;
+	}
+
+	
 	m_List->InitColumns();
 	Read();
 	
@@ -98,160 +189,6 @@ wxPanel *CDialog::GetPanel(wxWindow *Parent)
 	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
-
-}
-
-void CDialog::ControlArea()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
-		
-	m_List->_AddColumn(FID_AREA_NAME,FNAME_AREA_NAME);
-	m_List->_AddColumn(FID_AREA_INFO,FNAME_AREA_INFO);
-	
-	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
-	m_List->SetColumnWithId(AREA_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(AREA_COLUMN_WITH_NAME);
-	//SetLabel(GetMsg(MSG_AREA));
-	m_TopLabel->SetLabel(GetMsg(MSG_AREA));
-
-}
-
-void CDialog::ControlBattery()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));		m_List->InsertColumn(0,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_TYPE));		m_List->InsertColumn(1,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_CAPACITY));	m_List->InsertColumn(2,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));		m_List->InsertColumn(3,item);
-
-	m_List->_AddColumn(FID_BATTERY_NAME,FNAME_BATTERY_NAME);
-	m_List->_AddColumn(FID_BATTERY_TYPE,FNAME_BATTERY_TYPE);
-	m_List->_AddColumn(FID_BATTERY_CAPACITY,FNAME_BATTERY_CAPACITY);
-	m_List->_AddColumn(FID_BATTERY_INFO,FNAME_BATTERY_INFO);
-	
-	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
-	m_List->SetColumnWithId(BATTERY_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(BATTERY_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_BATTERY));
-	m_TopLabel->SetLabel(GetMsg(MSG_BATTERY));
-}
-
-void CDialog::ControlCommunication()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
-
-	m_List->_AddColumn(FID_COMMUNICATION_NAME,FNAME_COMMUNICATION_NAME);
-	m_List->_AddColumn(FID_COMMUNICATION_INFO,FNAME_COMMUNICATION_INFO);
-	
-	m_List->_AddColumn(FID_AREA_ID,FNAME_AREA_ID);
-	m_List->SetColumnWithId(COMMUNICATION_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(COMMUNICATION_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_COMMUNICATION_TYPE));
-	m_TopLabel->SetLabel(GetMsg(MSG_COMMUNICATION_TYPE));
-	
-}
-
-
-void CDialog::ControlSeaway()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
-
-	m_List->_AddColumn(FID_SEAWAY_NAME,FNAME_SEAWAY_NAME);
-	m_List->_AddColumn(FID_SEAWAY_INFO,FNAME_SEAWAY_INFO);
-	
-	m_List->_AddColumn(FID_SEAWAY_ID,FNAME_SEAWAY_ID);
-	m_List->SetColumnWithId(SEAWAY_COLUMN_WITH_ID);		// id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(SEAWAY_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_SEAWAY));
-	m_TopLabel->SetLabel(GetMsg(MSG_SEAWAY));
-}
-
-
-void CDialog::ControlLight()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
-
-	m_List->_AddColumn(FID_LIGHT_NAME,FNAME_LIGHT_NAME);
-	m_List->_AddColumn(FID_LIGHT_INFO,FNAME_LIGHT_INFO);
-	
-	m_List->_AddColumn(FID_LIGHT_ID,FNAME_LIGHT_ID);
-	m_List->SetColumnWithId(LIGHT_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(LIGHT_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_LIGHT));
-	m_TopLabel->SetLabel(GetMsg(MSG_LIGHT));
-}
-
-
-void CDialog::ControlFlash()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));		m_List->InsertColumn(0,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_TYPE));		m_List->InsertColumn(1,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));		m_List->InsertColumn(2,item);
-
-	m_List->_AddColumn(FID_FLASH_NAME,FNAME_FLASH_NAME);
-	m_List->_AddColumn(FID_FLASH_TYPE,FNAME_FLASH_TYPE);
-	m_List->_AddColumn(FID_FLASH_INFO,FNAME_FLASH_INFO);
-	
-	m_List->_AddColumn(FID_FLASH_ID,FNAME_FLASH_ID);
-	m_List->SetColumnWithId(FLASH_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(FLASH_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_FLASH));
-	m_TopLabel->SetLabel(GetMsg(MSG_FLASH));
-}
-
-
-
-void CDialog::ControlBulb()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));		m_List->InsertColumn(0,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_TYPE));		m_List->InsertColumn(1,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_VOLTAGE));	m_List->InsertColumn(2,item);
-	item.SetWidth(100);	item.SetText(GetMsg(MSG_POWER));	m_List->InsertColumn(3,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));		m_List->InsertColumn(4,item);
-
-	m_List->_AddColumn(FID_BULB_NAME,FNAME_BULB_NAME);
-	m_List->_AddColumn(FID_BULB_TYPE,FNAME_BULB_TYPE);
-	m_List->_AddColumn(FID_BULB_VOLTAGE,FNAME_BULB_VOLTAGE);
-	m_List->_AddColumn(FID_BULB_POWER,FNAME_BULB_POWER);
-	m_List->_AddColumn(FID_BULB_INFO,FNAME_BULB_INFO);
-	
-	m_List->_AddColumn(FID_BULB_ID,FNAME_BULB_ID);
-	m_List->SetColumnWithId(BULB_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(BULB_COLUMN_WITH_NAME);
-	
-	//SetLabel(GetMsg(MSG_BULB));
-	m_TopLabel->SetLabel(GetMsg(MSG_BULB));
-}
-
-void CDialog::ControlSymbolType()
-{
-	wxListItem item;
-	item.SetWidth(150);	item.SetText(GetMsg(MSG_NAME));	m_List->InsertColumn(0,item);
-	item.SetWidth(250);	item.SetText(GetMsg(MSG_INFO));	m_List->InsertColumn(1,item);
-		
-	m_List->_AddColumn(FID_SYMBOL_TYPE_NAME,FNAME_SYMBOL_TYPE_NAME);
-	m_List->_AddColumn(FID_SYMBOL_TYPE_INFO,FNAME_SYMBOL_TYPE_INFO);
-	
-	m_List->_AddColumn(FID_SYMBOL_TYPE_ID,FNAME_SYMBOL_TYPE_ID);
-	m_List->SetColumnWithId(SYMBOL_TYPE_COLUMN_WITH_ID); // id kolumny z id pól bazy danych
-	m_List->SetColumnWithName(SYMBOL_TYPE_COLUMN_WITH_NAME);
-	//SetLabel(GetMsg(MSG_AREA));
-	m_TopLabel->SetLabel(GetMsg(MSG_SYMBOL_TYPE));
 
 }
 
@@ -266,7 +203,9 @@ void CDialog::SetTable()
 		case CONTROL_LIGHT:			m_Table = TABLE_LIGHT;			break;
 		case CONTROL_FLASH:			m_Table = TABLE_FLASH;			break;
 		case CONTROL_BULB:			m_Table = TABLE_BULB;			break;
-		case CONTROL_SYMBOL_TYPE:	m_Table	= TABLE_SYMBOL;			break;
+		case CONTROL_SYMBOL_TYPE:	m_Table	= TABLE_SYMBOL_TYPE;	break;
+		case CONTROL_LANTERN:		m_Table = TABLE_LANTERN;		break;
+		case CONTROL_CHANGER:		m_Table = TABLE_CHANGER;		break;
 	}
 }
 
@@ -313,7 +252,7 @@ void CDialog::New()
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo());
 			break;
 			case CONTROL_BATTERY:		
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s', type='%s', capacity='%s'"),TABLE_BATTERY,ptr->GetName(),ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity());
+				sql = wxString::Format(_("INSERT INTO %s SET info='%s', type='%s', capacity='%s'"),TABLE_BATTERY,ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity());
 			break;
 			case CONTROL_COMMUNICATION:	
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_COMMUNICATION,ptr->GetName(),ptr->GetInfo());
@@ -325,10 +264,19 @@ void CDialog::New()
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_LIGHT,ptr->GetName(),ptr->GetInfo());
 			break;
 			case CONTROL_FLASH:			
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', type ='%s', info='%s'"),TABLE_FLASH,ptr->GetName(),ptr->GetType(),ptr->GetInfo());
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_FLASH,ptr->GetType(),ptr->GetInfo());
 			break;
 			case CONTROL_BULB:			
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', type ='%s',voltage='%s', power='%s', info='%s'"),TABLE_BULB,ptr->GetName(),ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),ptr->GetInfo());
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s',voltage='%s', power='%s', info='%s'"),TABLE_BULB,ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),ptr->GetInfo());
+			break;
+			case CONTROL_SYMBOL_TYPE:
+				sql = wxString::Format(_("INSERT INTO %s SET name ='%s', info='%s'"),TABLE_SYMBOL_TYPE,ptr->GetName(),ptr->GetInfo());
+			break;
+			case CONTROL_LANTERN:
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_LANTERN,ptr->GetType(),ptr->GetInfo());
+			break;
+			case CONTROL_CHANGER:
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_CHANGER,ptr->GetType(),ptr->GetInfo());
 			break;
 
 		}
@@ -362,6 +310,9 @@ void CDialog::OnEdit(wxString id)
 		case CONTROL_LIGHT:			EditLight(id);			break;
 		case CONTROL_BULB:			EditBulb(id);			break;
 		case CONTROL_SYMBOL_TYPE:	EditSymbolType(id);		break;
+		case CONTROL_FLASH:			EditFlash(id);			break;
+		case CONTROL_LANTERN:		EditLantern(id);		break;
+		case CONTROL_CHANGER:		EditChanger(id);		break;
 	}
 
 }
@@ -408,7 +359,6 @@ void CDialog::EditBattery(wxString id)
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_BATTERY_NAME]));
 	ptr->SetInfo(Convert(row[FID_BATTERY_INFO]));
 	ptr->SetCapacity(Convert(row[FID_BATTERY_CAPACITY]));
 	ptr->SetType(Convert(row[FID_BATTERY_TYPE]));
@@ -417,7 +367,7 @@ void CDialog::EditBattery(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s', type ='%s', capacity='%s' WHERE id = '%s'"),TABLE_BATTERY,ptr->GetName(),ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET info ='%s', type ='%s', capacity='%s' WHERE id = '%s'"),TABLE_BATTERY,ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -530,7 +480,6 @@ void CDialog::EditBulb(wxString id)
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_BULB_NAME]));
 	ptr->SetInfo(Convert(row[FID_BULB_INFO]));
 	ptr->SetPower(Convert(row[FID_BULB_POWER]));
 	ptr->SetVoltage(Convert(row[FID_BULB_VOLTAGE]));
@@ -540,7 +489,7 @@ void CDialog::EditBulb(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s', type ='%s', voltage='%s', power='%s' WHERE id = '%s'"),TABLE_BULB,ptr->GetName(),ptr->GetInfo(),ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET info ='%s', type ='%s', voltage='%s', power='%s' WHERE id = '%s'"),TABLE_BULB,ptr->GetInfo(),ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -557,13 +506,13 @@ void CDialog::EditSymbolType(wxString id)
 	if(!my_query(sql))
 		return;
 		
-	CNew *ptr = new CNew(CONTROL_AREA);
+	CNew *ptr = new CNew(CONTROL_SYMBOL_TYPE);
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_AREA_NAME]));
-	ptr->SetInfo(Convert(row[FID_AREA_INFO]));
+	ptr->SetName(Convert(row[FID_SYMBOL_TYPE_NAME]));
+	ptr->SetInfo(Convert(row[FID_SYMBOL_TYPE_INFO]));
 	
 	db_free_result(result);
 
@@ -579,6 +528,97 @@ void CDialog::EditSymbolType(wxString id)
 	delete ptr;
 	
 }
+
+void CDialog::EditFlash(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_FLASH,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(CONTROL_FLASH);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetType(Convert(row[FID_FLASH_TYPE]));
+	ptr->SetInfo(Convert(row[FID_FLASH_INFO]));
+	
+	db_free_result(result);
+
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_FLASH,ptr->GetType(),ptr->GetInfo(),id);
+		my_query(sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
+void CDialog::EditLantern(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_LANTERN,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(CONTROL_LANTERN);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetType(Convert(row[FID_LANTERN_TYPE]));
+	ptr->SetInfo(Convert(row[FID_LANTERN_INFO]));
+	
+	db_free_result(result);
+
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_LANTERN,ptr->GetType(),ptr->GetInfo(),id);
+		my_query(sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
+void CDialog::EditChanger(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_CHANGER,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(CONTROL_CHANGER);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetType(Convert(row[FID_CHANGER_TYPE]));
+	ptr->SetInfo(Convert(row[FID_CHANGER_INFO]));
+	
+	db_free_result(result);
+
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_CHANGER,ptr->GetType(),ptr->GetInfo(),id);
+		my_query(sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
 
 
 void CDialog::OnDelete(wxString id)
