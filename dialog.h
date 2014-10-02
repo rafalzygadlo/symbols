@@ -29,10 +29,11 @@ class CDialog: public wxDialog
 	void EditLight(wxString id);
 	void EditBulb(wxString id);
 	void EditSymbolType(wxString id);
-	void EditFlash(wxString id);
-	void EditLantern(wxString id);
-	void EditChanger(wxString id);
-	void EditSolar(wxString id);
+	
+	
+	
+	void EditName(wxString id); // wszystkie tabele z polami [type]
+	void EditType(wxString id); // wszystkie tabele z polami [type]
 	
 	void Read();
 	void Clear();

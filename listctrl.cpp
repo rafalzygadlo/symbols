@@ -15,7 +15,6 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_LIST_ITEM_ACTIVATED(ID_LIST,CListCtrl::OnActivate)
 	EVT_CONTEXT_MENU(CListCtrl::OnContextMenu)
 	EVT_LIST_ITEM_SELECTED(ID_LIST,CListCtrl::OnSelected)
-	EVT_LIST_ITEM_DESELECTED(ID_LIST,CListCtrl::OnDeSelected)
 	EVT_LIST_COL_CLICK(ID_LIST,CListCtrl::OnColClick)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
@@ -127,7 +126,7 @@ void CListCtrl::Read(wxString query)
 
 	while(row = (char**)db_fetch_row(result))
 	{
-		for(size_t i = 0; i < m_FieldCount; i++)
+		for(int i = 0; i < m_FieldCount; i++)
 		{
 			for(size_t j = 0; j < m_ColumnIds.size(); j++)
 			{
@@ -157,17 +156,26 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);			break;
-		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);			break;
-		case CONTROL_LIGHT:			_Menu = Menu(m_SelectedItem,MODULE_LIGHT);			break;
-		case CONTROL_BATTERY:		_Menu = Menu(m_SelectedItem,MODULE_BATTERY);		break;
-		case CONTROL_COMMUNICATION: _Menu = Menu(m_SelectedItem,MODULE_COMMUNICATION );	break;
-		case CONTROL_FLASH:			_Menu = Menu(m_SelectedItem,MODULE_FLASH);			break;
-		case CONTROL_BULB:			_Menu = Menu(m_SelectedItem,MODULE_BULB);			break;
-		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);	break;
-		case CONTROL_LANTERN:		_Menu = Menu(m_SelectedItem,MODULE_LANTERN);		break;
-		case CONTROL_CHANGER:		_Menu = Menu(m_SelectedItem,MODULE_CHANGER);		break;
-		case CONTROL_SOLAR:			_Menu = Menu(m_SelectedItem,MODULE_SOLAR);			break;
+		case CONTROL_AREA:				_Menu = Menu(m_SelectedItem,MODULE_AREA);				break;
+		case CONTROL_SEAWAY:			_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);				break;
+		case CONTROL_LIGHT:				_Menu = Menu(m_SelectedItem,MODULE_LIGHT);				break;
+		case CONTROL_BATTERY:			_Menu = Menu(m_SelectedItem,MODULE_BATTERY);			break;
+		case CONTROL_COMMUNICATION:		_Menu = Menu(m_SelectedItem,MODULE_COMMUNICATION );		break;
+		case CONTROL_FLASH:				_Menu = Menu(m_SelectedItem,MODULE_FLASH);				break;
+		case CONTROL_BULB:				_Menu = Menu(m_SelectedItem,MODULE_BULB);				break;
+		case CONTROL_SYMBOL_TYPE:		_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
+		case CONTROL_LANTERN:			_Menu = Menu(m_SelectedItem,MODULE_LANTERN);			break;
+		case CONTROL_CHANGER:			_Menu = Menu(m_SelectedItem,MODULE_CHANGER);			break;
+		case CONTROL_SOLAR:				_Menu = Menu(m_SelectedItem,MODULE_SOLAR);				break;
+		case CONTROL_REGULATOR:			_Menu = Menu(m_SelectedItem,MODULE_REGULATOR);			break;
+		case CONTROL_AC_ADAPTER:		_Menu = Menu(m_SelectedItem,MODULE_AC_ADAPTER);			break;
+		case CONTROL_SYNCHRONIZATION:	_Menu = Menu(m_SelectedItem,MODULE_SYNCHRONIZATION);	break;
+		case CONTROL_TELEMETRY:			_Menu = Menu(m_SelectedItem,MODULE_TELEMETRY);			break;
+		case CONTROL_COLLECTION:		_Menu = Menu(m_SelectedItem,MODULE_COLLECTION);			break;
+		case CONTROL_ANTENNA:			_Menu = Menu(m_SelectedItem,MODULE_ANTENNA);			break;
+		case CONTROL_LIGHTNING:			_Menu = Menu(m_SelectedItem,MODULE_LIGHTNING);			break;
+		case CONTROL_WIND_GENERATOR:	_Menu = Menu(m_SelectedItem,MODULE_WIND_GENERATOR);		break;
+		case CONTROL_NAUTOFON:			_Menu = Menu(m_SelectedItem,MODULE_NAUTOFON);			break;
 	}
 	
 	if(_Menu)
@@ -198,7 +206,6 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 		
 	}
 		
-	
 	return Menu;
 	
 }
@@ -215,16 +222,6 @@ void CListCtrl::OnSelected(wxListEvent &event)
 
 }
 
-void CListCtrl::OnDeSelected(wxListEvent &event)
-{
-	m_SelectedItem = -1;
-
-	switch(m_ControlType)
-	{
-//		case CONTROL_BATTERY:	((CDialog*)m_Control)->OnDeSelect();	break;
-		
-	}
-}
 
 void CListCtrl::OnActivate(wxListEvent &event)
 {
@@ -337,7 +334,7 @@ void CListCtrl::OnColClick(wxListEvent& event)
 	static int col = -1;
 	static int old_col;
 	
-	for(size_t i = 0; i < this->GetColumnCount(); i++)
+	for(int i = 0; i < this->GetColumnCount(); i++)
 	{
 		SetColumnImage(i,-1);
 	}

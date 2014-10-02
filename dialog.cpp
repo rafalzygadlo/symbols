@@ -55,23 +55,68 @@ SHeader Header[] =
 	{CONTROL_SOLAR,100,	{FID_CHANGER_TYPE , FNAME_CHANGER_TYPE, MSG_TYPE} },
 	{CONTROL_SOLAR,250,	{FID_CHANGER_INFO , FNAME_CHANGER_INFO, MSG_INFO} },
 
+	{CONTROL_REGULATOR,80,	{FID_REGULATOR_ID ,	FNAME_REGULATOR_ID, MSG_ID} },
+	{CONTROL_REGULATOR,100,	{FID_REGULATOR_TYPE , FNAME_REGULATOR_TYPE, MSG_TYPE} },
+	{CONTROL_REGULATOR,250,	{FID_REGULATOR_INFO , FNAME_REGULATOR_INFO, MSG_INFO} },
+
+	{CONTROL_AC_ADAPTER,80,	{FID_AC_ADAPTER_ID , FNAME_AC_ADAPTER_ID, MSG_ID} },
+	{CONTROL_AC_ADAPTER,100,{FID_AC_ADAPTER_TYPE , FNAME_AC_ADAPTER_TYPE, MSG_TYPE} },
+	{CONTROL_AC_ADAPTER,250,{FID_AC_ADAPTER_INFO , FNAME_AC_ADAPTER_INFO, MSG_INFO} },
+
+	{CONTROL_SYNCHRONIZATION,80, {FID_SYNCHRONIZATION_ID , FNAME_SYNCHRONIZATION_ID, MSG_ID} },
+	{CONTROL_SYNCHRONIZATION,100, {FID_SYNCHRONIZATION_TYPE , FNAME_SYNCHRONIZATION_TYPE, MSG_TYPE} },
+	{CONTROL_SYNCHRONIZATION,250, {FID_SYNCHRONIZATION_INFO , FNAME_SYNCHRONIZATION_INFO, MSG_INFO} },
+
+	{CONTROL_TELEMETRY,80, {FID_TELEMETRY_ID , FNAME_TELEMETRY_ID, MSG_ID} },
+	{CONTROL_TELEMETRY,100, {FID_TELEMETRY_TYPE , FNAME_TELEMETRY_TYPE, MSG_TYPE} },
+	{CONTROL_TELEMETRY,250, {FID_TELEMETRY_INFO , FNAME_TELEMETRY_INFO, MSG_INFO} },
+	
+	{CONTROL_COLLECTION,80, {FID_COLLECTION_ID , FNAME_COLLECTION_ID, MSG_ID} },
+	{CONTROL_COLLECTION,100, {FID_COLLECTION_TYPE , FNAME_COLLECTION_TYPE, MSG_TYPE} },
+	{CONTROL_COLLECTION,250, {FID_COLLECTION_INFO , FNAME_COLLECTION_INFO, MSG_INFO} },
+
+	{CONTROL_ANTENNA,80, {FID_ANTENNA_ID , FNAME_ANTENNA_ID, MSG_ID} },
+	{CONTROL_ANTENNA,100, {FID_ANTENNA_TYPE , FNAME_ANTENNA_TYPE, MSG_TYPE} },
+	{CONTROL_ANTENNA,250, {FID_ANTENNA_INFO , FNAME_ANTENNA_INFO, MSG_INFO} },
+
+	{CONTROL_LIGHTNING,80, {FID_LIGHTNING_ID , FNAME_LIGHTNING_ID, MSG_ID} },
+	{CONTROL_LIGHTNING,100, {FID_LIGHTNING_TYPE , FNAME_LIGHTNING_TYPE, MSG_TYPE} },
+	{CONTROL_LIGHTNING,250, {FID_LIGHTNING_INFO , FNAME_LIGHTNING_INFO, MSG_INFO} },
+	
+	{CONTROL_WIND_GENERATOR,80, {FID_WIND_GENERATOR_ID , FNAME_WIND_GENERATOR_ID, MSG_ID} },
+	{CONTROL_WIND_GENERATOR,100, {FID_WIND_GENERATOR_TYPE , FNAME_WIND_GENERATOR_TYPE, MSG_TYPE} },
+	{CONTROL_WIND_GENERATOR,250, {FID_WIND_GENERATOR_INFO , FNAME_WIND_GENERATOR_INFO, MSG_INFO} },
+
+	{CONTROL_NAUTOFON,80, {FID_NAUTOFON_ID , FNAME_NAUTOFON_ID, MSG_ID} },
+	{CONTROL_NAUTOFON,100, {FID_NAUTOFON_TYPE , FNAME_NAUTOFON_TYPE, MSG_TYPE} },
+	{CONTROL_NAUTOFON,250, {FID_NAUTOFON_INFO , FNAME_NAUTOFON_INFO, MSG_INFO} },
+
 	{-1},
 
 };
 
 SIds Id[] =
 {
-	{CONTROL_AREA, AREA_COLUMN_WITH_ID, AREA_COLUMN_WITH_NAME, MSG_AREA},
-	{CONTROL_BATTERY, BATTERY_COLUMN_WITH_ID, BATTERY_COLUMN_WITH_NAME,MSG_BATTERY},
-	{CONTROL_COMMUNICATION, COMMUNICATION_COLUMN_WITH_ID, COMMUNICATION_COLUMN_WITH_NAME,MSG_COMMUNICATION_TYPE},
-	{CONTROL_SEAWAY, SEAWAY_COLUMN_WITH_ID, SEAWAY_COLUMN_WITH_NAME,MSG_SEAWAY},
-	{CONTROL_LIGHT, LIGHT_COLUMN_WITH_ID, LIGHT_COLUMN_WITH_NAME,MSG_LIGHT},
-	{CONTROL_FLASH, FLASH_COLUMN_WITH_ID, FLASH_COLUMN_WITH_NAME,MSG_FLASH},
-	{CONTROL_BULB, BULB_COLUMN_WITH_ID, BULB_COLUMN_WITH_NAME,MSG_BULB},
-	{CONTROL_SYMBOL_TYPE, SYMBOL_TYPE_COLUMN_WITH_ID, SYMBOL_TYPE_COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
-	{CONTROL_LANTERN, LANTERN_COLUMN_WITH_ID, LANTERN_COLUMN_WITH_NAME,MSG_LANTERN},
-	{CONTROL_CHANGER, CHANGER_COLUMN_WITH_ID, CHANGER_COLUMN_WITH_NAME,MSG_CHANGER},
-	{CONTROL_SOLAR, SOLAR_COLUMN_WITH_ID, SOLAR_COLUMN_WITH_NAME, MSG_SOLAR},
+	{CONTROL_AREA, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_AREA},
+	{CONTROL_BATTERY, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BATTERY},
+	{CONTROL_COMMUNICATION, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_COMMUNICATION_TYPE},
+	{CONTROL_SEAWAY, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SEAWAY},
+	{CONTROL_LIGHT, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LIGHT},
+	{CONTROL_FLASH, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_FLASH},
+	{CONTROL_BULB, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BULB},
+	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
+	{CONTROL_LANTERN, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LANTERN},
+	{CONTROL_CHANGER, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_CHANGER},
+	{CONTROL_SOLAR, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_SOLAR},
+	{CONTROL_REGULATOR, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_REGULATOR},
+	{CONTROL_AC_ADAPTER, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_AC_ADAPTER},
+	{CONTROL_SYNCHRONIZATION, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_SYNCHRONIZATION},
+	{CONTROL_TELEMETRY, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_TELEMETRY_MODULE},
+	{CONTROL_COLLECTION, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_COLLECTION_MODULE},
+	{CONTROL_ANTENNA, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_ANTENNA},
+	{CONTROL_LIGHTNING, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_LIGHTNING},
+	{CONTROL_WIND_GENERATOR, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_WIND_GENERATOR},
+	{CONTROL_NAUTOFON, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_NAUTOFON},
 	{-1},
 
 };
@@ -88,6 +133,8 @@ CDialog::CDialog(int control_type, bool picker)
 	m_ButtonOk = NULL;
 	m_Table = wxEmptyString;
 	m_ControlType = control_type;
+	SetTable();
+	
 	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
@@ -201,23 +248,32 @@ void CDialog::SetTable()
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_AREA:			m_Table = TABLE_AREA;			break;
-		case CONTROL_BATTERY:		m_Table = TABLE_BATTERY;		break;
-		case CONTROL_COMMUNICATION:	m_Table = TABLE_COMMUNICATION;	break;
-		case CONTROL_SEAWAY:		m_Table = TABLE_SEAWAY;			break;
-		case CONTROL_LIGHT:			m_Table = TABLE_LIGHT;			break;
-		case CONTROL_FLASH:			m_Table = TABLE_FLASH;			break;
-		case CONTROL_BULB:			m_Table = TABLE_BULB;			break;
-		case CONTROL_SYMBOL_TYPE:	m_Table	= TABLE_SYMBOL_TYPE;	break;
-		case CONTROL_LANTERN:		m_Table = TABLE_LANTERN;		break;
-		case CONTROL_CHANGER:		m_Table = TABLE_CHANGER;		break;
-		case CONTROL_SOLAR:			m_Table = TABLE_SOLAR;			break;
+		case CONTROL_AREA:				m_Table = TABLE_AREA;				break;
+		case CONTROL_BATTERY:			m_Table = TABLE_BATTERY;			break;
+		case CONTROL_COMMUNICATION:		m_Table = TABLE_COMMUNICATION;		break;
+		case CONTROL_SEAWAY:			m_Table = TABLE_SEAWAY;				break;
+		case CONTROL_LIGHT:				m_Table = TABLE_LIGHT;				break;
+		case CONTROL_FLASH:				m_Table = TABLE_FLASH;				break;
+		case CONTROL_BULB:				m_Table = TABLE_BULB;				break;
+		case CONTROL_SYMBOL_TYPE:		m_Table	= TABLE_SYMBOL_TYPE;		break;
+		case CONTROL_LANTERN:			m_Table = TABLE_LANTERN;			break;
+		case CONTROL_CHANGER:			m_Table = TABLE_CHANGER;			break;
+		case CONTROL_SOLAR:				m_Table = TABLE_SOLAR;				break;
+		case CONTROL_REGULATOR:			m_Table = TABLE_REGULATOR;			break;
+		case CONTROL_AC_ADAPTER:		m_Table = TABLE_AC_ADAPTER;			break;
+		case CONTROL_SYNCHRONIZATION:	m_Table = TABLE_SYNCHRONIZATION;	break;
+		case CONTROL_TELEMETRY:			m_Table = TABLE_TELEMETRY;			break;
+		case CONTROL_COLLECTION:		m_Table = TABLE_COLLECTION;			break;
+		case CONTROL_ANTENNA:			m_Table = TABLE_ANTENNA;			break;
+		case CONTROL_LIGHTNING:			m_Table = TABLE_LIGHTNING;			break;
+		case CONTROL_WIND_GENERATOR:	m_Table = TABLE_WIND_GENERATOR;		break;
+		case CONTROL_NAUTOFON:			m_Table = TABLE_NAUTOFON;			break;
 	}
 }
 
 void CDialog::Read()
 {	
-	SetTable();
+	
 	wxString sql;
 
 	if(m_Field == wxEmptyString)		
@@ -255,39 +311,38 @@ void CDialog::New()
 		switch(m_ControlType)
 		{
 			case CONTROL_AREA:			
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo());
-			break;
-			case CONTROL_BATTERY:		
-				sql = wxString::Format(_("INSERT INTO %s SET info='%s', type='%s', capacity='%s'"),TABLE_BATTERY,ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity());
-			break;
 			case CONTROL_COMMUNICATION:	
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_COMMUNICATION,ptr->GetName(),ptr->GetInfo());
-			break;
 			case CONTROL_SEAWAY:		
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo());
+			case CONTROL_SYMBOL_TYPE:
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
+			break;
+			
+			case CONTROL_BATTERY:		
+				sql = wxString::Format(_("INSERT INTO %s SET info='%s', type='%s', capacity='%s'"),m_Table,ptr->GetInfo(),ptr->GetType(),ptr->GetCapacity());
 			break;
 			case CONTROL_LIGHT:			
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),TABLE_LIGHT,ptr->GetName(),ptr->GetInfo());
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
 			break;
-			case CONTROL_FLASH:			
-				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_FLASH,ptr->GetType(),ptr->GetInfo());
-			break;
+			
 			case CONTROL_BULB:			
-				sql = wxString::Format(_("INSERT INTO %s SET type ='%s',voltage='%s', power='%s', info='%s'"),TABLE_BULB,ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),ptr->GetInfo());
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s',voltage='%s', power='%s', info='%s'"),m_Table,ptr->GetType(),ptr->GetVoltage(),ptr->GetPower(),ptr->GetInfo());
 			break;
-			case CONTROL_SYMBOL_TYPE:
-				sql = wxString::Format(_("INSERT INTO %s SET name ='%s', info='%s'"),TABLE_SYMBOL_TYPE,ptr->GetName(),ptr->GetInfo());
-			break;
+						
 			case CONTROL_LANTERN:
-				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_LANTERN,ptr->GetType(),ptr->GetInfo());
-			break;
 			case CONTROL_CHANGER:
-				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_CHANGER,ptr->GetType(),ptr->GetInfo());
-			break;
 			case CONTROL_SOLAR:
-				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),TABLE_SOLAR,ptr->GetType(),ptr->GetInfo());
+			case CONTROL_REGULATOR:
+			case CONTROL_AC_ADAPTER:
+			case CONTROL_SYNCHRONIZATION:
+			case CONTROL_TELEMETRY:
+			case CONTROL_FLASH:
+			case CONTROL_COLLECTION:
+			case CONTROL_ANTENNA:
+			case CONTROL_LIGHTNING:
+			case CONTROL_WIND_GENERATOR:
+			case CONTROL_NAUTOFON:
+				sql = wxString::Format(_("INSERT INTO %s SET type ='%s', info='%s'"),m_Table,ptr->GetType(),ptr->GetInfo());
 			break;
-
 		}
 				
 		if(!my_query(sql))
@@ -312,41 +367,57 @@ void CDialog::OnEdit(wxString id)
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_AREA:			EditArea(id);			break;
-		case CONTROL_BATTERY:		EditBattery(id);		break;
-		case CONTROL_COMMUNICATION:	EditCommunication(id);	break;
-		case CONTROL_SEAWAY:		EditSeaway(id);			break;
-		case CONTROL_LIGHT:			EditLight(id);			break;
-		case CONTROL_BULB:			EditBulb(id);			break;
-		case CONTROL_SYMBOL_TYPE:	EditSymbolType(id);		break;
-		case CONTROL_FLASH:			EditFlash(id);			break;
-		case CONTROL_LANTERN:		EditLantern(id);		break;
-		case CONTROL_CHANGER:		EditChanger(id);		break;
-		case CONTROL_SOLAR:			EditSolar(id);			break;
+		
+		case CONTROL_BATTERY:			EditBattery(id);					break;
+		case CONTROL_LIGHT:				EditLight(id);						break;
+		case CONTROL_BULB:				EditBulb(id);						break;
+		
+		case CONTROL_COMMUNICATION:		
+		case CONTROL_AREA:				
+		case CONTROL_SEAWAY:			
+		case CONTROL_SYMBOL_TYPE:		
+			EditName(id);		
+		break;
+		
+		case CONTROL_FLASH:	
+		case CONTROL_LANTERN:
+		case CONTROL_CHANGER:
+		case CONTROL_SOLAR:
+		case CONTROL_REGULATOR:
+		case CONTROL_AC_ADAPTER:
+		case CONTROL_SYNCHRONIZATION:
+		case CONTROL_TELEMETRY:
+		case CONTROL_COLLECTION:
+		case CONTROL_ANTENNA:
+		case CONTROL_LIGHTNING:
+		case CONTROL_WIND_GENERATOR:
+		case CONTROL_NAUTOFON:
+			EditType(id);
+		break;
 	}
 
 }
 
-void CDialog::EditArea(wxString id)
+void CDialog::EditName(wxString id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_AREA,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
 		
-	CNew *ptr = new CNew(CONTROL_AREA);
+	CNew *ptr = new CNew(m_ControlType);
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_AREA_NAME]));
-	ptr->SetInfo(Convert(row[FID_AREA_INFO]));
+	ptr->SetName(Convert(row[FID_NAME]));
+	ptr->SetInfo(Convert(row[FID_INFO]));
 	
 	db_free_result(result);
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_AREA,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -354,8 +425,8 @@ void CDialog::EditArea(wxString id)
 	}
 
 	delete ptr;
-	
 }
+
 
 void CDialog::EditBattery(wxString id)
 {
@@ -388,65 +459,7 @@ void CDialog::EditBattery(wxString id)
 
 }
 
-void CDialog::EditCommunication(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_COMMUNICATION,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_COMMUNICATION);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetName(Convert(row[FID_COMMUNICATION_NAME]));
-	ptr->SetInfo(Convert(row[FID_COMMUNICATION_INFO]));
-	
-	db_free_result(result);
 
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_COMMUNICATION,ptr->GetName(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-	
-
-}		
-
-void CDialog::EditSeaway(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SEAWAY,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_SEAWAY);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetName(Convert(row[FID_SEAWAY_NAME]));
-	ptr->SetInfo(Convert(row[FID_SEAWAY_INFO]));
-	
-	db_free_result(result);
-
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_SEAWAY,ptr->GetName(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-}
 
 void CDialog::EditLight(wxString id)
 {
@@ -509,26 +522,27 @@ void CDialog::EditBulb(wxString id)
 	delete ptr;
 }
 
-void CDialog::EditSymbolType(wxString id)
+
+void CDialog::EditType(wxString id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SYMBOL_TYPE,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
 		
-	CNew *ptr = new CNew(CONTROL_SYMBOL_TYPE);
+	CNew *ptr = new CNew(m_ControlType);
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FID_SYMBOL_TYPE_NAME]));
-	ptr->SetInfo(Convert(row[FID_SYMBOL_TYPE_INFO]));
+	ptr->SetType(Convert(row[FID_TYPE]));
+	ptr->SetInfo(Convert(row[FID_INFO]));
 	
 	db_free_result(result);
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),TABLE_SYMBOL_TYPE,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetType(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -538,133 +552,11 @@ void CDialog::EditSymbolType(wxString id)
 	delete ptr;
 	
 }
-
-void CDialog::EditFlash(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_FLASH,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_FLASH);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetType(Convert(row[FID_FLASH_TYPE]));
-	ptr->SetInfo(Convert(row[FID_FLASH_INFO]));
-	
-	db_free_result(result);
-
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_FLASH,ptr->GetType(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-	
-}
-
-void CDialog::EditLantern(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_LANTERN,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_LANTERN);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetType(Convert(row[FID_LANTERN_TYPE]));
-	ptr->SetInfo(Convert(row[FID_LANTERN_INFO]));
-	
-	db_free_result(result);
-
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_LANTERN,ptr->GetType(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-	
-}
-
-void CDialog::EditChanger(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_CHANGER,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_CHANGER);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetType(Convert(row[FID_CHANGER_TYPE]));
-	ptr->SetInfo(Convert(row[FID_CHANGER_INFO]));
-	
-	db_free_result(result);
-
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_CHANGER,ptr->GetType(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-	
-}
-
-void CDialog::EditSolar(wxString id)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_SOLAR,id);
-	
-	if(!my_query(sql))
-		return;
-		
-	CNew *ptr = new CNew(CONTROL_CHANGER);
-	
-	void *result = db_result();
-	char **row = (char**)db_fetch_row(result);
-	
-	ptr->SetType(Convert(row[FID_SOLAR_TYPE]));
-	ptr->SetInfo(Convert(row[FID_SOLAR_INFO]));
-	
-	db_free_result(result);
-
-	if(ptr->ShowModal() == wxID_OK)
-	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),TABLE_SOLAR,ptr->GetType(),ptr->GetInfo(),id);
-		my_query(sql);
-		Clear();
-		Read();
-		Select();
-	}
-
-	delete ptr;
-	
-}
-
-
 
 
 void CDialog::OnDelete(wxString id)
 {
-	SetTable();
+	
 
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)

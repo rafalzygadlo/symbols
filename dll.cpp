@@ -41,7 +41,16 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Lantern = NULL;
 	m_Changer = NULL;
 	m_Solar = NULL;
-	
+	m_Regulator = NULL;
+	m_ACAdapter = NULL;
+	m_Synchronization = NULL;
+	m_Telemetry = NULL;
+	m_Collection = NULL;
+	m_Antenna = NULL;
+	m_Lightning = NULL;
+	m_WindGenerator = NULL;
+	m_Nautofon = NULL;
+		
 	NewPtr = NULL;
 	PositionDialog = NULL;	
 	m_Broker = NaviBroker;
@@ -55,7 +64,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	ErrorCode = 0;
 	MouseX = 0;
 	MouseY = 0;
-	Type = BUTTON_TYPE_ANY;
+	Type = -1;
 	RectWidth = 0; 
 	RectHeight = 0;
 	TranslationX = 0;
@@ -63,7 +72,6 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	MapScale = 0;
 	ClickedOnButton = false;
 	FirstTime = true;
-	ButtonAction = BUTTON_TYPE_ANY;
 	MapX = 0.0;
 	MapY = 0.0;
 	FirstRun = true;
@@ -107,6 +115,15 @@ CMapPlugin::~CMapPlugin()
 	delete m_Lantern;
 	delete m_Changer;
 	delete m_Solar;
+	delete m_Regulator;
+	delete m_ACAdapter;
+	delete m_Synchronization;
+	delete m_Telemetry;
+	delete m_Collection;
+	delete m_Antenna;
+	delete m_Lightning;
+	delete m_WindGenerator;
+	delete m_Nautofon;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -486,6 +503,71 @@ void CMapPlugin::Solar()
 	m_Solar->Show();
 }
 
+void CMapPlugin::Regulator()
+{
+	if(m_Regulator == NULL)
+		m_Regulator = new CDialog(CONTROL_REGULATOR,false);
+	m_Regulator->Show();
+}
+
+void CMapPlugin::ACAdapter()
+{
+	if(m_ACAdapter == NULL)
+		m_ACAdapter = new CDialog(CONTROL_AC_ADAPTER,false);
+	m_ACAdapter->Show();
+}
+
+void CMapPlugin::Synchronization()
+{
+	if(m_Synchronization == NULL)
+		m_Synchronization = new CDialog(CONTROL_SYNCHRONIZATION,false);
+	m_Synchronization->Show();
+}
+
+void CMapPlugin::Telemetry()
+{
+	if(m_Telemetry == NULL)
+		m_Telemetry = new CDialog(CONTROL_TELEMETRY,false);
+	m_Telemetry->Show();
+}
+
+void CMapPlugin::Collection()
+{
+	if(m_Collection == NULL)
+		m_Collection = new CDialog(CONTROL_COLLECTION,false);
+	m_Collection->Show();
+}
+
+void CMapPlugin::Antenna()
+{
+	if(m_Antenna == NULL)
+		m_Antenna = new CDialog(CONTROL_ANTENNA,false);
+	m_Antenna->Show();
+}
+
+void CMapPlugin::Lightning()
+{
+	if(m_Lightning == NULL)
+		m_Lightning = new CDialog(CONTROL_LIGHTNING,false);
+	m_Lightning->Show();
+}
+
+void CMapPlugin::WindGenerator()
+{
+	if(m_WindGenerator == NULL)
+		m_WindGenerator = new CDialog(CONTROL_WIND_GENERATOR,false);
+	m_WindGenerator->Show();
+}
+
+void CMapPlugin::Nautofon()
+{
+	if(m_Nautofon == NULL)
+		m_Nautofon = new CDialog(CONTROL_NAUTOFON,false);
+	m_Nautofon->Show();
+}
+
+
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -502,23 +584,26 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_FLASH),this, MenuFlash);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BULB),this, MenuBulb);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LANTERN),this, MenuLantern);
-
-
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHANGER),this, MenuChanger);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SOLAR),this, MenuSolar);
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_REGULATOR),this, MenuLantern);
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_AC_ADAPTER),this, MenuLantern);
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYNCHRONIZATION),this, MenuLantern);
-	
-	
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_REGULATOR),this, MenuRegulator);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_AC_ADAPTER),this, MenuACAdapter);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYNCHRONIZATION),this, MenuSynchronization);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_TELEMETRY_MODULE),this, MenuTelemetry);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COLLECTION_MODULE),this, MenuCollection);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_ANTENNA),this, MenuAntenna);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LIGHTNING),this, MenuLightning);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_WIND_GENERATOR),this, MenuWindGenerator);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NAUTOFON),this, MenuNautofon);
 
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_),this, MenuNautofon);
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
 {
 
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_NEW);
+	ThisPtr->Menu(CONTROL_NEW);
 
 	return NULL;
 }
@@ -526,7 +611,7 @@ void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_AREA);
+	ThisPtr->Menu(CONTROL_AREA);
 	
 	return NULL;	
 }
@@ -534,7 +619,7 @@ void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_SEAWAY);
+	ThisPtr->Menu(CONTROL_SEAWAY);
 	
 	return NULL;	
 }
@@ -542,7 +627,7 @@ void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_SYMBOL_TYPE);
+	ThisPtr->Menu(CONTROL_SYMBOL_TYPE);
 	
 	return NULL;	
 }
@@ -550,7 +635,7 @@ void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuBattery(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_BATTERY);
+	ThisPtr->Menu(CONTROL_BATTERY);
 	
 	return NULL;	
 }
@@ -558,7 +643,7 @@ void *CMapPlugin::MenuBattery(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_LIGHT);
+	ThisPtr->Menu(CONTROL_LIGHT);
 	
 	return NULL;	
 }
@@ -566,7 +651,7 @@ void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuCommunication(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_COMMUNICATION);
+	ThisPtr->Menu(CONTROL_COMMUNICATION);
 	
 	return NULL;	
 }
@@ -574,7 +659,7 @@ void *CMapPlugin::MenuCommunication(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuFlash(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_FLASH);
+	ThisPtr->Menu(CONTROL_FLASH);
 	
 	return NULL;	
 }
@@ -582,7 +667,7 @@ void *CMapPlugin::MenuFlash(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuBulb(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_BULB);
+	ThisPtr->Menu(CONTROL_BULB);
 	
 	return NULL;	
 }
@@ -590,7 +675,7 @@ void *CMapPlugin::MenuBulb(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuLantern(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_LANTERN);
+	ThisPtr->Menu(CONTROL_LANTERN);
 	
 	return NULL;	
 }
@@ -598,7 +683,7 @@ void *CMapPlugin::MenuLantern(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuChanger(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_CHANGER);
+	ThisPtr->Menu(CONTROL_CHANGER);
 	
 	return NULL;	
 }
@@ -606,7 +691,79 @@ void *CMapPlugin::MenuChanger(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuSolar(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(BUTTON_TYPE_SOLAR);
+	ThisPtr->Menu(CONTROL_SOLAR);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuRegulator(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_REGULATOR);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuACAdapter(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_AC_ADAPTER);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuSynchronization(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_SYNCHRONIZATION);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuTelemetry(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_TELEMETRY);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuCollection(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_COLLECTION);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuAntenna(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_ANTENNA);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuLightning(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_LIGHTNING);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuWindGenerator(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_WIND_GENERATOR);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuNautofon(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_NAUTOFON);
 	
 	return NULL;	
 }
@@ -615,21 +772,31 @@ void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case BUTTON_TYPE_NEW:			New();				break;
-		case BUTTON_TYPE_AREA:			Area();				break;
-		case BUTTON_TYPE_SEAWAY:		Seaway();			break;
-		case BUTTON_TYPE_LIGHT:			Light();			break;
-		case BUTTON_TYPE_BATTERY:		Battery();			break;
-		case BUTTON_TYPE_COMMUNICATION:	Communication();	break;
-		case BUTTON_TYPE_BULB:			Bulb();				break;
-		case BUTTON_TYPE_FLASH:			Flash();			break;
-		case BUTTON_TYPE_SYMBOL_TYPE:	SymbolType();		break;
-		case BUTTON_TYPE_LANTERN:		Lantern();			break;
-		case BUTTON_TYPE_CHANGER:		Changer();			break;
-		case BUTTON_TYPE_SOLAR:			Solar();			break;
+		case CONTROL_NEW:				New();				break;
+		case CONTROL_AREA:				Area();				break;
+		case CONTROL_SEAWAY:			Seaway();			break;
+		case CONTROL_LIGHT:				Light();			break;
+		case CONTROL_BATTERY:			Battery();			break;
+		case CONTROL_COMMUNICATION:		Communication();	break;
+		case CONTROL_BULB:				Bulb();				break;
+		case CONTROL_FLASH:				Flash();			break;
+		case CONTROL_SYMBOL_TYPE:		SymbolType();		break;
+		case CONTROL_LANTERN:			Lantern();			break;
+		case CONTROL_CHANGER:			Changer();			break;
+		case CONTROL_SOLAR:				Solar();			break;
+		case CONTROL_REGULATOR:			Regulator();		break;
+		case CONTROL_AC_ADAPTER:		ACAdapter();		break;
+		case CONTROL_SYNCHRONIZATION:	Synchronization();	break;
+		case CONTROL_TELEMETRY:			Telemetry();		break;
+		case CONTROL_COLLECTION:		Collection();		break;
+		case CONTROL_ANTENNA:			Antenna();			break;
+		case CONTROL_LIGHTNING:			Lightning();		break;
+		case CONTROL_WIND_GENERATOR:	WindGenerator();	break;
+		case CONTROL_NAUTOFON:			Nautofon();			break;
+		
 	}
 		
-	GetBroker()->Refresh(GetBroker()->GetParentPtr());
+	//GetBroker()->Refresh(GetBroker()->GetParentPtr());
 
 }
 

@@ -9,7 +9,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[39][2] = 
+const wchar_t *nvLanguage[45][2] = 
 { 
 	//en
 	{L"Symbol",	L"Znak"},
@@ -51,7 +51,12 @@ const wchar_t *nvLanguage[39][2] =
 	{L"Regulator",L"Regulator"},
 	{L"AC adapter",L"Zasilacz"},
 	{L"Synchronzation",L"Synchronizacja"},
-		
+	{L"Telemetry module",L"Modu³ telemetryczny"},
+	{L"Collection module",L"Modu³ zbierania"},
+	{L"Antenna",L"Antena"},
+	{L"Lightning arrester",L"Odgromnik"},
+	{L"Wind generator",L"Generator wiatrowy"},
+	{L"Nautofon",L"Nautofon"},
 };
 				
 	

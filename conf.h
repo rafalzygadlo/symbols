@@ -18,23 +18,6 @@
 #define DB_PASSWORD "navi_vts"
 #define DB_DB "navi_vts"
 
-#define BUTTON_TYPE_ANY			   -1
-#define BUTTON_TYPE_NEW				0
-#define BUTTON_TYPE_DELETE			1
-#define BUTTON_TYPE_PROPERTIES		2
-#define BUTTON_TYPE_AREA			3
-#define BUTTON_TYPE_SEAWAY			4
-#define BUTTON_TYPE_TYPE			5
-#define BUTTON_TYPE_LIGHT			6
-#define BUTTON_TYPE_BATTERY			7
-#define BUTTON_TYPE_COMMUNICATION	8
-#define BUTTON_TYPE_SYMBOL_TYPE		9
-#define BUTTON_TYPE_FLASH			10
-#define BUTTON_TYPE_BULB			11
-#define BUTTON_TYPE_LANTERN			12
-#define BUTTON_TYPE_CHANGER			13
-#define BUTTON_TYPE_SOLAR			14
-
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
 
@@ -101,6 +84,12 @@
 #define MSG_REGULATOR				36
 #define MSG_AC_ADAPTER				37
 #define MSG_SYNCHRONIZATION			38
+#define MSG_TELEMETRY_MODULE		39
+#define MSG_COLLECTION_MODULE		40
+#define MSG_ANTENNA					41
+#define MSG_LIGHTNING				42
+#define MSG_WIND_GENERATOR			43
+#define MSG_NAUTOFON				44
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -110,17 +99,27 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-#define CONTROL_AREA			0
-#define CONTROL_SEAWAY			1
-#define CONTROL_BATTERY			2
-#define CONTROL_LIGHT			3
-#define CONTROL_COMMUNICATION	4
-#define CONTROL_SYMBOL_TYPE		5
-#define CONTROL_FLASH			6
-#define CONTROL_BULB			7
-#define CONTROL_LANTERN			8
-#define CONTROL_CHANGER			9
-#define CONTROL_SOLAR			10
+#define CONTROL_NEW					1
+#define CONTROL_AREA				2
+#define CONTROL_SEAWAY				3
+#define CONTROL_BATTERY				4
+#define CONTROL_LIGHT				5
+#define CONTROL_COMMUNICATION		6
+#define CONTROL_SYMBOL_TYPE			7
+#define CONTROL_FLASH				8
+#define CONTROL_BULB				9
+#define CONTROL_LANTERN				10
+#define CONTROL_CHANGER				11
+#define CONTROL_SOLAR				12
+#define CONTROL_REGULATOR			13
+#define CONTROL_AC_ADAPTER			14
+#define CONTROL_SYNCHRONIZATION		15
+#define CONTROL_TELEMETRY			16
+#define CONTROL_COLLECTION			17
+#define CONTROL_ANTENNA				18
+#define CONTROL_LIGHTNING			19 // odgromnik
+#define CONTROL_WIND_GENERATOR		20
+#define CONTROL_NAUTOFON			21
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -130,38 +129,14 @@
 
 
 // kolumny z id w listctrl
-#define COMMUNICATION_COLUMN_WITH_ID 0
-#define COMMUNICATION_COLUMN_WITH_NAME 1
+#define COLUMN_WITH_ID 0
+#define COLUMN_WITH_NAME 1
 
-#define BATTERY_COLUMN_WITH_ID 0
-#define BATTERY_COLUMN_WITH_NAME 1
-
-#define AREA_COLUMN_WITH_ID	0
-#define AREA_COLUMN_WITH_NAME 1
-
-#define SEAWAY_COLUMN_WITH_ID 0
-#define SEAWAY_COLUMN_WITH_NAME 1
-
-#define LIGHT_COLUMN_WITH_ID 0
-#define LIGHT_COLUMN_WITH_NAME 1
-
-#define FLASH_COLUMN_WITH_ID 0
-#define FLASH_COLUMN_WITH_NAME 1
-
-#define BULB_COLUMN_WITH_ID 0
-#define BULB_COLUMN_WITH_NAME 1
-
-#define SYMBOL_TYPE_COLUMN_WITH_ID 0
-#define SYMBOL_TYPE_COLUMN_WITH_NAME 1
-
-#define LANTERN_COLUMN_WITH_ID 0
-#define LANTERN_COLUMN_WITH_NAME 1
-
-#define CHANGER_COLUMN_WITH_ID 0
-#define CHANGER_COLUMN_WITH_NAME 1
-
-#define SOLAR_COLUMN_WITH_ID 0
-#define SOLAR_COLUMN_WITH_NAME 1
+// globalne id dla pól takich samych
+// raz jest pole name a raz type
+#define FID_NAME 1
+#define FID_TYPE 1
+#define FID_INFO 2
 
 
 typedef struct Marker

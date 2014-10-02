@@ -18,18 +18,13 @@ class CNew: public wxDialog
 
 	void GetPanel(int type);
 
-	wxPanel *AreaPanel();
+	wxPanel *EditNamePanel();
+	wxPanel *EditTypePanel();
+	
 	wxPanel *BatteryPanel();
-	wxPanel *CommunicationPanel();
-	wxPanel *SeawayPanel();
 	wxPanel *LightPanel();
 	wxPanel *BulbPanel();
-	wxPanel *FlashPanel();
-	wxPanel *SymbolTypePanel();
-	wxPanel *LanternPanel();
-	wxPanel *ChangerPanel();
-	wxPanel *SolarPanel();
-	
+
 	bool Validate();
 		
 public:

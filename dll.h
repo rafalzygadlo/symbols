@@ -32,7 +32,16 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Lantern;
 	CDialog *m_Changer;
 	CDialog *m_Solar;
-	
+	CDialog *m_Regulator;
+	CDialog *m_ACAdapter;
+	CDialog *m_Synchronization;
+	CDialog *m_Telemetry;
+	CDialog *m_Collection;
+	CDialog *m_Antenna;
+	CDialog *m_Lightning;
+	CDialog *m_WindGenerator;
+	CDialog *m_Nautofon;
+
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
 	CPositionDialog *PositionDialog;
@@ -144,7 +153,16 @@ class CMapPlugin :public CNaviMapIOApi
 	void Lantern();
 	void Changer();
 	void Solar();
-		
+	void Regulator();
+	void ACAdapter();
+	void Synchronization();
+	void Telemetry();
+	void Collection();
+	void Antenna();
+	void Lightning(); // odgromnik
+	void WindGenerator();
+	void Nautofon();
+
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
 
@@ -159,6 +177,15 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuLantern(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuChanger(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSolar(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuRegulator(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuACAdapter(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSynchronization(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuTelemetry(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuCollection(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuAntenna(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuLightning(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuWindGenerator(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuNautofon(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	

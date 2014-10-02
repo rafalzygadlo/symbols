@@ -33,7 +33,6 @@ class CListCtrl: public wxListCtrl
 	
 	void OnActivate(wxListEvent &event);
 	void OnSelected(wxListEvent &event);
-	void OnDeSelected(wxListEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);
 	void OnColClick(wxListEvent &event);
 	void OnEdit(wxCommandEvent &event);
