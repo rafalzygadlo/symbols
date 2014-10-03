@@ -20,6 +20,7 @@ class CListCtrl: public wxListCtrl
 	int m_SelectedItem;
 	int m_ColumnWithId,m_ColumnWithName;
 	wxImageList *m_ImageListSmall;
+	wxArrayInt m_Checked;
 	
 	wxMenu *Menu(int id, const char *module);
 	
@@ -29,7 +30,8 @@ class CListCtrl: public wxListCtrl
 	wxArrayString *GetColumn(int column);
 	wxArrayString GetRow(int row);
 	wxString GetValue(wxArrayString *ptr, int record);
-
+	//bool IsChecked(long id);
+	//void SetChecked(long id, bool checked);
 	
 	void OnActivate(wxListEvent &event);
 	void OnSelected(wxListEvent &event);
@@ -42,12 +44,13 @@ class CListCtrl: public wxListCtrl
 	void OnChangePassword(wxCommandEvent &event);
 	void OnRight(wxCommandEvent &event);
 	void OnChangeGroup(wxCommandEvent &event);
-	//void OnFocused(wxListEvent &event);
+	void OnMouseEvent(wxMouseEvent& event);
+	
 	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
-	//int OnGetItemColumnImage(long item, long column) const; 
-	int OnGetItemImage(long item) const;
+	int OnGetItemColumnImage(long item, long column) const; 
+	//int OnGetItemImage(long item) const;
 
 public:
 	

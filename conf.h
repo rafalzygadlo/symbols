@@ -90,6 +90,7 @@
 #define MSG_LIGHTNING				42
 #define MSG_WIND_GENERATOR			43
 #define MSG_NAUTOFON				44
+#define MSG_QUANTITY				45
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"

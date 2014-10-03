@@ -4,10 +4,11 @@
 #include "tools.h"
 #include "images/up_sort.img"
 #include "images/down_sort.img"
+//#include "images/checkbox01.img"
+//#include "images/checkbox02.img"
 #include "db.h"
 #include "db_actions.h"
 #include "db_right.h"
-
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
@@ -19,13 +20,16 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
 	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
+	 //EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
 //	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
 	
 END_EVENT_TABLE()
  
+CListCtrl *thisptr;
 CListCtrl::CListCtrl( wxWindow *Parent, int style )
 :wxListCtrl( Parent, ID_LIST, wxDefaultPosition, wxDefaultSize, style )
 {
+	thisptr = this;
 	
 	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 	//SetDoubleBuffered(true);
@@ -35,8 +39,8 @@ CListCtrl::CListCtrl( wxWindow *Parent, int style )
 	m_Control = NULL;
 	m_ColumnWithId = 0;
 	
-	m_ImageListSmall = new wxImageList(10, 10, true);
-
+	m_ImageListSmall = new wxImageList(16,16);
+		
 	wxMemoryInputStream in_1((const unsigned char*)up_sort,up_sort_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
     m_ImageListSmall->Add(myImage_1);
@@ -45,7 +49,16 @@ CListCtrl::CListCtrl( wxWindow *Parent, int style )
     wxImage myImage_2(in_2, wxBITMAP_TYPE_PNG);
     m_ImageListSmall->Add(myImage_2);
 		
+	//wxMemoryInputStream in_3((const unsigned char*)checkbox01,checkbox01_size);
+    //wxImage myImage_3(in_3, wxBITMAP_TYPE_PNG);
+    //m_ImageListSmall->Add(myImage_3);
+
+	//wxMemoryInputStream in_4((const unsigned char*)checkbox02,checkbox02_size);
+    //wxImage myImage_4(in_4, wxBITMAP_TYPE_PNG);
+    //m_ImageListSmall->Add(myImage_4);
+	 	
 	SetImageList(m_ImageListSmall, wxIMAGE_LIST_SMALL);
+	
 	
 }
 
@@ -93,6 +106,7 @@ void CListCtrl::InitColumns()
 			wxArrayString *Data = new wxArrayString();
 			m_ColumnArray.Add(Data);
 		}
+	
 	}
 }
 
@@ -139,6 +153,7 @@ void CListCtrl::Read(wxString query)
 			}
 		}
 		
+		//m_Checked.Add(0);
 		rows++;
 	}
 
@@ -267,10 +282,60 @@ wxString CListCtrl::GetValue(wxArrayString *ptr, int record)
 }
 
 wxString CListCtrl::OnGetItemText(long item, long column) const
-{		
+{	
+	if(column >= m_ColumnArray.size())
+		return wxEmptyString;
+
 	wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(column);
 	return ptr->Item(item);
 }
+/*
+ void CListCtrl::OnMouseEvent(wxMouseEvent& event)
+ {
+
+	 if (event.LeftDown())
+	 {
+		int flags;
+		long item = HitTest(event.GetPosition(), flags);
+		if (item > -1 && (flags & wxLIST_HITTEST_ONITEMICON))
+		{
+			long id;
+			GetValue(GetColumn(m_ColumnWithId),item).ToLong(&id);
+			SetChecked(id, !IsChecked(item));
+			Refresh();
+		
+		}else{
+     	
+			event.Skip();
+		
+		}
+		      
+	 }else{
+         event.Skip();
+     }
+}
+ 
+bool CListCtrl::IsChecked(long item)
+{
+	long id;
+	GetValue(GetColumn(m_ColumnWithId),item).ToLong(&id);
+	for(int i = 0; i < m_Checked.size(); i++)
+	{
+		if(m_Checked.Item(i) == id)
+			return true;
+	}
+
+	return false;
+}
+ 
+void CListCtrl::SetChecked(long id, bool checked)
+{
+	if(checked)
+		m_Checked.Add(id);
+	else
+		m_Checked.Remove(id);
+}
+*/
 
 /*
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
@@ -371,22 +436,14 @@ void CListCtrl::Sort()
 	Refresh();
 }
 
-/*
+
 int CListCtrl::OnGetItemColumnImage(long item, long column) const
 {
-	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(item);
-	//CNaviGeometry *Installed = Plugin->IsInstalled(Geometry);
-	//if(Installed && column == 0)
-	//{
-		//if(!wxFileExists(Installed->GetAttributes()->GetValueAsString(GEOMETRY_ATTRIBUTE_9)))
-			//return 0;
-	//}
-	
 	return -1;
 }
-*/
-
+/*
 int CListCtrl::OnGetItemImage(long item) const
 {
 	return -1;
 }
+*/

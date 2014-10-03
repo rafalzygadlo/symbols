@@ -13,7 +13,7 @@ BEGIN_EVENT_TABLE(CPickerPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CPickerPanel::OnNew)
 END_EVENT_TABLE()
 
-CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type)
+CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wxString label)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
 	m_Parent = parent;
@@ -21,18 +21,41 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type)
 	m_ControlType = control_type;
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
 	
+	//this->SetWindowStyle(wxBORDER_SIMPLE);
+
 	m_Panel = new wxPanel(this);
-	m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
-	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
+	//m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
+	m_Sizer->Add(m_Panel,0,wxALL|wxEXPAND,0);
 	m_PanelSizer = new wxBoxSizer(wxVERTICAL);
 	m_Panel->SetSizer(m_PanelSizer);
 
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
-
+	//wxStaticText *m_Name = new wxStaticText(m_Panel,wxID_ANY,label);
+	//m_PanelSizer->Add(m_Name,0,wxALL,2);
+	
 	wxButton *New = new wxBitmapButton(m_Panel,ID_NEW,wxBitmap(myImage_1));
 	m_PanelSizer->Add(New,0,wxALL,3);
+
+	m_Grid = new wxGrid(m_Panel,wxID_ANY);
+	m_PanelSizer->Add(m_Grid,0,wxALL|wxEXPAND,3);
+	m_Grid->CreateGrid(0,2);
+
+	
+	m_Grid->SetColLabelValue(0,label);
+	m_Grid->SetColLabelValue(1,GetMsg(MSG_QUANTITY));
+	m_Grid->SetRowLabelSize(0);
+	m_Grid->AppendRows(10);
+    m_Grid->AppendCols(2);
+
+	//wxCheckListBox *List = new wxCheckListBox(m_Panel,wxID_ANY);
+	//List->Append("test1");
+	//List->Append("test2");
+	//m_PanelSizer->Add(List,0,wxALL|wxEXPAND,0);
+
+	m_WrapSizer = new wxWrapSizer(wxHORIZONTAL);
+	m_Sizer->Add(m_WrapSizer,0,wxALL|wxEXPAND,0);
 
 	SetSizer(m_Sizer);
 			
@@ -42,6 +65,8 @@ CPickerPanel::~CPickerPanel()
 {
 }
 
+
+
 wxArrayPtrVoid CPickerPanel::GetPanels()
 {
 	return m_Panels;
@@ -49,11 +74,14 @@ wxArrayPtrVoid CPickerPanel::GetPanels()
 
 void CPickerPanel::New(wxString id, wxString name)
 {
-	CPicker *ptr = new CPicker(m_Panel,this);
-	ptr->_SetId(id);
-	ptr->_SetName(name);
-	m_PanelSizer->Add(ptr,0,wxALL,1);
-	m_Panels.Add(ptr);
+	//CPicker *ptr = new CPicker(this,this);
+	//ptr->_SetId(id);
+	//ptr->_SetName(name);
+	//m_WrapSizer->Add(ptr,0,wxALL,1);
+	int _id = m_Grid->GetRows();
+	m_Grid->InsertRows(_id,1);
+	m_Grid->SetCellValue(name,_id,0);
+	//m_Panels.Add(ptr);
 }
 
 void CPickerPanel::OnNew(wxCommandEvent &event)

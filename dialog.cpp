@@ -237,7 +237,6 @@ wxPanel *CDialog::GetPanel(wxWindow *Parent)
 	Read();
 	
 	m_List->SetControlType(m_ControlType,this);
-
 	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;

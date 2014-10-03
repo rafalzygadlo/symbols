@@ -4,6 +4,8 @@
 #include "db.h"
 #include "color.h"
 #include "picker.h"
+#include <wx/choicebk.h>
+
 
 CNew::CNew(int type)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
@@ -203,56 +205,76 @@ wxPanel *CNew::LightPanel()
 
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
-			
+	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Sizer->Add(Panel,1,wxALL|wxEXPAND,5);
-	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
-	FlexGridSizer->AddGrowableCol(1);
+	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
+	wxGridSizer *FlexGridSizer = new wxGridSizer(2);
 	Panel->SetSizer(FlexGridSizer);
 	
-	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	//wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
+	//FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	CColorPanel *Color = new CColorPanel(Panel,this);
 	FlexGridSizer->Add(Color,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-			
-	wxStaticText *LabelBattery = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BATTERY));
-	FlexGridSizer->Add(LabelBattery,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CPickerPanel *Battery = new CPickerPanel(Panel,this,CONTROL_BATTERY);
-	FlexGridSizer->Add(Battery,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	//FlexGridSizer->AddSpacer(1);
+
+	wxChoicebook *Book = new wxChoicebook(this,wxID_ANY);
+	Sizer->Add(Book,0,wxALL|wxEXPAND,5);
+
+	CPickerPanel *Battery = new CPickerPanel(Book,this,CONTROL_BATTERY,GetMsg(MSG_BATTERY));
+	Book->AddPage(Battery,GetMsg(MSG_BATTERY));
 	
-	wxStaticText *LabelBulb = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BULB));
-	FlexGridSizer->Add(LabelBulb,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CPickerPanel *Bulb = new CPickerPanel(Panel,this,CONTROL_BULB);
-	FlexGridSizer->Add(Bulb,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	CPickerPanel *Bulb = new CPickerPanel(Book,this,CONTROL_BULB,GetMsg(MSG_BULB));
+	Book->AddPage(Bulb,GetMsg(MSG_BULB));
+		
+	CPickerPanel *Flash = new CPickerPanel(Book,this,CONTROL_FLASH,GetMsg(MSG_FLASH));
+	Book->AddPage(Flash,GetMsg(MSG_FLASH));
 	
-	wxStaticText *LabelFlash = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FLASH));
-	FlexGridSizer->Add(LabelFlash,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CPickerPanel *Flash = new CPickerPanel(Panel,this,CONTROL_FLASH);
-	FlexGridSizer->Add(Flash,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	CPickerPanel *Lantern = new CPickerPanel(Book,this,CONTROL_LANTERN,GetMsg(MSG_LANTERN));
+	Book->AddPage(Lantern,GetMsg(MSG_LANTERN));
 	
-	wxStaticText *LabelCommunication = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMMUNICATION_TYPE));
-	FlexGridSizer->Add(LabelCommunication,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CPickerPanel *Communication = new CPickerPanel(Panel,this,CONTROL_COMMUNICATION);
-	FlexGridSizer->Add(Communication,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	CPickerPanel *Changer = new CPickerPanel(Book,this,CONTROL_CHANGER,GetMsg(MSG_CHANGER));
+	Book->AddPage(Changer,GetMsg(MSG_CHANGER));
+
+	CPickerPanel *Solar = new CPickerPanel(Book,this,CONTROL_SOLAR,GetMsg(MSG_SOLAR));
+	Book->AddPage(Solar,GetMsg(MSG_SOLAR));
+
+	CPickerPanel *ACAdapter = new CPickerPanel(Book,this,CONTROL_AC_ADAPTER,GetMsg(MSG_AC_ADAPTER));
+	Book->AddPage(ACAdapter,GetMsg(MSG_AC_ADAPTER));
+
+	CPickerPanel *Regulator = new CPickerPanel(Book,this,CONTROL_REGULATOR,GetMsg(MSG_REGULATOR));
+	Book->AddPage(Regulator,GetMsg(MSG_REGULATOR));
+
+	CPickerPanel *Telemetry = new CPickerPanel(Book,this,CONTROL_TELEMETRY,GetMsg(MSG_TELEMETRY_MODULE));
+	Book->AddPage(Telemetry,GetMsg(MSG_TELEMETRY_MODULE));
 	
-	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
-	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	CPickerPanel *Collection = new CPickerPanel(Book,this,CONTROL_COLLECTION,GetMsg(MSG_COLLECTION_MODULE));
+	Book->AddPage(Collection,GetMsg(MSG_COLLECTION_MODULE));
+	
+	CPickerPanel *Communication = new CPickerPanel(Book,this,CONTROL_COMMUNICATION,GetMsg(MSG_COMMUNICATION_TYPE));
+	Book->AddPage(Communication,GetMsg(MSG_COMMUNICATION_TYPE));
+
+	CPickerPanel *Synchronization = new CPickerPanel(Book,this,CONTROL_SYNCHRONIZATION,GetMsg(MSG_SYNCHRONIZATION));
+	Book->AddPage(Synchronization,GetMsg(MSG_SYNCHRONIZATION));
+
+	CPickerPanel *Antenna = new CPickerPanel(Book,this,CONTROL_ANTENNA,GetMsg(MSG_ANTENNA));
+	Book->AddPage(Antenna,GetMsg(MSG_ANTENNA));
+	
+	wxBoxSizer *s = new wxBoxSizer(wxVERTICAL);
+	Sizer->Add(s);
+
+	wxStaticText *LabelName = new wxStaticText(this,wxID_ANY,GetMsg(MSG_NAME));
+	s->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextName = new wxTextCtrl(this,wxID_ANY,wxEmptyString);
 	m_TextName->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	s->Add(m_TextName,0,wxALL|wxEXPAND,5);
+	//FlexGridSizer->AddSpacer(1);
 			
-	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
-	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
+	wxStaticText *LabelInfo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_INFO));
+	s->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
 	m_TextInfo->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	s->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	//FlexGridSizer->AddSpacer(1);
 		
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);

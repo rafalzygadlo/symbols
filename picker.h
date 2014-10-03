@@ -2,6 +2,8 @@
 #define __PICKER_H
 
 #include <wx/wx.h>
+#include <wx/wrapsizer.h>
+#include <wx/grid.h>
 
 class CPicker;
 class CPickerPanel: public wxPanel
@@ -12,12 +14,14 @@ class CPickerPanel: public wxPanel
 	wxBoxSizer *m_PanelSizer;
 	wxArrayPtrVoid m_Panels;
 	int m_ControlType;
+	wxWrapSizer *m_WrapSizer;
+	wxGrid *m_Grid;
 	
 	void New(wxString id, wxString name);
 			
 public:
 
-	CPickerPanel(wxWindow *parent, wxWindow *top,int control_type);
+	CPickerPanel(wxWindow *parent, wxWindow *top,int control_type, wxString label);
 	~CPickerPanel();
 	void OnNew(wxCommandEvent &event);
 	void OnDelete(CPicker *ptr);
