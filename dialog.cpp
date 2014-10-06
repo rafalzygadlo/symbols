@@ -121,21 +121,42 @@ SIds Id[] =
 
 };
 
-CDialog::CDialog(int control_type)
-{
-
-}
-
 CDialog::CDialog(int control_type, bool picker)
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-	m_Picker = picker;
+	m_ControlType = control_type;
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
+	m_DialogPanel = new CDialogPanel(control_type,this,picker);
+	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
+
+	wxPanel *Panel = new wxPanel(this);
+	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(PanelSizer);
+
+}
+
+wxString CDialog::_GetId()
+{
+	return m_DialogPanel->_GetId();
+}
+
+wxString  CDialog::_GetName()
+{
+	return m_DialogPanel->_GetName();
+}
+
+CDialogPanel::CDialogPanel(int control_type, wxWindow *parent, bool picker)
+:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
+{
+
 	m_ButtonOk = NULL;
 	m_Table = wxEmptyString;
 	m_ControlType = control_type;
 	SetTable();
-	
-	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
+		
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	
@@ -153,14 +174,8 @@ CDialog::CDialog(int control_type, bool picker)
 	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(PanelSizer);
-	
-	//wxButton *ButtonNew = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_NEW));
-	//PanelSizer->Add(ButtonNew,0,wxALL,2);
-	//wxButton *ButtonEdit = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_EDIT));
-	//PanelSizer->Add(ButtonEdit,0,wxALL,2);
-	//wxButton *ButtonDelete = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_DELETE));
-	//PanelSizer->Add(ButtonDelete,0,wxALL,2);
-	
+
+
 	if(picker)
 	{
 		PanelSizer->AddStretchSpacer();
@@ -178,19 +193,25 @@ CDialog::CDialog(int control_type, bool picker)
 		
 	}
 	
+	//wxButton *ButtonNew = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_NEW));
+	//PanelSizer->Add(ButtonNew,0,wxALL,2);
+	//wxButton *ButtonEdit = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_EDIT));
+	//PanelSizer->Add(ButtonEdit,0,wxALL,2);
+	//wxButton *ButtonDelete = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_DELETE));
+	//PanelSizer->Add(ButtonDelete,0,wxALL,2);
+
+	
+	
+	
+	
 	Center();
 	
 }
 
-CDialog::~CDialog()
-{
-
-}
-
-wxPanel *CDialog::GetPanel(wxWindow *Parent)
+wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
 	m_List = new CListCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL | wxLC_SINGLE_SEL | wxLC_ALIGN_LEFT );
 
@@ -232,18 +253,17 @@ wxPanel *CDialog::GetPanel(wxWindow *Parent)
 		id++;
 	}
 
-	
+	m_List->SetControlType(m_ControlType,this);
 	m_List->InitColumns();
 	Read();
-	
-	m_List->SetControlType(m_ControlType,this);
+		
 	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
 
 }
 
-void CDialog::SetTable()
+void CDialogPanel::SetTable()
 {
 	switch(m_ControlType)
 	{
@@ -270,9 +290,8 @@ void CDialog::SetTable()
 	}
 }
 
-void CDialog::Read()
+void CDialogPanel::Read()
 {	
-	
 	wxString sql;
 
 	if(m_Field == wxEmptyString)		
@@ -285,22 +304,22 @@ void CDialog::Read()
 
 }
 
-void CDialog::Clear()
+void CDialogPanel::Clear()
 {
 	m_List->Clear();
 }
 	
-void CDialog::Select()
+void CDialogPanel::Select()
 {
 	m_List->Select();
 }
 
-void CDialog::OnNew()
+void CDialogPanel::OnNew()
 {
 	New();
 }
 
-void CDialog::New()
+void CDialogPanel::New()
 {
 	CNew *ptr = new CNew(m_ControlType);
 	if(ptr->ShowModal() == wxID_OK)
@@ -362,7 +381,7 @@ void CDialog::New()
 
 
 
-void CDialog::OnEdit(wxString id)
+void CDialogPanel::OnEdit(wxString id)
 {
 	switch(m_ControlType)
 	{
@@ -397,7 +416,7 @@ void CDialog::OnEdit(wxString id)
 
 }
 
-void CDialog::EditName(wxString id)
+void CDialogPanel::EditName(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
 	
@@ -405,14 +424,13 @@ void CDialog::EditName(wxString id)
 		return;
 		
 	CNew *ptr = new CNew(m_ControlType);
-	
+		
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
 	ptr->SetName(Convert(row[FID_NAME]));
 	ptr->SetInfo(Convert(row[FID_INFO]));
-	
-	db_free_result(result);
+	db_free_result(result);	
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
@@ -427,7 +445,7 @@ void CDialog::EditName(wxString id)
 }
 
 
-void CDialog::EditBattery(wxString id)
+void CDialogPanel::EditBattery(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_BATTERY,id);
 	
@@ -460,18 +478,17 @@ void CDialog::EditBattery(wxString id)
 
 
 
-void CDialog::EditLight(wxString id)
+void CDialogPanel::EditLight(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_LIGHT,id);
 	
 	if(!my_query(sql))
 		return;
-		
-	CNew *ptr = new CNew(CONTROL_LIGHT);
 	
 	void *result = db_result();
 	char **row = (char**)db_fetch_row(result);
 	
+	CNew *ptr = new CNew(CONTROL_LIGHT);
 	ptr->SetName(Convert(row[FID_LIGHT_NAME]));
 	ptr->SetInfo(Convert(row[FID_LIGHT_INFO]));
 	
@@ -489,7 +506,7 @@ void CDialog::EditLight(wxString id)
 	delete ptr;
 }
 
-void CDialog::EditBulb(wxString id)
+void CDialogPanel::EditBulb(wxString id)
 {
 
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),TABLE_BULB,id);
@@ -522,7 +539,7 @@ void CDialog::EditBulb(wxString id)
 }
 
 
-void CDialog::EditType(wxString id)
+void CDialogPanel::EditType(wxString id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
 	
@@ -553,7 +570,7 @@ void CDialog::EditType(wxString id)
 }
 
 
-void CDialog::OnDelete(wxString id)
+void CDialogPanel::OnDelete(wxString id)
 {
 	
 
@@ -564,10 +581,7 @@ void CDialog::OnDelete(wxString id)
 		my_query(sql);
 		Clear();
 		Read();
-		
-		if(m_Picker)
-			m_ButtonOk->Disable();
-		
+	
 	}
 
 	delete MessageDialog;
@@ -576,7 +590,7 @@ void CDialog::OnDelete(wxString id)
 
 
 
-void CDialog::OnColumnCLick(wxString field, int order)
+void CDialogPanel::OnColumnCLick(wxString field, int order)
 {
 	if(order == ORDER_ASC)
 		m_Order = _("ASC");
@@ -588,7 +602,7 @@ void CDialog::OnColumnCLick(wxString field, int order)
 	Read();
 }
 
-void CDialog::OnSelect(wxString id, wxString name)
+void CDialogPanel::OnSelect(wxString id, wxString name)
 {
 	if(m_ButtonOk)
 		m_ButtonOk->Enable();
@@ -597,12 +611,69 @@ void CDialog::OnSelect(wxString id, wxString name)
 
 }
 
-wxString CDialog::_GetId()
+wxString CDialogPanel::_GetId()
 {
 	return m_Id;
 }
 
-wxString  CDialog::_GetName()
+wxString  CDialogPanel::_GetName()
 {
 	return m_Name;
+}
+
+CMultiDialog::CMultiDialog()
+:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+{
+	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+	m_MultiDialogPanel = new CMultiDialogPanel(this);
+	Sizer->Add(m_MultiDialogPanel,1,wxALL|wxEXPAND,5);
+
+}
+
+wxString CMultiDialog::_GetId()
+{
+	return m_MultiDialogPanel->GetSelectedPanel()->_GetId();
+}
+
+wxString CMultiDialog::_GetName()
+{
+	return m_MultiDialogPanel->GetSelectedPanel()->_GetName();
+}
+
+BEGIN_EVENT_TABLE(CMultiDialogPanel,wxPanel)
+	EVT_LISTBOOK_PAGE_CHANGED(ID_LISTBOOK,OnPageChanged)
+END_EVENT_TABLE()
+
+CMultiDialogPanel::CMultiDialogPanel(wxWindow *parent)
+:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
+{
+	m_SelectedPanel = NULL;
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+			
+	wxListbook *Book = new wxListbook(this,ID_LISTBOOK);
+	Sizer->Add(Book,1,wxALL|wxEXPAND,0);
+
+	int i = 0;
+	while(Id[i].id_control !=-1)
+	{
+		CDialogPanel *DialogPanel = new CDialogPanel(Id[i].id_control,Book,true);
+		m_Panels.Add(DialogPanel);
+		Book->AddPage(DialogPanel, GetMsg(Id[i].id_label) );
+		i++;
+	}
+	
+}
+
+void CMultiDialogPanel::OnPageChanged(wxListbookEvent &event)
+{
+	m_SelectedPanel = (CDialogPanel*)m_Panels.Item(event.GetSelection());
+}
+
+CDialogPanel *CMultiDialogPanel::GetSelectedPanel()
+{
+	return m_SelectedPanel;
+
 }

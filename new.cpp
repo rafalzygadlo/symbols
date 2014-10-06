@@ -208,57 +208,18 @@ wxPanel *CNew::LightPanel()
 	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
 	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
-	wxGridSizer *FlexGridSizer = new wxGridSizer(2);
-	Panel->SetSizer(FlexGridSizer);
+	wxBoxSizer *BoxSizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(BoxSizer);
 	
 	//wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
 	//FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	CColorPanel *Color = new CColorPanel(Panel,this);
-	FlexGridSizer->Add(Color,0,wxALL|wxEXPAND,5);
+	BoxSizer->Add(Color,0,wxALL|wxEXPAND,5);
 	//FlexGridSizer->AddSpacer(1);
 
-	wxChoicebook *Book = new wxChoicebook(this,wxID_ANY);
-	Sizer->Add(Book,0,wxALL|wxEXPAND,5);
-
-	CPickerPanel *Battery = new CPickerPanel(Book,this,CONTROL_BATTERY,GetMsg(MSG_BATTERY));
-	Book->AddPage(Battery,GetMsg(MSG_BATTERY));
-	
-	CPickerPanel *Bulb = new CPickerPanel(Book,this,CONTROL_BULB,GetMsg(MSG_BULB));
-	Book->AddPage(Bulb,GetMsg(MSG_BULB));
+	CPickerPanel *BulbPicker = new CPickerPanel(Panel,this,-1,wxEmptyString);
+	BoxSizer->Add(BulbPicker,0,wxALL|wxEXPAND);
 		
-	CPickerPanel *Flash = new CPickerPanel(Book,this,CONTROL_FLASH,GetMsg(MSG_FLASH));
-	Book->AddPage(Flash,GetMsg(MSG_FLASH));
-	
-	CPickerPanel *Lantern = new CPickerPanel(Book,this,CONTROL_LANTERN,GetMsg(MSG_LANTERN));
-	Book->AddPage(Lantern,GetMsg(MSG_LANTERN));
-	
-	CPickerPanel *Changer = new CPickerPanel(Book,this,CONTROL_CHANGER,GetMsg(MSG_CHANGER));
-	Book->AddPage(Changer,GetMsg(MSG_CHANGER));
-
-	CPickerPanel *Solar = new CPickerPanel(Book,this,CONTROL_SOLAR,GetMsg(MSG_SOLAR));
-	Book->AddPage(Solar,GetMsg(MSG_SOLAR));
-
-	CPickerPanel *ACAdapter = new CPickerPanel(Book,this,CONTROL_AC_ADAPTER,GetMsg(MSG_AC_ADAPTER));
-	Book->AddPage(ACAdapter,GetMsg(MSG_AC_ADAPTER));
-
-	CPickerPanel *Regulator = new CPickerPanel(Book,this,CONTROL_REGULATOR,GetMsg(MSG_REGULATOR));
-	Book->AddPage(Regulator,GetMsg(MSG_REGULATOR));
-
-	CPickerPanel *Telemetry = new CPickerPanel(Book,this,CONTROL_TELEMETRY,GetMsg(MSG_TELEMETRY_MODULE));
-	Book->AddPage(Telemetry,GetMsg(MSG_TELEMETRY_MODULE));
-	
-	CPickerPanel *Collection = new CPickerPanel(Book,this,CONTROL_COLLECTION,GetMsg(MSG_COLLECTION_MODULE));
-	Book->AddPage(Collection,GetMsg(MSG_COLLECTION_MODULE));
-	
-	CPickerPanel *Communication = new CPickerPanel(Book,this,CONTROL_COMMUNICATION,GetMsg(MSG_COMMUNICATION_TYPE));
-	Book->AddPage(Communication,GetMsg(MSG_COMMUNICATION_TYPE));
-
-	CPickerPanel *Synchronization = new CPickerPanel(Book,this,CONTROL_SYNCHRONIZATION,GetMsg(MSG_SYNCHRONIZATION));
-	Book->AddPage(Synchronization,GetMsg(MSG_SYNCHRONIZATION));
-
-	CPickerPanel *Antenna = new CPickerPanel(Book,this,CONTROL_ANTENNA,GetMsg(MSG_ANTENNA));
-	Book->AddPage(Antenna,GetMsg(MSG_ANTENNA));
-	
 	wxBoxSizer *s = new wxBoxSizer(wxVERTICAL);
 	Sizer->Add(s);
 

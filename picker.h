@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include <wx/wrapsizer.h>
 #include <wx/grid.h>
+#include "listctrl.h"
 
 class CPicker;
 class CPickerPanel: public wxPanel
@@ -16,7 +17,8 @@ class CPickerPanel: public wxPanel
 	int m_ControlType;
 	wxWrapSizer *m_WrapSizer;
 	wxGrid *m_Grid;
-	
+	CListCtrl *m_List;
+	CMultiDialog *m_Dialog;
 	void New(wxString id, wxString name);
 			
 public:
@@ -26,6 +28,7 @@ public:
 	void OnNew(wxCommandEvent &event);
 	void OnDelete(CPicker *ptr);
 	void OnEdit(CPicker *ptr);
+	void Read(wxString query, int field);
 	wxArrayPtrVoid GetPanels();
 
 	

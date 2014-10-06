@@ -16,12 +16,13 @@ END_EVENT_TABLE()
 CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wxString label)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+	m_Dialog = NULL;
 	m_Parent = parent;
 	m_Top = top;
 	m_ControlType = control_type;
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
 	
-	//this->SetWindowStyle(wxBORDER_SIMPLE);
+	this->SetWindowStyle(wxBORDER_SIMPLE);
 
 	m_Panel = new wxPanel(this);
 	//m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
@@ -40,20 +41,15 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wx
 
 	m_Grid = new wxGrid(m_Panel,wxID_ANY);
 	m_PanelSizer->Add(m_Grid,0,wxALL|wxEXPAND,3);
-	m_Grid->CreateGrid(0,2);
-
-	
+	m_Grid->CreateGrid(0,0);
+		
+	m_Grid->AppendCols(2);
 	m_Grid->SetColLabelValue(0,label);
 	m_Grid->SetColLabelValue(1,GetMsg(MSG_QUANTITY));
-	m_Grid->SetRowLabelSize(0);
-	m_Grid->AppendRows(10);
-    m_Grid->AppendCols(2);
+	//m_Grid->SetRowLabelSize(0);
+	
 
-	//wxCheckListBox *List = new wxCheckListBox(m_Panel,wxID_ANY);
-	//List->Append("test1");
-	//List->Append("test2");
-	//m_PanelSizer->Add(List,0,wxALL|wxEXPAND,0);
-
+	
 	m_WrapSizer = new wxWrapSizer(wxHORIZONTAL);
 	m_Sizer->Add(m_WrapSizer,0,wxALL|wxEXPAND,0);
 
@@ -63,13 +59,31 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wx
 
 CPickerPanel::~CPickerPanel()
 {
+	delete m_Dialog;
 }
-
-
 
 wxArrayPtrVoid CPickerPanel::GetPanels()
 {
 	return m_Panels;
+}
+
+void CPickerPanel::Read(wxString query, int field)
+{
+	if(!my_query(query))
+		return;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+	
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString str(row[field],wxConvUTF8);
+		//m_List->Append(str);
+	}
+
+	db_free_result(result);
+	
 }
 
 void CPickerPanel::New(wxString id, wxString name)
@@ -78,24 +92,25 @@ void CPickerPanel::New(wxString id, wxString name)
 	//ptr->_SetId(id);
 	//ptr->_SetName(name);
 	//m_WrapSizer->Add(ptr,0,wxALL,1);
-	int _id = m_Grid->GetRows();
-	m_Grid->InsertRows(_id,1);
-	m_Grid->SetCellValue(name,_id,0);
 	//m_Panels.Add(ptr);
+	m_Grid->AppendRows(1);
+	m_Grid->SetCellValue(name,m_Grid->GetRows()-1,0);
+	
 }
 
 void CPickerPanel::OnNew(wxCommandEvent &event)
 {
-	CDialog *Dialog = new CDialog(m_ControlType,true);
+	if(m_Dialog == NULL)
+		m_Dialog = new CMultiDialog();
 	
-	if(Dialog->ShowModal() == wxID_OK)
+	if(m_Dialog->ShowModal() == wxID_OK)
 	{
-		New(Dialog->_GetId(),Dialog->_GetName());
+		New(m_Dialog->_GetId(),m_Dialog->_GetName());
 		m_Top->Layout();
 		m_Top->GetSizer()->SetSizeHints(m_Top);
 	}
 	
-	delete Dialog;
+	//delete m_Dialog;
 	
 }
 
@@ -105,8 +120,8 @@ void CPickerPanel::OnEdit(CPicker *ptr)
 	
 	if(Dialog->ShowModal() == wxID_OK)
 	{
-		ptr->_SetId(Dialog->_GetId());
-		ptr->_SetName(Dialog->_GetName());
+		//ptr->_SetId(Dialog->_GetId());
+		//ptr->_SetName(Dialog->_GetName());
 
 	}
 	

@@ -4,8 +4,8 @@
 #include "tools.h"
 #include "images/up_sort.img"
 #include "images/down_sort.img"
-//#include "images/checkbox01.img"
-//#include "images/checkbox02.img"
+#include "images/checkbox01.img"
+#include "images/checkbox02.img"
 #include "db.h"
 #include "db_actions.h"
 #include "db_right.h"
@@ -20,19 +20,18 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
 	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
-	 //EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
+	EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
 //	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
 	
 END_EVENT_TABLE()
- 
-CListCtrl *thisptr;
+
+
 CListCtrl::CListCtrl( wxWindow *Parent, int style )
 :wxListCtrl( Parent, ID_LIST, wxDefaultPosition, wxDefaultSize, style )
 {
-	thisptr = this;
-	
 	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 	//SetDoubleBuffered(true);
+	m_ThisPtr = this;
 	m_FieldCount = 0;
 	m_SelectedItem = -1;
 	SetItemCount(0);
@@ -49,13 +48,13 @@ CListCtrl::CListCtrl( wxWindow *Parent, int style )
     wxImage myImage_2(in_2, wxBITMAP_TYPE_PNG);
     m_ImageListSmall->Add(myImage_2);
 		
-	//wxMemoryInputStream in_3((const unsigned char*)checkbox01,checkbox01_size);
-    //wxImage myImage_3(in_3, wxBITMAP_TYPE_PNG);
-    //m_ImageListSmall->Add(myImage_3);
+	wxMemoryInputStream in_3((const unsigned char*)checkbox01,checkbox01_size);
+    wxImage myImage_3(in_3, wxBITMAP_TYPE_PNG);
+    m_ImageListSmall->Add(myImage_3);
 
-	//wxMemoryInputStream in_4((const unsigned char*)checkbox02,checkbox02_size);
-    //wxImage myImage_4(in_4, wxBITMAP_TYPE_PNG);
-    //m_ImageListSmall->Add(myImage_4);
+	wxMemoryInputStream in_4((const unsigned char*)checkbox02,checkbox02_size);
+    wxImage myImage_4(in_4, wxBITMAP_TYPE_PNG);
+    m_ImageListSmall->Add(myImage_4);
 	 	
 	SetImageList(m_ImageListSmall, wxIMAGE_LIST_SMALL);
 	
@@ -91,7 +90,7 @@ void CListCtrl::_AddColumn(int id,wxString field_name)
 	m_ColumnFields.Add(field_name);
 }
 
-void CListCtrl::SetControlType(int id, CDialog *control)
+void CListCtrl::SetControlType(int id, CDialogPanel *control)
 {
 	m_ControlType = id;
 	m_Control = control;
@@ -289,7 +288,7 @@ wxString CListCtrl::OnGetItemText(long item, long column) const
 	wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(column);
 	return ptr->Item(item);
 }
-/*
+
  void CListCtrl::OnMouseEvent(wxMouseEvent& event)
  {
 
@@ -335,7 +334,7 @@ void CListCtrl::SetChecked(long id, bool checked)
 	else
 		m_Checked.Remove(id);
 }
-*/
+
 
 /*
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
@@ -440,6 +439,18 @@ void CListCtrl::Sort()
 int CListCtrl::OnGetItemColumnImage(long item, long column) const
 {
 	return -1;
+	if(column == 0)
+	{
+		if(m_ThisPtr->IsChecked(item))
+			return 3;
+		else
+			return 2;
+	}else{
+	
+		return -1;
+	}
+	
+		
 }
 /*
 int CListCtrl::OnGetItemImage(long item) const

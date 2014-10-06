@@ -7,8 +7,10 @@
 
 class CDisplayPlugin;
 class CDialog;
+class CDialogPanel;
 class CListCtrl: public wxListCtrl
 {
+	CListCtrl *m_ThisPtr;
 	wxArrayPtrVoid m_ColumnArray;
 	wxArrayString m_DataArray;
 	wxArrayInt m_ColumnIds;
@@ -16,7 +18,7 @@ class CListCtrl: public wxListCtrl
 	int m_FieldCount;
 	wxMenu *m_Menu;
 	int m_ControlType;
-	CDialog *m_Control;
+	CDialogPanel *m_Control;
 	int m_SelectedItem;
 	int m_ColumnWithId,m_ColumnWithName;
 	wxImageList *m_ImageListSmall;
@@ -30,8 +32,8 @@ class CListCtrl: public wxListCtrl
 	wxArrayString *GetColumn(int column);
 	wxArrayString GetRow(int row);
 	wxString GetValue(wxArrayString *ptr, int record);
-	//bool IsChecked(long id);
-	//void SetChecked(long id, bool checked);
+	bool IsChecked(long id);
+	void SetChecked(long id, bool checked);
 	
 	void OnActivate(wxListEvent &event);
 	void OnSelected(wxListEvent &event);
@@ -58,7 +60,7 @@ public:
 	CListCtrl( wxWindow *Parent, int style );
 	~CListCtrl();
 
-	void SetControlType(int id, CDialog *control);
+	void SetControlType(int id, CDialogPanel *control);
 	void _AddColumn(int id,wxString field_name);
 	void InitColumns();
 	void Clear();
