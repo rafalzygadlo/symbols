@@ -27,6 +27,8 @@ void _SetUID(int uid);
 void SetLanguageId(int id);
 int GetLanguageId();
 wxString Convert(char *v);
+//wxArrayString GetItemType();
+//int GetItemTypeId(wxString name);
 
 #endif
 

@@ -3,6 +3,7 @@
 #include <wx/stdpaths.h>
 #include "conf.h"
 #include "tools.h"
+#include "db.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -27,36 +28,20 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Edit",L"Edycja"},
 	{L"Delete",L"Usuñ"},
 	{L"Seaway",L"Tor wodny"},
-	{L"Type",L"Rodzaj znaku"},
 	{L"Name can not be empty",L"Nazwa nie mo¿e byæ pusta"},
 	{L"Info",L"Opis"},
 	{L"Light",L"Œwiat³o"},
-	{L"Bulb",L"¯arówka"},
 	{L"Add color",L"Dodaj kolor"},
 	{L"Color",	L"Kolor"},
 	{L"Delete color", L"Usuñ kolor"},
-	{L"Battery",L"Akumulator"},
-	{L"Capacity",L"Pojemnoœæ"},
-	{L"Communication Type",L"Typ ³¹cznoœci"},
 	{L"Delete ?",L"Usun¹æ ?"},
 	{L"Character not allowed",L"Niedozwolony znak"},
-	{L"Flash",	L"B³yskacz"},
-	{L"Voltage",L"Napiêcie"},
-	{L"Power",L"Moc"},
 	{L"Type",L"Typ"},
-	{L"Lantern",L"Latarnia"},
-	{L"Id",	L"Id"},
-	{L"Changer",L"Zmieniacz"},
-	{L"Solar",L"Solar"},
-	{L"Regulator",L"Regulator"},
-	{L"AC adapter",L"Zasilacz"},
-	{L"Synchronzation",L"Synchronizacja"},
-	{L"Telemetry module",L"Modu³ telemetryczny"},
-	{L"Collection module",L"Modu³ zbierania"},
-	{L"Antenna",L"Antena"},
-	{L"Lightning arrester",L"Odgromnik"},
-	{L"Wind generator",L"Generator wiatrowy"},
-	{L"Nautofon",L"Nautofon"},
+	{L"Items",L"S³owniki"},
+	{L"Id",L"Id"},
+	{L"All",L"Wszystko"},
+	{L"Symbol type",L"Typ znaku"},
+	{L"Item type",L"Typ urz¹dzenia"},
 };
 				
 	
@@ -314,3 +299,16 @@ wxString Convert(char *v)
 	wxString str(v,wxConvUTF8);
 	return str;
 }
+
+//wxArrayString GetItemType()
+//{
+
+	//return 0;
+//}
+/*
+int GetItemTypeId(wxString name)
+{
+
+
+}
+*/

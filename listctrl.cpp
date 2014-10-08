@@ -170,26 +170,10 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_AREA:				_Menu = Menu(m_SelectedItem,MODULE_AREA);				break;
-		case CONTROL_SEAWAY:			_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);				break;
-		case CONTROL_LIGHT:				_Menu = Menu(m_SelectedItem,MODULE_LIGHT);				break;
-		case CONTROL_BATTERY:			_Menu = Menu(m_SelectedItem,MODULE_BATTERY);			break;
-		case CONTROL_COMMUNICATION:		_Menu = Menu(m_SelectedItem,MODULE_COMMUNICATION );		break;
-		case CONTROL_FLASH:				_Menu = Menu(m_SelectedItem,MODULE_FLASH);				break;
-		case CONTROL_BULB:				_Menu = Menu(m_SelectedItem,MODULE_BULB);				break;
-		case CONTROL_SYMBOL_TYPE:		_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
-		case CONTROL_LANTERN:			_Menu = Menu(m_SelectedItem,MODULE_LANTERN);			break;
-		case CONTROL_CHANGER:			_Menu = Menu(m_SelectedItem,MODULE_CHANGER);			break;
-		case CONTROL_SOLAR:				_Menu = Menu(m_SelectedItem,MODULE_SOLAR);				break;
-		case CONTROL_REGULATOR:			_Menu = Menu(m_SelectedItem,MODULE_REGULATOR);			break;
-		case CONTROL_AC_ADAPTER:		_Menu = Menu(m_SelectedItem,MODULE_AC_ADAPTER);			break;
-		case CONTROL_SYNCHRONIZATION:	_Menu = Menu(m_SelectedItem,MODULE_SYNCHRONIZATION);	break;
-		case CONTROL_TELEMETRY:			_Menu = Menu(m_SelectedItem,MODULE_TELEMETRY);			break;
-		case CONTROL_COLLECTION:		_Menu = Menu(m_SelectedItem,MODULE_COLLECTION);			break;
-		case CONTROL_ANTENNA:			_Menu = Menu(m_SelectedItem,MODULE_ANTENNA);			break;
-		case CONTROL_LIGHTNING:			_Menu = Menu(m_SelectedItem,MODULE_LIGHTNING);			break;
-		case CONTROL_WIND_GENERATOR:	_Menu = Menu(m_SelectedItem,MODULE_WIND_GENERATOR);		break;
-		case CONTROL_NAUTOFON:			_Menu = Menu(m_SelectedItem,MODULE_NAUTOFON);			break;
+		case CONTROL_LIGHT:		_Menu = Menu(m_SelectedItem,MODULE_LIGHT);	break;
+		case CONTROL_ITEM:		_Menu = Menu(m_SelectedItem,MODULE_ITEM);	break;
+		case CONTROL_AREA:		_Menu = Menu(m_SelectedItem,MODULE_AREA);	break;
+		case CONTROL_SEAWAY:	_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);	break;
 	}
 	
 	if(_Menu)

@@ -21,26 +21,10 @@ class CPositionDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
 
+	CDialog *m_Light;
+	CDialog *m_Items;
 	CDialog *m_Area;
 	CDialog *m_Seaway;
-	CDialog *m_Light;
-	CDialog *m_Battery;
-	CDialog *m_Communication;
-	CDialog *m_Flash;
-	CDialog *m_Bulb;
-	CDialog *m_SymbolType;
-	CDialog *m_Lantern;
-	CDialog *m_Changer;
-	CDialog *m_Solar;
-	CDialog *m_Regulator;
-	CDialog *m_ACAdapter;
-	CDialog *m_Synchronization;
-	CDialog *m_Telemetry;
-	CDialog *m_Collection;
-	CDialog *m_Antenna;
-	CDialog *m_Lightning;
-	CDialog *m_WindGenerator;
-	CDialog *m_Nautofon;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -142,27 +126,11 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderTest();
 	void SetSelectedShip(SMarker *ship);
 
+	void Items();
+	void Light();
 	void Area();
 	void Seaway();
-	void Light();
-	void Battery();
-	void Communication();
-	void Bulb();
-	void Flash();
-	void SymbolType();
-	void Lantern();
-	void Changer();
-	void Solar();
-	void Regulator();
-	void ACAdapter();
-	void Synchronization();
-	void Telemetry();
-	void Collection();
-	void Antenna();
-	void Lightning(); // odgromnik
-	void WindGenerator();
-	void Nautofon();
-
+	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
 
@@ -170,22 +138,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbolType(void *NaviMapIOApiPtr, void *Input);
 
-	static void *MenuBattery(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuCommunication(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuFlash(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuBulb(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuLantern(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuChanger(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuSolar(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuRegulator(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuACAdapter(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuSynchronization(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuTelemetry(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuCollection(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuAntenna(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuLightning(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuWindGenerator(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuNautofon(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuItems(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	

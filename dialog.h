@@ -36,39 +36,55 @@ class CDialogPanel: public wxPanel
 	bool m_Picker;
 	wxStaticText *m_TopLabel;
 	wxButton *m_ButtonOk;
+	wxListBox *m_ListBox;
+	int m_IdType;
+	wxArrayString m_FilterArray;
 			
 	void New();
 	void EditArea(wxString id);
-	void EditBattery(wxString id);
-	void EditCommunication(wxString id);
+	void EditSymbolType(wxString id);
 	void EditSeaway(wxString id);
 	void EditLight(wxString id);
-	void EditBulb(wxString id);
-	void EditSymbolType(wxString id);
-	
-		
+			
 	void EditName(wxString id); // wszystkie tabele z polami [type]
 	void EditType(wxString id); // wszystkie tabele z polami [type]
 	
 	void Read();
+	void ReadItems();
+	void ReadOthers();
+
 	void Clear();
 	void Select();
 	void SetTable();
 
+	void OnListBox(wxCommandEvent &event);
+
+	wxComboBox *GetFilterCombo(wxWindow *Parent);
+	wxListBox *GetFilterList(wxWindow *Parent);
+	wxPanel *GetPanel(wxWindow *Parent);
+	wxPanel *GetItemPanel(wxWindow *Parent);
+	wxPanel *GetPanelList(wxWindow *Parent);
+
 public:
 	
 	CDialogPanel(int control_type, wxWindow *parent,bool picker); // taki do pobrania tylko panela
-	
-	
+		
 	void OnNew();
 	void OnEdit(wxString id);
 	void OnDelete(wxString id);
 	void OnColumnCLick(wxString field, int order);
 	void OnSelect(wxString id, wxString name);
-	wxPanel *GetPanel(wxWindow *Parent);
+	
 
 	wxString _GetId();
 	wxString _GetName();
+	
+	DECLARE_EVENT_TABLE();
+
+	enum
+	{
+		ID_FILTER = 6214,
+	};
 
 };
 

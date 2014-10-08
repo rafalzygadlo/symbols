@@ -30,26 +30,10 @@ unsigned char PluginInfoBlock[] = {
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	SetUID(4);
+	m_Light = NULL;
+	m_Items = NULL;
 	m_Area = NULL;
 	m_Seaway = NULL;
-	m_Light = NULL;
-	m_Battery = NULL;
-	m_Communication = NULL;
-	m_Flash = NULL;
-	m_Bulb = NULL;
-	m_SymbolType = NULL;
-	m_Lantern = NULL;
-	m_Changer = NULL;
-	m_Solar = NULL;
-	m_Regulator = NULL;
-	m_ACAdapter = NULL;
-	m_Synchronization = NULL;
-	m_Telemetry = NULL;
-	m_Collection = NULL;
-	m_Antenna = NULL;
-	m_Lightning = NULL;
-	m_WindGenerator = NULL;
-	m_Nautofon = NULL;
 		
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -104,26 +88,10 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 
 CMapPlugin::~CMapPlugin()
 {
+	delete m_Light;
+	delete m_Items;
 	delete m_Area;
 	delete m_Seaway;
-	delete m_Light;
-	delete m_Battery;
-	delete m_Communication;
-	delete m_Flash;
-	delete m_Bulb;
-	delete m_SymbolType;
-	delete m_Lantern;
-	delete m_Changer;
-	delete m_Solar;
-	delete m_Regulator;
-	delete m_ACAdapter;
-	delete m_Synchronization;
-	delete m_Telemetry;
-	delete m_Collection;
-	delete m_Antenna;
-	delete m_Lightning;
-	delete m_WindGenerator;
-	delete m_Nautofon;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -426,6 +394,20 @@ void CMapPlugin::ShowProperties()
 	ShowFrameWindow(true);
 }
 
+void CMapPlugin::Light()
+{
+	if(m_Light == NULL)
+		m_Light = new CDialog(CONTROL_LIGHT,false);
+	m_Light->Show();
+}
+
+void CMapPlugin::Items()
+{
+	if(m_Items == NULL)
+		m_Items = new CDialog(CONTROL_ITEM,false);
+	m_Items->Show();
+}
+
 void CMapPlugin::Area()
 {
 	if(m_Area == NULL)
@@ -440,133 +422,6 @@ void CMapPlugin::Seaway()
 	m_Seaway->Show();
 }
 
-void CMapPlugin::Light()
-{
-	if(m_Light == NULL)
-		m_Light = new CDialog(CONTROL_LIGHT,false);
-	m_Light->Show();
-}
-
-void CMapPlugin::Battery()
-{
-	if(m_Battery == NULL)
-		m_Battery = new CDialog(CONTROL_BATTERY,false);
-	m_Battery->Show();
-}
-
-void CMapPlugin::Communication()
-{
-	if(m_Communication == NULL)
-		m_Communication = new CDialog(CONTROL_COMMUNICATION,false);
-	m_Communication->Show();
-}
-
-void CMapPlugin::Flash()
-{
-	if(m_Flash == NULL)
-		m_Flash = new CDialog(CONTROL_FLASH,false);
-	m_Flash->Show();
-}
-
-void CMapPlugin::Bulb()
-{
-	if(m_Bulb == NULL)
-		m_Bulb = new CDialog(CONTROL_BULB,false);
-	m_Bulb->Show();
-}
-
-void CMapPlugin::SymbolType()
-{
-	if(m_SymbolType == NULL)
-		m_SymbolType = new CDialog(CONTROL_SYMBOL_TYPE,false);
-	m_SymbolType->Show();
-}
-
-void CMapPlugin::Lantern()
-{
-	if(m_Lantern == NULL)
-		m_Lantern = new CDialog(CONTROL_LANTERN,false);
-	m_Lantern->Show();
-}
-
-void CMapPlugin::Changer()
-{
-	if(m_Changer == NULL)
-		m_Changer = new CDialog(CONTROL_CHANGER,false);
-	m_Changer->Show();
-}
-
-void CMapPlugin::Solar()
-{
-	if(m_Solar == NULL)
-		m_Solar = new CDialog(CONTROL_SOLAR,false);
-	m_Solar->Show();
-}
-
-void CMapPlugin::Regulator()
-{
-	if(m_Regulator == NULL)
-		m_Regulator = new CDialog(CONTROL_REGULATOR,false);
-	m_Regulator->Show();
-}
-
-void CMapPlugin::ACAdapter()
-{
-	if(m_ACAdapter == NULL)
-		m_ACAdapter = new CDialog(CONTROL_AC_ADAPTER,false);
-	m_ACAdapter->Show();
-}
-
-void CMapPlugin::Synchronization()
-{
-	if(m_Synchronization == NULL)
-		m_Synchronization = new CDialog(CONTROL_SYNCHRONIZATION,false);
-	m_Synchronization->Show();
-}
-
-void CMapPlugin::Telemetry()
-{
-	if(m_Telemetry == NULL)
-		m_Telemetry = new CDialog(CONTROL_TELEMETRY,false);
-	m_Telemetry->Show();
-}
-
-void CMapPlugin::Collection()
-{
-	if(m_Collection == NULL)
-		m_Collection = new CDialog(CONTROL_COLLECTION,false);
-	m_Collection->Show();
-}
-
-void CMapPlugin::Antenna()
-{
-	if(m_Antenna == NULL)
-		m_Antenna = new CDialog(CONTROL_ANTENNA,false);
-	m_Antenna->Show();
-}
-
-void CMapPlugin::Lightning()
-{
-	if(m_Lightning == NULL)
-		m_Lightning = new CDialog(CONTROL_LIGHTNING,false);
-	m_Lightning->Show();
-}
-
-void CMapPlugin::WindGenerator()
-{
-	if(m_WindGenerator == NULL)
-		m_WindGenerator = new CDialog(CONTROL_WIND_GENERATOR,false);
-	m_WindGenerator->Show();
-}
-
-void CMapPlugin::Nautofon()
-{
-	if(m_Nautofon == NULL)
-		m_Nautofon = new CDialog(CONTROL_NAUTOFON,false);
-	m_Nautofon->Show();
-}
-
-
 
 void CMapPlugin::CreateApiMenu(void) 
 {
@@ -579,6 +434,9 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_TYPE),this, MenuSymbolType);
 	NaviApiMenu->AddItem(L"-",this,NULL);
+	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
+	
+	/*
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMUNICATION_TYPE),this, MenuCommunication);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_FLASH),this, MenuFlash);
@@ -595,6 +453,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LIGHTNING),this, MenuLightning);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_WIND_GENERATOR),this, MenuWindGenerator);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NAUTOFON),this, MenuNautofon);
+	*/
 
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_),this, MenuNautofon);
 }	
@@ -606,6 +465,22 @@ void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input)
 	ThisPtr->Menu(CONTROL_NEW);
 
 	return NULL;
+}
+
+void *CMapPlugin::MenuItems(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_ITEM);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_LIGHT);
+	
+	return NULL;	
 }
 
 void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
@@ -627,143 +502,7 @@ void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_SYMBOL_TYPE);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuBattery(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_BATTERY);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_LIGHT);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuCommunication(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_COMMUNICATION);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuFlash(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_FLASH);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuBulb(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_BULB);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuLantern(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_LANTERN);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuChanger(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_CHANGER);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuSolar(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_SOLAR);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuRegulator(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_REGULATOR);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuACAdapter(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_AC_ADAPTER);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuSynchronization(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_SYNCHRONIZATION);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuTelemetry(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_TELEMETRY);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuCollection(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_COLLECTION);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuAntenna(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_ANTENNA);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuLightning(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_LIGHTNING);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuWindGenerator(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_WIND_GENERATOR);
-	
-	return NULL;	
-}
-
-void *CMapPlugin::MenuNautofon(void *NaviMapIOApiPtr, void *Input)
-{	
-	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_NAUTOFON);
+	//ThisPtr->Menu(CONTROL_SYMBOL_TYPE);
 	
 	return NULL;	
 }
@@ -772,31 +511,12 @@ void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case CONTROL_NEW:				New();				break;
-		case CONTROL_AREA:				Area();				break;
-		case CONTROL_SEAWAY:			Seaway();			break;
-		case CONTROL_LIGHT:				Light();			break;
-		case CONTROL_BATTERY:			Battery();			break;
-		case CONTROL_COMMUNICATION:		Communication();	break;
-		case CONTROL_BULB:				Bulb();				break;
-		case CONTROL_FLASH:				Flash();			break;
-		case CONTROL_SYMBOL_TYPE:		SymbolType();		break;
-		case CONTROL_LANTERN:			Lantern();			break;
-		case CONTROL_CHANGER:			Changer();			break;
-		case CONTROL_SOLAR:				Solar();			break;
-		case CONTROL_REGULATOR:			Regulator();		break;
-		case CONTROL_AC_ADAPTER:		ACAdapter();		break;
-		case CONTROL_SYNCHRONIZATION:	Synchronization();	break;
-		case CONTROL_TELEMETRY:			Telemetry();		break;
-		case CONTROL_COLLECTION:		Collection();		break;
-		case CONTROL_ANTENNA:			Antenna();			break;
-		case CONTROL_LIGHTNING:			Lightning();		break;
-		case CONTROL_WIND_GENERATOR:	WindGenerator();	break;
-		case CONTROL_NAUTOFON:			Nautofon();			break;
-		
+		case CONTROL_NEW:		New();		break;
+		case CONTROL_LIGHT:		Light();	break;
+		case CONTROL_ITEM:		Items();	break;
+		case CONTROL_AREA:		Area();		break;
+		case CONTROL_SEAWAY:	Seaway();	break;
 	}
-		
-	//GetBroker()->Refresh(GetBroker()->GetParentPtr());
 
 }
 

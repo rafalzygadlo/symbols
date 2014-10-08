@@ -45,7 +45,7 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wx
 		
 	m_Grid->AppendCols(2);
 	m_Grid->SetColLabelValue(0,label);
-	m_Grid->SetColLabelValue(1,GetMsg(MSG_QUANTITY));
+//	m_Grid->SetColLabelValue(1,GetMsg(MSG_QUANTITY));
 	//m_Grid->SetRowLabelSize(0);
 	
 

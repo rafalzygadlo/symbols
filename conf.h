@@ -60,37 +60,20 @@
 #define MSG_EDIT					12
 #define MSG_DELETE					13
 #define MSG_SEAWAY					14
-#define MSG_SYMBOL_TYPE				15
-#define MSG_NAME_EMPTY				16
-#define MSG_INFO					17
-#define MSG_LIGHT					18
-#define MSG_BULB					19
-#define MSG_ADD_COLOR				20
-#define MSG_COLOR					21
-#define MSG_DELETE_COLOR			22
-#define MSG_BATTERY					23
-#define MSG_CAPACITY				24
-#define MSG_COMMUNICATION_TYPE		25
-#define MSG_DELETE_QUESTION			26
-#define MSG_CHARACTER_NOT_ALLOWED	27
-#define MSG_FLASH					28
-#define MSG_VOLTAGE					29
-#define MSG_POWER					30
-#define MSG_TYPE					31
-#define MSG_LANTERN					32
-#define MSG_ID						33
-#define MSG_CHANGER					34
-#define MSG_SOLAR					35
-#define MSG_REGULATOR				36
-#define MSG_AC_ADAPTER				37
-#define MSG_SYNCHRONIZATION			38
-#define MSG_TELEMETRY_MODULE		39
-#define MSG_COLLECTION_MODULE		40
-#define MSG_ANTENNA					41
-#define MSG_LIGHTNING				42
-#define MSG_WIND_GENERATOR			43
-#define MSG_NAUTOFON				44
-#define MSG_QUANTITY				45
+#define MSG_NAME_EMPTY				15
+#define MSG_INFO					16
+#define MSG_LIGHT					17
+#define MSG_ADD_COLOR				18
+#define MSG_COLOR					19
+#define MSG_DELETE_COLOR			20
+#define MSG_DELETE_QUESTION			21
+#define MSG_CHARACTER_NOT_ALLOWED	22
+#define MSG_TYPE					23
+#define MSG_ITEMS					24
+#define MSG_ID						25
+#define MSG_ALL						26
+#define MSG_SYMBOL_TYPE				27
+#define MSG_ITEM_TYPE				28
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -100,27 +83,16 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-#define CONTROL_NEW					1
-#define CONTROL_AREA				2
-#define CONTROL_SEAWAY				3
-#define CONTROL_BATTERY				4
-#define CONTROL_LIGHT				5
-#define CONTROL_COMMUNICATION		6
-#define CONTROL_SYMBOL_TYPE			7
-#define CONTROL_FLASH				8
-#define CONTROL_BULB				9
-#define CONTROL_LANTERN				10
-#define CONTROL_CHANGER				11
-#define CONTROL_SOLAR				12
-#define CONTROL_REGULATOR			13
-#define CONTROL_AC_ADAPTER			14
-#define CONTROL_SYNCHRONIZATION		15
-#define CONTROL_TELEMETRY			16
-#define CONTROL_COLLECTION			17
-#define CONTROL_ANTENNA				18
-#define CONTROL_LIGHTNING			19 // odgromnik
-#define CONTROL_WIND_GENERATOR		20
-#define CONTROL_NAUTOFON			21
+#define CONTROL_ITEM		1
+#define CONTROL_ITEM_TYPE	2
+#define CONTROL_LIGHT		3
+#define CONTROL_NEW			4
+#define CONTROL_SEAWAY		5
+#define CONTROL_AREA		6
+
+// pola list box
+
+
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -132,6 +104,9 @@
 // kolumny z id w listctrl
 #define COLUMN_WITH_ID 0
 #define COLUMN_WITH_NAME 1
+
+#define COLUMN_ITEM_WITH_ID 0
+#define COLUMN_ITEM_WITH_NAME 2
 
 // globalne id dla pól takich samych
 // raz jest pole name a raz type
@@ -176,6 +151,11 @@ typedef struct Ids
 
 }SIds;
 
+typedef struct _Types
+{
+	const wchar_t *id;
+	const wchar_t *name;
 
+}SType;
 
 #endif
