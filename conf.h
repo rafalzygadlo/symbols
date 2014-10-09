@@ -97,8 +97,8 @@
 #define ORDER_ASC	0
 #define ORDER_DESC	1
 
-#define DEFAULT_DIALOG_HEIGHT	400
-#define DEFAULT_DIALOG_WIDTH	500
+#define DEFAULT_DIALOG_HEIGHT	450
+#define DEFAULT_DIALOG_WIDTH	600
 
 
 // kolumny z id w listctrl

@@ -13,7 +13,8 @@ class CNew: public wxDialog
 	wxComboBox *m_ComboItemType;
 	wxPanel *m_Panel;
 	wxFlexGridSizer *m_FlexGridSizer;
-	wxArrayPtrVoid m_Controls;
+	wxArrayPtrVoid m_Controls,m_Ids;
+	wxString m_ItemId;
 
 	void GetPanel(int type);
 
@@ -30,16 +31,18 @@ class CNew: public wxDialog
 		
 public:
 
-	CNew(int type, int id_type = -1);
+	CNew(int type, int id_type = -1, wxString item_id = wxEmptyString);
 	~CNew();
 	wxString GetName();
 	wxString GetInfo();
 	wxString GetType();
 	int GetItemType();
-
+	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
 	void SetInfo(wxString v);
 	void SetType(wxString v);
+	void SetItemTypeID(int v);
+	void SetItemId(wxString v);
 	
 	DECLARE_EVENT_TABLE();
 

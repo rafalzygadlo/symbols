@@ -11,10 +11,11 @@ BEGIN_EVENT_TABLE(CNew,wxDialog)
 END_EVENT_TABLE()
 
 
-CNew::CNew(int type, int id_type)
+CNew::CNew(int type, int id_type, wxString item_id)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
 	m_IdType = id_type;
+	m_ItemId = item_id;
 //	m_FeaturePanel = NULL;
 	m_TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
@@ -45,11 +46,6 @@ void CNew::GetPanel(int type)
 
 void CNew::GetItemFeaturePanel(wxWindow *Parent)
 {
-	//wxFlexGridSizer *Sizer = new wxFlexGridSizer(2);
-//	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
-	//Panel->SetBackgroundColour(*wxWHITE);
-	//Panel->SetSizer(Sizer);
-	
 	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE %s.id_type = '%d' AND `%s`.id = `%s`.id_feature ORDER BY name"),TABLE_ITEM_FEATURE, TABLE_ITEM_TYPE_FEATURE ,TABLE_ITEM_TYPE_FEATURE, m_IdType,TABLE_ITEM_FEATURE, TABLE_ITEM_TYPE_FEATURE );
 	if(!my_query(sql))
 		return;
@@ -64,12 +60,32 @@ void CNew::GetItemFeaturePanel(wxWindow *Parent)
 		wxStaticText *Label = new wxStaticText(Parent,wxID_ANY,Convert(row[FI_ITEM_FEATURE_NAME]));
 		m_FlexGridSizer->Add(Label,0,wxALL,5);
 		wxTextCtrl *Text = new wxTextCtrl(Parent,wxID_ANY);
+		Text->SetClientData((void*)atoi(row[FI_ITEM_FEATURE_ID]));
 		m_FlexGridSizer->Add(Text,0,wxALL|wxEXPAND,5);
-		m_FlexGridSizer->AddSpacer(1);
 		m_Controls.Add(Label);
 		m_Controls.Add(Text);
+		m_Ids.Add(Text);
 	}
 	
+	db_free_result(result);
+
+
+	for(size_t i = 0; i < m_Ids.size(); i++)
+	{
+		wxTextCtrl *txt = (wxTextCtrl*)m_Ids.Item(i);
+		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_item = '%s' AND id_feature = '%d'"),TABLE_ITEM_VALUE,m_ItemId,(int)txt->GetClientData());
+		my_query(sql);
+
+		void *result = db_result();
+		char **row = (char**)db_fetch_row(result);
+		
+		if(row)
+			txt->SetValue(Convert(row[FI_ITEM_VALUE_VALUE]));
+
+		db_free_result(result);	
+	
+	}
+
 
 }
 
@@ -107,8 +123,9 @@ wxPanel *CNew::EditItemPanel()
 	this->SetSizer(Sizer);
 
 	m_Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Sizer->Add(m_Panel,1,wxALL|wxEXPAND,5);
-	m_FlexGridSizer = new wxFlexGridSizer(3);
+	m_Panel->SetBackgroundColour(*wxWHITE);
+	Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
+	m_FlexGridSizer = new wxFlexGridSizer(2);
 	m_FlexGridSizer->AddGrowableCol(1);
 	m_Panel->SetSizer(m_FlexGridSizer);
 	
@@ -117,35 +134,28 @@ wxPanel *CNew::EditItemPanel()
 	
 	m_ComboItemType =  GetComboItemType(m_Panel);
 	m_FlexGridSizer->Add(m_ComboItemType,0,wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND,5);
-	m_FlexGridSizer->AddSpacer(1);
-
+	
 	wxStaticText *LabelName = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_NAME));
 	m_FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString);
 	m_FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	m_TextName->SetValidator(m_TextValidator);
-	m_FlexGridSizer->AddSpacer(1);
-
+	
 	wxStaticText *LabelType = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_TYPE));
 	m_FlexGridSizer->Add(LabelType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextType = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString);
 	m_FlexGridSizer->Add(m_TextType,0,wxALL|wxEXPAND,5);
 	m_TextType->SetValidator(m_TextValidator);
-	m_FlexGridSizer->AddSpacer(1);
-	
+		
 	wxStaticText *LabelInfo = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_INFO));
 	m_FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
 	m_TextInfo->SetValidator(m_TextValidator);
 	m_FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-	m_FlexGridSizer->AddSpacer(1);
 	
-	// feature
-	//m_ItemSizer = new wxBoxSizer(wxVERTICAL);
-	//Sizer->Add(m_ItemSizer,0,wxALL|wxEXPAND,0);
-	//m_FeaturePanel = GetItemFeaturePanel(this);
-	//m_ItemSizer->Add(m_FeaturePanel);
-	
+
+	GetItemFeaturePanel(m_Panel);
+
 
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
@@ -171,26 +181,24 @@ wxPanel *CNew::EditTypePanel()
 	this->SetSizer(Sizer);
 			
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Sizer->Add(Panel,1,wxALL|wxEXPAND,5);
-	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
+	Panel->SetBackgroundColour(*wxWHITE);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TYPE));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextType = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextType->SetValidator(m_TextValidator);
-
 	FlexGridSizer->Add(m_TextType,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
+	m_TextType->SetValidator(m_TextValidator);
+		
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
-	m_TextInfo->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
+	m_TextInfo->SetValidator(m_TextValidator);
+		
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -215,8 +223,9 @@ wxPanel *CNew::EditNamePanel()
 	this->SetSizer(Sizer);
 			
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Sizer->Add(Panel,1,wxALL|wxEXPAND,5);
-	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(3);
+	Panel->SetBackgroundColour(*wxWHITE);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
@@ -224,17 +233,14 @@ wxPanel *CNew::EditNamePanel()
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
 	m_TextName->SetValidator(m_TextValidator);
-
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
+		
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
 	m_TextInfo->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
+		
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -281,15 +287,13 @@ wxPanel *CNew::LightPanel()
 	m_TextName = new wxTextCtrl(this,wxID_ANY,wxEmptyString);
 	m_TextName->SetValidator(m_TextValidator);
 	s->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	//FlexGridSizer->AddSpacer(1);
-			
+				
 	wxStaticText *LabelInfo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_INFO));
 	s->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
 	m_TextInfo->SetValidator(m_TextValidator);
 	s->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-	//FlexGridSizer->AddSpacer(1);
-		
+			
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -347,18 +351,9 @@ void CNew::OnComboItem(wxCommandEvent &event)
 		delete wnd;
 	}
 	
-	m_FlexGridSizer->PrependSpacer(1);
-	m_FlexGridSizer->PrependSpacer(1);
-
 	m_Controls.Clear();
-//	if(m_FeaturePanel != NULL)
-//	{	
-		//m_ItemSizer->Detach(m_FeaturePanel);
-		//delete m_FeaturePanel;
-//	}
-	
+	m_Ids.Clear();
 	GetItemFeaturePanel(m_Panel);
-	//m_ItemSizer->Add(m_FeaturePanel,0,wxALL|wxEXPAND,5);
 	this->Layout();
 	this->GetSizer()->SetSizeHints(this);
 
@@ -402,3 +397,18 @@ void CNew::SetType(wxString v)
 	m_TextType->SetValue(v);
 }
 
+void CNew::SetItemTypeID(int v)
+{
+	m_IdType = v;
+
+}
+
+wxArrayPtrVoid CNew::GetFeatureControls()
+{
+	return m_Ids;
+}
+
+void CNew::SetItemId(wxString v)
+{
+	m_ItemId = v;
+}

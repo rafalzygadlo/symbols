@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include "listctrl.h"
 #include <wx/listbook.h>
+#include "new.h"
 
 class CListCtrl;
 class CDialogPanel;
@@ -45,6 +46,8 @@ class CDialogPanel: public wxPanel
 	void EditSymbolType(wxString id);
 	void EditSeaway(wxString id);
 	void EditLight(wxString id);
+	void EditItem(wxString id);
+	int GetItemTypeId(wxString id);
 			
 	void EditName(wxString id); // wszystkie tabele z polami [type]
 	void EditType(wxString id); // wszystkie tabele z polami [type]
@@ -56,6 +59,7 @@ class CDialogPanel: public wxPanel
 	void Clear();
 	void Select();
 	void SetTable();
+	void NewItem(CNew *ptr);
 
 	void OnListBox(wxCommandEvent &event);
 

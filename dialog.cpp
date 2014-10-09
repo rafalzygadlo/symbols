@@ -13,7 +13,7 @@ SHeader Header[] =
 	{CONTROL_LIGHT,250,	{FI_LIGHT_INFO , FN_LIGHT_INFO, MSG_INFO} },
 
 	{CONTROL_ITEM,80,	{FI_ITEM_ID , FN_ITEM_ID, MSG_ID} },
-	{CONTROL_ITEM,120,	{FI_ITEM_NAME , FN_ITEM_TYPE, MSG_NAME} },
+	{CONTROL_ITEM,120,	{FI_ITEM_NAME , FN_ITEM_NAME, MSG_NAME} },
 	{CONTROL_ITEM,100,	{FI_ITEM_TYPE , FN_ITEM_TYPE, MSG_TYPE} },
 	{CONTROL_ITEM,250,	{FI_ITEM_INFO , FN_ITEM_INFO, MSG_INFO} },
 	
@@ -54,6 +54,7 @@ CDialog::CDialog(int control_type, bool picker)
 	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(PanelSizer);
+	Center();
 
 }
 
@@ -353,22 +354,34 @@ void CDialogPanel::New()
 	if(ptr->ShowModal() == wxID_OK)
 	{
 		wxString sql; 
-
+		bool query = false;
 		switch(m_ControlType)
 		{
-			case CONTROL_ITEM:		sql = wxString::Format(_("INSERT INTO %s SET id_type ='%d', name='%s', type='%s', info='%s'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo());	break;
-			
-			case CONTROL_LIGHT:		sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo()); break;
-			case CONTROL_ITEM_TYPE:	sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());	break;
+			case CONTROL_ITEM:	
+				NewItem(ptr);
+			break;
+			case CONTROL_LIGHT:		
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo()); 
+				query = true;
+			break;
+			case CONTROL_ITEM_TYPE:	
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());	
+				query = true;
+			break;
 			case CONTROL_AREA:
 			case CONTROL_SEAWAY:
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());	break;
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());	
+				query = true;
+			break;
 		}
-				
-		if(!my_query(sql))
+		
+		if(query)
 		{
-			delete ptr;
-			return;
+			if(!my_query(sql))
+			{
+				delete ptr;
+				return;
+			}
 		}
 			
 		Clear();
@@ -380,17 +393,104 @@ void CDialogPanel::New()
 	
 }
 
+void CDialogPanel::NewItem(CNew *ptr)
+{
+	
+	wxString sql;
+	
+	sql = wxString::Format(_("INSERT INTO %s SET id_type ='%d', name='%s', type='%s', info='%s'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo());
+	if(!my_query(sql))
+		return;
+
+	wxArrayPtrVoid controls = ptr->GetFeatureControls();
+
+	for(size_t i = 0; i < controls.size(); i++)
+	{
+		int id = db_last_insert_id();
+		wxTextCtrl *txt = (wxTextCtrl*)controls.Item(i);
+		int id_feature = (int)txt->GetClientData();
+		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_item ='%s' AND id_feature ='%d'"),TABLE_ITEM_VALUE,id,id_feature);
+		my_query(sql);
+		sql = wxString::Format	(_("INSERT INTO `%s` SET id_item ='%s', id_feature ='%d',value='%s'"),TABLE_ITEM_VALUE,id,id_feature,txt->GetValue());
+		my_query(sql);
+	}
+
+		
+}
+
 void CDialogPanel::OnEdit(wxString id)
 {
 	switch(m_ControlType)
 	{
 		case CONTROL_LIGHT:	EditLight(id);	break;
+		case CONTROL_ITEM:	EditItem(id);	break;
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 				EditName(id);
 			break;
 	}
 
+}
+
+int CDialogPanel::GetItemTypeId(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+
+	if(!my_query(sql))
+		return 0;
+		
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	int value = (atoi(row[FI_ITEM_ID_ITEM_TYPE]));
+
+	db_free_result(result);
+	return value;
+
+}
+
+void CDialogPanel::EditItem(wxString id)
+{
+
+	int type = GetItemTypeId(id);
+	CNew *ptr = new CNew(m_ControlType,type,id);
+
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	//ptr->SetItemTypeID(atoi(row[FI_ITEM_ID_ITEM_TYPE]));
+	ptr->SetName(Convert(row[FI_ITEM_NAME]));
+	ptr->SetType(Convert(row[FI_ITEM_TYPE]));
+	ptr->SetInfo(Convert(row[FI_ITEM_INFO]));
+	db_free_result(result);	
+
+	
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_type = '%d', name = '%s', type = '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo(),id);
+		my_query(sql);
+
+		wxArrayPtrVoid controls = ptr->GetFeatureControls();
+
+		for(size_t i = 0; i < controls.size(); i++)
+		{
+			wxTextCtrl *txt = (wxTextCtrl*)controls.Item(i);
+			int id_feature = (int)txt->GetClientData();
+			sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_item ='%s' AND id_feature ='%d'"),TABLE_ITEM_VALUE,id,id_feature);
+			my_query(sql);
+			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item ='%s', id_feature ='%d',value='%s'"),TABLE_ITEM_VALUE,id,id_feature,txt->GetValue());
+			my_query(sql);
+		}
+
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
 }
 
 void CDialogPanel::EditLight(wxString id)
