@@ -34,6 +34,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Items = NULL;
 	m_Area = NULL;
 	m_Seaway = NULL;
+	m_SymbolType = NULL;
 		
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -92,6 +93,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Items;
 	delete m_Area;
 	delete m_Seaway;
+	delete m_SymbolType;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -397,31 +399,37 @@ void CMapPlugin::ShowProperties()
 void CMapPlugin::Light()
 {
 	if(m_Light == NULL)
-		m_Light = new CDialog(CONTROL_LIGHT,false);
+		m_Light = new CDialog(CONTROL_LIGHT);
 	m_Light->Show();
 }
 
 void CMapPlugin::Items()
 {
 	if(m_Items == NULL)
-		m_Items = new CDialog(CONTROL_ITEM,false);
+		m_Items = new CDialog(CONTROL_ITEM);
 	m_Items->Show();
 }
 
 void CMapPlugin::Area()
 {
 	if(m_Area == NULL)
-		m_Area = new CDialog(CONTROL_AREA,false);
+		m_Area = new CDialog(CONTROL_AREA);
 	m_Area->Show();
 }
 
 void CMapPlugin::Seaway()
 {
 	if(m_Seaway == NULL)
-		m_Seaway = new CDialog(CONTROL_SEAWAY,false);
+		m_Seaway = new CDialog(CONTROL_SEAWAY);
 	m_Seaway->Show();
 }
 
+void CMapPlugin::SymbolType()
+{
+	if(m_SymbolType == NULL)
+		m_SymbolType = new CDialog(CONTROL_SYMBOL_TYPE);
+	m_SymbolType->Show();
+}
 
 void CMapPlugin::CreateApiMenu(void) 
 {
@@ -502,7 +510,7 @@ void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	//ThisPtr->Menu(CONTROL_SYMBOL_TYPE);
+	ThisPtr->Menu(CONTROL_SYMBOL_TYPE);
 	
 	return NULL;	
 }
@@ -511,11 +519,12 @@ void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case CONTROL_NEW:		New();		break;
-		case CONTROL_LIGHT:		Light();	break;
-		case CONTROL_ITEM:		Items();	break;
-		case CONTROL_AREA:		Area();		break;
-		case CONTROL_SEAWAY:	Seaway();	break;
+		case CONTROL_NEW:			New();			break;
+		case CONTROL_LIGHT:			Light();		break;
+		case CONTROL_ITEM:			Items();		break;
+		case CONTROL_AREA:			Area();			break;
+		case CONTROL_SEAWAY:		Seaway();		break;
+		case CONTROL_SYMBOL_TYPE:	SymbolType();	break;
 	}
 
 }

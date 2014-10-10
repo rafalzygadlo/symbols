@@ -11,10 +11,13 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextInfo;
 	wxTextCtrl *m_TextType;
 	wxComboBox *m_ComboItemType;
+	wxComboBox *m_ComboFilterType;
+	wxListBox *m_ListBox;
 	wxPanel *m_Panel;
 	wxFlexGridSizer *m_FlexGridSizer;
 	wxArrayPtrVoid m_Controls,m_Ids;
 	wxString m_ItemId;
+	bool m_Edit;
 
 	void GetPanel(int type);
 
@@ -26,12 +29,13 @@ class CNew: public wxDialog
 	wxComboBox *GetComboItemType(wxWindow *Parent);
 	void GetItemFeaturePanel(wxWindow *Parent);
 	void OnComboItem(wxCommandEvent &event);
-
+	void OnComboFilter(wxCommandEvent &event);
+	//wxComboBox *GetFilterCombo(wxWindow *Parent);
 	bool Validate();
 		
 public:
 
-	CNew(int type, int id_type = -1, wxString item_id = wxEmptyString);
+	CNew(int type, int id_type = -1, wxString item_id = wxEmptyString, bool edit = false);
 	~CNew();
 	wxString GetName();
 	wxString GetInfo();
@@ -49,6 +53,7 @@ public:
 	enum
 	{
 		ID_ITEM_TYPE = 5224,
+		ID_FILTER,
 	};
 	
 

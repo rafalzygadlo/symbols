@@ -20,7 +20,7 @@ class CDialog : public wxDialog
 
 
 public:
-	CDialog(int control_type, bool picker);
+	CDialog(int control_type);
 	wxString _GetId();
 	wxString _GetName();
 	
@@ -34,10 +34,10 @@ class CDialogPanel: public wxPanel
 	int m_ControlType,m_ColumnWithName;
 	wxString m_Table;
 	wxString m_Id, m_Name;
-	bool m_Picker;
 	wxStaticText *m_TopLabel;
 	wxButton *m_ButtonOk;
 	wxListBox *m_ListBox;
+	wxComboBox *m_ComboBox;
 	int m_IdType;
 	wxArrayString m_FilterArray;
 			
@@ -62,16 +62,17 @@ class CDialogPanel: public wxPanel
 	void NewItem(CNew *ptr);
 
 	void OnListBox(wxCommandEvent &event);
-
-	wxComboBox *GetFilterCombo(wxWindow *Parent);
-	wxListBox *GetFilterList(wxWindow *Parent);
+	
+	//wxComboBox *GetFilterCombo(wxWindow *Parent);
+	//wxListBox *GetFilterList(wxWindow *Parent);
 	wxPanel *GetPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
+	wxPanel *GetLightPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
 
 public:
 	
-	CDialogPanel(int control_type, wxWindow *parent,bool picker); // taki do pobrania tylko panela
+	CDialogPanel(int control_type, wxWindow *parent); // taki do pobrania tylko panela
 		
 	void OnNew();
 	void OnEdit(wxString id);

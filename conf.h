@@ -89,9 +89,9 @@
 #define CONTROL_NEW			4
 #define CONTROL_SEAWAY		5
 #define CONTROL_AREA		6
+#define CONTROL_SYMBOL_TYPE 7
 
 // pola list box
-
 
 
 #define ORDER_ASC	0

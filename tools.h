@@ -27,8 +27,9 @@ void _SetUID(int uid);
 void SetLanguageId(int id);
 int GetLanguageId();
 wxString Convert(char *v);
-//wxArrayString GetItemType();
-//int GetItemTypeId(wxString name);
+
+wxListBox *GetFilterList(wxWindow *Parent, int wid);
+wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
 
 #endif
 

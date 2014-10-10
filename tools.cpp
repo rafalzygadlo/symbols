@@ -20,7 +20,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Longitude",	L"Longitude"},
 	{L"Latitude",L"Latitude"},
 	{L"Close",	L"Zamknij"},
-	{L"Ok",L"Ok"},
+	{L"OK",L"OK"},
 	{L"Cancel",L"Anuluj"},
 	{L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",L"Kliknij na mapie ¿eby ustaliæ pozycjê."},
 	{L"Area",L"Akwen"},
@@ -312,3 +312,60 @@ int GetItemTypeId(wxString name)
 
 }
 */
+
+
+wxListBox *GetFilterList(wxWindow *Parent, int wid)
+{
+	wxListBox *Filter = new wxListBox(Parent,wid);
+	Filter->Append(GetMsg(MSG_ALL));
+
+	wxArrayString ar;
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
+	if(!my_query(sql))
+		return Filter;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+		
+	int i = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[FI_ITEM_TYPE_NAME],wxConvUTF8);
+		ar.Add(name);
+		int id = Filter->Append(name);
+		Filter->SetClientData(id,(int*)atoi(row[FI_ITEM_TYPE_ID]));
+	}
+
+	db_free_result(result);
+		
+	return Filter;
+}
+
+wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
+{
+	wxComboBox *Filter = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	Filter->Append(GetMsg(MSG_ALL));
+
+	wxArrayString ar;
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
+	if(!my_query(sql))
+		return Filter;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+		
+	int i = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[FI_ITEM_TYPE_NAME],wxConvUTF8);
+		ar.Add(name);
+		int id = Filter->Append(name);
+		Filter->SetClientData(id,(int*)atoi(row[FI_ITEM_TYPE_ID]));
+	}
+
+	db_free_result(result);
+
+	return Filter;
+}
