@@ -16,9 +16,9 @@ class CPickerPanel: public wxPanel
 	wxArrayPtrVoid m_Panels;
 	int m_ControlType;
 	wxWrapSizer *m_WrapSizer;
-	wxGrid *m_Grid;
+	//wxGrid *m_Grid;
 	CListCtrl *m_List;
-	CMultiDialog *m_Dialog;
+	CDialog *m_Dialog;
 	void New(wxString id, wxString name);
 			
 public:

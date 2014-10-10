@@ -4,6 +4,7 @@
 #include "listctrl.h"
 #include "db.h"
 #include <wx/mstream.h>
+#include <wx/dataview.h>
 
 
 extern unsigned int	add_size;
@@ -26,7 +27,7 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wx
 
 	m_Panel = new wxPanel(this);
 	//m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
-	m_Sizer->Add(m_Panel,0,wxALL|wxEXPAND,0);
+	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
 	m_PanelSizer = new wxBoxSizer(wxVERTICAL);
 	m_Panel->SetSizer(m_PanelSizer);
 
@@ -36,25 +37,47 @@ CPickerPanel::CPickerPanel(wxWindow *parent,wxWindow *top, int control_type , wx
 	//wxStaticText *m_Name = new wxStaticText(m_Panel,wxID_ANY,label);
 	//m_PanelSizer->Add(m_Name,0,wxALL,2);
 	
-	wxButton *New = new wxBitmapButton(m_Panel,ID_NEW,wxBitmap(myImage_1));
-	m_PanelSizer->Add(New,0,wxALL,3);
+	//wxButton *New = new wxBitmapButton(m_Panel,ID_NEW,wxBitmap(myImage_1));
+	//m_PanelSizer->Add(New,0,wxALL,3);
 
-	m_Grid = new wxGrid(m_Panel,wxID_ANY);
-	m_PanelSizer->Add(m_Grid,0,wxALL|wxEXPAND,3);
-	m_Grid->CreateGrid(0,0);
+	//m_Grid = new wxGrid(m_Panel,wxID_ANY);
+	//m_PanelSizer->Add(m_Grid,0,wxALL|wxEXPAND,3);
+	//m_Grid->CreateGrid(0,0);
 		
-	m_Grid->AppendCols(2);
-	m_Grid->SetColLabelValue(0,label);
+	//m_Grid->AppendCols(2);
+	//m_Grid->SetColLabelValue(0,label);
 //	m_Grid->SetColLabelValue(1,GetMsg(MSG_QUANTITY));
 	//m_Grid->SetRowLabelSize(0);
 	
+	/*
+	wxDataViewListCtrl *listctrl = new wxDataViewListCtrl( m_Panel, wxID_ANY );
+	listctrl->SetMinSize(wxSize(-1,150));
+listctrl->AppendToggleColumn( "Toggle" );
+listctrl->AppendTextColumn( "Text" );
 
+wxVector<wxVariant> data;
+data.push_back( wxVariant(true) );
+data.push_back( wxVariant("row 1") );
+listctrl->AppendItem( data );
+data.clear();
+data.push_back( wxVariant(false) );
+data.push_back( wxVariant("row 3") );
+listctrl->AppendItem( data );
+
+	m_PanelSizer->Add(listctrl,1,wxALL|wxEXPAND,3);
+	*/
 	
-	m_WrapSizer = new wxWrapSizer(wxHORIZONTAL);
-	m_Sizer->Add(m_WrapSizer,0,wxALL|wxEXPAND,0);
+	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
+	m_PanelSizer->Add(HSizer,0,wxALL|wxEXPAND,0);
 
+	CDialogPanel *Dialog = new CDialogPanel(CONTROL_ITEM,m_Panel, true);
+	HSizer->Add(Dialog,0,wxALL|wxEXPAND,2);
+	
+	wxListBox *ListBox = new wxListBox(m_Panel,wxID_ANY);
+	HSizer->Add(ListBox,0,wxALL|wxEXPAND,2);
+		
 	SetSizer(m_Sizer);
-			
+				
 }
 
 CPickerPanel::~CPickerPanel()
@@ -93,15 +116,15 @@ void CPickerPanel::New(wxString id, wxString name)
 	//ptr->_SetName(name);
 	//m_WrapSizer->Add(ptr,0,wxALL,1);
 	//m_Panels.Add(ptr);
-	m_Grid->AppendRows(1);
-	m_Grid->SetCellValue(name,m_Grid->GetRows()-1,0);
+//	m_Grid->AppendRows(1);
+//	m_Grid->SetCellValue(name,m_Grid->GetRows()-1,0);
 	
 }
 
 void CPickerPanel::OnNew(wxCommandEvent &event)
 {
 	if(m_Dialog == NULL)
-		m_Dialog = new CMultiDialog();
+		m_Dialog = new CDialog(CONTROL_ITEM,true);
 	
 	if(m_Dialog->ShowModal() == wxID_OK)
 	{

@@ -25,6 +25,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Items;
 	CDialog *m_Area;
 	CDialog *m_Seaway;
+	CDialog *m_SymbolType;
 
 	double CenterX, CenterY;
 	wxArrayPtrVoid TextureList;
@@ -130,6 +131,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Light();
 	void Area();
 	void Seaway();
+	void SymbolType();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);

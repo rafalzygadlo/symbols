@@ -3,19 +3,20 @@
 #include "tools.h"
 #include "db.h"
 #include "color.h"
-#include "picker.h"
 #include <wx/choicebk.h>
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_ITEM_TYPE,OnComboItem)
+	EVT_COMBOBOX(ID_FILTER,OnComboFilter)
 END_EVENT_TABLE()
 
 
-CNew::CNew(int type, int id_type, wxString item_id)
+CNew::CNew(int type, int id_type, wxString item_id, bool edit)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
 	m_IdType = id_type;
 	m_ItemId = item_id;
+	m_Edit = edit;
 //	m_FeaturePanel = NULL;
 	m_TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
@@ -39,6 +40,7 @@ void CNew::GetPanel(int type)
 		case CONTROL_LIGHT:	LightPanel();		break;
 		case CONTROL_AREA:	
 		case CONTROL_SEAWAY:
+		case CONTROL_SYMBOL_TYPE:
 			EditNamePanel();	break;
 
 	}
@@ -95,27 +97,37 @@ wxComboBox *CNew::GetComboItemType(wxWindow *Parent)
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
 	if(!my_query(sql))
 		return ptr;
-	
-	
+		
 	int rows = 0;
 	void *result = db_result();
 	char **row;
-		
-	int i = 0;
+	bool selected = false;
+
+	int counter = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
 		wxString name(row[FI_ITEM_TYPE_NAME],wxConvUTF8);
 		int id = ptr->Append(name);
 		int rid = atoi(row[FI_ITEM_TYPE_ID]);
 		if(m_IdType == rid)
+		{
 			ptr->SetSelection(id);
+			selected = true;
+		}
 		ptr->SetClientData(id,(int*)rid);
+		counter++;
 	}
 		
+	if(!selected && counter > 0)
+	{
+		m_IdType = (int)ptr->GetClientData(0);
+		ptr->SetSelection(0);
+		
+	}
+	
 	db_free_result(result);
 	return ptr;
 }
-
 
 wxPanel *CNew::EditItemPanel()
 {
@@ -134,6 +146,7 @@ wxPanel *CNew::EditItemPanel()
 	
 	m_ComboItemType =  GetComboItemType(m_Panel);
 	m_FlexGridSizer->Add(m_ComboItemType,0,wxALL|wxALIGN_CENTER_VERTICAL|wxEXPAND,5);
+	m_ComboItemType->Enable(!m_Edit);
 	
 	wxStaticText *LabelName = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_NAME));
 	m_FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -275,10 +288,13 @@ wxPanel *CNew::LightPanel()
 	CColorPanel *Color = new CColorPanel(Panel,this);
 	BoxSizer->Add(Color,0,wxALL|wxEXPAND,5);
 	//FlexGridSizer->AddSpacer(1);
+			
+	m_ComboFilterType = GetFilterCombo(Panel,ID_FILTER);
+	BoxSizer->Add(m_ComboFilterType,0,wxALL,0);
 
-	CPickerPanel *BulbPicker = new CPickerPanel(Panel,this,-1,wxEmptyString);
-	BoxSizer->Add(BulbPicker,0,wxALL|wxEXPAND);
-		
+	m_ListBox = new wxListBox(Panel,wxID_ANY);
+	BoxSizer->Add(m_ListBox,0,wxALL,0);
+
 	wxBoxSizer *s = new wxBoxSizer(wxVERTICAL);
 	Sizer->Add(s);
 
@@ -359,6 +375,30 @@ void CNew::OnComboItem(wxCommandEvent &event)
 
 }
 
+void CNew::OnComboFilter(wxCommandEvent &event)
+{
+	int id = event.GetSelection();
+	m_ListBox->Clear();
+
+	m_IdType = (int)m_ComboFilterType->GetClientData(id);
+	
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d'"),TABLE_ITEM,m_IdType);
+	if(!my_query(sql))
+		return;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[FI_ITEM_NAME],wxConvUTF8);
+		m_ListBox->Append(name);
+	}
+
+	db_free_result(result);
+		
+}
 
 wxString CNew::GetName()
 {
