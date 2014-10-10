@@ -165,11 +165,12 @@ wxPanel *CDialogPanel::GetItemPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
 	
 	m_ListBox = GetFilterList(Panel);
 
-	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
+	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,5);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 	
 	return Panel;
@@ -218,6 +219,7 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
 	m_List = new CListCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL | wxLC_SINGLE_SEL | wxLC_ALIGN_LEFT );
 
@@ -263,7 +265,7 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 	m_List->InitColumns();
 	Read();
 		
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,5);
 
 	return Panel;
 
