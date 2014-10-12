@@ -12,15 +12,14 @@ class CMultiDialogPanel;
 class CDialog : public wxDialog
 {
 	CDialogPanel *m_DialogPanel;
-	
-	int m_ControlType;
-	wxStaticText *m_TopLabel;
-	wxButton *m_ButtonOk;
+	CDialogPanel *m_DialogSlave;
+	//wxButton *m_ButtonOk;
 	wxString m_Id, m_Name;
 
 
 public:
 	CDialog(int control_type);
+	CDialog(int control_master, int control_slave);
 	wxString _GetId();
 	wxString _GetName();
 	
@@ -40,6 +39,7 @@ class CDialogPanel: public wxPanel
 	wxComboBox *m_ComboBox;
 	int m_IdType;
 	wxArrayString m_FilterArray;
+	CDialogPanel *m_Slave;
 			
 	void New();
 	void EditArea(wxString id);
@@ -79,7 +79,7 @@ public:
 	void OnDelete(wxString id);
 	void OnColumnCLick(wxString field, int order);
 	void OnSelect(wxString id, wxString name);
-	
+	void SetSlave(CDialogPanel *ptr);
 
 	wxString _GetId();
 	wxString _GetName();

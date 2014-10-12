@@ -48,49 +48,18 @@ SIds Id[] =
 CDialog::CDialog(int control_type)
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
-
+	m_ControlType = control_type;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	
 	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	m_DialogPanel = new CDialogPanel(control_type,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
-		
-	wxPanel *Panel = new wxPanel(this);
-	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
-	
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(PanelSizer);	
-	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
-	PanelSizer->AddStretchSpacer();
-	PanelSizer->Add(ButtonClose,0,wxALL,2);
 
-	Center();
-
-}
-
-CDialog::CDialog(int control_master, int control_slave)
-:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-{
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	this->SetSizer(Sizer);
-	
-	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
-	
-	m_DialogPanel = new CDialogPanel(control_master,this);
-	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
-
-	m_DialogSlave = new CDialogPanel(control_master,this);
-	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
-
-	m_DialogPanel->SetSlave(m_DialogSlave);
 	wxPanel *Panel = new wxPanel(this);
 	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(PanelSizer);	
-	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
-	PanelSizer->AddStretchSpacer();
-	PanelSizer->Add(ButtonClose,0,wxALL,2);
+	Panel->SetSizer(PanelSizer);
 	Center();
 
 }
@@ -119,7 +88,6 @@ CDialogPanel::CDialogPanel(int control_type, wxWindow *parent)
 	m_ControlType = control_type;
 	m_ListBox = NULL;
 	m_TopLabel = NULL;
-	m_Slave = NULL;
 	SetTable();
 		
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -142,7 +110,13 @@ CDialogPanel::CDialogPanel(int control_type, wxWindow *parent)
 	//PanelSizer->Add(ButtonClose,0,wxALL,5);
 		
 	
-	
+	wxPanel *Panel = new wxPanel(this);
+	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(PanelSizer);	
+	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
+	PanelSizer->AddStretchSpacer();
+	PanelSizer->Add(ButtonClose,0,wxALL,2);
 		
 	
 	/*
@@ -172,11 +146,6 @@ void CDialogPanel::OnListBox(wxCommandEvent &event)
 	Read();
 }
 
-void CDialogPanel::SetSlave(CDialogPanel *ptr)
-{
-	m_Slave = ptr;
-}
-
 wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 {
 	switch(m_ControlType)
@@ -197,8 +166,15 @@ wxPanel *CDialogPanel::GetItemPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
-	m_ListBox = GetFilterList(Panel,ID_FILTER);
+<<<<<<< HEAD
+	
+	m_ListBox = GetFilterList(Panel);
+
 	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,5);
+=======
+	m_ListBox = GetFilterList(Panel,ID_FILTER);
+	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
+>>>>>>> 577eafada1ded09fe657c7bb1b37de20c1d75868
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 				
 	return Panel;
@@ -209,6 +185,7 @@ wxPanel *CDialogPanel::GetLightPanel(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
+	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 	return Panel;
 }
@@ -675,11 +652,9 @@ void CDialogPanel::OnSelect(wxString id, wxString name)
 {
 	if(m_ButtonOk)
 		m_ButtonOk->Enable();
-	
 	m_Id = id;
 	m_Name = name;
-	if(m_Slave)
-		m_Slave->Read();
+
 }
 
 wxString CDialogPanel::_GetId()
