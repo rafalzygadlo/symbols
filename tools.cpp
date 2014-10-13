@@ -42,6 +42,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"All",L"Wszystko"},
 	{L"Symbol type",L"Typ znaku"},
 	{L"Item type",L"Typ urz¹dzenia"},
+	{L"Light item",L"Sk³adowe œwiat³a"},
 };
 				
 	

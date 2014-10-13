@@ -399,7 +399,7 @@ void CMapPlugin::ShowProperties()
 void CMapPlugin::Light()
 {
 	if(m_Light == NULL)
-		m_Light = new CDialog(CONTROL_LIGHT,CONTROL_AREA);
+		m_Light = new CDialog(CONTROL_LIGHT,CONTROL_LIGHT_ITEM);
 	m_Light->Show();
 }
 

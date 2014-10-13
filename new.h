@@ -25,6 +25,7 @@ class CNew: public wxDialog
 	wxPanel *EditTypePanel();
 	wxPanel *EditItemPanel();
 	wxPanel *LightPanel();
+	void LightItem();
 	
 	wxComboBox *GetComboItemType(wxWindow *Parent);
 	void GetItemFeaturePanel(wxWindow *Parent);

@@ -74,6 +74,7 @@
 #define MSG_ALL						26
 #define MSG_SYMBOL_TYPE				27
 #define MSG_ITEM_TYPE				28
+#define MSG_LIGHT_ITEM				29
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -90,6 +91,7 @@
 #define CONTROL_SEAWAY		5
 #define CONTROL_AREA		6
 #define CONTROL_SYMBOL_TYPE 7
+#define CONTROL_LIGHT_ITEM	8
 
 // pola list box
 

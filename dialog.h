@@ -13,13 +13,15 @@ class CDialog : public wxDialog
 {
 	CDialogPanel *m_DialogPanel;
 	CDialogPanel *m_DialogSlave;
-	//wxButton *m_ButtonOk;
+	wxButton *m_ButtonOk;
 	wxString m_Id, m_Name;
+	bool m_Picker;
+	wxPanel *GetButtonPanel(wxWindow *parent);
 
 
 public:
-	CDialog(int control_type);
-	CDialog(int control_master, int control_slave);
+	CDialog(int control_type, bool picker = false);
+	CDialog(int control_master, int control_slave, bool picker = false);
 	wxString _GetId();
 	wxString _GetName();
 	
@@ -32,9 +34,8 @@ class CDialogPanel: public wxPanel
 	CListCtrl *m_List;	
 	int m_ControlType,m_ColumnWithName;
 	wxString m_Table;
-	wxString m_Id, m_Name;
+	wxString m_Id, m_Name, m_IdMaster;
 	wxStaticText *m_TopLabel;
-	wxButton *m_ButtonOk;
 	wxListBox *m_ListBox;
 	wxComboBox *m_ComboBox;
 	int m_IdType;
@@ -53,13 +54,16 @@ class CDialogPanel: public wxPanel
 	void EditType(wxString id); // wszystkie tabele z polami [type]
 	
 	void Read();
+	void ReadAll();
 	void ReadItems();
 	void ReadOthers();
+	void ReadLightItems();
 
 	void Clear();
 	void Select();
 	void SetTable();
 	void NewItem(CNew *ptr);
+	void NewLightItem();
 
 	void OnListBox(wxCommandEvent &event);
 	
@@ -68,6 +72,7 @@ class CDialogPanel: public wxPanel
 	wxPanel *GetPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	wxPanel *GetLightPanel(wxWindow *Parent);
+	wxPanel *GetLightItemPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
 
 public:
@@ -83,6 +88,8 @@ public:
 
 	wxString _GetId();
 	wxString _GetName();
+
+	void _SetIdMaster(wxString id);
 	
 	DECLARE_EVENT_TABLE();
 

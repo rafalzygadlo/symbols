@@ -3,6 +3,7 @@
 #include "tools.h"
 #include "db.h"
 #include "color.h"
+#include "dialog.h"
 #include <wx/choicebk.h>
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
@@ -36,8 +37,8 @@ void CNew::GetPanel(int type)
 {
 	switch(type)
 	{
-		case CONTROL_ITEM:	EditItemPanel();	break;
-		case CONTROL_LIGHT:	LightPanel();		break;
+		case CONTROL_ITEM:			EditItemPanel();	break;
+		case CONTROL_LIGHT:
 		case CONTROL_AREA:	
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:
@@ -269,61 +270,6 @@ wxPanel *CNew::EditNamePanel()
 	
 	return Panel;
 	
-}
-
-
-wxPanel *CNew::LightPanel()
-{
-
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	this->SetSizer(Sizer);
-	
-	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Sizer->Add(Panel,0,wxALL|wxEXPAND,5);
-	wxBoxSizer *BoxSizer = new wxBoxSizer(wxVERTICAL);
-	Panel->SetSizer(BoxSizer);
-	
-	//wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	//FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	CColorPanel *Color = new CColorPanel(Panel,this);
-	BoxSizer->Add(Color,0,wxALL|wxEXPAND,5);
-	//FlexGridSizer->AddSpacer(1);
-			
-	m_ComboFilterType = GetFilterCombo(Panel,ID_FILTER);
-	BoxSizer->Add(m_ComboFilterType,0,wxALL,0);
-
-	m_ListBox = new wxListBox(Panel,wxID_ANY);
-	BoxSizer->Add(m_ListBox,0,wxALL,0);
-
-	wxBoxSizer *s = new wxBoxSizer(wxVERTICAL);
-	Sizer->Add(s);
-
-	wxStaticText *LabelName = new wxStaticText(this,wxID_ANY,GetMsg(MSG_NAME));
-	s->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextName = new wxTextCtrl(this,wxID_ANY,wxEmptyString);
-	m_TextName->SetValidator(m_TextValidator);
-	s->Add(m_TextName,0,wxALL|wxEXPAND,5);
-				
-	wxStaticText *LabelInfo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_INFO));
-	s->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(310,80),wxTE_MULTILINE);
-	m_TextInfo->SetValidator(m_TextValidator);
-	s->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-			
-	wxPanel *Panel1 = new wxPanel(this);
-	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
-	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel1->SetSizer(Panel1Sizer);
-
-	Panel1Sizer->AddStretchSpacer();
-
-	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
-	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
-
-	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
-	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
-	
-	return Panel;
 }
 
 bool CNew::Validate()
