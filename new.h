@@ -2,6 +2,7 @@
 #define __NEW_H
 
 #include <wx/wx.h>
+#include "picture.h"
 
 class CNew: public wxDialog
 {
@@ -18,12 +19,14 @@ class CNew: public wxDialog
 	wxArrayPtrVoid m_Controls,m_Ids;
 	wxString m_ItemId;
 	bool m_Edit;
+	CPicturePanel *m_PicturePanel;
 
 	void GetPanel(int type);
 
 	wxPanel *EditNamePanel();
 	wxPanel *EditTypePanel();
 	wxPanel *EditItemPanel();
+	wxPanel *EditPicturePanel();
 	wxPanel *LightPanel();
 	void LightItem();
 	
@@ -31,7 +34,6 @@ class CNew: public wxDialog
 	void GetItemFeaturePanel(wxWindow *Parent);
 	void OnComboItem(wxCommandEvent &event);
 	void OnComboFilter(wxCommandEvent &event);
-	//wxComboBox *GetFilterCombo(wxWindow *Parent);
 	bool Validate();
 		
 public:
@@ -48,7 +50,9 @@ public:
 	void SetType(wxString v);
 	void SetItemTypeID(int v);
 	void SetItemId(wxString v);
-	
+	wxImage GetImage();
+	void SetImageId(wxString id);
+
 	DECLARE_EVENT_TABLE();
 
 	enum

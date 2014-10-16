@@ -176,6 +176,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);			break;
 		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);			break;
 		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);	break;
+		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);		break;
 	}
 	
 	if(_Menu)

@@ -75,6 +75,12 @@
 #define MSG_SYMBOL_TYPE				27
 #define MSG_ITEM_TYPE				28
 #define MSG_LIGHT_ITEM				29
+#define MSG_PICTURE					30
+#define MSG_ADD_PICTURE				31
+#define MSG_BAD_PICTURE				32
+#define MSG_PICTURE_TO_BIG			33
+#define MSG_PICTURE_INFO			34
+#define MSG_CHOOSE_PICTURE			35
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -92,8 +98,7 @@
 #define CONTROL_AREA		6
 #define CONTROL_SYMBOL_TYPE 7
 #define CONTROL_LIGHT_ITEM	8
-
-// pola list box
+#define CONTROL_PICTURE		9
 
 
 #define ORDER_ASC	0
@@ -116,6 +121,13 @@
 #define FID_TYPE 1
 #define FID_INFO 2
 
+#define PICTURE_MAX_WIDTH	250
+#define PICTURE_MAX_HEIGHT	250
+#define PICTURE_MAX_SIZE 64000
+	
+
+#define PICTURE_PANEL_NEW		0
+#define PICTURE_PANEL_PICKER	1
 
 typedef struct Marker
 {

@@ -30,6 +30,8 @@ wxString Convert(char *v);
 
 wxListBox *GetFilterList(wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
+bool GetPicture(wxString filename, char *&buffer, int *size);
+unsigned char* Bin2Hex(unsigned char *str, unsigned int len);
 
 #endif
 

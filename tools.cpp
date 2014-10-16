@@ -4,6 +4,8 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "NaviToolsLib.h"
+#include "stdio.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -43,6 +45,12 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Symbol type",L"Typ znaku"},
 	{L"Item type",L"Typ urz¹dzenia"},
 	{L"Light item",L"Sk³adowe œwiat³a"},
+	{L"Picture",L"Zdjêcie"},
+	{L"Add picture",L"Dodaj zdjêcie"},
+	{L"Bad picture",L"Nie mo¿na za³adowaæ zdjêcia"},
+	{L"Picture too big max %dkB",L"Za du¿e zdjêcie max %dkB"},
+	{L"Size: %d x %d",L"Wymiary: %d x %d"},
+	{L"Choose picture",L"Wybierz zdjêcie"},
 };
 				
 	
@@ -369,4 +377,44 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 	db_free_result(result);
 
 	return Filter;
+}
+
+bool GetPicture(wxString filename, char *&buffer, int *size)
+{
+	FILE *f;
+	
+	wxString str = filename;
+	wxCharBuffer file = str.ToUTF8(); 
+	const char *fname = file.data();
+	f = fopen(fname , "rb" );
+	if( f == NULL )
+		return false;
+		
+	*size = nvFileSize(fname);
+	rewind(f);
+	buffer = (char*)malloc(*size);
+	size_t a = fread(buffer,*size,1,f);
+	fclose(f);
+			
+	return true;
+}
+
+unsigned char* Bin2Hex(unsigned char *str, unsigned int len)
+{
+
+
+    unsigned int buffer_size = (len * 2) + 1;
+    unsigned int i;
+    unsigned char *buffer = (unsigned char*)malloc( buffer_size ), *pbuffer;
+
+    memset(buffer, 0, buffer_size);
+    pbuffer = buffer;
+    for(i=0; i<len; i++ )
+    {
+
+        sprintf( (char*)pbuffer, "%02X", str[i] );
+        pbuffer += 2;
+    };
+
+    return buffer;
 }

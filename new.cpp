@@ -4,7 +4,7 @@
 #include "db.h"
 #include "color.h"
 #include "dialog.h"
-#include <wx/choicebk.h>
+#include "picture.h"
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_ITEM_TYPE,OnComboItem)
@@ -38,11 +38,12 @@ void CNew::GetPanel(int type)
 	switch(type)
 	{
 		case CONTROL_ITEM:			EditItemPanel();	break;
+		case CONTROL_PICTURE:		EditPicturePanel();	break;
 		case CONTROL_LIGHT:
 		case CONTROL_AREA:	
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:
-			EditNamePanel();	break;
+		case CONTROL_SYMBOL_TYPE:	EditNamePanel();	break;
+		
 
 	}
 }
@@ -132,16 +133,24 @@ wxComboBox *CNew::GetComboItemType(wxWindow *Parent)
 
 wxPanel *CNew::EditItemPanel()
 {
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	this->SetSizer(Sizer);
-
+	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Main);
+	
 	m_Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
 	m_Panel->SetBackgroundColour(*wxWHITE);
-	Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
+	Main->Add(m_Panel,1,wxALL|wxEXPAND,0);
+	
+		
 	m_FlexGridSizer = new wxFlexGridSizer(2);
 	m_FlexGridSizer->AddGrowableCol(1);
 	m_Panel->SetSizer(m_FlexGridSizer);
 	
+	wxStaticText *LabelPicture = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_PICTURE));
+	m_FlexGridSizer->Add(LabelPicture,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_PicturePanel = new CPicturePanel(m_Panel,PICTURE_PANEL_PICKER);
+	m_FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
+		
 	wxStaticText *LabelItemType = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_ITEM_TYPE));
 	m_FlexGridSizer->Add(LabelItemType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	
@@ -152,6 +161,7 @@ wxPanel *CNew::EditItemPanel()
 	wxStaticText *LabelName = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_NAME));
 	m_FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
 	m_FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	m_TextName->SetValidator(m_TextValidator);
 	
@@ -172,7 +182,7 @@ wxPanel *CNew::EditItemPanel()
 
 
 	wxPanel *Panel1 = new wxPanel(this);
-	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	Main->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel1->SetSizer(Panel1Sizer);
 
@@ -246,6 +256,7 @@ wxPanel *CNew::EditNamePanel()
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
 	m_TextName->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 		
@@ -271,6 +282,57 @@ wxPanel *CNew::EditNamePanel()
 	return Panel;
 	
 }
+
+wxPanel *CNew::EditPicturePanel()
+{
+	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Main);
+	
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Panel->SetBackgroundColour(*wxWHITE);
+	Main->Add(Panel,1,wxALL|wxEXPAND,0);
+	
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);
+	
+	wxStaticText *LabelPicture = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_PICTURE));
+	FlexGridSizer->Add(LabelPicture,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_NEW);
+	FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
+		
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
+	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
+	m_TextName->SetValidator(m_TextValidator);
+			
+	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
+	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+
+	wxPanel *Panel1 = new wxPanel(this);
+	Main->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+
+	Panel1Sizer->AddStretchSpacer();
+
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+	
+	return Panel;
+	
+}
+
+
 
 bool CNew::Validate()
 {
@@ -397,4 +459,14 @@ wxArrayPtrVoid CNew::GetFeatureControls()
 void CNew::SetItemId(wxString v)
 {
 	m_ItemId = v;
+}
+
+wxImage CNew::GetImage()
+{
+	return m_PicturePanel->GetImage();
+}
+
+void CNew::SetImageId(wxString id)
+{
+	m_PicturePanel->SetImageId(id);
 }

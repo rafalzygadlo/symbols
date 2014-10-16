@@ -14,7 +14,7 @@ class CDialog : public wxDialog
 	CDialogPanel *m_DialogPanel;
 	CDialogPanel *m_DialogSlave;
 	wxButton *m_ButtonOk;
-	wxString m_Id, m_Name;
+	wxString m_ID;
 	bool m_Picker;
 	wxPanel *GetButtonPanel(wxWindow *parent);
 
@@ -23,7 +23,7 @@ public:
 	CDialog(int control_type, bool picker = false);
 	CDialog(int control_master, int control_slave, bool picker = false);
 	wxString _GetId();
-	wxString _GetName();
+	//wxString _GetName();
 	
 };
 
@@ -34,13 +34,16 @@ class CDialogPanel: public wxPanel
 	CListCtrl *m_List;	
 	int m_ControlType,m_ColumnWithName;
 	wxString m_Table;
-	wxString m_Id, m_Name, m_IdMaster;
+	wxString m_ID, m_Name, m_IDMaster;
 	wxStaticText *m_TopLabel;
 	wxListBox *m_ListBox;
 	wxComboBox *m_ComboBox;
-	int m_IdType;
+	int m_IDType;
 	wxArrayString m_FilterArray;
 	CDialogPanel *m_Slave;
+	CPicturePanel *m_PicturePanel;
+	int m_IsSlave;
+	wxWindow *m_Parent;
 			
 	void New();
 	void EditArea(wxString id);
@@ -52,18 +55,22 @@ class CDialogPanel: public wxPanel
 			
 	void EditName(wxString id); // wszystkie tabele z polami [type]
 	void EditType(wxString id); // wszystkie tabele z polami [type]
+	void EditPicture(wxString id);
 	
 	void Read();
 	void ReadAll();
 	void ReadItems();
 	void ReadOthers();
 	void ReadLightItems();
+	void ReadPicture();
 
 	void Clear();
 	void Select();
 	void SetTable();
 	void NewItem(CNew *ptr);
 	void NewLightItem();
+	void NewPicture();
+	void UpdatePicture(wxImage image, int id);
 
 	void OnListBox(wxCommandEvent &event);
 	
@@ -74,10 +81,11 @@ class CDialogPanel: public wxPanel
 	wxPanel *GetLightPanel(wxWindow *Parent);
 	wxPanel *GetLightItemPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
+	wxPanel *GetPicturePanel(wxWindow *Parent);
 
 public:
 	
-	CDialogPanel(int control_type, wxWindow *parent); // taki do pobrania tylko panela
+	CDialogPanel(int control_type, wxWindow *parent, bool slave = false); // taki do pobrania tylko panela
 		
 	void OnNew();
 	void OnEdit(wxString id);

@@ -4,34 +4,41 @@
 #include "listctrl.h"
 #include "new.h"
 #include "db.h"
-
+#include <wx/rawbmp.h>
+#include <string.h>
+#include <wx/mstream.h>
+#include <wx/statline.h>
 
 SHeader Header[] =
 {
-	{CONTROL_LIGHT, 80,	{FI_LIGHT_ID , FN_LIGHT_ID, MSG_ID} },
+	{CONTROL_LIGHT, 0,	{FI_LIGHT_ID , FN_LIGHT_ID, MSG_ID} },
 	{CONTROL_LIGHT,100,	{FI_LIGHT_NAME , FN_LIGHT_NAME, MSG_NAME} },
 	{CONTROL_LIGHT,250,	{FI_LIGHT_INFO , FN_LIGHT_INFO, MSG_INFO} },
 
-	{CONTROL_ITEM, 80, {FI_ITEM_ID , FN_ITEM_ID, MSG_ID} },
+	{CONTROL_ITEM, 0, {FI_ITEM_ID , FN_ITEM_ID, MSG_ID} },
 	{CONTROL_ITEM,120, {FI_ITEM_NAME , FN_ITEM_NAME, MSG_NAME} },
 	{CONTROL_ITEM,100, {FI_ITEM_TYPE , FN_ITEM_TYPE, MSG_TYPE} },
 	{CONTROL_ITEM,250, {FI_ITEM_INFO , FN_ITEM_INFO, MSG_INFO} },
 	
-	{CONTROL_AREA, 80, {FI_AREA_ID ,	FN_AREA_ID, MSG_ID} },
+	{CONTROL_AREA, 0, {FI_AREA_ID ,	FN_AREA_ID, MSG_ID} },
 	{CONTROL_AREA,100, {FI_AREA_NAME , FN_AREA_NAME, MSG_NAME} },
 	{CONTROL_AREA,250, {FI_AREA_INFO , FN_AREA_INFO, MSG_INFO} },
 
-	{CONTROL_SEAWAY, 80, {FI_SEAWAY_ID , FN_SEAWAY_ID, MSG_ID} },
+	{CONTROL_SEAWAY, 0, {FI_SEAWAY_ID , FN_SEAWAY_ID, MSG_ID} },
 	{CONTROL_SEAWAY,100, {FI_SEAWAY_NAME , FN_SEAWAY_NAME, MSG_NAME} },
 	{CONTROL_SEAWAY,250, {FI_SEAWAY_INFO , FN_SEAWAY_INFO, MSG_INFO} },
 
-	{CONTROL_SYMBOL_TYPE, 80, {FI_SYMBOL_TYPE_ID , FN_SYMBOL_TYPE_ID, MSG_ID} },
+	{CONTROL_SYMBOL_TYPE, 0, {FI_SYMBOL_TYPE_ID , FN_SYMBOL_TYPE_ID, MSG_ID} },
 	{CONTROL_SYMBOL_TYPE,100, {FI_SYMBOL_TYPE_NAME , FN_SYMBOL_TYPE_NAME, MSG_NAME} },
 	{CONTROL_SYMBOL_TYPE,250, {FI_SYMBOL_TYPE_INFO , FN_SYMBOL_TYPE_INFO, MSG_INFO} },
 	
-	{CONTROL_LIGHT_ITEM,80, {FI_ITEM_ID  , FN_ITEM_ID, MSG_ID} },
+	{CONTROL_LIGHT_ITEM,0, {FI_ITEM_ID  , FN_ITEM_ID, MSG_ID} },
 	{CONTROL_LIGHT_ITEM,100, {FI_ITEM_NAME + 1 , FN_ITEM_TYPE, MSG_NAME} },
 	{CONTROL_LIGHT_ITEM,100, {FI_ITEM_TYPE + 1, FN_ITEM_TYPE, MSG_TYPE} },
+
+	{CONTROL_PICTURE,0, {FI_PICTURE_ID  , FN_PICTURE_ID, MSG_ID} },
+	{CONTROL_PICTURE,100, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
+	{CONTROL_PICTURE,100, {FI_PICTURE_INFO  , FN_PICTURE_INFO, MSG_INFO} },
 	
 	{-1},
 
@@ -45,12 +52,12 @@ SIds Id[] =
 	{CONTROL_SEAWAY, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SEAWAY},
 	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
 	{CONTROL_LIGHT_ITEM,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LIGHT_ITEM},
-	{-1},
+	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE}, 
 
 };
 
 CDialog::CDialog(int control_type, bool picker)
-:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX)
 {
 	m_ButtonOk = NULL;
 	m_Picker = picker;
@@ -60,7 +67,10 @@ CDialog::CDialog(int control_type, bool picker)
 	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	m_DialogPanel = new CDialogPanel(control_type,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
-		
+	
+	wxStaticLine *Line = new wxStaticLine(this);
+	Sizer->Add(Line,0,wxALL|wxEXPAND,5);
+	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	
 	Center();
@@ -68,7 +78,7 @@ CDialog::CDialog(int control_type, bool picker)
 }
 
 CDialog::CDialog(int control_master, int control_slave,bool picker)
-:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX)
 {
 	m_ButtonOk = NULL;
 	m_Picker = picker;
@@ -80,11 +90,14 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
 	m_DialogPanel = new CDialogPanel(control_master,this);
 	Sizer->Add(m_DialogPanel,0,wxALL|wxEXPAND,0);
 
-	m_DialogSlave = new CDialogPanel(control_slave,this);
+	m_DialogSlave = new CDialogPanel(control_slave,this,true);
 	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
 	
 	m_DialogPanel->SetSlave(m_DialogSlave);
 	
+	wxStaticLine *Line = new wxStaticLine(this);
+	Sizer->Add(Line,0,wxALL|wxEXPAND,5);
+
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 
 	Center();
@@ -122,26 +135,25 @@ wxString CDialog::_GetId()
 	return m_DialogPanel->_GetId();
 }
 
-wxString  CDialog::_GetName()
-{
-	return m_DialogPanel->_GetName();
-}
 
 BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
 	EVT_LISTBOX(ID_FILTER,OnListBox)
 END_EVENT_TABLE()
 
-CDialogPanel::CDialogPanel(int control_type, wxWindow *parent)
+CDialogPanel::CDialogPanel(int control_type, wxWindow *parent,bool slave)
 :wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
-	m_IdType = -1;
+	m_IsSlave = slave;
+	m_Parent = parent;
+	m_IDType = -1;
 	m_ListBox = NULL;
 	m_Table = wxEmptyString;
-	m_IdMaster = wxEmptyString;
+	m_IDMaster = wxEmptyString;
 	m_ControlType = control_type;
 	m_ListBox = NULL;
 	m_TopLabel = NULL;
 	m_Slave = NULL;
+	m_PicturePanel = NULL;
 	SetTable();
 		
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -164,10 +176,10 @@ void CDialogPanel::OnListBox(wxCommandEvent &event)
 	
 	if(sel == -1)
 	{
-		m_IdType = -1;	
+		m_IDType = -1;	
 	}else{
 		
-		m_IdType = (int)m_ListBox->GetClientData(event.GetSelection());
+		m_IDType = (int)m_ListBox->GetClientData(event.GetSelection());
 	}
 		
 	Clear();
@@ -186,6 +198,7 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_ITEM:			return GetItemPanel(Parent);
 		case CONTROL_LIGHT:			return GetLightPanel(Parent);
 		case CONTROL_LIGHT_ITEM:	return GetLightItemPanel(Parent);
+		case CONTROL_PICTURE:		return GetPicturePanel(Parent);
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:
@@ -200,8 +213,8 @@ wxPanel *CDialogPanel::GetLightItemPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
-	m_ListBox = GetFilterList(Panel,ID_FILTER);
-	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,5);
+	//m_ListBox = GetFilterList(Panel,ID_FILTER);
+	//Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 				
 	return Panel;
@@ -215,7 +228,7 @@ wxPanel *CDialogPanel::GetItemPanel(wxWindow *Parent)
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
 	m_ListBox = GetFilterList(Panel,ID_FILTER);
-	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,5);
+	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 				
 	return Panel;
@@ -227,6 +240,17 @@ wxPanel *CDialogPanel::GetLightPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
+	return Panel;
+}
+
+wxPanel *CDialogPanel::GetPicturePanel(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetSizer(Sizer);
+	m_PicturePanel = new CPicturePanel(Panel);
+	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
+	Sizer->Add(m_PicturePanel,1,wxALL|wxEXPAND,0);
 	return Panel;
 }
 
@@ -332,6 +356,8 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 			m_List->SetColumnWithName(i.col_with_name);
 			if(m_TopLabel)
 				m_TopLabel->SetLabel(GetMsg(i.id_label));
+			if(!m_IsSlave)
+				m_Parent->SetLabel(GetMsg(i.id_label));
 			break;
 		} 
 	
@@ -358,6 +384,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_AREA:			m_Table = TABLE_AREA;			break;
 		case CONTROL_SEAWAY:		m_Table = TABLE_SEAWAY;			break;
 		case CONTROL_SYMBOL_TYPE:	m_Table = TABLE_SYMBOL_TYPE;	break;
+		case CONTROL_PICTURE:		m_Table = TABLE_PICTURE;		break;
 	
 	}
 }
@@ -370,11 +397,27 @@ void CDialogPanel::Read()
 		case CONTROL_LIGHT_ITEM:	ReadLightItems();	break;
 		case CONTROL_LIGHT:
 		case CONTROL_AREA:
-		case CONTROL_SEAWAY:	
+		case CONTROL_SEAWAY:
+		
 		case CONTROL_SYMBOL_TYPE:	ReadOthers();		break;
+		case CONTROL_PICTURE:		ReadPicture();		break;
 	}
 
 }
+
+void CDialogPanel::ReadPicture()
+{	
+	wxString sql;
+	if(m_Field == wxEmptyString)		
+		sql = wxString::Format(_("SELECT %s,%s,%s FROM `%s`"),FN_PICTURE_ID,FN_PICTURE_NAME,FN_PICTURE_INFO,m_Table);
+	else
+		sql = wxString::Format(_("SELECT %s,%s,%s FROM `%s` ORDER BY %s %s"),FN_PICTURE_ID,FN_PICTURE_NAME,FN_PICTURE_INFO, m_Table,m_Field,m_Order);
+	
+	m_List->Read(sql);
+	m_List->Refresh(false);
+
+}
+
 
 void CDialogPanel::ReadOthers()
 {	
@@ -393,7 +436,7 @@ void CDialogPanel::ReadItems()
 {	
 	wxString sql;
 
-	if(m_IdType == -1)
+	if(m_IDType == -1)
 	{
 		if(m_Field == wxEmptyString)		
 			sql = wxString::Format(_("SELECT * FROM `%s`"),m_Table);
@@ -402,9 +445,9 @@ void CDialogPanel::ReadItems()
 	}else{
 
 		if(m_Field == wxEmptyString)		
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d'"),m_Table,m_IdType);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d'"),m_Table,m_IDType);
 		else
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d' ORDER BY %s %s"),m_Table,m_IdType,m_Field,m_Order);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d' ORDER BY %s %s"),m_Table,m_IDType,m_Field,m_Order);
 	}
 
 	m_List->Read(sql);
@@ -415,21 +458,21 @@ void CDialogPanel::ReadItems()
 void CDialogPanel::ReadLightItems()
 {
 	wxString sql;
-	if(m_IdMaster == wxEmptyString)
+	if(m_IDMaster == wxEmptyString)
 		return;
 
-	if(m_IdType == -1)
+	if(m_IDType == -1)
 	{
 		if(m_Field == wxEmptyString)		
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s'"),VIEW_LIGHT_ITEM ,m_IdMaster);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s'"),VIEW_LIGHT_ITEM ,m_IDMaster);
 		else
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' ORDER BY %s %s"), VIEW_LIGHT_ITEM,m_IdMaster, m_Field,m_Order);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' ORDER BY %s %s"), VIEW_LIGHT_ITEM,m_IDMaster, m_Field,m_Order);
 	}else{
 		
 		if(m_Field == wxEmptyString)		
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' AND id_type = '%d'"),VIEW_LIGHT_ITEM,m_IdMaster, m_IdType);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' AND id_type = '%d'"),VIEW_LIGHT_ITEM,m_IDMaster, m_IDType);
 		else
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' AND id_type = '%d' ORDER BY %s %s"),VIEW_LIGHT_ITEM, m_IdMaster, m_IdType, m_Field,m_Order);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_light = '%s' AND id_type = '%d' ORDER BY %s %s"),VIEW_LIGHT_ITEM, m_IDMaster, m_IDType, m_Field,m_Order);
 	}
 
 	m_List->Read(sql);
@@ -439,6 +482,8 @@ void CDialogPanel::ReadLightItems()
 
 void CDialogPanel::Clear()
 {
+	if(m_PicturePanel)
+		m_PicturePanel->Clear();
 	m_List->Clear();
 }
 	
@@ -463,14 +508,16 @@ void CDialogPanel::OnNew()
 		case CONTROL_LIGHT_ITEM:
 			NewLightItem();
 		break;
-	
+		case CONTROL_PICTURE:
+			NewPicture();
+		break;
 	}
 	
 }
 
 void CDialogPanel::New()
 {
-	CNew *ptr = new CNew(m_ControlType,m_IdType);
+	CNew *ptr = new CNew(m_ControlType,m_IDType);
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
@@ -521,7 +568,7 @@ void CDialogPanel::NewLightItem()
 	if(ptr->ShowModal() == wxID_OK)
 	{
 		wxString sql;
-		sql = wxString::Format(_("INSERT INTO %s SET id_light='%s', id_item='%s'"),m_Table,m_IdMaster,ptr->_GetId());
+		sql = wxString::Format(_("INSERT INTO %s SET id_light='%s', id_item='%s'"),m_Table,m_IDMaster,ptr->_GetId());
 				
 		if(!my_query(sql))
 		{
@@ -560,17 +607,63 @@ void CDialogPanel::NewItem(CNew *ptr)
 		
 }
 
+void CDialogPanel::NewPicture()
+{
+	CNew *ptr = new CNew(CONTROL_PICTURE,true); 
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString _sql;
+		_sql = wxString::Format(_("INSERT INTO %s SET name ='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
+		if(!my_query(_sql))
+			return;
+		
+		int id = db_last_insert_id();
+		wxImage img =  ptr->GetImage();
+		UpdatePicture(img,id);
+		Clear();
+		Read();
+	}
+	
+	delete ptr;
+
+}
+void CDialogPanel::UpdatePicture(wxImage image,int id)
+{	
+						
+	if(!image.IsOk())
+		return;
+	
+	const char *sql = "UPDATE `%s` SET data='%s' WHERE id = '%d'";
+	wxMemoryOutputStream stream;
+	if(!image.SaveFile(stream,wxBITMAP_TYPE_PNG))
+		return;
+	wxStreamBuffer *st = stream.GetOutputStreamBuffer();
+		
+	char *chunk = (char*)malloc(st->GetBufferSize() * 2);
+	int data_size = db_escape_string( chunk, (const char*)st->GetBufferStart(), st->GetBufferSize());
+	int table_len = strlen(TABLE_PICTURE);
+	int new_sql_size = strlen(sql) + table_len + data_size;
+	char *new_sql = (char*)malloc(new_sql_size);
+	memset(new_sql,0,new_sql_size);
+		
+	int len = sprintf( new_sql,sql,TABLE_PICTURE,chunk,id);
+	my_query(new_sql,len);
+	free(chunk);		
+	free(new_sql);
+	
+}
+
+
 void CDialogPanel::OnEdit(wxString id)
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_LIGHT:	EditLight(id);	break;
-		case CONTROL_ITEM:	EditItem(id);	break;
+		case CONTROL_PICTURE:		EditPicture(id);	break;
+		case CONTROL_LIGHT:			EditLight(id);	break;
+		case CONTROL_ITEM:			EditItem(id);	break;
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:
-				EditName(id);
-			break;
+		case CONTROL_SYMBOL_TYPE:	EditName(id);	break;
 	}
 
 }
@@ -721,6 +814,54 @@ void CDialogPanel::EditType(wxString id)
 	
 }
 
+void CDialogPanel::EditPicture(wxString id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	
+	if(!my_query(sql))
+		return;
+		
+	CNew *ptr = new CNew(m_ControlType);
+	
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetName(Convert(row[FID_NAME]));
+	ptr->SetInfo(Convert(row[FID_INFO]));
+
+	//unsigned long *len = db_fetch_lengths(result);
+	//int size = len[FI_PICTURE_DATA];
+	//if(size > 0)
+	//{
+		//wxMemoryInputStream stream( row[FI_PICTURE_DATA],len[FI_PICTURE_DATA]);
+		//wxLogNull log;
+		//wxImage img(stream);
+		//if(img.IsOk())
+			//ptr->SetImage(img);
+	//}
+	
+	db_free_result(result);
+
+	ptr->SetImageId(id);
+	
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET name= '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
+		my_query(sql);
+		
+		wxImage img = ptr->GetImage();
+		long _id;
+		id.ToLong(&_id);
+		UpdatePicture(img,_id);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+	
+}
+
 void CDialogPanel::OnDelete(wxString id)
 {
 
@@ -751,20 +892,27 @@ void CDialogPanel::OnColumnCLick(wxString field, int order)
 
 void CDialogPanel::OnSelect(wxString id, wxString name)
 {
-	m_Id = id;
+	m_ID = id;
 	m_Name = name;
 	
 	if(m_Slave)
 	{
 		m_Slave->_SetIdMaster(id);
+		m_Slave->Clear();
 		m_Slave->Read();
+	}
+
+	if(m_PicturePanel)
+	{
+		m_PicturePanel->_SetId(m_ID);
+		m_PicturePanel->Read();
 	}
 	
 }
 
 wxString CDialogPanel::_GetId()
 {
-	return m_Id;
+	return m_ID;
 }
 
 wxString  CDialogPanel::_GetName()
@@ -774,7 +922,7 @@ wxString  CDialogPanel::_GetName()
 
 void CDialogPanel::_SetIdMaster(wxString id)
 {
-	m_IdMaster = id;
+	m_IDMaster = id;
 }
 
 

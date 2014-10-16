@@ -35,6 +35,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Area = NULL;
 	m_Seaway = NULL;
 	m_SymbolType = NULL;
+	m_Picture = NULL;
 		
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -94,6 +95,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Area;
 	delete m_Seaway;
 	delete m_SymbolType;
+	delete m_Picture;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -265,6 +267,15 @@ void CMapPlugin::Run(void *Params)
 		wxMessageBox(str);
 	}	
 
+	//FILE *File;
+    //if (wxFileExists(GetLog))
+      //  File = fopen(path.char_str(),"a");
+    //else
+      //  File = fopen(path.char_str(),"w");
+	//wxLogStderr *LogFile = new wxLogStderr(File);
+    //wxLog *Log = new wxLog();
+    //Log->SetActiveTarget(LogFile);
+
 	Read();
 	CreateApiMenu(); // jezyki
 	// refresh dla wywolania renderu zeby skreowac ikony
@@ -431,18 +442,27 @@ void CMapPlugin::SymbolType()
 	m_SymbolType->Show();
 }
 
+void CMapPlugin::Picture()
+{
+	if(m_Picture == NULL)
+		m_Picture = new CDialog(CONTROL_PICTURE);
+	m_Picture->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
-	NaviApiMenu->AddItem(L"-",this,NULL);
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
+	//NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LIGHT),this, MenuLight );
 	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_TYPE),this, MenuSymbolType);
+	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_PICTURE),this,MenuPicture);
 	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
+	
 	
 	/*
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
@@ -479,6 +499,14 @@ void *CMapPlugin::MenuItems(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
 	ThisPtr->Menu(CONTROL_ITEM);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuPicture(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_PICTURE);
 	
 	return NULL;	
 }
@@ -525,6 +553,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_AREA:			Area();			break;
 		case CONTROL_SEAWAY:		Seaway();		break;
 		case CONTROL_SYMBOL_TYPE:	SymbolType();	break;
+		case CONTROL_PICTURE:		Picture();		break;
 	}
 
 }
