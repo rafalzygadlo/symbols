@@ -158,13 +158,13 @@ CDialogPanel::CDialogPanel(int control_type, wxWindow *parent,bool slave)
 		
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
-	wxPanel *TopPanel = new wxPanel(this);
-	Sizer->Add(TopPanel,0,wxALL|wxEXPAND,5);
-	wxBoxSizer *TopPanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	TopPanel->SetSizer(TopPanelSizer);
+	//wxPanel *TopPanel = new wxPanel(this);
+	//Sizer->Add(TopPanel,0,wxALL|wxEXPAND,5);
+	//wxBoxSizer *TopPanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	//TopPanel->SetSizer(TopPanelSizer);
 
-	m_TopLabel = new wxStaticText(TopPanel,wxID_ANY,wxEmptyString);
-	TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
+	//m_TopLabel = new wxStaticText(TopPanel,wxID_ANY,wxEmptyString);
+	//TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
 	
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
 			
@@ -354,8 +354,8 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 		{
 			m_List->SetColumnWithId(i.col_with_id);
 			m_List->SetColumnWithName(i.col_with_name);
-			if(m_TopLabel)
-				m_TopLabel->SetLabel(GetMsg(i.id_label));
+			//if(m_TopLabel)
+			//	m_TopLabel->SetLabel(GetMsg(i.id_label));
 			if(!m_IsSlave)
 				m_Parent->SetLabel(GetMsg(i.id_label));
 			break;
@@ -635,7 +635,7 @@ void CDialogPanel::UpdatePicture(wxImage image,int id)
 	
 	const char *sql = "UPDATE `%s` SET data='%s' WHERE id = '%d'";
 	wxMemoryOutputStream stream;
-	if(!image.SaveFile(stream,wxBITMAP_TYPE_PNG))
+	if(!image.SaveFile(stream,wxBITMAP_TYPE_JPEG))
 		return;
 	wxStreamBuffer *st = stream.GetOutputStreamBuffer();
 		
