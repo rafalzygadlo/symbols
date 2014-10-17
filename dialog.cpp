@@ -638,7 +638,7 @@ void CDialogPanel::UpdatePicture(wxImage image,int id)
 	if(!image.SaveFile(stream,wxBITMAP_TYPE_JPEG))
 		return;
 	wxStreamBuffer *st = stream.GetOutputStreamBuffer();
-		
+	
 	char *chunk = (char*)malloc(st->GetBufferSize() * 2);
 	int data_size = db_escape_string( chunk, (const char*)st->GetBufferStart(), st->GetBufferSize());
 	int table_len = strlen(TABLE_PICTURE);
@@ -828,18 +828,7 @@ void CDialogPanel::EditPicture(wxString id)
 	
 	ptr->SetName(Convert(row[FID_NAME]));
 	ptr->SetInfo(Convert(row[FID_INFO]));
-
-	//unsigned long *len = db_fetch_lengths(result);
-	//int size = len[FI_PICTURE_DATA];
-	//if(size > 0)
-	//{
-		//wxMemoryInputStream stream( row[FI_PICTURE_DATA],len[FI_PICTURE_DATA]);
-		//wxLogNull log;
-		//wxImage img(stream);
-		//if(img.IsOk())
-			//ptr->SetImage(img);
-	//}
-	
+		
 	db_free_result(result);
 
 	ptr->SetImageId(id);

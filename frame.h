@@ -12,7 +12,6 @@
 class CMyIcon;
 class CMyFrame: public wxDialog
 {
-	wxScrolledWindow *Scroll;
 	CMapPlugin *m_DLL;	
 	SMarker *MarkerSelectedPtr;
 	wxTextCtrl *textname;
