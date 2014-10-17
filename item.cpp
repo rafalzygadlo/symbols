@@ -120,7 +120,7 @@ void CItem::AppendCombo()
 	Sizer->Add(Delete,0,wxALL,2);
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%s'"),TABLE_ITEM,m_Id);
-	Read(sql,0,Combo);
+	Read(sql,2,Combo);
 
 	m_ItemPanel->_Layout();
 	m_Counter++;
