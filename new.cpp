@@ -26,7 +26,7 @@ CNew::CNew(int type, int id_type, wxString item_id, bool edit)
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
 
 	GetPanel(type);
-	GetSizer()->SetSizeHints(this);
+	Fit();
 	GetSizer()->Layout();
 	Center();
 	
@@ -150,7 +150,6 @@ wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 {
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
-	Panel->SetBackgroundColour(*wxWHITE);
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
@@ -171,7 +170,15 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	FlexGridSizer->Add(GetAreaCombo(Panel,wxID_ANY),0,wxALL|wxEXPAND,5);
-	
+
+	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
+	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	FlexGridSizer->Add(GetSeawayCombo(Panel,wxID_ANY),0,wxALL|wxEXPAND,5);
+
+	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
+	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	FlexGridSizer->Add(GetSeawayCombo(Panel,wxID_ANY),0,wxALL|wxEXPAND,5);
+		
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
@@ -340,11 +347,13 @@ void CNew::EditSymbolPanel()
 
 	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
 	PanelSizer->Add(HSizer,0,wxALL|wxEXPAND,5);
+	
+	wxPanel *SPanel = GetSymbolPanel(Panel);
+	HSizer->Add(SPanel,0,wxALL|wxEXPAND,0);
+	
 	wxPanel *PPanel = GetPicturePanel(Panel);
 	HSizer->Add(PPanel,0,wxALL,0);
 	
-	//wxPanel *SPanel = GetSymbolPanel(Panel);
-	//PanelSizer->Add(SPanel,0,wxALL|wxEXPAND,0);
 		
 	//wxStaticLine *Line = new wxStaticLine(this);
 	//Sizer->Add(Line,0,wxALL|wxEXPAND,1);
@@ -374,6 +383,8 @@ void CNew::EditSymbolPanel()
 
 	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
 	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+
+	GetSizer()->SetSizeHints(this);
 	
 }
 

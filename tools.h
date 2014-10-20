@@ -31,5 +31,6 @@ wxString Convert(char *v);
 wxListBox *GetFilterList(wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
 wxComboBox *GetAreaCombo(wxWindow *Parent, int wid);
+wxComboBox *GetSeawayCombo(wxWindow *Parent, int wid);
 #endif
 

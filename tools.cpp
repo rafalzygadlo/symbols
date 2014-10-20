@@ -382,13 +382,13 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 
 wxComboBox *GetAreaCombo(wxWindow *Parent, int wid)
 {
-	wxComboBox *Filter = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
-	Filter->Append(GetMsg(MSG_ALL));
+	wxComboBox *ptr = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	ptr->Append(GetMsg(MSG_ALL));
 
 	wxArrayString ar;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_AREA);
 	if(!my_query(sql))
-		return Filter;
+		return ptr;
 	
 	int rows = 0;
 	void *result = db_result();
@@ -399,11 +399,39 @@ wxComboBox *GetAreaCombo(wxWindow *Parent, int wid)
 	{
 		wxString name(row[FI_AREA_NAME],wxConvUTF8);
 		ar.Add(name);
-		int id = Filter->Append(name);
-		Filter->SetClientData(id,(int*)atoi(row[FI_AREA_ID]));
+		int id = ptr->Append(name);
+		ptr->SetClientData(id,(int*)atoi(row[FI_AREA_ID]));
 	}
 
 	db_free_result(result);
 
-	return Filter;
+	return ptr;
+}
+
+wxComboBox *GetSeawayCombo(wxWindow *Parent, int wid)
+{
+	wxComboBox *ptr = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	ptr->Append(GetMsg(MSG_ALL));
+
+	wxArrayString ar;
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_SEAWAY);
+	if(!my_query(sql))
+		return ptr;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+		
+	int i = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[FI_SEAWAY_NAME],wxConvUTF8);
+		ar.Add(name);
+		int id = ptr->Append(name);
+		ptr->SetClientData(id,(int*)atoi(row[FI_SEAWAY_ID]));
+	}
+
+	db_free_result(result);
+
+	return ptr;
 }
