@@ -23,16 +23,19 @@ class CNew: public wxDialog
 
 	void GetPanel(int type);
 
-	wxPanel *EditNamePanel();
-	wxPanel *EditTypePanel();
-	wxPanel *EditItemPanel();
-	wxPanel *EditPicturePanel();
-	wxPanel *EditLightPanel();
+	void EditNamePanel();
+	void EditTypePanel();
+	void EditItemPanel();
+	void EditPicturePanel();
+	void EditSymbolPanel();
 	//wxPanel *LightPanel();
 	void LightItem();
 	
 	wxComboBox *GetComboItemType(wxWindow *Parent);
 	void GetItemFeaturePanel(wxWindow *Parent);
+	wxPanel *GetPicturePanel(wxWindow *Parent);
+	wxPanel *GetSymbolPanel(wxWindow *Parent);
+	
 	void OnComboItem(wxCommandEvent &event);
 	void OnComboFilter(wxCommandEvent &event);
 	bool Validate();

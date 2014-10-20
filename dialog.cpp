@@ -11,33 +11,33 @@
 
 SHeader Header[] =
 {
-	{CONTROL_LIGHT, 0,	{FI_LIGHT_ID , FN_LIGHT_ID, MSG_ID} },
-	{CONTROL_LIGHT,100,	{FI_LIGHT_NAME , FN_LIGHT_NAME, MSG_NAME} },
-	{CONTROL_LIGHT,250,	{FI_LIGHT_INFO , FN_LIGHT_INFO, MSG_INFO} },
+	{CONTROL_SYMBOL, -1,	{FI_LIGHT_ID , FN_LIGHT_ID, MSG_ID} },
+	{CONTROL_SYMBOL,150, {FI_LIGHT_NAME , FN_LIGHT_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL,250, {FI_LIGHT_INFO , FN_LIGHT_INFO, MSG_INFO} },
 
-	{CONTROL_ITEM, 0, {FI_ITEM_ID , FN_ITEM_ID, MSG_ID} },
-	{CONTROL_ITEM,120, {FI_ITEM_NAME , FN_ITEM_NAME, MSG_NAME} },
+	{CONTROL_ITEM, -1, {FI_ITEM_ID , FN_ITEM_ID, MSG_ID} },
+	{CONTROL_ITEM,150, {FI_ITEM_NAME , FN_ITEM_NAME, MSG_NAME} },
 	{CONTROL_ITEM,100, {FI_ITEM_TYPE , FN_ITEM_TYPE, MSG_TYPE} },
 	{CONTROL_ITEM,250, {FI_ITEM_INFO , FN_ITEM_INFO, MSG_INFO} },
 	
-	{CONTROL_AREA, 0, {FI_AREA_ID ,	FN_AREA_ID, MSG_ID} },
-	{CONTROL_AREA,100, {FI_AREA_NAME , FN_AREA_NAME, MSG_NAME} },
+	{CONTROL_AREA, -1, {FI_AREA_ID ,	FN_AREA_ID, MSG_ID} },
+	{CONTROL_AREA,150, {FI_AREA_NAME , FN_AREA_NAME, MSG_NAME} },
 	{CONTROL_AREA,250, {FI_AREA_INFO , FN_AREA_INFO, MSG_INFO} },
 
-	{CONTROL_SEAWAY, 0, {FI_SEAWAY_ID , FN_SEAWAY_ID, MSG_ID} },
-	{CONTROL_SEAWAY,100, {FI_SEAWAY_NAME , FN_SEAWAY_NAME, MSG_NAME} },
+	{CONTROL_SEAWAY, -1, {FI_SEAWAY_ID , FN_SEAWAY_ID, MSG_ID} },
+	{CONTROL_SEAWAY,150, {FI_SEAWAY_NAME , FN_SEAWAY_NAME, MSG_NAME} },
 	{CONTROL_SEAWAY,250, {FI_SEAWAY_INFO , FN_SEAWAY_INFO, MSG_INFO} },
 
-	{CONTROL_SYMBOL_TYPE, 0, {FI_SYMBOL_TYPE_ID , FN_SYMBOL_TYPE_ID, MSG_ID} },
-	{CONTROL_SYMBOL_TYPE,100, {FI_SYMBOL_TYPE_NAME , FN_SYMBOL_TYPE_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_TYPE, -1, {FI_SYMBOL_TYPE_ID , FN_SYMBOL_TYPE_ID, MSG_ID} },
+	{CONTROL_SYMBOL_TYPE,150, {FI_SYMBOL_TYPE_NAME , FN_SYMBOL_TYPE_NAME, MSG_NAME} },
 	{CONTROL_SYMBOL_TYPE,250, {FI_SYMBOL_TYPE_INFO , FN_SYMBOL_TYPE_INFO, MSG_INFO} },
 	
-	{CONTROL_LIGHT_ITEM,0, {FI_ITEM_ID  , FN_ITEM_ID, MSG_ID} },
-	{CONTROL_LIGHT_ITEM,100, {FI_ITEM_NAME + 1 , FN_ITEM_TYPE, MSG_NAME} },
-	{CONTROL_LIGHT_ITEM,100, {FI_ITEM_TYPE + 1, FN_ITEM_TYPE, MSG_TYPE} },
+	//{CONTROL_LIGHT_ITEM,0, {FI_ITEM_ID  , FN_ITEM_ID, MSG_ID} },
+	//{CONTROL_LIGHT_ITEM,100, {FI_ITEM_NAME + 1 , FN_ITEM_TYPE, MSG_NAME} },
+	//{CONTROL_LIGHT_ITEM,100, {FI_ITEM_TYPE + 1, FN_ITEM_TYPE, MSG_TYPE} },
 
-	{CONTROL_PICTURE,0, {FI_PICTURE_ID  , FN_PICTURE_ID, MSG_ID} },
-	{CONTROL_PICTURE,100, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
+	{CONTROL_PICTURE,-1, {FI_PICTURE_ID  , FN_PICTURE_ID, MSG_ID} },
+	{CONTROL_PICTURE,150, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
 	{CONTROL_PICTURE,100, {FI_PICTURE_INFO  , FN_PICTURE_INFO, MSG_INFO} },
 	
 	{-1},
@@ -46,12 +46,12 @@ SHeader Header[] =
 
 SIds Id[] =
 {
-	{CONTROL_LIGHT, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LIGHT},
+	{CONTROL_SYMBOL, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL},
 	{CONTROL_ITEM, COLUMN_ITEM_WITH_ID, COLUMN_ITEM_WITH_NAME,MSG_ITEMS},
 	{CONTROL_AREA, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_AREA},
 	{CONTROL_SEAWAY, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SEAWAY},
 	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
-	{CONTROL_LIGHT_ITEM,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LIGHT_ITEM},
+	//{CONTROL_LIGHT_ITEM,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_LIGHT_ITEM},
 	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE}, 
 
 };
@@ -68,8 +68,8 @@ CDialog::CDialog(int control_type, bool picker)
 	m_DialogPanel = new CDialogPanel(control_type,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
 	
-	wxStaticLine *Line = new wxStaticLine(this);
-	Sizer->Add(Line,0,wxALL|wxEXPAND,5);
+	//wxStaticLine *Line = new wxStaticLine(this);
+	//Sizer->Add(Line,0,wxALL|wxEXPAND,5);
 	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	
@@ -95,8 +95,8 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
 	
 	m_DialogPanel->SetSlave(m_DialogSlave);
 	
-	wxStaticLine *Line = new wxStaticLine(this);
-	Sizer->Add(Line,0,wxALL|wxEXPAND,5);
+	//wxStaticLine *Line = new wxStaticLine(this);
+	//Sizer->Add(Line,0,wxALL|wxEXPAND,5);
 
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 
@@ -196,8 +196,8 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 	switch(m_ControlType)
 	{
 		case CONTROL_ITEM:			return GetItemPanel(Parent);
-		case CONTROL_LIGHT:			return GetLightPanel(Parent);
-		case CONTROL_LIGHT_ITEM:	return GetLightItemPanel(Parent);
+		case CONTROL_SYMBOL:		return GetSymbolPanel(Parent);
+		//case CONTROL_LIGHT_ITEM:	return GetLightItemPanel(Parent);
 		case CONTROL_PICTURE:		return GetPicturePanel(Parent);
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
@@ -234,7 +234,7 @@ wxPanel *CDialogPanel::GetItemPanel(wxWindow *Parent)
 	return Panel;
 }
 
-wxPanel *CDialogPanel::GetLightPanel(wxWindow *Parent)
+wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
@@ -378,8 +378,8 @@ void CDialogPanel::SetTable()
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_LIGHT:			m_Table = TABLE_LIGHT;			break;
-		case CONTROL_LIGHT_ITEM:	m_Table = TABLE_LIGHT_ITEM;		break;
+		case CONTROL_SYMBOL:		m_Table = TABLE_SYMBOL;			break;
+		//case CONTROL_LIGHT_ITEM:	m_Table = TABLE_LIGHT_ITEM;		break;
 		case CONTROL_ITEM:			m_Table = TABLE_ITEM;			break;
 		case CONTROL_AREA:			m_Table = TABLE_AREA;			break;
 		case CONTROL_SEAWAY:		m_Table = TABLE_SEAWAY;			break;
@@ -394,8 +394,8 @@ void CDialogPanel::Read()
 	switch(m_ControlType)
 	{
 		case CONTROL_ITEM:			ReadItems();		break;
-		case CONTROL_LIGHT_ITEM:	ReadLightItems();	break;
-		case CONTROL_LIGHT:
+//		case CONTROL_LIGHT_ITEM:	ReadLightItems();	break;
+		case CONTROL_SYMBOL:
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		
@@ -498,16 +498,16 @@ void CDialogPanel::OnNew()
 	{
 		case CONTROL_ITEM:
 		case CONTROL_ITEM_TYPE:
-		case CONTROL_LIGHT:
+		case CONTROL_SYMBOL:
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:
 			New();	
 		break;
 
-		case CONTROL_LIGHT_ITEM:
-			NewLightItem();
-		break;
+		//case CONTROL_LIGHT_ITEM:
+			//NewLightItem();
+		//break;
 		case CONTROL_PICTURE:
 			NewPicture();
 		break;
@@ -528,7 +528,7 @@ void CDialogPanel::New()
 			case CONTROL_ITEM:
 				NewItem(ptr);
 			break;
-			case CONTROL_LIGHT:
+			case CONTROL_SYMBOL:
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
 				query = true;
 			break;
@@ -659,11 +659,11 @@ void CDialogPanel::OnEdit(wxString id)
 	switch(m_ControlType)
 	{
 		case CONTROL_PICTURE:		EditPicture(id);	break;
-		case CONTROL_LIGHT:			EditLight(id);	break;
-		case CONTROL_ITEM:			EditItem(id);	break;
+		case CONTROL_SYMBOL:		EditSymbol(id);		break;
+		case CONTROL_ITEM:			EditItem(id);		break;
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:	EditName(id);	break;
+		case CONTROL_SYMBOL_TYPE:	EditName(id);		break;
 	}
 
 }
@@ -729,7 +729,7 @@ void CDialogPanel::EditItem(wxString id)
 	delete ptr;
 }
 
-void CDialogPanel::EditLight(wxString id)
+void CDialogPanel::EditSymbol(wxString id)
 {
 	CNew *ptr = new CNew(m_ControlType);
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);

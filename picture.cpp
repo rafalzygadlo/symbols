@@ -39,10 +39,7 @@ CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 		wxHyperlinkCtrl *m_New = new wxHyperlinkCtrl(this,ID_PICK,GetMsg(MSG_CHOOSE_PICTURE),wxEmptyString);
 		Sizer->Add(m_New,0,wxALL,10);
 	}
-
-	wxBoxSizer *VSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(VSizer,0,wxALL,0);
-		
+			
 	SetSizer(Sizer);
 }
 

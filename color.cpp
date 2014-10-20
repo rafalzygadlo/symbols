@@ -5,6 +5,8 @@
 #include "conf.h"
 #include "tools.h"
 
+extern unsigned int	del_size;
+extern unsigned char del[]; 
 
 BEGIN_EVENT_TABLE(CColorPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CColorPanel::OnNew)
@@ -16,18 +18,17 @@ CColorPanel::CColorPanel(wxWindow *parent,wxWindow *top)
 	m_Parent = parent;
 	m_Top = top;
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
-		
 	m_Panel = new wxPanel(this);
 	m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
 	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
-	m_PanelSizer = new wxWrapSizer(wxHORIZONTAL);
+	m_PanelSizer = new wxBoxSizer(wxVERTICAL);
 	m_Panel->SetSizer(m_PanelSizer);
 	
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-
+	m_PanelSizer->AddStretchSpacer(1);
 	wxButton *Button = new wxBitmapButton(m_Panel,ID_NEW,wxBitmap(myImage_1));
-	m_PanelSizer->Add(Button,0,wxALL,3);
+	m_PanelSizer->Add(Button,0,wxALL|wxALIGN_RIGHT,1);
 			
 	SetSizer(m_Sizer);
 			
@@ -46,7 +47,7 @@ void CColorPanel::New(wxColor color)
 {
 	CColor *Color = new CColor(m_Panel,this);
 	Color->SetColor(color);
-	m_PanelSizer->Add(Color,0,wxALL,1);
+	m_PanelSizer->Add(Color,0,wxALL|wxEXPAND,1);
 	m_ColorPanels.Add(Color);
 }
 
@@ -86,9 +87,7 @@ void CColorPanel::OnDelete(CColor *ptr)
 }
 
 BEGIN_EVENT_TABLE(CColor, wxPanel)
-	EVT_CONTEXT_MENU(CColor::OnContextMenu)
-	EVT_MENU(ID_DELETE,CColor::OnDelete)
-	EVT_MENU(ID_EDIT,CColor::OnEdit)
+	EVT_BUTTON(ID_DELETE,CColor::OnDelete)
 END_EVENT_TABLE()
 
 CColor::CColor(wxWindow *parent, CColorPanel *panel)
@@ -100,35 +99,21 @@ CColor::CColor(wxWindow *parent, CColorPanel *panel)
 	
 	m_Panel = new wxPanel(this);
 	m_Panel->SetBackgroundColour(*wxWHITE);
-	m_Panel->SetMinSize(wxSize(25,25));
-	m_Sizer->Add(m_Panel,0,wxALL|wxEXPAND,2);
+	m_Panel->SetWindowStyle(wxBORDER_SIMPLE);
+	m_Sizer->Add(m_Panel,1,wxALL|wxEXPAND,0);
 
-	
-	
-	//wxStaticText *Label = new wxStaticText(this,wxID_ANY,_("Default name"));
-	//m_Sizer->Add(Label,0,wxALL,2);
-		
-	//wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
-	//Panel->SetSizer(PanelSizer);
+	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
+    wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
+	wxButton *Delete = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
+	m_Sizer->Add(Delete,0,wxALL,1);
+	
 	SetSizer(m_Sizer);
 }
 
 CColor::~CColor()
 {
 
-}
-
-void CColor::OnContextMenu(wxContextMenuEvent &event)
-{
-	int count = m_ColorPanel->GetColorPanels().size();
-
-	wxMenu *Menu = new wxMenu();
-	Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-	Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-	
-	PopupMenu(Menu);
-	delete Menu;
 }
 
 void CColor::OnDelete(wxCommandEvent &event)

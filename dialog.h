@@ -49,7 +49,7 @@ class CDialogPanel: public wxPanel
 	void EditArea(wxString id);
 	void EditSymbolType(wxString id);
 	void EditSeaway(wxString id);
-	void EditLight(wxString id);
+	void EditSymbol(wxString id);
 	void EditItem(wxString id);
 	int GetItemTypeId(wxString id);
 			
@@ -78,7 +78,7 @@ class CDialogPanel: public wxPanel
 	//wxListBox *GetFilterList(wxWindow *Parent);
 	wxPanel *GetPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
-	wxPanel *GetLightPanel(wxWindow *Parent);
+	wxPanel *GetSymbolPanel(wxWindow *Parent);
 	wxPanel *GetLightItemPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);

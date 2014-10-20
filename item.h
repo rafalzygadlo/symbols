@@ -7,6 +7,7 @@
 #include "listctrl.h"
 
 class CItem;
+class CComboPanel;
 class CItemPanel: public wxPanel
 {
 	wxWindow *m_Top;
@@ -32,8 +33,9 @@ class CItem: public wxPanel
 	wxComboBox *m_Combo;
 	wxBoxSizer *m_ComboSizer;
 	wxScrolledWindow *m_Scroll;
+	wxArrayPtrVoid m_List;
 		
-	void OnDelete(wxCommandEvent &event);
+	
 	void OnNew(wxCommandEvent &event);
 	void AppendCombo();
 
@@ -44,7 +46,7 @@ public:
 	void _SetId(wxString v);
 	void _SetName(wxString v);
 	wxString _GetId();
-	void Read(wxString query, int field, wxComboBox *combo);
+	void OnDelete(CComboPanel *panel);
 
 	
 	DECLARE_EVENT_TABLE();
@@ -58,6 +60,31 @@ public:
 
 };
 
+class CComboPanel: public wxPanel
+{
+	CItem *m_Parent;
+	wxBoxSizer *m_Sizer;
+	wxArrayPtrVoid m_Items;
+				
+public:
+
+	CComboPanel(CItem *parent, wxString id);
+	void OnDelete(wxCommandEvent &event);
+	void Read(wxString query, int field, wxComboBox *combo);
+
+	DECLARE_EVENT_TABLE();
+	
+	enum
+	{
+		ID_DELETE = 8124,
+		
+	};
+
+	//void Read(wxString query);
+	//wxArrayPtrVoid GetItems();
+	//void _Layout();
+	
+};
 
 
 #endif

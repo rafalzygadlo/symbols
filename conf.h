@@ -81,6 +81,7 @@
 #define MSG_PICTURE_TO_BIG			33
 #define MSG_PICTURE_INFO			34
 #define MSG_CHOOSE_PICTURE			35
+#define MSG_SYMBOL					36
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -92,13 +93,12 @@
 
 #define CONTROL_ITEM		1
 #define CONTROL_ITEM_TYPE	2
-#define CONTROL_LIGHT		3
+#define CONTROL_SYMBOL		3
 #define CONTROL_NEW			4
 #define CONTROL_SEAWAY		5
 #define CONTROL_AREA		6
 #define CONTROL_SYMBOL_TYPE 7
-#define CONTROL_LIGHT_ITEM	8
-#define CONTROL_PICTURE		9
+#define CONTROL_PICTURE		8
 
 
 #define ORDER_ASC	0

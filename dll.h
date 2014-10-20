@@ -21,7 +21,7 @@ class CPositionDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
 
-	CDialog *m_Light;
+	CDialog *m_Symbol;
 	CDialog *m_Items;
 	CDialog *m_Area;
 	CDialog *m_Seaway;
@@ -129,14 +129,14 @@ class CMapPlugin :public CNaviMapIOApi
 	void SetSelectedShip(SMarker *ship);
 
 	void Items();
-	void Light();
+	void Symbol();
 	void Area();
 	void Seaway();
 	void SymbolType();
 	void Picture();
 	
-	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
-	static void *MenuLight(void *NaviMapIOApiPtr, void *Input);
+	//static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
 
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);

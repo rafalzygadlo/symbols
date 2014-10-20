@@ -30,7 +30,7 @@ unsigned char PluginInfoBlock[] = {
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	SetUID(4);
-	m_Light = NULL;
+	m_Symbol = NULL;
 	m_Items = NULL;
 	m_Area = NULL;
 	m_Seaway = NULL;
@@ -90,7 +90,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 
 CMapPlugin::~CMapPlugin()
 {
-	delete m_Light;
+	delete m_Symbol;
 	delete m_Items;
 	delete m_Area;
 	delete m_Seaway;
@@ -407,11 +407,11 @@ void CMapPlugin::ShowProperties()
 	ShowFrameWindow(true);
 }
 
-void CMapPlugin::Light()
+void CMapPlugin::Symbol()
 {
-	if(m_Light == NULL)
-		m_Light = new CDialog(CONTROL_LIGHT,CONTROL_LIGHT_ITEM);
-	m_Light->Show();
+	if(m_Symbol == NULL)
+		m_Symbol = new CDialog(CONTROL_SYMBOL);
+	m_Symbol->Show();
 }
 
 void CMapPlugin::Items()
@@ -454,15 +454,12 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
 	//NaviApiMenu->AddItem(L"-",this,NULL);
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_LIGHT),this, MenuLight );
-	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_TYPE),this, MenuSymbolType);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_PICTURE),this,MenuPicture);
-	NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
-	
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	
 	/*
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
@@ -485,7 +482,7 @@ void CMapPlugin::CreateApiMenu(void)
 
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_),this, MenuNautofon);
 }	
-
+/*
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
 {
 
@@ -494,7 +491,7 @@ void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input)
 
 	return NULL;
 }
-
+*/
 void *CMapPlugin::MenuItems(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -511,10 +508,10 @@ void *CMapPlugin::MenuPicture(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
-void *CMapPlugin::MenuLight(void *NaviMapIOApiPtr, void *Input)
+void *CMapPlugin::MenuSymbol(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_LIGHT);
+	ThisPtr->Menu(CONTROL_SYMBOL);
 	
 	return NULL;	
 }
@@ -548,7 +545,7 @@ void CMapPlugin::Menu(int type)
 	switch(type)
 	{
 		case CONTROL_NEW:			New();			break;
-		case CONTROL_LIGHT:			Light();		break;
+		case CONTROL_SYMBOL:		Symbol();		break;
 		case CONTROL_ITEM:			Items();		break;
 		case CONTROL_AREA:			Area();			break;
 		case CONTROL_SEAWAY:		Seaway();		break;

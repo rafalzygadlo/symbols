@@ -23,10 +23,8 @@ CItemPanel::CItemPanel(wxWindow *top, wxWindow *parent)
 	{
 		CItem *ptr = (CItem*)m_Items.Item(i);
 		Sizer->Add(ptr,0,wxALL|wxEXPAND,1);
-
 	}
-
-	
+		
 	SetSizer(Sizer);
 				
 }
@@ -69,7 +67,6 @@ void CItemPanel::Read(wxString query)
 }
 
 BEGIN_EVENT_TABLE(CItem, wxPanel)
-	EVT_BUTTON(ID_DELETE,CItem::OnDelete)
 	EVT_BUTTON(ID_NEW,CItem::OnNew)
 END_EVENT_TABLE()
 
@@ -102,32 +99,80 @@ CItem::~CItem()
 {
 
 }
+
 void CItem::AppendCombo()
 {
-	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	this->GetSizer()->Add(Sizer,0,wxALL|wxEXPAND,2);
+	CComboPanel *ComboPanel = new CComboPanel(this,m_Id);
+	this->GetSizer()->Add(ComboPanel,0,wxALL|wxEXPAND,2);
 	
-	wxStaticText *LabelNumber = new wxStaticText(this,wxID_ANY,wxString::Format(_("%d"),m_Counter));
-	Sizer->Add(LabelNumber,0,wxALL,2);
+	m_ItemPanel->_Layout();
+	m_Counter++;
+
+	m_List.Add(ComboPanel);
+
+}
+
+void CItem::OnDelete(CComboPanel *panel)
+{
+	this->GetSizer()->Detach(panel);
+	delete panel;
+	m_List.Remove(panel);
+	m_ItemPanel->_Layout();
+
+}
+
+void CItem::OnNew(wxCommandEvent &event)
+{
+	AppendCombo();
+}
+
+wxString CItem::_GetId()
+{
+	return m_Id;
+}
+
+void CItem::_SetId(wxString v)
+{
+	m_Id = v;
+}
+
+void CItem::_SetName(wxString v)
+{
+	m_Name->SetLabel(v);
+}
+
+BEGIN_EVENT_TABLE(CComboPanel, wxPanel)
+	EVT_BUTTON(ID_DELETE,CComboPanel::OnDelete)
+END_EVENT_TABLE()
+
+CComboPanel::CComboPanel(CItem *parent, wxString id)
+	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
+{
+	m_Parent = parent;
 	
-	wxComboBox *Combo = new wxComboBox(this,wxID_ANY,wxEmptyString);
-	Sizer->Add(Combo,1,wxALL,2);
+	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	this->SetSizer(PanelSizer);
+			
+	wxComboBox *Combo = new wxComboBox(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0,wxCB_READONLY);
+	PanelSizer->Add(Combo,1,wxALL,2);
 	
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
 	wxButton *Delete = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	Sizer->Add(Delete,0,wxALL,2);
+	PanelSizer->Add(Delete,0,wxALL,2);
 
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%s'"),TABLE_ITEM,m_Id);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%s'"),TABLE_ITEM,id);
 	Read(sql,2,Combo);
-
-	m_ItemPanel->_Layout();
-	m_Counter++;
-
+		
 }
 
-void CItem::Read(wxString query, int field, wxComboBox *combo)
+void CComboPanel::OnDelete(wxCommandEvent &event)
+{
+	m_Parent->OnDelete(this);
+}
+
+void CComboPanel::Read(wxString query, int field, wxComboBox *combo)
 {
 	if(!my_query(query))
 		return;
@@ -144,30 +189,4 @@ void CItem::Read(wxString query, int field, wxComboBox *combo)
 
 	db_free_result(result);
 	
-}
-
-void CItem::OnDelete(wxCommandEvent &event)
-{
-	m_Counter--;
-}
-
-void CItem::OnNew(wxCommandEvent &event)
-{
-	AppendCombo();
-}
-
-wxString CItem::_GetId()
-{
-	return m_Id;
-}
-
-
-void CItem::_SetId(wxString v)
-{
-	m_Id = v;
-}
-
-void CItem::_SetName(wxString v)
-{
-	m_Name->SetLabel(v);
 }

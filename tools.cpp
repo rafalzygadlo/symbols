@@ -15,7 +15,7 @@ int GlobalUID;
 const wchar_t *nvLanguage[45][2] = 
 { 
 	//en
-	{L"Symbol",	L"Znak"},
+	{L"Manager",L"Manager"},
 	{L"New", L"Nowy  \tCtrl+N"},
 	{L"Name", L"Nazwa"},
 	{L"Description",L"Opis"},
@@ -39,7 +39,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Delete ?",L"Usun¹æ ?"},
 	{L"Character not allowed",L"Niedozwolony znak"},
 	{L"Type",L"Typ"},
-	{L"Items",L"S³owniki"},
+	{L"Devices",L"Urz¹dzenie"},
 	{L"Id",L"Id"},
 	{L"All",L"Wszystko"},
 	{L"Symbol type",L"Typ znaku"},
@@ -51,6 +51,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Picture too big max %dkB",L"Za du¿e zdjêcie max %dkB"},
 	{L"Size: %d x %d",L"Wymiary: %d x %d"},
 	{L"Choose picture",L"Wybierz zdjêcie"},
+	{L"Symbol",L"Znak"},
 };
 				
 	
@@ -372,6 +373,34 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 		ar.Add(name);
 		int id = Filter->Append(name);
 		Filter->SetClientData(id,(int*)atoi(row[FI_ITEM_TYPE_ID]));
+	}
+
+	db_free_result(result);
+
+	return Filter;
+}
+
+wxComboBox *GetAreaCombo(wxWindow *Parent, int wid)
+{
+	wxComboBox *Filter = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	Filter->Append(GetMsg(MSG_ALL));
+
+	wxArrayString ar;
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_AREA);
+	if(!my_query(sql))
+		return Filter;
+	
+	int rows = 0;
+	void *result = db_result();
+	char **row;
+		
+	int i = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[FI_AREA_NAME],wxConvUTF8);
+		ar.Add(name);
+		int id = Filter->Append(name);
+		Filter->SetClientData(id,(int*)atoi(row[FI_AREA_ID]));
 	}
 
 	db_free_result(result);
