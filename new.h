@@ -75,6 +75,7 @@ public:
 	float GetLon();
 	float GetLat();
 	wxString GetNumber();
+	wxString GetPictureId();
 
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);

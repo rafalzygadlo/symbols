@@ -8,6 +8,7 @@
 #include <string.h>
 #include <wx/mstream.h>
 #include <wx/statline.h>
+#include "wx/laywin.h"
 
 SHeader Header[] =
 {
@@ -67,7 +68,6 @@ CDialog::CDialog(int control_type, bool picker)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	
-	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
 	m_DialogPanel = new CDialogPanel(control_type,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
 	
@@ -90,13 +90,32 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	
-	SetSize(DEFAULT_DIALOG_WIDTH,DEFAULT_DIALOG_HEIGHT);
-	
+	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(HSizer,1,wxALL|wxEXPAND,0);
+/*
+	 wxSashWindow* win =
+      new wxSashWindow(this, wxID_ANY,
+                             wxDefaultPosition, wxSize(200, 30),
+                             wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN);
+	 HSizer->Add(win,1,wxALL|wxEXPAND,0);
+	 
+	 wxBoxSizer *a = new wxBoxSizer(wxVERTICAL);
+	 win->SetSizer(a);
+	 
+  //win->SetDefaultSize(wxSize(1000, 30));
+  //win->SetOrientation(wxLAYOUT_HORIZONTAL);
+ // win->SetAlignment(wxLAYOUT_TOP);
+  win->SetBackgroundColour(*wxRED);
+  win->SetSashVisible(wxSASH_RIGHT, true);
+  	
+	*/
 	m_DialogPanel = new CDialogPanel(control_master,this);
 	Sizer->Add(m_DialogPanel,0,wxALL|wxEXPAND,0);
-
+	
 	m_DialogSlave = new CDialogPanel(control_slave,this,true);
 	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
+	
+	
 	
 	m_DialogPanel->SetSlave(m_DialogSlave);
 	
@@ -288,8 +307,8 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
-	//m_ListBox = GetFilterList(Panel,ID_FILTER);
-	//Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
+	m_PicturePanel = new CPicturePanel(Panel);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 				
 	return Panel;
@@ -392,7 +411,7 @@ wxComboBox *CDialogPanel::GetFilterCombo(wxWindow *Parent)
 */
 wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 {
-	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
@@ -655,6 +674,11 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 		my_query(sql);
 	}
 
+	sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
+	my_query(sql);
+	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
+	my_query(sql);
+
 }
 
 void CDialogPanel::NewSymbolItem()
@@ -889,6 +913,11 @@ void CDialogPanel::EditSymbol(wxString id)
 			my_query(sql);
 		}
 		
+		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
+		my_query(sql);
+		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
+		my_query(sql);
+
 		Clear();
 		Read();
 		Select();
@@ -1038,6 +1067,21 @@ void CDialogPanel::OnSelect(wxString id, wxString name)
 		m_Slave->Read();
 	}
 
+	if(m_ControlType == CONTROL_SYMBOL)
+	{
+		wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%s'"),TABLE_SYMBOL_PICTURE,id);
+		my_query(sql);
+
+		void *result = db_result();
+		char** row = (char**)db_fetch_row(result);
+		if(row)
+			m_ID = row[FI_SYMBOL_PICTURE_ID_PICTURE];
+		else
+			m_ID = wxEmptyString;
+		
+		db_free_result(result);
+	}
+	
 	if(m_PicturePanel)
 	{
 		m_PicturePanel->_SetId(m_ID);
@@ -1045,6 +1089,7 @@ void CDialogPanel::OnSelect(wxString id, wxString name)
 	}
 	
 }
+
 
 wxString CDialogPanel::_GetId()
 {

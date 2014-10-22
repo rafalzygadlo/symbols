@@ -779,3 +779,8 @@ int CNew::GetItemType()
 {
 	return	(int)m_ComboItemType->GetClientData(m_ComboItemType->GetSelection());
 }
+
+wxString CNew::GetPictureId()
+{
+	return m_PicturePanel->GetPictureId();
+}

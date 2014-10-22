@@ -62,6 +62,11 @@ void CPicturePanel::SetPictureId(wxString id)
 	//m_Picture->SetBitmap(bmp);
 }
 
+wxString CPicturePanel::GetPictureId()
+{
+	return m_ID;
+}
+
 void CPicturePanel::OnPick(wxHyperlinkEvent &event)
 {
 	CDialog *Dialog = new CDialog(CONTROL_PICTURE,true);
@@ -157,12 +162,13 @@ void CPicturePanel::Read()
 	char **row = (char**)db_fetch_row(result);
 	
 	unsigned long *len = db_fetch_lengths(result);
+	m_StaticPicture->ClearBackground();
+	m_StaticPicture->SetBitmap(wxNullBitmap);
 
 	if(row && len)
 	{
 		int size = len[FI_PICTURE_DATA];
-		m_StaticPicture->ClearBackground();
-		m_StaticPicture->SetBitmap(wxNullBitmap);
+		
 		
 		if(size > 0)
 		{

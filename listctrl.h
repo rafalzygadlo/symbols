@@ -48,6 +48,7 @@ class CListCtrl: public wxListCtrl
 	void OnRight(wxCommandEvent &event);
 	void OnChangeGroup(wxCommandEvent &event);
 	void OnMouseEvent(wxMouseEvent& event);
+	void OnPaint(wxPaintEvent &event);
 	
 	
 	wxString OnGetItemText(long item, long column) const;

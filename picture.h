@@ -26,6 +26,7 @@ public:
 	~CPicturePanel();
 	wxImage GetPicture();
 	void SetPictureId(wxString id);
+	wxString GetPictureId();
 	void _SetId(wxString id);
 	void Read();
 	void Clear();
