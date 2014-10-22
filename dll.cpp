@@ -410,7 +410,7 @@ void CMapPlugin::ShowProperties()
 void CMapPlugin::Symbol()
 {
 	if(m_Symbol == NULL)
-		m_Symbol = new CDialog(CONTROL_SYMBOL);
+		m_Symbol = new CDialog(CONTROL_SYMBOL,CONTROL_SYMBOL_ITEM);
 	m_Symbol->Show();
 }
 

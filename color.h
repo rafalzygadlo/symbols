@@ -12,8 +12,7 @@ class CColorPanel: public wxPanel
 	wxPanel *m_Panel;
 	wxBoxSizer *m_PanelSizer;
 	wxArrayPtrVoid m_ColorPanels;
-	void New(wxColor color);
-			
+				
 public:
 
 	CColorPanel(wxWindow *parent, wxWindow *top);
@@ -22,6 +21,7 @@ public:
 	void OnEdit();
 	void OnDelete(CColor *ptr);
 	void OnEdit(CColor *ptr);
+	void New(wxColor color);
 	wxArrayPtrVoid GetColorPanels();
 
 	DECLARE_EVENT_TABLE();
@@ -49,6 +49,7 @@ public:
 	CColor(wxWindow *parent, CColorPanel *panel);
 	~CColor();
 	void SetColor(wxColor color);
+	wxColor GetColor();
 	DECLARE_EVENT_TABLE();
 	
 	enum

@@ -100,7 +100,7 @@ void CPositionDialog::OnLon(wxCommandEvent &event)
 
 	float value = MarkerSelectedPtr->x;
 		
-	if(SetLon(m_TextLon->GetValue().char_str(),&value))
+	if(_SetLon(m_TextLon->GetValue().char_str(),&value))
 	{
 		double y,to_x,to_y;
 		y = MarkerSelectedPtr->y;
@@ -128,7 +128,7 @@ void CPositionDialog::OnLat(wxCommandEvent &event)
 	
 	float value = MarkerSelectedPtr->x;
 	
-	if(SetLat(m_TextLat->GetValue().char_str(),&value))
+	if(_SetLat(m_TextLat->GetValue().char_str(),&value))
 	{
 		double x,to_x,to_y;
 		x = MarkerSelectedPtr->x;

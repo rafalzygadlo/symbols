@@ -1,6 +1,7 @@
 #include <wx/colordlg.h>
 #include <wx/mstream.h>
 #include "images/add.img"
+#include "images/del.img"
 #include "color.h"
 #include "conf.h"
 #include "tools.h"
@@ -129,4 +130,9 @@ void CColor::OnEdit(wxCommandEvent &event)
 void CColor::SetColor(wxColor color)
 {
 	m_Panel->SetBackgroundColour(color);
+}
+
+wxColor CColor::GetColor()
+{
+	return m_Panel->GetBackgroundColour();
 }

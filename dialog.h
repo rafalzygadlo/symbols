@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include "listctrl.h"
 #include <wx/listbook.h>
+#include <wx/fileconf.h>
 #include "new.h"
 
 class CListCtrl;
@@ -15,13 +16,17 @@ class CDialog : public wxDialog
 	CDialogPanel *m_DialogSlave;
 	wxButton *m_ButtonOk;
 	wxString m_ID;
+	int m_ControlType;
 	bool m_Picker;
 	wxPanel *GetButtonPanel(wxWindow *parent);
+	void ReadConfig();
+	void WriteConfig();
 
 
 public:
 	CDialog(int control_type, bool picker = false);
 	CDialog(int control_master, int control_slave, bool picker = false);
+	~CDialog();
 	wxString _GetId();
 	//wxString _GetName();
 	
@@ -44,7 +49,7 @@ class CDialogPanel: public wxPanel
 	CPicturePanel *m_PicturePanel;
 	int m_IsSlave;
 	wxWindow *m_Parent;
-			
+				
 	void New();
 	void EditArea(wxString id);
 	void EditSymbolType(wxString id);
@@ -61,32 +66,38 @@ class CDialogPanel: public wxPanel
 	void ReadAll();
 	void ReadItems();
 	void ReadOthers();
-	void ReadLightItems();
+	void ReadSymbolItems();
 	void ReadPicture();
 
 	void Clear();
 	void Select();
 	void SetTable();
 	void NewItem(CNew *ptr);
-	void NewLightItem();
+	void NewSymbol(CNew *ptr);
+	void NewSymbolItem();
 	void NewPicture();
 	void UpdatePicture(wxImage image, int id);
+	void SetSymbolColor(CNew *ptr,wxString id);
+	void SetSymbolPicture(CNew *ptr,wxString id);
 
 	void OnListBox(wxCommandEvent &event);
+
+	void ReadConfig();
+	void WriteConfig();
 	
 	//wxComboBox *GetFilterCombo(wxWindow *Parent);
 	//wxListBox *GetFilterList(wxWindow *Parent);
 	wxPanel *GetPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	wxPanel *GetSymbolPanel(wxWindow *Parent);
-	wxPanel *GetLightItemPanel(wxWindow *Parent);
+	wxPanel *GetSymbolItemPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 
 public:
 	
 	CDialogPanel(int control_type, wxWindow *parent, bool slave = false); // taki do pobrania tylko panela
-		
+	~CDialogPanel();	
 	void OnNew();
 	void OnEdit(wxString id);
 	void OnDelete(wxString id);
@@ -104,38 +115,6 @@ public:
 	enum
 	{
 		ID_FILTER = 6214,
-	};
-
-};
-
-class CMultiDialog: public wxDialog
-{
-	CMultiDialogPanel *m_MultiDialogPanel;
-
-public:
-	
-	CMultiDialog();	
-	wxString _GetId();
-	wxString _GetName();
-};
-
-
-class CMultiDialogPanel: public wxPanel
-{
-	wxArrayPtrVoid m_Panels;
-	CDialogPanel *m_SelectedPanel;
-	void CMultiDialogPanel::OnPageChanged(wxListbookEvent &event);
-public:
-	
-	CMultiDialogPanel(wxWindow *parent);
-	CDialogPanel *GetSelectedPanel();
-	wxString _GetId();
-	wxString _GetName();
-	DECLARE_EVENT_TABLE();
-
-	enum
-	{
-		ID_LISTBOOK = 4632,
 	};
 
 };

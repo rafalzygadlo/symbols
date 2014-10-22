@@ -22,11 +22,11 @@ CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 
 	m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
 	Sizer->Add(m_Info,0,wxALL,5);
-	m_Picture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
-	m_Picture->SetBackgroundColour(*wxWHITE);
-	m_Picture->SetWindowStyle(wxBORDER_SIMPLE);
-	m_Picture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
-	Sizer->Add(m_Picture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,0);
+	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
+	m_StaticPicture->SetBackgroundColour(*wxWHITE);
+	m_StaticPicture->SetWindowStyle(wxBORDER_SIMPLE);
+	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
+	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,5);
 	
 	if(type == PICTURE_PANEL_NEW)
 	{
@@ -47,12 +47,12 @@ CPicturePanel::~CPicturePanel()
 {
 
 }
-wxImage CPicturePanel::GetImage()
+wxImage CPicturePanel::GetPicture()
 {
-	return m_Image;
+	return m_Picture;
 }
 
-void CPicturePanel::SetImageId(wxString id)
+void CPicturePanel::SetPictureId(wxString id)
 {
 	m_ID = id;
 	Clear();
@@ -67,7 +67,7 @@ void CPicturePanel::OnPick(wxHyperlinkEvent &event)
 	CDialog *Dialog = new CDialog(CONTROL_PICTURE,true);
 	if(Dialog->ShowModal() == wxID_OK)
 	{
-		SetImageId(Dialog->_GetId());
+		SetPictureId(Dialog->_GetId());
 	}
 	
 	delete Dialog;
@@ -118,8 +118,8 @@ void CPicturePanel::New()
 					Clear();
 					m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),image.GetWidth(),image.GetHeight()));	
 					wxBitmap bmp_0(image);
-					m_Picture->SetBitmap(bmp_0);
-					m_Image = image;
+					m_StaticPicture->SetBitmap(bmp_0);
+					m_Picture = image;
 					this->Refresh();
 					this->Layout();
 				}
@@ -134,9 +134,9 @@ void CPicturePanel::New()
 void CPicturePanel::Clear()
 {
 	m_Info->SetLabel(wxEmptyString);
-	m_Picture->SetSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT);
-	m_Picture->SetBitmap(wxNullBitmap);
-	m_Picture->Refresh();
+	m_StaticPicture->SetSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT);
+	m_StaticPicture->SetBitmap(wxNullBitmap);
+	m_StaticPicture->Refresh();
 	this->Refresh();
 }
 
@@ -161,8 +161,8 @@ void CPicturePanel::Read()
 	if(row && len)
 	{
 		int size = len[FI_PICTURE_DATA];
-		m_Picture->ClearBackground();
-		m_Picture->SetBitmap(wxNullBitmap);
+		m_StaticPicture->ClearBackground();
+		m_StaticPicture->SetBitmap(wxNullBitmap);
 		
 		if(size > 0)
 		{
@@ -175,7 +175,7 @@ void CPicturePanel::Read()
 			{
 				m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),img.GetWidth(),img.GetHeight()));	
 				wxBitmap bmp(img);
-				m_Picture->SetBitmap(bmp);
+				m_StaticPicture->SetBitmap(bmp);
 			}
 		}
 		

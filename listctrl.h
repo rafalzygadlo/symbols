@@ -25,11 +25,12 @@ class CListCtrl: public wxListCtrl
 	wxArrayInt m_Checked;
 	
 	wxMenu *Menu(int id, const char *module);
-	
+	wxMenu *MenuSymbolItem(int id, const char *module);
+
 	void Sort();
 	void NewUser();
 	void NewGroup();
-	wxArrayString *GetColumn(int column);
+	wxArrayString *_GetColumn(int column);
 	wxArrayString GetRow(int row);
 	wxString GetValue(wxArrayString *ptr, int record);
 	bool IsChecked(long id);
@@ -52,7 +53,7 @@ class CListCtrl: public wxListCtrl
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
 	int OnGetItemColumnImage(long item, long column) const; 
-	//int OnGetItemImage(long item) const;
+	int OnGetItemImage(long item) const;
 
 public:
 	

@@ -52,6 +52,8 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Size: %d x %d",L"Wymiary: %d x %d"},
 	{L"Choose picture",L"Wybierz zdjêcie"},
 	{L"Symbol",L"Znak"},
+	{L"Quantity",L"Iloœæ"},
+	{L"Symbol number",L"Numer znaku"},
 };
 				
 	
@@ -187,7 +189,7 @@ void nvPointOfIntersection(double a1, double b1,double a2, double b2, double *x,
 	*y = (a2 * b1 - b2 * a1) / (a2 - a1); 
 }
 
-bool SetLat(char *text, float *val)
+bool _SetLat(char *text, float *val)
 {
 	int degree,min;
 	float sec;
@@ -198,7 +200,7 @@ bool SetLat(char *text, float *val)
 	
 	sscanf(buffer,"%d° %d' %f'' %c",&degree,&min,&sec,&dindicator);
 	bool result = true;	
-	if(degree != 0 && min != 0 && sec != 0)
+	if(degree != 0 || min != 0 || sec != 0)
 		if(dindicator != 'S' && dindicator != 'N')
 			result = false;
 		
@@ -217,7 +219,7 @@ bool SetLat(char *text, float *val)
 		_min = min + ((float)sec/60);
 		y = degree + ((float)_min/60);
 				
-		if(dindicator == 'N')
+		if(dindicator == 'S')  //by³o N w naszym g³upim navi
 		{
 			if(y == 0)
 				*val = y;
@@ -235,7 +237,7 @@ bool SetLat(char *text, float *val)
 	return true;
 }
 
-bool SetLon(char *text, float *val)
+bool _SetLon(char *text, float *val)
 {
 	int degree,min;
 	float sec;
@@ -246,7 +248,7 @@ bool SetLon(char *text, float *val)
 
 	sscanf(buffer,"%d° %d' %f'' %c",&degree,&min,&sec,&dindicator);
 	bool result = true;	
-	if(degree != 0 && min != 0 && sec != 0)
+	if(degree != 0 || min != 0 || sec != 0)
 		if(dindicator != 'W' && dindicator != 'E')
 			result = false;
 		
@@ -380,13 +382,12 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 	return Filter;
 }
 
-wxComboBox *GetAreaCombo(wxWindow *Parent, int wid)
-{
-	wxComboBox *ptr = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
-	ptr->Append(GetMsg(MSG_ALL));
 
-	wxArrayString ar;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_AREA);
+wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel)
+{
+	wxComboBox *ptr = new wxComboBox(Parent,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+		
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
 	if(!my_query(sql))
 		return ptr;
 	
@@ -397,38 +398,17 @@ wxComboBox *GetAreaCombo(wxWindow *Parent, int wid)
 	int i = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxString name(row[FI_AREA_NAME],wxConvUTF8);
-		ar.Add(name);
+		wxString name(row[FID_NAME],wxConvUTF8);
 		int id = ptr->Append(name);
-		ptr->SetClientData(id,(int*)atoi(row[FI_AREA_ID]));
-	}
+		int row_id = atoi(row[FID_ID]);
 
-	db_free_result(result);
+		long sid;
+		sel.ToLong(&sid);
 
-	return ptr;
-}
+		if(sid == row_id)
+			ptr->SetSelection(id);
 
-wxComboBox *GetSeawayCombo(wxWindow *Parent, int wid)
-{
-	wxComboBox *ptr = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
-	ptr->Append(GetMsg(MSG_ALL));
-
-	wxArrayString ar;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_SEAWAY);
-	if(!my_query(sql))
-		return ptr;
-	
-	int rows = 0;
-	void *result = db_result();
-	char **row;
-		
-	int i = 0;
-	while(row = (char**)db_fetch_row(result))
-	{
-		wxString name(row[FI_SEAWAY_NAME],wxConvUTF8);
-		ar.Add(name);
-		int id = ptr->Append(name);
-		ptr->SetClientData(id,(int*)atoi(row[FI_SEAWAY_ID]));
+		ptr->SetClientData(id,(int*)row_id);
 	}
 
 	db_free_result(result);

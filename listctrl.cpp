@@ -20,7 +20,7 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_NEW,CListCtrl::OnNew)
 	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
 	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
-	EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
+	//EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
 //	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
 	
 END_EVENT_TABLE()
@@ -170,13 +170,13 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_SYMBOL:		_Menu = Menu(m_SelectedItem,MODULE_SYMBOL);			break;
-		//case CONTROL_LIGHT_ITEM:	_Menu = Menu(m_SelectedItem,MODULE_LIGHT);			break;
-		case CONTROL_ITEM:			_Menu = Menu(m_SelectedItem,MODULE_ITEM);			break;
-		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);			break;
-		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);			break;
-		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);	break;
-		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);		break;
+		case CONTROL_SYMBOL:		_Menu = Menu(m_SelectedItem,MODULE_SYMBOL);				break;
+		case CONTROL_SYMBOL_ITEM:	_Menu = MenuSymbolItem(m_SelectedItem,MODULE_SYMBOL);	break;
+		case CONTROL_ITEM:			_Menu = Menu(m_SelectedItem,MODULE_ITEM);				break;
+		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);				break;
+		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);				break;
+		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
+		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);			break;
 	}
 	
 	if(_Menu)
@@ -211,6 +211,26 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 	
 }
 
+wxMenu *CListCtrl::MenuSymbolItem(int id, const char *module)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+	}
+		
+	return Menu;
+	
+}
+
 void CListCtrl::OnSelected(wxListEvent &event)
 {
 	
@@ -231,7 +251,7 @@ void CListCtrl::OnActivate(wxListEvent &event)
 
 void CListCtrl::OnEdit(wxCommandEvent &event)
 {
-	m_Control->OnEdit(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));
+	m_Control->OnEdit(GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem));
 }
 
 void CListCtrl::OnNew(wxCommandEvent &event)
@@ -241,10 +261,10 @@ void CListCtrl::OnNew(wxCommandEvent &event)
 
 void CListCtrl::OnDelete(wxCommandEvent &event)
 {
-	m_Control->OnDelete(GetValue(GetColumn(m_ColumnWithId),m_SelectedItem));
+	m_Control->OnDelete(GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem));
 }
 
-wxArrayString *CListCtrl::GetColumn(int column)
+wxArrayString *CListCtrl::_GetColumn(int column)
 {
 	return (wxArrayString*)m_ColumnArray.Item(column);
 }
@@ -286,7 +306,7 @@ wxString CListCtrl::OnGetItemText(long item, long column) const
 		if (item > -1 && (flags & wxLIST_HITTEST_ONITEMICON))
 		{
 			long id;
-			GetValue(GetColumn(m_ColumnWithId),item).ToLong(&id);
+			GetValue(_GetColumn(m_ColumnWithId),item).ToLong(&id);
 			SetChecked(id, !IsChecked(item));
 			Refresh();
 		
@@ -304,7 +324,7 @@ wxString CListCtrl::OnGetItemText(long item, long column) const
 bool CListCtrl::IsChecked(long item)
 {
 	long id;
-	GetValue(GetColumn(m_ColumnWithId),item).ToLong(&id);
+	GetValue(_GetColumn(m_ColumnWithId),item).ToLong(&id);
 	for(size_t i = 0; i < m_Checked.size(); i++)
 	{
 		if(m_Checked.Item(i) == id)
@@ -439,9 +459,8 @@ int CListCtrl::OnGetItemColumnImage(long item, long column) const
 	
 		
 }
-/*
+
 int CListCtrl::OnGetItemImage(long item) const
 {
 	return -1;
 }
-*/

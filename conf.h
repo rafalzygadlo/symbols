@@ -82,6 +82,8 @@
 #define MSG_PICTURE_INFO			34
 #define MSG_CHOOSE_PICTURE			35
 #define MSG_SYMBOL					36
+#define MSG_QUANTITY				37
+#define MSG_SYMBOL_NUMBER			38
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -99,6 +101,7 @@
 #define CONTROL_AREA		6
 #define CONTROL_SYMBOL_TYPE 7
 #define CONTROL_PICTURE		8
+#define CONTROL_SYMBOL_ITEM	9
 
 
 #define ORDER_ASC	0
@@ -117,17 +120,28 @@
 
 // globalne id dla pól takich samych
 // raz jest pole name a raz type
-#define FID_NAME 1
-#define FID_TYPE 1
-#define FID_INFO 2
+#define FID_ID		0
+#define FID_NAME	1
+#define FID_TYPE	1
+#define FID_INFO	2
 
-#define PICTURE_MAX_WIDTH	250
-#define PICTURE_MAX_HEIGHT	250
+#define PICTURE_MAX_WIDTH	200
+#define PICTURE_MAX_HEIGHT	200
 #define PICTURE_MAX_SIZE 64000
 	
 
 #define PICTURE_PANEL_NEW		0
 #define PICTURE_PANEL_PICKER	1
+
+
+#define COLUMN_SEPARATOR ";"
+
+#define KEY_DIALOG "dialog"
+#define KEY_COLUMN_WIDTH "col_width"
+#define KEY_DIALOG_WIDTH "width"
+#define KEY_DIALOG_HEIGHT "height"
+
+#define MAX_ITEMS 10
 
 typedef struct Marker
 {

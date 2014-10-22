@@ -10,8 +10,8 @@
 class CPicturePanel: public wxPanel
 {
 	wxBoxSizer *m_PanelSizer;
-	wxStaticBitmap *m_Picture;
-	wxImage m_Image;
+	wxStaticBitmap *m_StaticPicture;
+	wxImage m_Picture;
 	wxString m_ID;
 	wxStaticText *m_Info;
 	
@@ -24,8 +24,8 @@ public:
 
 	CPicturePanel(wxWindow *parent, int type = -1);
 	~CPicturePanel();
-	wxImage GetImage();
-	void SetImageId(wxString id);
+	wxImage GetPicture();
+	void SetPictureId(wxString id);
 	void _SetId(wxString id);
 	void Read();
 	void Clear();

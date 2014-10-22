@@ -93,7 +93,7 @@ void CMyFrame::OnLon(wxCommandEvent &event)
 
 	float value = MarkerSelectedPtr->x;
 	
-	if(SetLon(textlon->GetValue().char_str(),&value))
+	if(_SetLon(textlon->GetValue().char_str(),&value))
 	{
 		double y,to_x,to_y;
 		y = MarkerSelectedPtr->y;
@@ -118,7 +118,7 @@ void CMyFrame::OnLat(wxCommandEvent &event)
 {
 	float value = MarkerSelectedPtr->y;
 
-	if(SetLat(textlat->GetValue().char_str(),&value))
+	if(_SetLat(textlat->GetValue().char_str(),&value))
 	{
 		
 		double x,to_x,to_y;

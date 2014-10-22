@@ -18,8 +18,8 @@ wxString GetDistanceUnit(size_t id);
 wxString GetDistanceName(size_t id);
 wxString GetProductInfo();
 wxString GetProductName();
-bool SetLat(char *text, float *val);
-bool SetLon(char *text, float *val);
+bool _SetLat(char *text, float *val);
+bool _SetLon(char *text, float *val);
 wxString GetWorkDir();
 wxString GetConfigFile();
 int _GetUID();
@@ -30,7 +30,7 @@ wxString Convert(char *v);
 
 wxListBox *GetFilterList(wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
-wxComboBox *GetAreaCombo(wxWindow *Parent, int wid);
-wxComboBox *GetSeawayCombo(wxWindow *Parent, int wid);
+wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel);
+
 #endif
 
