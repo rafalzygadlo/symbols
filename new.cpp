@@ -20,8 +20,8 @@ END_EVENT_TABLE()
 CNew::CNew(int type, int id_type, wxString item_id, bool edit)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
-	m_Lon = 50;
-	m_Lat = 50;
+	m_Lon = 0;
+	m_Lat = 0;
 	m_ControlType = type;
 	m_IDType = id_type;
 	m_ItemID = item_id;
@@ -158,12 +158,12 @@ wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 
 void CNew::ClearColors()
 {
-	for(size_t i = 0; i < m_Color.size(); i++)
-	{
-		delete m_Color[i];
-	}
+//	for(size_t i = 0; i < m_Color.size(); i++)
+//	{
+		//delete m_Color[i];
+	//}
 	
-	m_Color.Clear();
+	//m_Color.Clear();
 }
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
@@ -179,9 +179,9 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
-	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
 
+	/*
 	m_ColorPanel = new CColorPanel(Panel,this);
 	FlexGridSizer->Add(m_ColorPanel,0,wxALL|wxEXPAND,5);
 	for(size_t i = 0; i < m_Color.size(); i++)
@@ -191,6 +191,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	}
 	
 	ClearColors();
+	*/
 	
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -207,6 +208,22 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_SymbolTypeCombo = GetCombo(Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 	
+	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
+	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextColor = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextColor->SetValue(m_Color);
+	m_TextColor->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextColor,0,wxALL|wxEXPAND,5);
+
+	wxStaticText *LabelCoverage = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COVERAGE));
+	FlexGridSizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextCoverage = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextCoverage->SetValue(m_Coverage);
+	m_TextCoverage->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextCoverage,0,wxALL|wxEXPAND,5);
+
+
+
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -684,17 +701,24 @@ void CNew::SetSymbolType(wxString id)
 	m_SymbolTypeID = id;
 }
 
+void CNew::SetColor(wxString v)
+{	
+	m_Color;
+}
+
+/*
 void CNew::SetColor(wxColor *color)
 {	
 	m_Color.Add(color);
 }
+*/
 
-void CNew::SetLon(float v)
+void CNew::SetLon(double v)
 {
 	m_Lon = v;
 }
 
-void CNew::SetLat(float v)
+void CNew::SetLat(double v)
 {
 	m_Lat = v;
 }
@@ -703,12 +727,16 @@ void CNew::_SetPosition(double lon, double lat)
 {
 	m_Lon = lon;
 	m_Lat = lat;
-	
 }
 
 void CNew::SetNumber(wxString v)
 {
 	m_Number = v;
+}
+
+void CNew::SetCoverage(wxString v)
+{
+	m_Coverage = v;
 }
 
 //GET
@@ -745,12 +773,12 @@ CColorPanel *CNew::GetColorPanel()
 	return m_ColorPanel;
 }
 
-float CNew::GetLon()
+double CNew::GetLon()
 {
 	return m_Lon;
 }
 
-float CNew::GetLat()
+double CNew::GetLat()
 {
 	return m_Lat;
 }
@@ -783,4 +811,15 @@ int CNew::GetItemType()
 wxString CNew::GetPictureId()
 {
 	return m_PicturePanel->GetPictureId();
+}
+
+wxString CNew::GetColor()
+{
+	return m_TextColor->GetValue();
+}
+
+wxString CNew::GetCoverage()
+{
+	return m_TextCoverage->GetValue();
+	
 }

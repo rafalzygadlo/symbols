@@ -94,6 +94,7 @@ void CPositionDialog::OnCancel(wxCommandEvent &event)
 
 void CPositionDialog::OnLon(wxCommandEvent &event)
 {
+	/*
 	SMarker *MarkerSelectedPtr =_Parent->GetNewMarkerPtr();
 	if(MarkerSelectedPtr == NULL)
 		return;
@@ -117,11 +118,12 @@ void CPositionDialog::OnLon(wxCommandEvent &event)
 		m_TextLon->Refresh();
 	
 	}
-
+	*/
 }
 
 void CPositionDialog::OnLat(wxCommandEvent &event)
 {
+	/*
 	SMarker *MarkerSelectedPtr =_Parent->GetNewMarkerPtr();
 	if(MarkerSelectedPtr == NULL)
 		return;
@@ -144,7 +146,7 @@ void CPositionDialog::OnLat(wxCommandEvent &event)
 		m_TextLat->SetForegroundColour(*wxRED);
 		m_TextLat->Refresh();
 	}
-
+	*/
 }
 
 void CPositionDialog::_SetPosition(double lon, double lat)

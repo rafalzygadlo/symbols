@@ -464,19 +464,3 @@ int CListCtrl::OnGetItemImage(long item) const
 {
 	return -1;
 }
-
-void CListCtrl::OnPaint(wxPaintEvent &event)
-{
-	wxPaintDC dc(this);
-	
-	if(GetItemCount() == 0)
-	{
-	
-		dc.DrawText(" no items count", 10,10);
-	
-	}
-
-
-	event.Skip();
-
-}

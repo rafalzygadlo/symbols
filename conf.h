@@ -30,8 +30,8 @@
 
 #define PLUGIN_ID 4
 
-#define MARKER_NAME_SIZE 32
-#define MARKER_DESCRIPTION_SIZE 255
+#define SYMBOL_NAME_SIZE 64
+#define SYMBOL_DESCRIPTION_SIZE 255
 //#define MARKER_DEFAULT_ICON_ID 0
 
 #define COLUM_0_WIDTH	120
@@ -84,6 +84,7 @@
 #define MSG_SYMBOL					36
 #define MSG_QUANTITY				37
 #define MSG_SYMBOL_NUMBER			38
+#define MSG_COVERAGE				39
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -143,14 +144,14 @@
 
 #define MAX_ITEMS 10
 
-typedef struct Marker
+typedef struct Symbol
 {
 	float x;
 	float y;
-	wchar_t name[MARKER_NAME_SIZE + 1];
-	wchar_t description[MARKER_DESCRIPTION_SIZE + 1];
+	wchar_t name[SYMBOL_NAME_SIZE + 1];
+	wchar_t description[SYMBOL_DESCRIPTION_SIZE + 1];
 		
-}SMarker;
+}SSymbol;
 
 
 typedef struct Column

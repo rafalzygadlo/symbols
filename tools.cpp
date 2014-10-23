@@ -54,6 +54,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Symbol",L"Znak"},
 	{L"Quantity",L"Iloœæ"},
 	{L"Symbol number",L"Numer znaku"},
+	{L"Coverage",L"Zasiêg"},
 };
 				
 	
@@ -129,16 +130,16 @@ void SetLangId(int id)
 	GlobalLanguageID = id;
 }
 //degree = 40.044658660888672
-wxString ConvertDegree(float degree) 
+wxString ConvertDegree(double degree) 
 {
 	int decimal = (int)degree;
-    double minutes = (float)(degree - decimal) * 60;
-    double second = (float)(minutes - (int)(minutes)) * 60;
-	return wxString::Format(_("%02d° %02d' %02.2f''"),decimal, (int)minutes, second);
+    double minutes = (double)(degree - decimal) * 60;
+    double second = (double)(minutes - (int)(minutes)) * 60;
+	return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
       
 }
 
-wxString FormatLongitude(float x) 
+wxString FormatLongitude(double x) 
 {
       wxString str;
 
@@ -161,7 +162,7 @@ wxString FormatLongitude(float x)
       return str;
 }
 
-wxString FormatLatitude(float y) 
+wxString FormatLatitude(double y) 
 {
 	
 	wxString str;
@@ -189,7 +190,7 @@ void nvPointOfIntersection(double a1, double b1,double a2, double b2, double *x,
 	*y = (a2 * b1 - b2 * a1) / (a2 - a1); 
 }
 
-bool _SetLat(char *text, float *val)
+bool _SetLat(char *text, double *val)
 {
 	int degree,min;
 	float sec;
@@ -216,9 +217,12 @@ bool _SetLat(char *text, float *val)
 
 	if(result)
 	{
-		_min = min + ((float)sec/60);
-		y = degree + ((float)_min/60);
-				
+		_min = min + ((double)sec/60);
+		y = degree + ((double)_min/60);
+		
+		if(y > 90)
+			return false;
+
 		if(dindicator == 'S')  //by³o N w naszym g³upim navi
 		{
 			if(y == 0)
@@ -237,7 +241,7 @@ bool _SetLat(char *text, float *val)
 	return true;
 }
 
-bool _SetLon(char *text, float *val)
+bool _SetLon(char *text, double *val)
 {
 	int degree,min;
 	float sec;
@@ -258,15 +262,20 @@ bool _SetLon(char *text, float *val)
 		result = false;
 	if(sec >= 60 || sec < 0)
 		result = false;
+	if((degree + min + sec) > 180)
+		result = false;
 
 	double x;
 	double _min;
 	
 	if(result)
 	{
-		_min = min + ((float)sec/60);
-		x = degree + ((float)_min/60);
-				
+		_min = min + ((double)sec/60);
+		x = degree + ((double)_min/60);
+		
+		if(x > 180)
+			return false;
+	
 		if(dindicator == 'W')
 		{
 			if(x == 0)
@@ -283,7 +292,9 @@ bool _SetLon(char *text, float *val)
 		return false;
 	}
 
+	
 	return true;
+		
 }
 
 int _GetUID()

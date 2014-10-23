@@ -48,7 +48,7 @@ void CColorPanel::New(wxColor color)
 {
 	CColor *Color = new CColor(m_Panel,this);
 	Color->SetColor(color);
-	m_PanelSizer->Add(Color,0,wxALL|wxEXPAND,1);
+	m_PanelSizer->Add(Color,0,wxALL,1);
 	m_ColorPanels.Add(Color);
 }
 
@@ -106,8 +106,8 @@ CColor::CColor(wxWindow *parent, CColorPanel *panel)
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
-	wxButton *Delete = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	m_Sizer->Add(Delete,0,wxALL,1);
+	//wxButton *Delete = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
+	//m_Sizer->Add(Delete,0,wxALL,1);
 	
 	SetSizer(m_Sizer);
 }

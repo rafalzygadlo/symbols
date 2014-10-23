@@ -34,7 +34,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxBoxSizer *Page1Sizer;
 	//wxStaticText *ShipName, *Lon, *Lat;
 	//wxTextCtrl *ShipDesc;
-	SMarker *Selected;
+	SSymbol *Selected;
 	wxString ControlName;
 	wxButton *ButtonOn,*ButtonOff;
 	int Column1Width,Column2Width,Column3Width,Column4Width,Column5Width;
@@ -57,14 +57,14 @@ public:
 	CDisplayPlugin(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString& name = wxT("DisplayApiPanel") );
 	~CDisplayPlugin();
 	
-	void SetSelectedShip(SMarker *ship);
-	void ShipProperties(SMarker *ship);
-	void ShipConfig(SMarker *ship);
-	void ShipData(SMarker *ship);
-	void ShipReport(SMarker *ship);
-	void ShipReportConfig(SMarker *ship);
-	bool ShipIsSelected(SMarker *ship);
-	void ShowInfoPanel(bool show, SMarker *ship);
+	void SetSelectedShip(SSymbol *ship);
+	void ShipProperties(SSymbol *ship);
+	void ShipConfig(SSymbol *ship);
+	void ShipData(SSymbol *ship);
+	void ShipReport(SSymbol *ship);
+	void ShipReportConfig(SSymbol *ship);
+	bool ShipIsSelected(SSymbol *ship);
+	void ShowInfoPanel(bool show, SSymbol *ship);
 	CNaviBroker *GetBroker();
 	
 

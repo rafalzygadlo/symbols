@@ -37,13 +37,13 @@ class CMapPlugin :public CNaviMapIOApi
 	double HotSpotY;
 	//int SelectedTextureID;
 	//int SelectedIconID;
-	SMarker *NewPtr;
+	SSymbol *NewPtr;
 	wxFile _file;
 	float Angle;
 	double Factor;
 	bool MoveMarker;
 	double MOM_X, MOM_Y;
-	SMarker *SelectedPtr, *HighlightedPtr;
+	SSymbol *SelectedPtr, *HighlightedPtr;
 	int ErrorCode;
 	double SmoothScaleFactor;
 	bool NeedExit;
@@ -88,7 +88,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Read();
 	void CreateTextures(void);
 	void WriteConfig();
-	std::vector <SMarker*> GetPoints();
+	std::vector <SSymbol*> GetPoints();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
 	void SetClickedOnButton(bool value);
@@ -120,13 +120,13 @@ class CMapPlugin :public CNaviMapIOApi
 	void Move();
 	void ReadHeader();
 	int Count();
-	SMarker *Get(int id);
+	SSymbol *Get(int id);
 	double Distance();
-	SMarker* SetMarker(double x, double y);
+	SSymbol* SetMarker(double x, double y);
 	void SetPosition(double x, double y);
 	void RenderNew();
 	void RenderTest();
-	void SetSelectedShip(SMarker *ship);
+	void SetSelectedShip(SSymbol *ship);
 
 	void Items();
 	void Symbol();
@@ -135,7 +135,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SymbolType();
 	void Picture();
 	
-	//static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
 
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
@@ -157,19 +157,19 @@ public:
 	wxString GetFilePath();
 	wxArrayString *GetDataArray();
 	int GetErrorCode();
-	SMarker *GetSelectedPtr();
+	SSymbol *GetSelectedPtr();
 	size_t GetMarkerIconsCount();
-	void AddField(wchar_t *name, wchar_t *value, SMarker *Marker);
+	void AddField(wchar_t *name, wchar_t *value, SSymbol *Marker);
 	void SetErrorCode(int er);
 	void SetFilePath(wxString file);
 	void SetMarkerTextureID(int id);
 	void SetMarkerIconID(int id);
 	void ShowPopupMenu(bool show);
 	void ShowFrameWindow(bool show);
-	SMarker *GetNewMarkerPtr();
+	SSymbol *GetNewMarkerPtr();
 	void Append();
 	void Remove();
-	bool ShipIsSelected(SMarker *ship);
+	bool ShipIsSelected(SSymbol *ship);
 	int GetDisplaySignal();
 	wxArrayPtrVoid *GetShipList();
 

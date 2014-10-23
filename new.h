@@ -15,12 +15,14 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextType;
 	wxTextCtrl *m_TextLat, *m_TextLon;
 	wxTextCtrl *m_TextNumber;
+	wxTextCtrl *m_TextColor;
+	wxTextCtrl *m_TextCoverage;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
+	
 	wxString m_Number;
-	float m_Lon,m_Lat;
-
+	double m_Lon,m_Lat;
 	wxString m_Name,m_Info,m_Type;
 	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
 	wxString m_PictureId;
@@ -33,7 +35,9 @@ class CNew: public wxDialog
 	wxArrayPtrVoid m_Controls,m_IDs;
 	wxString m_ItemID;
 	bool m_Edit;
-	wxArrayPtrVoid m_Color;
+	wxString m_Color;
+	wxString m_Coverage;
+	//wxArrayPtrVoid m_Color;
 	
 	
 	void GetPanel(int type);
@@ -72,10 +76,12 @@ public:
 	int GetAreaId();
 	int GetSymbolTypeId();
 	CColorPanel *GetColorPanel();
-	float GetLon();
-	float GetLat();
+	double GetLon();
+	double GetLat();
 	wxString GetNumber();
 	wxString GetPictureId();
+	wxString GetColor();
+	wxString GetCoverage();
 
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
@@ -87,10 +93,12 @@ public:
 	void SetSeaway(wxString id);
 	void SetArea(wxString id);
 	void SetSymbolType(wxString id);
-	void SetColor(wxColor *color);
-	void SetLon(float v);
-	void SetLat(float v);
+	void SetColor(wxString v);
+	void SetLon(double v);
+	void SetLat(double v);
 	void SetNumber(wxString v);
+	void SetCoverage(wxString v);
+
 
 	void Create();
 

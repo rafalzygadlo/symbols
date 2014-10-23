@@ -125,7 +125,7 @@ void *CMapPlugin::GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params)
 
 void *CMapPlugin::SetSelectedShipFunc(void *NaviMapIOApiPtr, void *Params)
 {
-	SMarker *Ship = (SMarker*)Params;
+	SSymbol *Ship = (SSymbol*)Params;
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
 	ThisPtr->SetSelectedShip(Ship);
 		
@@ -133,7 +133,7 @@ void *CMapPlugin::SetSelectedShipFunc(void *NaviMapIOApiPtr, void *Params)
 
 }
 
-void CMapPlugin::SetSelectedShip(SMarker *ship)
+void CMapPlugin::SetSelectedShip(SSymbol *ship)
 {
 	SelectedPtr = ship;
 	SendSelectSignal();
@@ -141,7 +141,7 @@ void CMapPlugin::SetSelectedShip(SMarker *ship)
 }
 
 
-SMarker *CMapPlugin::GetSelectedPtr()
+SSymbol *CMapPlugin::GetSelectedPtr()
 {
 	return SelectedPtr;
 }
@@ -171,33 +171,22 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 
 void CMapPlugin::Read()
 {
-	//wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_OBJECT);
-	//my_query(sql);
-	//void *result = db_result();
+	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
+	my_query(sql);
+	void *result = db_result();
 		
-	if(_file.Exists(PointsPath))
-	{
-		if(_file.Open(PointsPath))
-		{	
-			while(!_file.Eof())
-			{	
-				SMarker *buffer = (SMarker*)malloc(sizeof(SMarker));
-				memset(buffer,0,sizeof(SMarker));
-				_file.Read(buffer,sizeof(SMarker));
-				Add(buffer->x,buffer->y,buffer->name,buffer->description);
-				NewPtr = NULL;
-				free(buffer);
-			}
+	SSymbol *buffer = (SSymbol*)malloc(sizeof(SSymbol));
+	memset(buffer,0,sizeof(SSymbol));
+	
+	Add(buffer->x,buffer->y,buffer->name,buffer->description);
+	NewPtr = NULL;
+	free(buffer);
 		
-			_file.Close();
-		}
-	}
-
 	SendInsertSignal();
 }
 
 
-bool CMapPlugin::ShipIsSelected(SMarker *ship)
+bool CMapPlugin::ShipIsSelected(SSymbol *ship)
 {
 	if(ship == SelectedPtr)
 		return true;
@@ -213,7 +202,7 @@ void CMapPlugin::WriteConfig()
 	{
 				
 		for(unsigned int i = 0; i < ShipList->size();i++)
-			_file.Write(ShipList->Item(i),sizeof(SMarker));
+			_file.Write(ShipList->Item(i),sizeof(SSymbol));
 
 		_file.Close();
 	}
@@ -328,7 +317,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 		
 	bool add = false;
-	SMarker *ptr = NULL;
+	SSymbol *ptr = NULL;
 	
 	if(ptr = SetMarker(MapX,MapY))
 	{
@@ -364,12 +353,12 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	
 }
 
-SMarker *CMapPlugin::SetMarker(double x, double y)
+SSymbol *CMapPlugin::SetMarker(double x, double y)
 {
 
 	for(size_t i = 0; i < ShipList->size(); i++)
 	{
-		SMarker *Ship = (SMarker*)ShipList->Item(i);
+		SSymbol *Ship = (SSymbol*)ShipList->Item(i);
 		if(IsPointInsideBox(MapX, MapY, Ship->x - (RectWidth/2) + TranslationX, Ship->y - (RectHeight/2) + TranslationY, Ship->x + (RectWidth/2) + TranslationX , Ship->y + (RectHeight/2) + TranslationY))
 			return Ship;
 	}
@@ -452,7 +441,7 @@ void CMapPlugin::Picture()
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
 	//NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
@@ -482,7 +471,7 @@ void CMapPlugin::CreateApiMenu(void)
 
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_),this, MenuNautofon);
 }	
-/*
+
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
 {
 
@@ -491,7 +480,7 @@ void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input)
 
 	return NULL;
 }
-*/
+
 void *CMapPlugin::MenuItems(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -587,8 +576,8 @@ void CMapPlugin::Remove()
 
 void CMapPlugin::Append()
 {
-	SMarker *Marker = (SMarker*)malloc(sizeof(SMarker));
-	memcpy(Marker,NewPtr,sizeof(SMarker));
+	SSymbol *Marker = (SSymbol*)malloc(sizeof(SSymbol));
+	memcpy(Marker,NewPtr,sizeof(SSymbol));
 	ShipList->Add(Marker);
 	free(NewPtr);
 	NewPtr = NULL;
@@ -598,8 +587,8 @@ void CMapPlugin::Append()
 void CMapPlugin::Add(double x, double y, wchar_t *name, wchar_t *description,  bool _new)
 {
 		
-	SMarker *Points = (SMarker*)malloc(sizeof(SMarker));
-	memset(Points,0,sizeof(SMarker));
+	SSymbol *Points = (SSymbol*)malloc(sizeof(SSymbol));
+	memset(Points,0,sizeof(SSymbol));
 	Points->x = x;
 	Points->y = y;
 			
@@ -607,10 +596,10 @@ void CMapPlugin::Add(double x, double y, wchar_t *name, wchar_t *description,  b
 		NewPtr = Points;		
 		
 	if(name != NULL)
-		wcscpy_s(Points->name,MARKER_NAME_SIZE, name);
+		wcscpy_s(Points->name,SYMBOL_NAME_SIZE, name);
 	
 	if(description != NULL)
-		wcscpy_s(Points->description,MARKER_DESCRIPTION_SIZE,description);
+		wcscpy_s(Points->description,SYMBOL_DESCRIPTION_SIZE,description);
 			
 	if(!_new)
 		ShipList->Add(Points);
@@ -636,7 +625,7 @@ void CMapPlugin::SetPosition(double x, double y)
 
 }
 
-SMarker *CMapPlugin::GetNewMarkerPtr()
+SSymbol *CMapPlugin::GetNewMarkerPtr()
 {
 	return NewPtr;
 }
@@ -663,7 +652,7 @@ void CMapPlugin::New()
 }
 
 
-void CMapPlugin::AddField(wchar_t *name, wchar_t *value, SMarker *Marker )
+void CMapPlugin::AddField(wchar_t *name, wchar_t *value, SSymbol *Marker )
 {
 	/*SFields *Fields = new SFields();
 	Fields->next = NULL;
@@ -690,7 +679,7 @@ void CMapPlugin::Delete()
 
 	for(size_t i = 0; i < ShipList->size(); i ++)
 	{
-		SMarker *Marker = (SMarker*)ShipList->Item(i);
+		SSymbol *Marker = (SSymbol*)ShipList->Item(i);
 		if(SelectedPtr == Marker)
 		{
 			ShipList->Remove(Marker);
@@ -822,7 +811,7 @@ void CMapPlugin::RenderMarkers()
 	glEnable(GL_TEXTURE_2D);
 	for(size_t i = 0; i < ShipList->size(); i++)
 	{
-		SMarker *Marker = (SMarker*)ShipList->Item(i);
+		SSymbol *Marker = (SSymbol*)ShipList->Item(i);
 		glColor4f(1.0f,1.0f,1.0f,0.6f);
 		glPushMatrix();
 		

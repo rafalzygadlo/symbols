@@ -90,7 +90,7 @@ CMyFrame::~CMyFrame(void)
 
 void CMyFrame::OnLon(wxCommandEvent &event)
 {
-
+	/*
 	float value = MarkerSelectedPtr->x;
 	
 	if(_SetLon(textlon->GetValue().char_str(),&value))
@@ -110,12 +110,13 @@ void CMyFrame::OnLon(wxCommandEvent &event)
 		textlon->Refresh();
 	
 	}
-
+	*/
 
 }
 
 void CMyFrame::OnLat(wxCommandEvent &event)
 {
+	/*
 	float value = MarkerSelectedPtr->y;
 
 	if(_SetLat(textlat->GetValue().char_str(),&value))
@@ -138,7 +139,7 @@ void CMyFrame::OnLat(wxCommandEvent &event)
 		textlat->SetForegroundColour(*wxRED);
 		textlat->Refresh();
 	}
-		
+	*/
 }
 
 void CMyFrame::ShowIconChanger(bool show)
@@ -156,7 +157,7 @@ void CMyFrame::OnTextChanged(wxCommandEvent &event)
 	
 	if(event.GetId() == ID_NAME)
 	{
-		if(textname->GetValue().Length() >= MARKER_NAME_SIZE)
+		if(textname->GetValue().Length() >= SYMBOL_NAME_SIZE)
 			ButtonClose->Disable();
 		else
 			ButtonClose->Enable();
@@ -164,7 +165,7 @@ void CMyFrame::OnTextChanged(wxCommandEvent &event)
 
 	if(event.GetId() == ID_DESCRIPTION)
 	{
-		if(textdescription->GetValue().Length() >= MARKER_DESCRIPTION_SIZE)
+		if(textdescription->GetValue().Length() >= SYMBOL_DESCRIPTION_SIZE)
 			ButtonClose->Disable();
 		else
 			ButtonClose->Enable();
@@ -183,8 +184,8 @@ void CMyFrame::OnMarkerDelete(wxCommandEvent &event)
 
 void CMyFrame::OnCloseButton(wxCommandEvent &event)
 {	
-	wcscpy_s(MarkerSelectedPtr->name,MARKER_NAME_SIZE, textname->GetValue().wc_str()); 
-	wcscpy_s(MarkerSelectedPtr->description, MARKER_DESCRIPTION_SIZE, textdescription->GetValue().wc_str()); 
+	wcscpy_s(MarkerSelectedPtr->name,SYMBOL_NAME_SIZE, textname->GetValue().wc_str()); 
+	wcscpy_s(MarkerSelectedPtr->description, SYMBOL_DESCRIPTION_SIZE, textdescription->GetValue().wc_str()); 
 	Hide();
 }
 

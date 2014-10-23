@@ -114,9 +114,7 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
 	
 	m_DialogSlave = new CDialogPanel(control_slave,this,true);
 	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
-	
-	
-	
+		
 	m_DialogPanel->SetSlave(m_DialogSlave);
 	
 	//wxStaticLine *Line = new wxStaticLine(this);
@@ -659,13 +657,13 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%f',lat='%f', name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f', name='%s', info='%s'"),
+		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetColor(), ptr->GetName(),ptr->GetInfo());
 	my_query(sql);
 	
 	int id = db_last_insert_id();
 
-	wxArrayPtrVoid pan = ptr->GetColorPanel()->GetColorPanels();
+	/*wxArrayPtrVoid pan = ptr->GetColorPanel()->GetColorPanels();
 
 	for(size_t i = 0; i < pan.size(); i++)
 	{
@@ -673,7 +671,7 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d'"),TABLE_SYMBOL_COLOR,id,Color->GetColor().GetRGB());
 		my_query(sql);
 	}
-
+	*/
 	sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
 	my_query(sql);
 	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
@@ -884,35 +882,36 @@ void CDialogPanel::EditSymbol(wxString id)
 	ptr->SetSeaway(Convert(row[FI_SYMBOL_ID_SEAWAY]));
 	ptr->SetArea(Convert(row[FI_SYMBOL_ID_AREA]));
 	ptr->SetSymbolType(Convert(row[FI_SYMBOL_ID_SYMBOL_TYPE]));
-	ptr->SetLon(atof(row[FI_SYMBOL_LON]));
-	ptr->SetLat(atof(row[FI_SYMBOL_LAT]));
+	ptr->SetLon(strtod(row[FI_SYMBOL_LON],NULL));
+	ptr->SetLat(strtod(row[FI_SYMBOL_LAT],NULL));
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
+	ptr->SetColor(Convert(row[FI_SYMBOL_COLOR]));
 	db_free_result(result);	
 	
-	SetSymbolColor(ptr,id);
+	//SetSymbolColor(ptr,id);
 	SetSymbolPicture(ptr,id);
 
 	ptr->Create();
 		
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%f', lat='%f', name='%s', info ='%s' WHERE id = '%s'"),
-										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f', color='%s', name='%s', info ='%s' WHERE id = '%s'"),
+										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetColor(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 
+		/*
 		wxArrayPtrVoid pan = ptr->GetColorPanel()->GetColorPanels();
 		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_COLOR,id);
 		my_query(sql);
-		
 		for(size_t i = 0; i < pan.size(); i++)
 		{
 			CColor *Color = (CColor*)pan.Item(i);
 			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d'"),TABLE_SYMBOL_COLOR,id,Color->GetColor().GetRGB());
 			my_query(sql);
 		}
-		
+		*/
 		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
 		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
@@ -1120,7 +1119,7 @@ void CDialogPanel::SetSymbolColor(CNew *ptr,wxString id)
 	{
 		wxColor *color = new wxColor();;
 		color->SetRGB(atoi(row[FI_SYMBOL_COLOR_COLOR]));
-		ptr->SetColor(color);
+//		ptr->SetColor(color);
 	}
 		
 	db_free_result(result);

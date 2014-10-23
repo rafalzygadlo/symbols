@@ -13,9 +13,9 @@ class CMyIcon;
 class CMyFrame: public wxDialog
 {
 	CMapPlugin *m_DLL;	
-	SMarker *MarkerSelectedPtr;
+	SSymbol *MarkerSelectedPtr;
 	wxTextCtrl *textname;
-	std::vector<SMarker> *MarkerList;
+	std::vector<SSymbol> *MarkerList;
 	wxListBox *markerlistbox;
 	wxFlexGridSizer *GridSizer;
 	wxPanel *Panel;
