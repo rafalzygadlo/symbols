@@ -5,10 +5,13 @@
 #include "db.h"
 #include <wx/mstream.h>
 #include <wx/dataview.h>
-#include "images/del.img"
+//#include "images/del.img"
 
 extern unsigned int	add_size;
 extern unsigned char add[]; 
+
+extern unsigned int	del_size;
+extern unsigned char del[]; 
 
 CItemPanel::CItemPanel(wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
@@ -18,7 +21,7 @@ CItemPanel::CItemPanel(wxWindow *top, wxWindow *parent)
 		
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
 	Read(sql);
-			
+		
 	for(size_t i = 0; i < m_Items.size(); i++)
 	{
 		CItem *ptr = (CItem*)m_Items.Item(i);
@@ -83,16 +86,15 @@ CItem::CItem(CItemPanel *parent,wxString name)
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
 	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(HSizer,0,wxALL|wxEXPAND,5);
+	Sizer->Add(HSizer,0,wxALL|wxEXPAND,0);
 	
 	m_Name = new wxStaticText(this,wxID_ANY,wxEmptyString);
 	m_Name->SetLabel(name);
-	HSizer->Add(m_Name,0,wxALL,1);
+	HSizer->Add(m_Name,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	HSizer->AddStretchSpacer(1);
 	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
 	HSizer->Add(New,0,wxALL|wxALIGN_RIGHT,1);
-	
-	//AppendCombo();
+		
 }
 
 CItem::~CItem()
@@ -103,7 +105,7 @@ CItem::~CItem()
 void CItem::AppendCombo()
 {
 	CComboPanel *ComboPanel = new CComboPanel(this,m_Id);
-	this->GetSizer()->Add(ComboPanel,0,wxALL|wxEXPAND,2);
+	this->GetSizer()->Add(ComboPanel,0,wxALL|wxEXPAND,1);
 	
 	m_ItemPanel->_Layout();
 	m_Counter++;
@@ -154,16 +156,16 @@ CComboPanel::CComboPanel(CItem *parent, wxString id)
 	this->SetSizer(PanelSizer);
 			
 	wxComboBox *Combo = new wxComboBox(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0,wxCB_READONLY);
-	PanelSizer->Add(Combo,1,wxALL,2);
+	PanelSizer->Add(Combo,1,wxALL,1);
 	
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 
 	wxButton *Delete = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	PanelSizer->Add(Delete,0,wxALL,2);
+	PanelSizer->Add(Delete,0,wxALL,1);
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%s'"),TABLE_ITEM,id);
-	Read(sql,2,Combo);
+	Read(sql,Combo);
 		
 }
 
@@ -172,7 +174,7 @@ void CComboPanel::OnDelete(wxCommandEvent &event)
 	m_Parent->OnDelete(this);
 }
 
-void CComboPanel::Read(wxString query, int field, wxComboBox *combo)
+void CComboPanel::Read(wxString query, wxComboBox *combo)
 {
 	if(!my_query(query))
 		return;
@@ -183,8 +185,9 @@ void CComboPanel::Read(wxString query, int field, wxComboBox *combo)
 	
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxString str(row[field],wxConvUTF8);
-		combo->Append(str);
+		wxString name(row[FI_ITEM_NAME],wxConvUTF8);
+		wxString type(row[FI_ITEM_TYPE],wxConvUTF8);
+		combo->Append(wxString::Format(_("[%s][%s]"),name,type));
 	}
 
 	db_free_result(result);

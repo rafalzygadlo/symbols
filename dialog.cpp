@@ -76,8 +76,9 @@ CDialog::CDialog(int control_type, bool picker)
 	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	
-	Center();
 	ReadConfig();
+	Center();
+	
 
 }
 
@@ -110,20 +111,21 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
   	
 	*/
 	m_DialogPanel = new CDialogPanel(control_master,this);
-	Sizer->Add(m_DialogPanel,0,wxALL|wxEXPAND,0);
+	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
 	
-	m_DialogSlave = new CDialogPanel(control_slave,this,true);
-	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
+	//m_DialogSlave = new CDialogPanel(control_slave,this,true);
+	//Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
 		
-	m_DialogPanel->SetSlave(m_DialogSlave);
+	//m_DialogPanel->SetSlave(m_DialogSlave);
 	
 	//wxStaticLine *Line = new wxStaticLine(this);
 	//Sizer->Add(Line,0,wxALL|wxEXPAND,5);
 
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 
-	Center();
 	ReadConfig();
+	Center();
+	
 
 }
 
@@ -305,10 +307,10 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
+	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 	m_PicturePanel = new CPicturePanel(Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
-				
+	
 	return Panel;
 }
 

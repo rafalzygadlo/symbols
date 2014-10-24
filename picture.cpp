@@ -16,12 +16,12 @@ END_EVENT_TABLE()
 CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
-	this->SetWindowStyle(wxBORDER_SIMPLE);
+	//this->SetWindowStyle(wxBORDER_SIMPLE);
 	//SetBackgroundColour(*wxWHITE);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 
 	m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
-	Sizer->Add(m_Info,0,wxALL,5);
+	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,2);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetBackgroundColour(*wxWHITE);
 	m_StaticPicture->SetWindowStyle(wxBORDER_SIMPLE);
@@ -31,13 +31,13 @@ CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 	if(type == PICTURE_PANEL_NEW)
 	{
 		wxHyperlinkCtrl *m_New = new wxHyperlinkCtrl(this,ID_NEW,GetMsg(MSG_CHOOSE_PICTURE),wxEmptyString);
-		Sizer->Add(m_New,0,wxALL,10);
+		Sizer->Add(m_New,0,wxALL|wxALIGN_CENTER,2);
 	}
 	
 	if(type == PICTURE_PANEL_PICKER)
 	{
 		wxHyperlinkCtrl *m_New = new wxHyperlinkCtrl(this,ID_PICK,GetMsg(MSG_CHOOSE_PICTURE),wxEmptyString);
-		Sizer->Add(m_New,0,wxALL,10);
+		Sizer->Add(m_New,0,wxALL|wxALIGN_CENTER,2);
 	}
 			
 	SetSizer(Sizer);

@@ -8,6 +8,7 @@
 #include "item.h"
 #include <wx/statline.h>
 #include "tools.h"
+#include "light.h"
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_ITEM_TYPE,OnComboItem)
@@ -143,6 +144,25 @@ wxComboBox *CNew::GetComboItemType(wxWindow *Parent)
 	return ptr;
 }
 
+wxPanel *CNew::GetItemPanel(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(Parent);
+	Panel->SetSizer(Sizer);
+
+	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
+	Sizer->Add(Scroll,1,wxALL|wxEXPAND,5);
+	Scroll->SetFocusIgnoringChildren();
+	Scroll->SetSizer(ScrollSizer);
+
+	CItemPanel *Item  = new CItemPanel(Panel,Scroll);
+	ScrollSizer->Add(Item,1,wxALL|wxEXPAND,0);
+	Scroll->SetScrollbars(20, 20, 20, 20);
+	
+	return Panel;
+}
+
 wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -164,6 +184,26 @@ void CNew::ClearColors()
 	//}
 	
 	//m_Color.Clear();
+}
+
+wxPanel *CNew::GetLightPanel(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+
+	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
+	Sizer->Add(Scroll,1,wxALL|wxEXPAND,5);
+	Scroll->SetFocusIgnoringChildren();
+	Scroll->SetSizer(ScrollSizer);
+		
+	CLightPanel *LightPanel = new CLightPanel(Panel,Scroll);
+	ScrollSizer->Add(LightPanel,1,wxALL|wxEXPAND,5);
+	Scroll->SetScrollbars(20, 20, 20, 20);
+	
+	return Panel;
+
 }
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
@@ -208,21 +248,6 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_SymbolTypeCombo = GetCombo(Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 	
-	wxStaticText *LabelColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COLOR));
-	FlexGridSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextColor = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextColor->SetValue(m_Color);
-	m_TextColor->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextColor,0,wxALL|wxEXPAND,5);
-
-	wxStaticText *LabelCoverage = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COVERAGE));
-	FlexGridSizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextCoverage = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextCoverage->SetValue(m_Coverage);
-	m_TextCoverage->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextCoverage,0,wxALL|wxEXPAND,5);
-
-
 
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -419,23 +444,33 @@ void CNew::EditSymbolPanel()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
-
+	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
 	Panel->SetBackgroundColour(*wxWHITE);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(PanelSizer);
 	
-	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
-
-	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-	PanelSizer->Add(HSizer,0,wxALL|wxEXPAND,5);
+	wxNotebook *Notebook = new wxNotebook(Panel,wxID_ANY);
+	PanelSizer->Add(Notebook,1,wxALL|wxEXPAND,0);
+	Notebook->AddPage(GetSymbolPanel(Notebook),GetMsg(MSG_SYMBOL));
+	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
+	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
+	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));
 	
-	wxPanel *SPanel = GetSymbolPanel(Panel);
-	HSizer->Add(SPanel,0,wxALL|wxEXPAND,5);
 	
-	wxPanel *PPanel = GetPicturePanel(Panel);
+	//wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
+	//PanelSizer->Add(HSizer,0,wxALL|wxEXPAND,5);
+	
+	//wxPanel *LPanel = 
+	//HSizer->Add(LPanel,0,wxALL|wxEXPAND,5);
+	
+	//wxPanel *SPanel = GetSymbolPanel(Panel);
+	//HSizer->Add(SPanel,0,wxALL|wxEXPAND,5);
+	
+	//wxPanel *PPanel = GetPicturePanel(Panel);
 	//PPanel->SetMinSize(wxSize(120,120));
-	HSizer->Add(PPanel,0,wxALL,5);
+	//HSizer->Add(PPanel,0,wxALL,5);
 	
 		
 	//wxStaticLine *Line = new wxStaticLine(this);

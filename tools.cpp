@@ -55,6 +55,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Quantity",L"Iloœæ"},
 	{L"Symbol number",L"Numer znaku"},
 	{L"Coverage",L"Zasiêg"},
+	{L"Sector",L"Sektor"},
 };
 				
 	

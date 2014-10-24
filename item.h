@@ -70,7 +70,7 @@ public:
 
 	CComboPanel(CItem *parent, wxString id);
 	void OnDelete(wxCommandEvent &event);
-	void Read(wxString query, int field, wxComboBox *combo);
+	void Read(wxString query, wxComboBox *combo);
 
 	DECLARE_EVENT_TABLE();
 	

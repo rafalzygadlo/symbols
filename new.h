@@ -47,7 +47,6 @@ class CNew: public wxDialog
 	void EditItemPanel();
 	void EditPicturePanel();
 	void EditSymbolPanel();
-	//wxPanel *LightPanel();
 	void SymbolItem();
 	void _SetPosition(double lon, double lat);
 	
@@ -55,6 +54,8 @@ class CNew: public wxDialog
 	void GetItemFeaturePanel(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 	wxPanel *GetSymbolPanel(wxWindow *Parent);
+	wxPanel *GetLightPanel(wxWindow *Parent);
+	wxPanel *GetItemPanel(wxWindow *Parent);
 	void OnLat(wxCommandEvent &event);
 	void OnLon(wxCommandEvent &event);
 	

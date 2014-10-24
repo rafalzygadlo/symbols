@@ -6,8 +6,11 @@
 #include "conf.h"
 #include "tools.h"
 
-extern unsigned int	del_size;
-extern unsigned char del[]; 
+//extern unsigned int	del_size;
+//extern unsigned char del[]; 
+
+//extern unsigned int	add_size;
+//extern unsigned char add[]; 
 
 BEGIN_EVENT_TABLE(CColorPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CColorPanel::OnNew)
