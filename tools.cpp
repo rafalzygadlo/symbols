@@ -263,9 +263,7 @@ bool _SetLon(char *text, double *val)
 		result = false;
 	if(sec >= 60 || sec < 0)
 		result = false;
-	if((degree + min + sec) > 180)
-		result = false;
-
+	
 	double x;
 	double _min;
 	
