@@ -3,7 +3,6 @@
 
 #include <wx/wx.h>
 #include "picture.h"
-#include "color.h"
 
 class CNew: public wxDialog
 {
@@ -26,7 +25,6 @@ class CNew: public wxDialog
 	wxString m_Name,m_Info,m_Type;
 	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
 	wxString m_PictureId;
-	CColorPanel *m_ColorPanel;
 	CPicturePanel *m_PicturePanel;
 
 	wxListBox *m_ListBox;
@@ -76,12 +74,11 @@ public:
 	int GetSeawayId();
 	int GetAreaId();
 	int GetSymbolTypeId();
-	CColorPanel *GetColorPanel();
 	double GetLon();
 	double GetLat();
 	wxString GetNumber();
 	wxString GetPictureId();
-	wxString GetColor();
+	//wxString GetColor();
 	wxString GetCoverage();
 
 	wxArrayPtrVoid GetFeatureControls();

@@ -2,14 +2,13 @@
 #define __LIGHT_H
 
 #include <wx/wx.h>
-#include <wx/wrapsizer.h>
 #include <wx/grid.h>
+#include <wx/spinctrl.h>
 
 class CLight;
 class CLightPanel: public wxPanel
 {
 	wxWindow *m_Top;
-	//wxBoxSizer *m_Sizer;
 	wxArrayPtrVoid m_List;
 	void OnNew(wxCommandEvent &event);
 	void AppendPanel();
@@ -21,7 +20,7 @@ public:
 	~CLightPanel();
 	void Read(wxString query);
 	wxArrayPtrVoid GetItems();
-	void _Layout();
+	//void _Layout();
 	void OnDelete(CLight *panel);
 
 	DECLARE_EVENT_TABLE();
@@ -40,7 +39,7 @@ class CLight: public wxPanel
 	CLightPanel *m_ItemPanel;
 	wxString m_Id;
 	
-	wxTextCtrl *m_SectorText;
+	wxSpinCtrl *m_SectorTextFrom,*m_SectorTextTo;
 	wxTextCtrl *m_CoverageText;
 	
 	void OnNew(wxCommandEvent &event);
@@ -68,5 +67,22 @@ public:
 
 };
 
+class CColorLight :public wxPanel
+{
+	
+public:
+
+	CColorLight(wxWindow *parent);
+	void OnDClick(wxMouseEvent &event);
+	void OnWindowEnter(wxMouseEvent &event);
+
+	DECLARE_EVENT_TABLE();
+	
+	enum
+	{
+		ID_COLOR = 6323
+	};
+
+};
 
 #endif

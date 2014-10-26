@@ -2,7 +2,6 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
-#include "color.h"
 #include "dialog.h"
 #include "picture.h"
 #include "item.h"
@@ -447,7 +446,7 @@ void CNew::EditSymbolPanel()
 	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
 	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
-	Panel->SetBackgroundColour(*wxWHITE);
+	//Panel->SetBackgroundColour(*wxWHITE);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(PanelSizer);
 	
@@ -803,11 +802,6 @@ int CNew::GetSymbolTypeId()
 	
 }
 
-CColorPanel *CNew::GetColorPanel()
-{
-	return m_ColorPanel;
-}
-
 double CNew::GetLon()
 {
 	return m_Lon;
@@ -848,10 +842,10 @@ wxString CNew::GetPictureId()
 	return m_PicturePanel->GetPictureId();
 }
 
-wxString CNew::GetColor()
-{
-	return m_TextColor->GetValue();
-}
+//wxString CNew::GetColor()
+//{
+	//return m_TextColor->GetValue();
+//}
 
 wxString CNew::GetCoverage()
 {

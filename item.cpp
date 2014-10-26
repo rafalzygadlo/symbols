@@ -78,22 +78,14 @@ CItem::CItem(CItemPanel *parent,wxString name)
 {
 	m_Counter = 1;
 	m_ItemPanel = parent;
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,name);
 	SetSizer(Sizer);
 	
-	this->SetWindowStyle(wxBORDER_SIMPLE);
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-
-	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(HSizer,0,wxALL|wxEXPAND,0);
 	
-	m_Name = new wxStaticText(this,wxID_ANY,wxEmptyString);
-	m_Name->SetLabel(name);
-	HSizer->Add(m_Name,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	HSizer->AddStretchSpacer(1);
 	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	HSizer->Add(New,0,wxALL|wxALIGN_RIGHT,1);
+	Sizer->Add(New,0,wxALL|wxALIGN_RIGHT,1);
 		
 }
 
@@ -187,7 +179,7 @@ void CComboPanel::Read(wxString query, wxComboBox *combo)
 	{
 		wxString name(row[FI_ITEM_NAME],wxConvUTF8);
 		wxString type(row[FI_ITEM_TYPE],wxConvUTF8);
-		combo->Append(wxString::Format(_("[%s][%s]"),name,type));
+		combo->Append(wxString::Format(_("%s %s"),name,type));
 	}
 
 	db_free_result(result);

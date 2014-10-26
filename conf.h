@@ -86,6 +86,8 @@
 #define MSG_SYMBOL_NUMBER			38
 #define MSG_COVERAGE				39
 #define MSG_SECTOR					40
+#define MSG_FROM					41
+#define MSG_TO						42
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -105,13 +107,11 @@
 #define CONTROL_PICTURE		8
 #define CONTROL_SYMBOL_ITEM	9
 
-
 #define ORDER_ASC	0
 #define ORDER_DESC	1
 
 #define DEFAULT_DIALOG_HEIGHT	450
 #define DEFAULT_DIALOG_WIDTH	600
-
 
 // kolumny z id w listctrl
 #define COLUMN_WITH_ID 0
@@ -131,11 +131,8 @@
 #define PICTURE_MAX_HEIGHT	200
 #define PICTURE_MAX_SIZE 64000
 	
-
 #define PICTURE_PANEL_NEW		0
 #define PICTURE_PANEL_PICKER	1
-
-
 #define COLUMN_SEPARATOR ";"
 
 #define KEY_DIALOG "dialog"
@@ -143,7 +140,10 @@
 #define KEY_DIALOG_WIDTH "width"
 #define KEY_DIALOG_HEIGHT "height"
 
-#define MAX_ITEMS 10
+#define MAX_ITEMS 10 //przy dodawaniu zawartosci znaku
+
+#define PANEL_COLOR_WIDTH 25
+#define PANEL_COLOR_HEIGHT 25
 
 typedef struct Symbol
 {

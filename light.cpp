@@ -3,11 +3,13 @@
 #include "tools.h"
 #include "db.h"
 #include <wx/mstream.h>
+#include <wx/colordlg.h>
 #include <wx/dataview.h>
+#include "images/del.img"
+#include "images/add.img"
 
 extern unsigned int	add_size;
 extern unsigned char add[]; 
-
 extern unsigned int	del_size;
 extern unsigned char del[]; 
 
@@ -18,8 +20,8 @@ CLightPanel::CLightPanel(wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
 	m_Top = top;
-	this->SetWindowStyle(wxBORDER_SIMPLE);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_LIGHT));
+	SetSizer(Sizer);
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
@@ -47,7 +49,7 @@ void CLightPanel::AppendPanel()
 {
 	CLight *Light = new CLight(this);
 	m_List.Add(Light);
-	this->GetSizer()->Add(Light,0,wxALL|wxEXPAND,5);
+	this->GetSizer()->Insert(1,Light,0,wxALL|wxEXPAND,5);
 	this->Layout();
 	m_Top->Layout();
 }
@@ -61,10 +63,10 @@ void CLightPanel::RemovePanel(CLight *panel)
 	m_Top->Layout();
 }
 
-void CLightPanel::_Layout()
-{
-	m_Top->Layout();
-}
+//void CLightPanel::_Layout()
+//{
+	//m_Top->Layout();
+//}
 
 wxArrayPtrVoid CLightPanel::GetItems()
 {
@@ -103,33 +105,43 @@ CLight::CLight(CLightPanel *parent)
 {
 	m_Counter = 1;
 	m_ItemPanel = parent;
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_LIGHT));
 	SetSizer(Sizer);
-	
-	this->SetWindowStyle(wxBORDER_SIMPLE);
+		
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-
-	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(HSizer,0,wxALL|wxEXPAND,0);
+	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
+	Sizer->Add(Del,0,wxALL,1);
+	
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
 		
 	wxStaticText *LabelColor = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COLOR));
-	Sizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_CoverageText = new wxTextCtrl(this,wxID_ANY);
-	Sizer->Add(m_CoverageText,0,wxALL|wxEXPAND,1);
+	FlexSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	CColorLight *m_ColorPanel = new CColorLight(this);
+	m_ColorPanel->SetMinSize(wxSize(PANEL_COLOR_WIDTH,PANEL_COLOR_HEIGHT));
+	m_ColorPanel->SetWindowStyle(wxBORDER_SIMPLE);
+	FlexSizer->Add(m_ColorPanel,0,wxALL,1);
 
 	wxStaticText *LabelCoverage = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COVERAGE));
-	Sizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	FlexSizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_CoverageText = new wxTextCtrl(this,wxID_ANY);
-	Sizer->Add(m_CoverageText,0,wxALL|wxEXPAND,1);
+	FlexSizer->Add(m_CoverageText,0,wxALL|wxEXPAND,1);
 	
 	wxStaticText *LabelSector = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR));
-	Sizer->Add(LabelSector,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_SectorText = new wxTextCtrl(this,wxID_ANY);
-	Sizer->Add(m_SectorText,0,wxALL|wxEXPAND,1);
+	FlexSizer->Add(LabelSector,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	FlexSizer->AddSpacer(1);
+
+	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_FROM));
+	FlexSizer->Add(LabelSectorFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	m_SectorTextFrom = new wxSpinCtrl(this,wxID_ANY);
+	FlexSizer->Add(m_SectorTextFrom,0,wxALL|wxEXPAND,1);
 	
-	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	HSizer->Add(Del,0,wxALL|wxALIGN_RIGHT,1);
+	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_TO));
+	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	m_SectorTextTo = new wxSpinCtrl(this,wxID_ANY);
+	FlexSizer->Add(m_SectorTextTo,0,wxALL|wxEXPAND,1);
+	
 		
 }
 
@@ -182,4 +194,32 @@ void CLight::_SetId(wxString v)
 void CLight::_SetName(wxString v)
 {
 //	m_Name->SetLabel(v);
+}
+
+BEGIN_EVENT_TABLE(CColorLight, wxPanel)
+	EVT_LEFT_DCLICK(OnDClick)
+	EVT_ENTER_WINDOW(OnWindowEnter)
+END_EVENT_TABLE()
+
+CColorLight::CColorLight(wxWindow *parent)
+:wxPanel(parent)
+{
+	
+}
+
+void CColorLight::OnWindowEnter(wxMouseEvent &event)
+{
+	SetCursor(wxCursor(wxCURSOR_HAND));
+}
+
+void CColorLight::OnDClick(wxMouseEvent &event)
+{
+	wxColourDialog dialog(this);
+	if (dialog.ShowModal() == wxID_OK)
+	{
+		wxColor color = dialog.GetColourData().GetColour();
+		SetBackgroundColour(color);
+		Refresh();
+	}
+
 }

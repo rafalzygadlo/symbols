@@ -16,15 +16,12 @@ END_EVENT_TABLE()
 CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
-	//this->SetWindowStyle(wxBORDER_SIMPLE);
-	//SetBackgroundColour(*wxWHITE);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
+	SetSizer(Sizer);
 
 	m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
 	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,2);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
-	m_StaticPicture->SetBackgroundColour(*wxWHITE);
-	m_StaticPicture->SetWindowStyle(wxBORDER_SIMPLE);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
 	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,5);
 	

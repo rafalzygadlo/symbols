@@ -321,10 +321,10 @@ wxPanel *CDialogPanel::GetItemPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetBackgroundColour(*wxWHITE);
 	Panel->SetSizer(Sizer);
+	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 	m_ListBox = GetFilterList(Panel,ID_FILTER);
 	Sizer->Add(m_ListBox,0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
-				
+					
 	return Panel;
 }
 
@@ -660,7 +660,7 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
 	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f', name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetColor(), ptr->GetName(),ptr->GetInfo());
+		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetName(),ptr->GetInfo());
 	my_query(sql);
 	
 	int id = db_last_insert_id();
@@ -899,8 +899,8 @@ void CDialogPanel::EditSymbol(wxString id)
 		
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f', color='%s', name='%s', info ='%s' WHERE id = '%s'"),
-										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetColor(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',  name='%s', info ='%s' WHERE id = '%s'"),
+										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),  ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 
 		/*
