@@ -52,7 +52,7 @@ void CNew::GetPanel(int type)
 		case CONTROL_ITEM:			EditItemPanel();	break;
 		case CONTROL_PICTURE:		EditPicturePanel();	break;
 		case CONTROL_SYMBOL:		EditSymbolPanel();	break;
-		case CONTROL_AREA:	
+		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:	EditNamePanel();	break;
 		
@@ -193,16 +193,21 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 
 	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
 	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
-	Sizer->Add(Scroll,1,wxALL|wxEXPAND,5);
+	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
 		
-	CLightPanel *LightPanel = new CLightPanel(Panel,Scroll);
-	ScrollSizer->Add(LightPanel,1,wxALL|wxEXPAND,5);
+	m_LightPanel = new CLightPanel(Panel,Scroll);
+	ScrollSizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	
 	return Panel;
 
+}
+
+CLightPanel *CNew::GetLightPanel()
+{
+	return m_LightPanel;
 }
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
@@ -446,7 +451,6 @@ void CNew::EditSymbolPanel()
 	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
 	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
-	//Panel->SetBackgroundColour(*wxWHITE);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(PanelSizer);
 	
@@ -456,39 +460,7 @@ void CNew::EditSymbolPanel()
 	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
 	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
 	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));
-	
-	
-	//wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-	//PanelSizer->Add(HSizer,0,wxALL|wxEXPAND,5);
-	
-	//wxPanel *LPanel = 
-	//HSizer->Add(LPanel,0,wxALL|wxEXPAND,5);
-	
-	//wxPanel *SPanel = GetSymbolPanel(Panel);
-	//HSizer->Add(SPanel,0,wxALL|wxEXPAND,5);
-	
-	//wxPanel *PPanel = GetPicturePanel(Panel);
-	//PPanel->SetMinSize(wxSize(120,120));
-	//HSizer->Add(PPanel,0,wxALL,5);
-	
 		
-	//wxStaticLine *Line = new wxStaticLine(this);
-	//Sizer->Add(Line,0,wxALL|wxEXPAND,1);
-
-	//wxStaticText *Label+ = new wxStaticText(this,wxID_ANY,GetMsg(MSG_LIGHT));
-	//Sizer->Add(LabelLight,0,wxALL|wxEXPAND,1);
-	/*
-	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
-	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
-	PanelSizer->Add(Scroll,0,wxALL|wxEXPAND,5);
-	Scroll->SetFocusIgnoringChildren();
-	Scroll->SetSizer(ScrollSizer);
-
-	CItemPanel *Item  = new CItemPanel(Panel,Scroll);
-	ScrollSizer->Add(Item,0,wxALL|wxEXPAND,0);
-	Scroll->SetScrollbars(20, 20, 20, 20);
-	*/
-	
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);

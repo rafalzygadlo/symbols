@@ -3,7 +3,9 @@
 
 #include <wx/wx.h>
 #include "picture.h"
+#include "light.h"
 
+class CLightPanel;
 class CNew: public wxDialog
 {
 	int m_IDType;
@@ -19,6 +21,7 @@ class CNew: public wxDialog
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
+	CLightPanel *m_LightPanel;
 	
 	wxString m_Number;
 	double m_Lon,m_Lat;
@@ -56,7 +59,7 @@ class CNew: public wxDialog
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	void OnLat(wxCommandEvent &event);
 	void OnLon(wxCommandEvent &event);
-	
+		
 	void OnComboItem(wxCommandEvent &event);
 	void OnComboFilter(wxCommandEvent &event);
 	bool Validate();
@@ -96,7 +99,7 @@ public:
 	void SetLat(double v);
 	void SetNumber(wxString v);
 	void SetCoverage(wxString v);
-
+	CLightPanel *GetLightPanel();
 
 	void Create();
 

@@ -9,6 +9,7 @@
 #include <wx/mstream.h>
 #include <wx/statline.h>
 #include "wx/laywin.h"
+#include "light.h"
 
 SHeader Header[] =
 {
@@ -903,17 +904,17 @@ void CDialogPanel::EditSymbol(wxString id)
 										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),  ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 
-		/*
-		wxArrayPtrVoid pan = ptr->GetColorPanel()->GetColorPanels();
-		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_COLOR,id);
+		
+		CLightPanel *pan = ptr->GetLightPanel();
+		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_LIGHT,id);
 		my_query(sql);
-		for(size_t i = 0; i < pan.size(); i++)
+		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
-			CColor *Color = (CColor*)pan.Item(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d'"),TABLE_SYMBOL_COLOR,id,Color->GetColor().GetRGB());
+			CLight *Light = pan->GetLight(i);
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d'"),TABLE_SYMBOL_COLOR,id,Light->GetColor().GetRGB());
 			my_query(sql);
 		}
-		*/
+		
 		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
 		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
