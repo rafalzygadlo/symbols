@@ -460,6 +460,9 @@ void CNew::EditSymbolPanel()
 	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
 	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
 	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));
+
+	//CLightDraw *d = new CLightDraw(Notebook);
+	//Notebook->AddPage(d,GetMsg(MSG_ITEMS));
 		
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
