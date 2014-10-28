@@ -47,7 +47,7 @@ class CLight: public wxPanel
 	wxString m_Id;
 	wxArrayPtrVoid m_Sectors;
 	wxSpinCtrl *m_CoverageText;
-	wxStaticBoxSizer *m_SectorSizer;
+	wxBoxSizer *m_SectorSizer;
 	wxSpinCtrl *m_SectorTextFrom,*m_SectorTextTo;
 	
 	void OnNewSector(wxCommandEvent &event);
@@ -105,6 +105,24 @@ class CSectorPanel :public wxPanel
 
 public:
 	CSectorPanel(CLight *parent, bool _add = false);
+	
+	DECLARE_EVENT_TABLE();
+
+	enum
+	{
+		ID_DELETE,
+	};
+};
+
+class CLightDraw :public wxPanel
+{
+
+	int m_Width,m_Height;
+	void OnPaint(wxPaintEvent &event);
+	void OnSize(wxSizeEvent &event);
+
+public:
+	CLightDraw(CLightPanel *parent);
 	
 	DECLARE_EVENT_TABLE();
 

@@ -24,11 +24,15 @@ CLightPanel::CLightPanel(wxWindow *top, wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 					
-	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
-    wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	Sizer->Add(New,0,wxALL,1);
+	//wxMemoryInputStream in_1((const unsigned char*)add,add_size);
+    //wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
+	//wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
+	//Sizer->Add(New,0,wxALL,1);
 	
+	CLightDraw *LightDraw = new CLightDraw(this);
+	//CLight *Light = new CLight(this);
+	m_List.Add(LightDraw);
+	Sizer->Add(LightDraw,1,wxALL|wxEXPAND,1);
 	
 }
 
@@ -59,9 +63,10 @@ void CLightPanel::OnDelete(CLight *panel)
 
 void CLightPanel::AppendPanel()
 {
-	CLight *Light = new CLight(this);
-	m_List.Add(Light);
-	this->GetSizer()->Add(Light,0,wxALL|wxEXPAND,5);
+	CLightDraw *LightDraw = new CLightDraw(this);
+	//CLight *Light = new CLight(this);
+	m_List.Add(LightDraw);
+	this->GetSizer()->Add(LightDraw,1,wxALL|wxEXPAND,1);
 	this->Layout();
 	m_Top->Layout();
 }
@@ -125,7 +130,7 @@ CLight::CLight(CLightPanel *parent)
 {
 	m_Counter = 1;
 	m_ItemPanel = parent;
-	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_LIGHT));
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);//,this,GetMsg(MSG_LIGHT));
 	SetSizer(Sizer);
 		
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
@@ -134,7 +139,7 @@ CLight::CLight(CLightPanel *parent)
 	Sizer->Add(Del,0,wxALL,1);
 	
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
-	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
+	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,0);
 		
 	wxStaticText *LabelColor = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COLOR));
 	FlexSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
@@ -250,7 +255,7 @@ void CColorLight::OnClick(wxMouseEvent &event)
 	{
 		wxColor color = dialog.GetColourData().GetColour();
 		SetBackgroundColour(color);
-		SetFocus();
+		//SetFocus();
 		Refresh();
 	}
 
@@ -297,4 +302,39 @@ void CSectorPanel::OnDelete(wxCommandEvent &event)
 {
 	m_Light->OnDeleteSector(this);
 
+}
+
+BEGIN_EVENT_TABLE(CLightDraw, wxPanel)
+	//EVT_BUTTON(ID_NEW,OnNew)
+	EVT_PAINT(OnPaint)
+	EVT_SIZE(OnSize)
+END_EVENT_TABLE()
+
+CLightDraw::CLightDraw(CLightPanel *parent)
+	:wxPanel(parent)
+{
+	SetBackgroundColour(*wxRED);
+	//SetMinSize(wxSize(150,150));
+	//m_Light = parent;
+	m_Height = 150;
+	m_Width = 150;
+}
+
+void CLightDraw::OnSize(wxSizeEvent &event)
+{
+	//GetClientSize(&m_Width, &m_Height);
+
+}
+
+void CLightDraw::OnPaint(wxPaintEvent &event)
+{
+	wxPaintDC dc(this);
+	
+	//wxSize s = GetSize();
+
+	int r = (m_Width*m_Height)*2 / ((2*m_Width) + (2*m_Height)); 
+
+	//dc.DrawAr
+
+	dc.DrawCircle(m_Width/2,m_Height/2,r);
 }
