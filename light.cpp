@@ -7,6 +7,7 @@
 #include <wx/dataview.h>
 #include "images/del.img"
 #include "images/add.img"
+#include <wx/clrpicker.h>
 
 extern unsigned int	add_size;
 extern unsigned char add[]; 
@@ -137,27 +138,28 @@ CLight::CLight(CLightPanel *parent)
 		
 	wxStaticText *LabelColor = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COLOR));
 	FlexSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	CColorLight *m_ColorPanel = new CColorLight(this);
-	m_ColorPanel->SetMinSize(wxSize(PANEL_COLOR_WIDTH,PANEL_COLOR_HEIGHT));
-	m_ColorPanel->SetWindowStyle(wxBORDER_SIMPLE);
-	FlexSizer->Add(m_ColorPanel,0,wxALL,1);
+	wxColourPickerCtrl *ColorPicker = new wxColourPickerCtrl(this,wxID_ANY);
+	FlexSizer->Add(ColorPicker,0,wxALL,1);
 
 	wxStaticText *LabelCoverage = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COVERAGE));
 	FlexSizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_CoverageText = new wxSpinCtrl(this,wxID_ANY);
 	FlexSizer->Add(m_CoverageText,0,wxALL|wxEXPAND,1);
 	
-	m_SectorSizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_SECTOR));
-	Sizer->Add(m_SectorSizer,0,wxALL|wxEXPAND,5);
-
-	wxMemoryInputStream in_2((const unsigned char*)add,add_size);
-    wxImage myImage_2(in_2, wxBITMAP_TYPE_PNG);
-	wxButton *New = new wxBitmapButton(this,ID_NEW_SECTOR,wxBitmap(myImage_2));
-
-	m_SectorSizer->Add(New,0,wxALL,2);
-
-	CSectorPanel *Sector = new CSectorPanel(this,true);
-	m_SectorSizer->Add(Sector,0,wxALL|wxEXPAND,2);
+	//m_SectorSizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_SECTOR));
+	//Sizer->Add(m_SectorSizer,0,wxALL|wxEXPAND,5);
+	
+	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_FROM));
+	FlexSizer->Add(LabelSectorFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	m_SectorTextFrom = new wxSpinCtrl(this,wxID_ANY);
+	FlexSizer->Add(m_SectorTextFrom,0,wxALL|wxEXPAND,1);
+	
+	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_TO));
+	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	m_SectorTextTo = new wxSpinCtrl(this,wxID_ANY);
+	FlexSizer->Add(m_SectorTextTo,0,wxALL|wxEXPAND,1);
+		
+	//m_SectorSizer->Add(Sector,0,wxALL|wxEXPAND,2);
 		
 }
 
@@ -266,12 +268,12 @@ CSectorPanel::CSectorPanel(CLight *parent, bool _add)
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(5);
 	this->SetSizer(FlexSizer);
 		
-	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_FROM));
+	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_FROM));
 	FlexSizer->Add(LabelSectorFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_SectorTextFrom = new wxSpinCtrl(this,wxID_ANY);
 	FlexSizer->Add(m_SectorTextFrom,0,wxALL|wxEXPAND,1);
 	
-	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_TO));
+	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_TO));
 	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_SectorTextTo = new wxSpinCtrl(this,wxID_ANY);
 	FlexSizer->Add(m_SectorTextTo,0,wxALL|wxEXPAND,1);

@@ -86,8 +86,8 @@
 #define MSG_SYMBOL_NUMBER			38
 #define MSG_COVERAGE				39
 #define MSG_SECTOR					40
-#define MSG_FROM					41
-#define MSG_TO						42
+#define MSG_SECTOR_FROM				41
+#define MSG_SECTOR_TO				42
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"

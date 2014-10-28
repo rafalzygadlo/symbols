@@ -48,6 +48,7 @@ class CLight: public wxPanel
 	wxArrayPtrVoid m_Sectors;
 	wxSpinCtrl *m_CoverageText;
 	wxStaticBoxSizer *m_SectorSizer;
+	wxSpinCtrl *m_SectorTextFrom,*m_SectorTextTo;
 	
 	void OnNewSector(wxCommandEvent &event);
 	//void OnDeleteSector(wxCommandEvent &event);
