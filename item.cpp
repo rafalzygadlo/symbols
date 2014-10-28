@@ -113,11 +113,10 @@ void CItem::AppendCombo()
 
 void CItem::OnDelete(CComboPanel *panel)
 {
+	m_List.Remove(panel);
 	this->GetSizer()->Detach(panel);
 	delete panel;
-	m_List.Remove(panel);
 	m_ItemPanel->_Layout();
-
 }
 
 void CItem::OnNew(wxCommandEvent &event)
@@ -190,16 +189,18 @@ void CComboPanel::Read(wxString query)
 	int rows = 0;
 	void *result = db_result();
 	char **row;
-	
+	int counter = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
 		wxString id(row[FI_ITEM_ID],wxConvUTF8);
 		wxString name(row[FI_ITEM_NAME],wxConvUTF8);
 		wxString type(row[FI_ITEM_TYPE],wxConvUTF8);
 		m_Combo->Append(wxString::Format(_("%s %s"),name,type));
+		m_Combo->SetSelection(0);
 		long _id;
 		id.ToLong(&_id);
-		m_Combo->SetClientData((int*)_id);
+		m_Combo->SetClientData(counter, (int*)_id);
+		counter++;
 	}
 
 	db_free_result(result);

@@ -644,7 +644,7 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s' name='%s', info='%s'"),
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s', name='%s', info='%s'"),
 		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetName(),ptr->GetInfo());
 	my_query(sql);
 	
@@ -667,10 +667,10 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 	for(size_t i = 0; i < ItemPanel->GetCount(); i++)
 	{
 		CItem *Item = ItemPanel->GetItem(i);
-		for(size_t j = 0 ;	Item->GetCount(); j++)
+		for(size_t j = 0 ;j < Item->GetCount(); j++)
 		{
 			CComboPanel *Combo = Item->GetCombo(j);
-			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d' WHERE id_symbol ='%d'"),TABLE_SYMBOL_ITEM,Combo->_GetId(),id);
+			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d',id_symbol ='%d'"),TABLE_SYMBOL_ITEM,Combo->_GetId(),id);
 			my_query(sql);
 		}
 	
@@ -922,6 +922,19 @@ void CDialogPanel::EditSymbol(wxString id)
 			my_query(sql);
 		}
 		
+		CItemPanel *ItemPanel = ptr->GetItemPanel();
+
+		for(size_t i = 0; i < ItemPanel->GetCount(); i++)
+		{
+			CItem *Item = ItemPanel->GetItem(i);
+			for(size_t j = 0 ;j < Item->GetCount(); j++)
+			{
+				CComboPanel *Combo = Item->GetCombo(j);
+				sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d', id_symbol ='%s'"),TABLE_SYMBOL_ITEM,Combo->_GetId(),id);
+				my_query(sql);
+			}
+		}
+
 		//picture
 		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
