@@ -660,21 +660,22 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f', name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(), ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s' name='%s', info='%s'"),
+		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetName(),ptr->GetInfo());
 	my_query(sql);
 	
 	int id = db_last_insert_id();
 
-	/*wxArrayPtrVoid pan = ptr->GetColorPanel()->GetColorPanels();
+	CLightPanel *LightPanel = ptr->GetLightPanel();
 
-	for(size_t i = 0; i < pan.size(); i++)
+	for(size_t i = 0; i <LightPanel->GetCount(); i++)
 	{
-		CColor *Color = (CColor*)pan.Item(i);
-		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d'"),TABLE_SYMBOL_COLOR,id,Color->GetColor().GetRGB());
+		CLight *Light = LightPanel->GetLight(i);
+		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,color='%d' ,coverage='%s' ,sector_from='%s' ,sector_to='%s'"),
+			TABLE_SYMBOL_LIGHT,id,Light->GetColor().GetRGB(),Light->GetCoverage(),Light->GetSectorFrom(),Light->GetSectorTo());
 		my_query(sql);
 	}
-	*/
+	
 	sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
 	my_query(sql);
 	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
@@ -890,31 +891,36 @@ void CDialogPanel::EditSymbol(wxString id)
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
-	ptr->SetColor(Convert(row[FI_SYMBOL_COLOR]));
+	ptr->SetCharacteristic(Convert(row[FI_SYMBOL_CHARACTERISTIC]));
+
 	db_free_result(result);	
-	
-	//SetSymbolColor(ptr,id);
 	SetSymbolPicture(ptr,id);
 
 	ptr->Create();
-		
+	
+	SetSymbolLight(ptr,id);
+
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',  name='%s', info ='%s' WHERE id = '%s'"),
-										m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),  ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s', name='%s', info ='%s' WHERE id = '%s'"),
+			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(), ptr->GetName(),ptr->GetInfo(),id);
+		my_query(sql);
+		
+		//light
+		CLightPanel *pan = ptr->GetLightPanel();
+		
+		sql = wxString::Format(_("DELETE FROM `%s` WHERE id_symbol='%s'"),TABLE_SYMBOL_LIGHT,id);
 		my_query(sql);
 
-		
-		CLightPanel *pan = ptr->GetLightPanel();
-		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_LIGHT,id);
-		my_query(sql);
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
 			CLight *Light = pan->GetLight(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d'"),TABLE_SYMBOL_COLOR,id,Light->GetColor().GetRGB());
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d',coverage='%s',sector_from='%s',sector_to='%s'"),
+			TABLE_SYMBOL_LIGHT,id,Light->GetColor().GetRGB(),Light->GetCoverage(),Light->GetSectorFrom(),Light->GetSectorTo());
 			my_query(sql);
 		}
 		
+		//picture
 		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
 		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
@@ -1108,9 +1114,9 @@ void CDialogPanel::_SetIdMaster(wxString id)
 	m_IDMaster = id;
 }
 
-void CDialogPanel::SetSymbolColor(CNew *ptr,wxString id)
+void CDialogPanel::SetSymbolLight(CNew *ptr,wxString id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%s'"),TABLE_SYMBOL_COLOR,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%s'"),TABLE_SYMBOL_LIGHT,id);
 	
 	if(!my_query(sql))
 		return;
@@ -1118,13 +1124,22 @@ void CDialogPanel::SetSymbolColor(CNew *ptr,wxString id)
 	void *result = db_result();
 	char **row;
 	
+	CLightPanel *LightPanel = ptr->GetLightPanel();
+
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxColor *color = new wxColor();;
-		color->SetRGB(atoi(row[FI_SYMBOL_COLOR_COLOR]));
-//		ptr->SetColor(color);
+		CLight *Light = new CLight(LightPanel);
+		wxColor color;
+		color.SetRGB(atoi(row[FI_SYMBOL_LIGHT_COLOR]));
+		Light->SetColor(color);
+		Light->SetCoverage(row[FI_SYMBOL_LIGHT_COVERAGE]);
+		Light->SetSectorFrom(row[FI_SYMBOL_LIGHT_SECTOR_FROM]);
+		Light->SetSectorTo(row[FI_SYMBOL_LIGHT_SECTOR_TO]);
+		//Light->SetCharacteristic(row[FI_SYMBOL_LIGHT_CHARACTERISTIC]);
+		LightPanel->AppendPanel(Light);
 	}
-		
+	
+	
 	db_free_result(result);
 }
 

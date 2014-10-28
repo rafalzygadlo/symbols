@@ -7,7 +7,7 @@
 #include <wx/dataview.h>
 #include "images/del.img"
 #include "images/add.img"
-#include <wx/clrpicker.h>
+#include <wx/valnum.h>
 
 extern unsigned int	add_size;
 extern unsigned char add[]; 
@@ -23,17 +23,15 @@ CLightPanel::CLightPanel(wxWindow *top, wxWindow *parent)
 	m_Top = top;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
-					
-	//wxMemoryInputStream in_1((const unsigned char*)add,add_size);
-    //wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	//wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	//Sizer->Add(New,0,wxALL,1);
 	
-	CLightDraw *LightDraw = new CLightDraw(this);
-	//CLight *Light = new CLight(this);
-	m_List.Add(LightDraw);
-	Sizer->Add(LightDraw,1,wxALL|wxEXPAND,1);
-	
+	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
+    wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
+	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
+	Sizer->Add(New,0,wxALL,1);
+
+	m_Sizer = new wxWrapSizer(wxHORIZONTAL);
+	Sizer->Add(m_Sizer,1,wxALL|wxEXPAND,0);
+		
 }
 
 CLightPanel::~CLightPanel()
@@ -51,44 +49,28 @@ CLight *CLightPanel::GetLight(int id)
 	return (CLight*)m_List.Item(id);
 }
 
-
 void CLightPanel::OnNew(wxCommandEvent &event)
 {
-	AppendPanel();
+	CLight *Light = new CLight(this);
+	AppendPanel(Light);
 }
 void CLightPanel::OnDelete(CLight *panel)
 {
 	RemovePanel(panel);
 }
 
-void CLightPanel::AppendPanel()
+void CLightPanel::AppendPanel(CLight *light)
 {
-	CLightDraw *LightDraw = new CLightDraw(this);
-	//CLight *Light = new CLight(this);
-	m_List.Add(LightDraw);
-	this->GetSizer()->Add(LightDraw,1,wxALL|wxEXPAND,1);
-	this->Layout();
+	m_List.Add(light);
+	m_Sizer->Add(light,1,wxALL|wxEXPAND,1);
 	m_Top->Layout();
 }
 
 void CLightPanel::RemovePanel(CLight *panel)
 {
-	this->GetSizer()->Detach(panel);
+	m_Sizer->Detach(panel);
 	delete panel;
 	m_List.Remove(panel);
-	this->Layout();
-	m_Top->Layout();
-}
-
-void CLightPanel::OnNewSector()
-{
-	this->Layout();
-	m_Top->Layout();
-}
-
-void CLightPanel::OnDeleteSector()
-{
-	this->Layout();
 	m_Top->Layout();
 }
 
@@ -120,51 +102,69 @@ void CLightPanel::Read(wxString query)
 }
 
 BEGIN_EVENT_TABLE(CLight, wxPanel)
-	EVT_BUTTON(ID_NEW_SECTOR,CLight::OnNewSector)
-	//EVT_BUTTON(ID_DELETE_SECTOR,CLight::OnDeleteSector)
 	EVT_BUTTON(ID_DELETE,CLight::OnDelete)
 END_EVENT_TABLE()
 
 CLight::CLight(CLightPanel *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
 {
-	m_Counter = 1;
+		
+	wxFloatingPointValidator<float> CoverageValidator;
+	CoverageValidator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
+	CoverageValidator.SetMin(COVERAGE_MIN);
+	CoverageValidator.SetMax(COVERAGE_MAX);
+	CoverageValidator.SetPrecision(COVERAGE_PRECISION);
+
+	wxFloatingPointValidator<float> SectorValidator;
+	SectorValidator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
+	SectorValidator.SetMin(SECTOR_MIN);
+	SectorValidator.SetMax(SECTOR_MAX);
+	SectorValidator.SetPrecision(COVERAGE_PRECISION);
+
+	wxTextValidator TextValidator;
+	TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
+	TextValidator.SetCharExcludes(_("'\"\\;?"));
+
 	m_ItemPanel = parent;
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);//,this,GetMsg(MSG_LIGHT));
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 		
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	Sizer->Add(Del,0,wxALL,1);
+	Sizer->Add(Del,0,wxALL,0);
 	
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
-	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,0);
+	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 		
 	wxStaticText *LabelColor = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COLOR));
 	FlexSizer->Add(LabelColor,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	wxColourPickerCtrl *ColorPicker = new wxColourPickerCtrl(this,wxID_ANY);
-	FlexSizer->Add(ColorPicker,0,wxALL,1);
-
+	FlexSizer->AddGrowableCol(1);
+	m_ColorPicker = new wxColourPickerCtrl(this,wxID_ANY);
+	FlexSizer->Add(m_ColorPicker,0,wxALL,1);
+		
 	wxStaticText *LabelCoverage = new wxStaticText(this,wxID_ANY,GetMsg(MSG_COVERAGE));
 	FlexSizer->Add(LabelCoverage,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_CoverageText = new wxSpinCtrl(this,wxID_ANY);
-	FlexSizer->Add(m_CoverageText,0,wxALL|wxEXPAND,1);
-	
-	//m_SectorSizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_SECTOR));
-	//Sizer->Add(m_SectorSizer,0,wxALL|wxEXPAND,5);
-	
+	m_CoverageText = new wxTextCtrl(this,wxID_ANY);
+	m_CoverageText->SetSize(80,-1);
+	m_CoverageText->SetValue(wxString::Format(_("%4.2f"),COVERAGE_DEFAULT_VALUE));
+	m_CoverageText->SetValidator(CoverageValidator);
+	FlexSizer->Add(m_CoverageText,0,wxALL,1);
+		
 	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_FROM));
 	FlexSizer->Add(LabelSectorFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_SectorTextFrom = new wxSpinCtrl(this,wxID_ANY);
-	FlexSizer->Add(m_SectorTextFrom,0,wxALL|wxEXPAND,1);
+	m_SectorTextFrom = new wxTextCtrl(this,wxID_ANY);
+	m_SectorTextFrom->SetValidator(SectorValidator);
+	m_SectorTextFrom->SetValue(wxString::Format(_("%4.2f"),SECTOR_FROM_DEFAULT_VALUE));
+	FlexSizer->Add(m_SectorTextFrom,0,wxALL,1);
 	
 	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_TO));
 	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_SectorTextTo = new wxSpinCtrl(this,wxID_ANY);
-	FlexSizer->Add(m_SectorTextTo,0,wxALL|wxEXPAND,1);
+	m_SectorTextTo = new wxTextCtrl(this,wxID_ANY);
+	m_SectorTextTo->SetValue(wxString::Format(_("%4.2f"),SECTOR_TO_DEFAULT_VALUE));
+	m_SectorTextTo->SetValidator(SectorValidator);
+	FlexSizer->Add(m_SectorTextTo,0,wxALL,1);
 		
-	//m_SectorSizer->Add(Sector,0,wxALL|wxEXPAND,2);
 		
 }
 
@@ -172,40 +172,6 @@ CLight::~CLight()
 {
 
 }
-
-
-/*
-void CLight::OnDelete(CComboPanel *panel)
-{
-	this->GetSizer()->Detach(panel);
-	delete panel;
-	m_List.Remove(panel);
-	m_ItemPanel->_Layout();
-
-}
-*/
-void CLight::OnNewSector(wxCommandEvent &event)
-{
-	CSectorPanel *Panel = new CSectorPanel(this);
-	m_SectorSizer->Add(Panel,0,wxALL|wxEXPAND,2);
-	m_ItemPanel->OnNewSector();
-
-	m_Sectors.Add(Panel);
-	
-}
-
-void CLight::OnDeleteSector(CSectorPanel *panel)
-{
-	this->GetSizer()->Detach(panel);
-	delete panel;
-	m_ItemPanel->OnDeleteSector();
-	m_Sectors.Remove(panel);
-}
-
-//void CLight::OnNewSector(CSectorPanel *panel)
-//{
-//	this->GetSizer()->Add(panel,0,wxALL|wxEXPAND,5);
-//}
 
 void CLight::OnDelete(wxCommandEvent &event)
 {
@@ -222,87 +188,47 @@ void CLight::_SetId(wxString v)
 	m_Id = v;
 }
 
-void CLight::_SetName(wxString v)
+void CLight::SetColor(wxColor color)
 {
-//	m_Name->SetLabel(v);
+	m_ColorPicker->SetColour(color);
 }
+
+void CLight::SetCoverage(wxString v)
+{
+	m_CoverageText->SetValue(v);
+}
+
+void CLight::SetSectorFrom(wxString v)
+{
+	m_SectorTextFrom->SetValue(v);
+}
+
+void CLight::SetSectorTo(wxString v)
+{
+	m_SectorTextTo->SetValue(v);
+}
+
 
 wxColor CLight::GetColor()
 {
-	return GetBackgroundColour();
+	return m_ColorPicker->GetColour();
 }
 
-BEGIN_EVENT_TABLE(CColorLight, wxPanel)
-	EVT_LEFT_DOWN(OnClick)
-	EVT_ENTER_WINDOW(OnWindowEnter)
-END_EVENT_TABLE()
-
-CColorLight::CColorLight(wxWindow *parent)
-:wxPanel(parent)
+wxString CLight::GetCoverage()
 {
-	
+	return m_CoverageText->GetValue();
 }
 
-void CColorLight::OnWindowEnter(wxMouseEvent &event)
+wxString CLight::GetSectorFrom()
 {
-	SetCursor(wxCursor(wxCURSOR_HAND));
+	return m_SectorTextFrom->GetValue();
 }
 
-void CColorLight::OnClick(wxMouseEvent &event)
+wxString CLight::GetSectorTo()
 {
-	wxColourDialog dialog(this);
-	if (dialog.ShowModal() == wxID_OK)
-	{
-		wxColor color = dialog.GetColourData().GetColour();
-		SetBackgroundColour(color);
-		//SetFocus();
-		Refresh();
-	}
-
+	return m_SectorTextTo->GetValue();
 }
 
-BEGIN_EVENT_TABLE(CSectorPanel, wxPanel)
-	//EVT_BUTTON(ID_NEW,OnNew)
-	EVT_BUTTON(ID_DELETE,OnDelete)
-END_EVENT_TABLE()
-
-CSectorPanel::CSectorPanel(CLight *parent, bool _add)
-	:wxPanel(parent)
-{
-	m_Light = parent;
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(5);
-	this->SetSizer(FlexSizer);
-		
-	wxStaticText *LabelSectorFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_FROM));
-	FlexSizer->Add(LabelSectorFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_SectorTextFrom = new wxSpinCtrl(this,wxID_ANY);
-	FlexSizer->Add(m_SectorTextFrom,0,wxALL|wxEXPAND,1);
-	
-	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_SECTOR_TO));
-	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_SectorTextTo = new wxSpinCtrl(this,wxID_ANY);
-	FlexSizer->Add(m_SectorTextTo,0,wxALL|wxEXPAND,1);
-
-	if(!_add)
-	{	
-		wxMemoryInputStream in_1((const unsigned char*)del,del_size);
-		wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-		wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-		FlexSizer->Add(Del,0,wxALL,1);
-	}
-
-}
-
-//void CSectorPanel::OnDelete(wxCommandEvent &event)
-//{
-	//m_LightPanel->OnNewSector(this);
-//}
-
-void CSectorPanel::OnDelete(wxCommandEvent &event)
-{
-	m_Light->OnDeleteSector(this);
-
-}
 
 BEGIN_EVENT_TABLE(CLightDraw, wxPanel)
 	//EVT_BUTTON(ID_NEW,OnNew)
@@ -313,7 +239,7 @@ END_EVENT_TABLE()
 CLightDraw::CLightDraw(CLightPanel *parent)
 	:wxPanel(parent)
 {
-	SetBackgroundColour(*wxRED);
+	//SetBackgroundColour(*wxRED);
 	//SetMinSize(wxSize(150,150));
 	//m_Light = parent;
 	m_Height = 150;

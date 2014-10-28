@@ -17,7 +17,7 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextLat, *m_TextLon;
 	wxTextCtrl *m_TextNumber;
 	wxTextCtrl *m_TextColor;
-	wxTextCtrl *m_TextCoverage;
+	wxTextCtrl *m_CharacteristicText;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
@@ -38,9 +38,8 @@ class CNew: public wxDialog
 	bool m_Edit;
 	wxString m_Color;
 	wxString m_Coverage;
-	//wxArrayPtrVoid m_Color;
-	
-	
+	wxString m_Characteristic;
+		
 	void GetPanel(int type);
 
 	void EditNamePanel();
@@ -81,9 +80,8 @@ public:
 	double GetLat();
 	wxString GetNumber();
 	wxString GetPictureId();
-	//wxString GetColor();
-	wxString GetCoverage();
-
+	wxString GetCharacteristic();
+		
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
 	void SetInfo(wxString v);
@@ -99,7 +97,9 @@ public:
 	void SetLat(double v);
 	void SetNumber(wxString v);
 	void SetCoverage(wxString v);
+	void SetCharacteristic(wxString v);
 	CLightPanel *GetLightPanel();
+
 
 	void Create();
 

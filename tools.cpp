@@ -58,6 +58,7 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Sector",L"Sektor"},
 	{L"Sector from",L"Sektor od"},
 	{L"Sector to",L"Sektor do"},
+	{L"Characteristic",L"Charakterystyka"},
 };
 				
 	

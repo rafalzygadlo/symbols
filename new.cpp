@@ -191,12 +191,24 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	FlexSizer->AddGrowableCol(1);
+	wxStaticText *LabelCharacteristic = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CHARACTERISTIC));
+	FlexSizer->Add(LabelCharacteristic,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	m_CharacteristicText = new wxTextCtrl(Panel,wxID_ANY);
+	m_CharacteristicText->SetValue(m_Characteristic);
+	m_CharacteristicText->SetValidator(m_TextValidator);
+	FlexSizer->Add(m_CharacteristicText,0,wxALL|wxEXPAND,1);
+	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
+		
+	
 	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
 	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
 	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
-		
+	
+	
 	m_LightPanel = new CLightPanel(Panel,Scroll);
 	ScrollSizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
 	Scroll->SetScrollbars(20, 20, 20, 20);
@@ -212,47 +224,29 @@ CLightPanel *CNew::GetLightPanel()
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 {
-	//wxPanel *Main = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
-	//wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	//wxNotebook *Notebook = new wxNotebook(Main,wxID_ANY);
-	//Sizer->Add(Notebook,1,wxALL|wxEXPAND);
-
-
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
-	
-	
-
-	/*
-	m_ColorPanel = new CColorPanel(Panel,this);
-	FlexGridSizer->Add(m_ColorPanel,0,wxALL|wxEXPAND,5);
-	for(size_t i = 0; i < m_Color.size(); i++)
-	{
-		wxColor *color = (wxColor*)m_Color.Item(i);
-		m_ColorPanel->New(*color);	
-	}
-	
-	ClearColors();
-	*/
-	
+		
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(Panel,TABLE_AREA,m_AreaID);
+	m_AreaCombo->SetSelection(0);
 	FlexGridSizer->Add(m_AreaCombo,0,wxALL|wxEXPAND,5);
 
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SeawayCombo = GetCombo(Panel,TABLE_SEAWAY,m_SeawayID);
+	m_SeawayCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SeawayCombo,0,wxALL|wxEXPAND,5);
 
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SymbolTypeCombo = GetCombo(Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
+	m_SymbolTypeCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 	
-
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -265,6 +259,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->Add(LabelNumber,0,wxALL,5);
 	m_TextNumber = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 	m_TextNumber->SetValue(m_Number);
+	m_TextNumber->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextNumber,0,wxALL,5);
 	
 	wxStaticText *LabelLat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
@@ -748,6 +743,11 @@ void CNew::SetCoverage(wxString v)
 	m_Coverage = v;
 }
 
+void CNew::SetCharacteristic(wxString v)
+{
+	m_Characteristic = v;
+}
+
 //GET
 wxArrayPtrVoid CNew::GetFeatureControls()
 {
@@ -762,19 +762,16 @@ wxImage CNew::GetPicture()
 int CNew::GetAreaId()
 {
 	return (int)m_AreaCombo->GetClientData(m_AreaCombo->GetSelection());
-	
 }
 
 int CNew::GetSeawayId()
 {
 	return (int)m_SeawayCombo->GetClientData(m_SeawayCombo->GetSelection());
-	
 }
 
 int CNew::GetSymbolTypeId()
 {
 	return (int)m_SymbolTypeCombo->GetClientData(m_SymbolTypeCombo->GetSelection());
-	
 }
 
 double CNew::GetLon()
@@ -817,13 +814,7 @@ wxString CNew::GetPictureId()
 	return m_PicturePanel->GetPictureId();
 }
 
-//wxString CNew::GetColor()
-//{
-	//return m_TextColor->GetValue();
-//}
-
-wxString CNew::GetCoverage()
+wxString CNew::GetCharacteristic()
 {
-	return m_TextCoverage->GetValue();
-	
+	return m_CharacteristicText->GetValue();
 }

@@ -4,18 +4,16 @@
 #include <wx/wx.h>
 #include <wx/grid.h>
 #include <wx/spinctrl.h>
-#include <wx/clrpicker.h>
-#include <wx/wrapsizer.h>
 
 class CLight;
+class CSectorPanel;
 class CLightPanel: public wxPanel
 {
 	wxWindow *m_Top;
 	wxArrayPtrVoid m_List;
-	wxTextCtrl *m_CharacteristicText;
-	wxWrapSizer *m_Sizer;
-
+	
 	void OnNew(wxCommandEvent &event);
+	void AppendPanel();
 	void RemovePanel(CLight *panel);
 				
 public:
@@ -27,8 +25,7 @@ public:
 	void OnDelete(CLight *panel);
 	void OnNewSector();
 	void OnDeleteSector();
-	void AppendPanel(CLight *panel);
-	
+
 	size_t GetCount();
 	CLight *GetLight(int id);
 
@@ -45,14 +42,20 @@ public:
 
 class CLight: public wxPanel
 {
+	int m_Counter;
 	CLightPanel *m_ItemPanel;
 	wxString m_Id;
-	wxTextCtrl *m_CoverageText;
-	wxTextCtrl *m_SectorTextFrom;
-	wxTextCtrl *m_SectorTextTo;
-	wxColourPickerCtrl *m_ColorPicker;
+	wxArrayPtrVoid m_Sectors;
+	wxSpinCtrl *m_CoverageText;
+<<<<<<< HEAD
+	wxStaticBoxSizer *m_SectorSizer;
+	wxSpinCtrl *m_SectorTextFrom,*m_SectorTextTo;
+=======
+	wxBoxSizer *m_SectorSizer;
+>>>>>>> 6586772e6e46bf7d3600085a9fe939bb8533df10
 	
 	void OnNewSector(wxCommandEvent &event);
+	//void OnDeleteSector(wxCommandEvent &event);
 	void OnDelete(wxCommandEvent &event);
 	wxPanel *GetSectorPanel(wxWindow *parent, bool _add = true);
 
@@ -60,22 +63,14 @@ public:
 
 	CLight(CLightPanel *parent);
 	~CLight();
-		
+	void _SetId(wxString v);
+	void _SetName(wxString v);
 	wxString _GetId();
 	wxColor GetColor();
-	wxString GetCoverage();
-	wxString GetSectorFrom();
-	wxString GetSectorTo();
+	void OnDeleteSector(CSectorPanel *panel);
+	//void OnDelete(CComboPanel *panel);
 
-
-	void _SetId(wxString v);
-	void SetColor(wxColor color);
-	void SetCoverage(wxString v);
-	void SetSectorFrom(wxString v);
-	void SetSectorTo(wxString v);
 	
-
-		
 	DECLARE_EVENT_TABLE();
 	
 	enum
@@ -85,6 +80,42 @@ public:
 		
 	};
 
+};
+
+class CColorLight :public wxPanel
+{
+	
+public:
+
+	CColorLight(wxWindow *parent);
+	void OnClick(wxMouseEvent &event);
+	void OnWindowEnter(wxMouseEvent &event);
+
+	DECLARE_EVENT_TABLE();
+	
+	enum
+	{
+		ID_COLOR = 6323
+	};
+
+};
+
+class CSectorPanel :public wxPanel
+{
+	CLight *m_Light;
+	wxSpinCtrl *m_SectorTextFrom,*m_SectorTextTo;
+
+	void OnDelete(wxCommandEvent &event);
+
+public:
+	CSectorPanel(CLight *parent, bool _add = false);
+	
+	DECLARE_EVENT_TABLE();
+
+	enum
+	{
+		ID_DELETE,
+	};
 };
 
 class CLightDraw :public wxPanel

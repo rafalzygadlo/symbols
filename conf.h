@@ -88,6 +88,7 @@
 #define MSG_SECTOR					40
 #define MSG_SECTOR_FROM				41
 #define MSG_SECTOR_TO				42
+#define MSG_CHARACTERISTIC			43
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -144,6 +145,18 @@
 
 #define PANEL_COLOR_WIDTH 25
 #define PANEL_COLOR_HEIGHT 25
+
+//validator
+#define SECTOR_PRECISION 2
+#define SECTOR_MIN 0.00f
+#define SECTOR_MAX 360.00
+#define SECTOR_FROM_DEFAULT_VALUE 0.00
+#define SECTOR_TO_DEFAULT_VALUE 360.00
+
+#define COVERAGE_PRECISION 2
+#define COVERAGE_MIN 0.00
+#define COVERAGE_MAX 100.00
+#define COVERAGE_DEFAULT_VALUE 0.0
 
 typedef struct Symbol
 {

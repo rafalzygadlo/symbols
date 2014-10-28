@@ -77,7 +77,7 @@ class CDialogPanel: public wxPanel
 	void NewSymbolItem();
 	void NewPicture();
 	void UpdatePicture(wxImage image, int id);
-	void SetSymbolColor(CNew *ptr,wxString id);
+	void SetSymbolLight(CNew *ptr,wxString id);
 	void SetSymbolPicture(CNew *ptr,wxString id);
 
 	void OnListBox(wxCommandEvent &event);
