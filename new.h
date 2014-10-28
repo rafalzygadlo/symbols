@@ -4,8 +4,10 @@
 #include <wx/wx.h>
 #include "picture.h"
 #include "light.h"
+#include "item.h"
 
 class CLightPanel;
+class CItemPanel;
 class CNew: public wxDialog
 {
 	int m_IDType;
@@ -22,6 +24,7 @@ class CNew: public wxDialog
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
 	CLightPanel *m_LightPanel;
+	CItemPanel *m_ItemPanel;
 	
 	wxString m_Number;
 	double m_Lon,m_Lat;
@@ -99,7 +102,7 @@ public:
 	void SetCoverage(wxString v);
 	void SetCharacteristic(wxString v);
 	CLightPanel *GetLightPanel();
-
+	CItemPanel *GetItemPanel();
 
 	void Create();
 

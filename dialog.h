@@ -10,6 +10,7 @@
 class CListCtrl;
 class CDialogPanel;
 class CMultiDialogPanel;
+class CNew;
 class CDialog : public wxDialog
 {
 	CDialogPanel *m_DialogPanel;

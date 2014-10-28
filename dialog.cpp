@@ -94,23 +94,7 @@ CDialog::CDialog(int control_master, int control_slave,bool picker)
 	
 	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
 	Sizer->Add(HSizer,1,wxALL|wxEXPAND,0);
-/*
-	 wxSashWindow* win =
-      new wxSashWindow(this, wxID_ANY,
-                             wxDefaultPosition, wxSize(200, 30),
-                             wxNO_BORDER | wxSW_3D | wxCLIP_CHILDREN);
-	 HSizer->Add(win,1,wxALL|wxEXPAND,0);
-	 
-	 wxBoxSizer *a = new wxBoxSizer(wxVERTICAL);
-	 win->SetSizer(a);
-	 
-  //win->SetDefaultSize(wxSize(1000, 30));
-  //win->SetOrientation(wxLAYOUT_HORIZONTAL);
- // win->SetAlignment(wxLAYOUT_TOP);
-  win->SetBackgroundColour(*wxRED);
-  win->SetSashVisible(wxSASH_RIGHT, true);
-  	
-	*/
+
 	m_DialogPanel = new CDialogPanel(control_master,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
 	
@@ -666,6 +650,7 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 	
 	int id = db_last_insert_id();
 
+	//light
 	CLightPanel *LightPanel = ptr->GetLightPanel();
 
 	for(size_t i = 0; i <LightPanel->GetCount(); i++)
@@ -676,6 +661,23 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 		my_query(sql);
 	}
 	
+	//item
+	CItemPanel *ItemPanel = ptr->GetItemPanel();
+
+	for(size_t i = 0; i < ItemPanel->GetCount(); i++)
+	{
+		CItem *Item = ItemPanel->GetItem(i);
+		for(size_t j = 0 ;	Item->GetCount(); j++)
+		{
+			CComboPanel *Combo = Item->GetCombo(j);
+			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d' WHERE id_symbol ='%d'"),TABLE_SYMBOL_ITEM,Combo->_GetId(),id);
+			my_query(sql);
+		}
+	
+	}
+
+
+	//picture
 	sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
 	my_query(sql);
 	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());

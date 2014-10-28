@@ -19,7 +19,8 @@ public:
 	CItemPanel(wxWindow *top, wxWindow *parent);
 	~CItemPanel();
 	void Read(wxString query);
-	wxArrayPtrVoid GetItems();
+	CItem *GetItem(int id);
+	size_t GetCount();
 	void _Layout();
 	
 };
@@ -47,7 +48,8 @@ public:
 	void _SetName(wxString v);
 	wxString _GetId();
 	void OnDelete(CComboPanel *panel);
-
+	CComboPanel *GetCombo(int id);
+	size_t GetCount();
 	
 	DECLARE_EVENT_TABLE();
 	
@@ -65,13 +67,14 @@ class CComboPanel: public wxPanel
 	CItem *m_Parent;
 	wxBoxSizer *m_Sizer;
 	wxArrayPtrVoid m_Items;
-				
+	wxComboBox *m_Combo;
+
 public:
 
 	CComboPanel(CItem *parent, wxString id);
 	void OnDelete(wxCommandEvent &event);
-	void Read(wxString query, wxComboBox *combo);
-
+	void Read(wxString query);
+	int _GetId();
 	DECLARE_EVENT_TABLE();
 	
 	enum

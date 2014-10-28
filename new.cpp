@@ -155,8 +155,8 @@ wxPanel *CNew::GetItemPanel(wxWindow *Parent)
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
 
-	CItemPanel *Item  = new CItemPanel(Panel,Scroll);
-	ScrollSizer->Add(Item,1,wxALL|wxEXPAND,0);
+	m_ItemPanel  = new CItemPanel(Panel,Scroll);
+	ScrollSizer->Add(m_ItemPanel,1,wxALL|wxEXPAND,0);
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	
 	return Panel;
@@ -217,10 +217,6 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 
 }
 
-CLightPanel *CNew::GetLightPanel()
-{
-	return m_LightPanel;
-}
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 {
@@ -817,4 +813,14 @@ wxString CNew::GetPictureId()
 wxString CNew::GetCharacteristic()
 {
 	return m_CharacteristicText->GetValue();
+}
+
+CItemPanel *CNew::GetItemPanel()
+{
+	return m_ItemPanel;
+} 
+
+CLightPanel *CNew::GetLightPanel()
+{
+	return m_LightPanel;
 }

@@ -42,11 +42,6 @@ void CItemPanel::_Layout()
 	m_Top->Layout();
 }
 
-wxArrayPtrVoid CItemPanel::GetItems()
-{
-	return m_Items;
-}
-
 void CItemPanel::Read(wxString query)
 {
 	if(!my_query(query))
@@ -67,6 +62,16 @@ void CItemPanel::Read(wxString query)
 
 	db_free_result(result);
 	
+}
+
+CItem *CItemPanel::GetItem(int id)
+{
+	return (CItem*)m_Items.Item(id);
+}
+
+size_t CItemPanel::GetCount()
+{
+	return m_Items.size();
 }
 
 BEGIN_EVENT_TABLE(CItem, wxPanel)
@@ -135,6 +140,17 @@ void CItem::_SetName(wxString v)
 	m_Name->SetLabel(v);
 }
 
+size_t CItem::GetCount()
+{
+	return m_List.size();
+}
+
+CComboPanel *CItem::GetCombo(int id)
+{
+	return (CComboPanel*)m_List.Item(id);
+}
+
+
 BEGIN_EVENT_TABLE(CComboPanel, wxPanel)
 	EVT_BUTTON(ID_DELETE,CComboPanel::OnDelete)
 END_EVENT_TABLE()
@@ -147,8 +163,8 @@ CComboPanel::CComboPanel(CItem *parent, wxString id)
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	this->SetSizer(PanelSizer);
 			
-	wxComboBox *Combo = new wxComboBox(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0,wxCB_READONLY);
-	PanelSizer->Add(Combo,1,wxALL,1);
+	m_Combo = new wxComboBox(this,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0,wxCB_READONLY);
+	PanelSizer->Add(m_Combo,1,wxALL,1);
 	
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
@@ -157,7 +173,7 @@ CComboPanel::CComboPanel(CItem *parent, wxString id)
 	PanelSizer->Add(Delete,0,wxALL,1);
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%s'"),TABLE_ITEM,id);
-	Read(sql,Combo);
+	Read(sql);
 		
 }
 
@@ -166,7 +182,7 @@ void CComboPanel::OnDelete(wxCommandEvent &event)
 	m_Parent->OnDelete(this);
 }
 
-void CComboPanel::Read(wxString query, wxComboBox *combo)
+void CComboPanel::Read(wxString query)
 {
 	if(!my_query(query))
 		return;
@@ -177,11 +193,20 @@ void CComboPanel::Read(wxString query, wxComboBox *combo)
 	
 	while(row = (char**)db_fetch_row(result))
 	{
+		wxString id(row[FI_ITEM_ID],wxConvUTF8);
 		wxString name(row[FI_ITEM_NAME],wxConvUTF8);
 		wxString type(row[FI_ITEM_TYPE],wxConvUTF8);
-		combo->Append(wxString::Format(_("%s %s"),name,type));
+		m_Combo->Append(wxString::Format(_("%s %s"),name,type));
+		long _id;
+		id.ToLong(&_id);
+		m_Combo->SetClientData((int*)_id);
 	}
 
 	db_free_result(result);
 	
+}
+
+int CComboPanel::_GetId()
+{
+	return (int)m_Combo->GetClientData(m_Combo->GetSelection());
 }
