@@ -17,9 +17,10 @@ BEGIN_EVENT_TABLE(CNew,wxDialog)
 END_EVENT_TABLE()
 
 
-CNew::CNew(int type, int id_type, wxString item_id, bool edit)
+CNew::CNew(int type, int id_type, int item_id, bool edit)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
+	m_PictureId = -1;
 	m_Lon = 0;
 	m_Lat = 0;
 	m_ControlType = type;
@@ -89,7 +90,7 @@ void CNew::GetItemFeaturePanel(wxWindow *Parent)
 	for(size_t i = 0; i < m_IDs.size(); i++)
 	{
 		wxTextCtrl *txt = (wxTextCtrl*)m_IDs.Item(i);
-		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_item = '%s' AND id_feature = '%d'"),TABLE_ITEM_VALUE,m_ItemID,(int)txt->GetClientData());
+		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_item = '%d' AND id_feature = '%d'"),TABLE_ITEM_VALUE,m_ItemID,(int)txt->GetClientData());
 		my_query(sql);
 
 		void *result = db_result();
@@ -268,8 +269,8 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	FlexGridSizer->Add(m_TextLon,0,wxALL,5);
 	
-	m_TextLon->SetValue(FormatLongitude(m_Lon));
-	m_TextLat->SetValue(FormatLatitude(m_Lat));
+	m_TextLon->SetValue(FormatLongitude(m_Lon,0));
+	m_TextLat->SetValue(FormatLatitude(m_Lat,0));
 	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -575,9 +576,7 @@ void CNew::OnLat(wxCommandEvent &event)
 
 bool CNew::Validate()
 {
-
-	return true;
-	
+		
 	wxString err;
 	bool result = true;
 		
@@ -675,12 +674,12 @@ void CNew::SetItemTypeID(int v)
 
 }
 
-void CNew::SetItemId(wxString v)
+void CNew::SetItemId(int v)
 {
 	m_ItemID = v;
 }
 
-void CNew::SetPictureId(wxString id)
+void CNew::SetPictureId(int id)
 {
 	m_PictureId = id;
 
@@ -805,7 +804,7 @@ int CNew::GetItemType()
 	return	(int)m_ComboItemType->GetClientData(m_ComboItemType->GetSelection());
 }
 
-wxString CNew::GetPictureId()
+int CNew::GetPictureId()
 {
 	return m_PicturePanel->GetPictureId();
 }

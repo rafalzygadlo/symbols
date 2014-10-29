@@ -22,6 +22,7 @@ public:
 	CItem *GetItem(int id);
 	size_t GetCount();
 	void _Layout();
+	void AppendCombo(int item_id);
 	
 };
 
@@ -38,7 +39,7 @@ class CItem: public wxPanel
 		
 	
 	void OnNew(wxCommandEvent &event);
-	void AppendCombo();
+	
 
 public:
 
@@ -50,6 +51,7 @@ public:
 	void OnDelete(CComboPanel *panel);
 	CComboPanel *GetCombo(int id);
 	size_t GetCount();
+	CComboPanel *AppendCombo();
 	
 	DECLARE_EVENT_TABLE();
 	
@@ -75,6 +77,8 @@ public:
 	void OnDelete(wxCommandEvent &event);
 	void Read(wxString query);
 	int _GetId();
+	void SetSelection(int id);
+
 	DECLARE_EVENT_TABLE();
 	
 	enum

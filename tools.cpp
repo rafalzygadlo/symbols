@@ -12,7 +12,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[45][2] = 
+const wchar_t *nvLanguage[46][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -59,6 +59,8 @@ const wchar_t *nvLanguage[45][2] =
 	{L"Sector from",L"Sektor od"},
 	{L"Sector to",L"Sektor do"},
 	{L"Characteristic",L"Charakterystyka"},
+	{L"No picture",L"Brak zdjêcia"},
+	{L"Properties",L"W³aœciwoœci"},
 };
 				
 	
@@ -134,49 +136,53 @@ void SetLangId(int id)
 	GlobalLanguageID = id;
 }
 //degree = 40.044658660888672
-wxString ConvertDegree(double degree) 
+wxString ConvertDegree(double degree,int type) 
 {
 	int decimal = (int)degree;
     double minutes = (double)(degree - decimal) * 60;
     double second = (double)(minutes - (int)(minutes)) * 60;
-	return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
+	
+	if(type)
+		return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
+	else
+		return wxString::Format(_("%02d° %02.4f'"),decimal, minutes);
       
 }
 
-wxString FormatLongitude(double x) 
+wxString FormatLongitude(double x, int type) 
 {
       wxString str;
 
       if(x == 0)
-		  return str = wxString::Format(_("%s"), ConvertDegree(0).wc_str());
+		  return str = wxString::Format(_("%s"), ConvertDegree(0,type).wc_str());
 	  
 	  if (x > 0.0f) 
 	  {
         if (x <= 180.0f)
-			str = wxString::Format(_("%s E"), ConvertDegree(x).wc_str());
+			str = wxString::Format(_("%s E"), ConvertDegree(x,type).wc_str());
         else
-			str = wxString::Format(_("%s W"), ConvertDegree(360 - x).wc_str());
+			str = wxString::Format(_("%s W"), ConvertDegree(360 - x,type).wc_str());
       } else {
         if (x >= -180.0f)
-			str = wxString::Format(_("%s W"), ConvertDegree(-x).wc_str());
+			str = wxString::Format(_("%s W"), ConvertDegree(-x,type).wc_str());
         else
-			str = wxString::Format(_("%s E"), ConvertDegree(x+360).wc_str());
+			str = wxString::Format(_("%s E"), ConvertDegree(x+360,type).wc_str());
             
       }
       return str;
 }
 
-wxString FormatLatitude(double y) 
+wxString FormatLatitude(double y,int type) 
 {
 	
 	wxString str;
 	 if(y == 0)
-		  return str = wxString::Format(_("%s"), ConvertDegree(0).wc_str());
+		  return str = wxString::Format(_("%s"), ConvertDegree(0,type).wc_str());
 
     if (y > 0)
-		str = wxString::Format(_("%s N"), ConvertDegree(y).wc_str());
+		str = wxString::Format(_("%s N"), ConvertDegree(y,type).wc_str());
     else
-		str = wxString::Format(_("%s S"), ConvertDegree(-y).wc_str());
+		str = wxString::Format(_("%s S"), ConvertDegree(-y,type).wc_str());
 
     return str;
 
@@ -195,6 +201,104 @@ void nvPointOfIntersection(double a1, double b1,double a2, double b2, double *x,
 }
 
 bool _SetLat(char *text, double *val)
+{
+	int degree;
+	float min;
+	char dindicator;
+
+	char buffer[64];
+	sprintf(buffer,"%s",text);
+	
+	sscanf(buffer,"%d° %f' %c",&degree,&min,&dindicator);
+	bool result = true;	
+	if(degree != 0 || min != 0)
+		if(dindicator != 'S' && dindicator != 'N')
+			result = false;
+		
+	if(degree > 90 || degree < 0)
+		result = false;
+	if(min >= 60 || min < 0)
+		result = false;
+	
+	double y;
+	
+	if(result)
+	{
+		y = degree + ((double)min);
+		
+		if(y > 90)
+			return false;
+
+		if(dindicator == 'S')  //by³o N w naszym g³upim navi
+		{
+			if(y == 0)
+				*val = y;
+			else
+				*val = -y;
+		}else{
+			*val = y;
+		}
+	
+	}else{
+			
+		return false;
+	}
+
+	return true;
+}
+
+bool _SetLon(char *text, double *val)
+{
+	int degree;
+	float min;
+	char dindicator;
+
+	char buffer[64];
+	sprintf(buffer,"%s",text);
+
+	sscanf(buffer,"%d° %f' %c",&degree,&min,&dindicator);
+	bool result = true;	
+	if(degree != 0 || min != 0 )
+		if(dindicator != 'W' && dindicator != 'E')
+			result = false;
+		
+	if(degree > 180 || degree < 0)
+		result = false;
+	if(min >= 60 || min < 0)
+		result = false;
+	
+	double x;
+		
+	if(result)
+	{
+		//_min = min;
+		x = degree + ((double)min);
+		
+		if(x > 180)
+			return false;
+	
+		if(dindicator == 'W')
+		{
+			if(x == 0)
+				*val = x;
+			else
+				*val = -x;
+			
+		}else{
+			*val = x;
+		}
+	
+	}else{
+	
+		return false;
+	}
+
+	
+	return true;
+		
+}
+
+bool _SetLatSec(char *text, double *val)
 {
 	int degree,min;
 	float sec;
@@ -245,7 +349,7 @@ bool _SetLat(char *text, double *val)
 	return true;
 }
 
-bool _SetLon(char *text, double *val)
+bool _SetLonSec(char *text, double *val)
 {
 	int degree,min;
 	float sec;
@@ -298,6 +402,7 @@ bool _SetLon(char *text, double *val)
 	return true;
 		
 }
+
 
 int _GetUID()
 {

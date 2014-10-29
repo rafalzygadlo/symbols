@@ -30,14 +30,14 @@ class CNew: public wxDialog
 	double m_Lon,m_Lat;
 	wxString m_Name,m_Info,m_Type;
 	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
-	wxString m_PictureId;
+	int m_PictureId;
 	CPicturePanel *m_PicturePanel;
 
 	wxListBox *m_ListBox;
 	wxPanel *m_Panel;
 	wxFlexGridSizer *m_FlexGridSizer;
 	wxArrayPtrVoid m_Controls,m_IDs;
-	wxString m_ItemID;
+	int m_ItemID;
 	bool m_Edit;
 	wxString m_Color;
 	wxString m_Coverage;
@@ -69,7 +69,7 @@ class CNew: public wxDialog
 		
 public:
 
-	CNew(int type, int id_type = -1, wxString item_id = wxEmptyString, bool edit = false);
+	CNew(int type, int id_type = -1, int item_id = -1, bool edit = false);
 	~CNew();
 	wxString GetName();
 	wxString GetInfo();
@@ -82,7 +82,7 @@ public:
 	double GetLon();
 	double GetLat();
 	wxString GetNumber();
-	wxString GetPictureId();
+	int GetPictureId();
 	wxString GetCharacteristic();
 		
 	wxArrayPtrVoid GetFeatureControls();
@@ -90,8 +90,8 @@ public:
 	void SetInfo(wxString v);
 	void SetType(wxString v);
 	void SetItemTypeID(int v);
-	void SetItemId(wxString v);
-	void SetPictureId(wxString id);
+	void SetItemId(int v);
+	void SetPictureId(int id);
 	void SetSeaway(wxString id);
 	void SetArea(wxString id);
 	void SetSymbolType(wxString id);

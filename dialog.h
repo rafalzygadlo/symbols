@@ -16,7 +16,7 @@ class CDialog : public wxDialog
 	CDialogPanel *m_DialogPanel;
 	CDialogPanel *m_DialogSlave;
 	wxButton *m_ButtonOk;
-	wxString m_ID;
+	int m_ID;
 	int m_ControlType;
 	bool m_Picker;
 	wxPanel *GetButtonPanel(wxWindow *parent);
@@ -28,7 +28,7 @@ public:
 	CDialog(int control_type, bool picker = false);
 	CDialog(int control_master, int control_slave, bool picker = false);
 	~CDialog();
-	wxString _GetId();
+	int _GetId();
 	//wxString _GetName();
 	
 };
@@ -40,7 +40,9 @@ class CDialogPanel: public wxPanel
 	CListCtrl *m_List;	
 	int m_ControlType,m_ColumnWithName;
 	wxString m_Table;
-	wxString m_ID, m_Name, m_IDMaster;
+	int m_ID;
+	wxString m_Name;
+	int	m_IDMaster;
 	wxStaticText *m_TopLabel;
 	wxListBox *m_ListBox;
 	wxComboBox *m_ComboBox;
@@ -52,16 +54,16 @@ class CDialogPanel: public wxPanel
 	wxWindow *m_Parent;
 				
 	void New();
-	void EditArea(wxString id);
-	void EditSymbolType(wxString id);
-	void EditSeaway(wxString id);
-	void EditSymbol(wxString id);
-	void EditItem(wxString id);
-	int GetItemTypeId(wxString id);
+	void EditArea(int id);
+	void EditSymbolType(int id);
+	void EditSeaway(int id);
+	void EditSymbol(int id);
+	void EditItem(int id);
+	int GetItemTypeId(int id);
 			
-	void EditName(wxString id); // wszystkie tabele z polami [type]
-	void EditType(wxString id); // wszystkie tabele z polami [type]
-	void EditPicture(wxString id);
+	void EditName(int id); // wszystkie tabele z polami [type]
+	void EditType(int id); // wszystkie tabele z polami [type]
+	void EditPicture(int id);
 	
 	void Read();
 	void ReadAll();
@@ -78,8 +80,9 @@ class CDialogPanel: public wxPanel
 	void NewSymbolItem();
 	void NewPicture();
 	void UpdatePicture(wxImage image, int id);
-	void SetSymbolLight(CNew *ptr,wxString id);
-	void SetSymbolPicture(CNew *ptr,wxString id);
+	void SetSymbolLight(CNew *ptr,int id);
+	void SetSymbolPicture(CNew *ptr,int id);
+	void SetSymbolItem(CNew *ptr,int id);
 
 	void OnListBox(wxCommandEvent &event);
 
@@ -100,16 +103,16 @@ public:
 	CDialogPanel(int control_type, wxWindow *parent, bool slave = false); // taki do pobrania tylko panela
 	~CDialogPanel();	
 	void OnNew();
-	void OnEdit(wxString id);
-	void OnDelete(wxString id);
+	void OnEdit(int id);
+	void OnDelete(int id);
 	void OnColumnCLick(wxString field, int order);
-	void OnSelect(wxString id, wxString name);
+	void OnSelect(int id, wxString name);
 	void SetSlave(CDialogPanel *ptr);
 
-	wxString _GetId();
+	int _GetId();
 	wxString _GetName();
 
-	void _SetIdMaster(wxString id);
+	void _SetIdMaster(int id);
 	
 	DECLARE_EVENT_TABLE();
 

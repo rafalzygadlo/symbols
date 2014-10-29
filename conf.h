@@ -89,6 +89,8 @@
 #define MSG_SECTOR_FROM				41
 #define MSG_SECTOR_TO				42
 #define MSG_CHARACTERISTIC			43
+#define MSG_NO_PICTURE				44
+#define MSG_PROPERTIES				45
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"

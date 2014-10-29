@@ -170,7 +170,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_SYMBOL:		_Menu = Menu(m_SelectedItem,MODULE_SYMBOL);				break;
+		case CONTROL_SYMBOL:		_Menu = MenuSymbol(m_SelectedItem,MODULE_SYMBOL);		break;
 		case CONTROL_SYMBOL_ITEM:	_Menu = MenuSymbolItem(m_SelectedItem,MODULE_SYMBOL);	break;
 		case CONTROL_ITEM:			_Menu = Menu(m_SelectedItem,MODULE_ITEM);				break;
 		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);				break;
@@ -211,6 +211,34 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 	
 }
 
+wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
+{
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+		Menu->AppendSeparator();
+		Menu->Append(ID_PROPERTIES,GetMsg(MSG_PROPERTIES));
+		if(!db_check_right(module,ACTION_PROPERTIES,_GetUID()))
+			Menu->FindItem(ID_PROPERTIES)->Enable(false);
+	}
+		
+	return Menu;
+	
+}
+
 wxMenu *CListCtrl::MenuSymbolItem(int id, const char *module)
 {
 	wxMenu *Menu = new wxMenu();
@@ -233,11 +261,11 @@ wxMenu *CListCtrl::MenuSymbolItem(int id, const char *module)
 
 void CListCtrl::OnSelected(wxListEvent &event)
 {
-	
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	wxArrayString row = GetRow(m_SelectedItem);	
-	wxString id = row[m_ColumnWithId];
+	long id;
+	row[m_ColumnWithId].ToLong(&id);
 	wxString name = row[m_ColumnWithName];
 	m_Control->OnSelect(id,name);
 
@@ -251,7 +279,9 @@ void CListCtrl::OnActivate(wxListEvent &event)
 
 void CListCtrl::OnEdit(wxCommandEvent &event)
 {
-	m_Control->OnEdit(GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem));
+	long id;
+	GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	m_Control->OnEdit(id);
 }
 
 void CListCtrl::OnNew(wxCommandEvent &event)
@@ -261,7 +291,9 @@ void CListCtrl::OnNew(wxCommandEvent &event)
 
 void CListCtrl::OnDelete(wxCommandEvent &event)
 {
-	m_Control->OnDelete(GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem));
+	long id;
+	GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	m_Control->OnDelete(id);
 }
 
 wxArrayString *CListCtrl::_GetColumn(int column)

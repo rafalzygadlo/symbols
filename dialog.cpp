@@ -164,7 +164,7 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 	return Panel;
 }
 
-wxString CDialog::_GetId()
+int CDialog::_GetId()
 {
 	return m_DialogPanel->_GetId();
 }
@@ -182,7 +182,7 @@ CDialogPanel::CDialogPanel(int control_type, wxWindow *parent,bool slave)
 	m_IDType = -1;
 	m_ListBox = NULL;
 	m_Table = wxEmptyString;
-	m_IDMaster = wxEmptyString;
+	m_IDMaster = -1;
 	m_ControlType = control_type;
 	m_ListBox = NULL;
 	m_TopLabel = NULL;
@@ -537,21 +537,21 @@ void CDialogPanel::ReadItems()
 void CDialogPanel::ReadSymbolItems()
 {
 	wxString sql;
-	if(m_IDMaster == wxEmptyString)
+	if(m_IDMaster == -1)
 		return;
 
 	if(m_IDType == -1)
 	{
 		if(m_Field == wxEmptyString)		
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%s'"),VIEW_SYMBOL_ITEM ,m_IDMaster);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%d'"),VIEW_SYMBOL_ITEM ,m_IDMaster);
 		else
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%s' ORDER BY %s %s"), VIEW_SYMBOL_ITEM,m_IDMaster, m_Field,m_Order);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%d' ORDER BY %s %s"), VIEW_SYMBOL_ITEM,m_IDMaster, m_Field,m_Order);
 	}else{
 		
 		if(m_Field == wxEmptyString)		
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%s' AND id_type = '%d'"),VIEW_SYMBOL_ITEM,m_IDMaster, m_IDType);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%d' AND id_type = '%d'"),VIEW_SYMBOL_ITEM,m_IDMaster, m_IDType);
 		else
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%s' AND id_type = '%d' ORDER BY %s %s"),VIEW_SYMBOL_ITEM, m_IDMaster, m_IDType, m_Field,m_Order);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%d' AND id_type = '%d' ORDER BY %s %s"),VIEW_SYMBOL_ITEM, m_IDMaster, m_IDType, m_Field,m_Order);
 	}
 
 	m_List->Read(sql);
@@ -675,19 +675,21 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 		}
 	
 	}
-
-
+	
 	//picture
 	sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
 	my_query(sql);
-	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
-	my_query(sql);
+	int pid = ptr->GetPictureId();
+	if(pid > 0)
+	{	sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%d'"),TABLE_SYMBOL_PICTURE,id,pid);
+		my_query(sql);
+	}
 
 }
 
 void CDialogPanel::NewSymbolItem()
 {
-	if(m_IDMaster == wxEmptyString)
+	if(m_IDMaster == -1)
 		return;
 
 	CDialog *ptr = new CDialog(CONTROL_ITEM,true);
@@ -701,7 +703,7 @@ void CDialogPanel::NewSymbolItem()
 		{
         
 			wxString sql;
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_item='%s'"),m_Table,m_IDMaster,ptr->_GetId());
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_item='%d'"),m_Table,m_IDMaster,ptr->_GetId());
 			long counter;
 			dlg.GetValue().ToLong(&counter);
 			if(counter > MAX_ITEMS)
@@ -797,7 +799,7 @@ void CDialogPanel::UpdatePicture(wxImage image,int id)
 }
 
 
-void CDialogPanel::OnEdit(wxString id)
+void CDialogPanel::OnEdit(int id)
 {
 	switch(m_ControlType)
 	{
@@ -811,9 +813,9 @@ void CDialogPanel::OnEdit(wxString id)
 
 }
 
-int CDialogPanel::GetItemTypeId(wxString id)
+int CDialogPanel::GetItemTypeId(int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 
 	if(!my_query(sql))
 		return 0;
@@ -827,13 +829,13 @@ int CDialogPanel::GetItemTypeId(wxString id)
 
 }
 
-void CDialogPanel::EditItem(wxString id)
+void CDialogPanel::EditItem(int id)
 {
 
 	int type = GetItemTypeId(id);
 	CNew *ptr = new CNew(m_ControlType,type,id,true);
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
@@ -850,7 +852,7 @@ void CDialogPanel::EditItem(wxString id)
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_type = '%d', name = '%s', type = '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_type = '%d', name = '%s', type = '%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo(),id);
 		my_query(sql);
 
 		wxArrayPtrVoid controls = ptr->GetFeatureControls();
@@ -859,9 +861,9 @@ void CDialogPanel::EditItem(wxString id)
 		{
 			wxTextCtrl *txt = (wxTextCtrl*)controls.Item(i);
 			int id_feature = (int)txt->GetClientData();
-			sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_item ='%s' AND id_feature ='%d'"),TABLE_ITEM_VALUE,id,id_feature);
+			sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_item ='%d' AND id_feature ='%d'"),TABLE_ITEM_VALUE,id,id_feature);
 			my_query(sql);
-			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item ='%s', id_feature ='%d',value='%s'"),TABLE_ITEM_VALUE,id,id_feature,txt->GetValue());
+			sql = wxString::Format	(_("INSERT INTO `%s` SET id_item ='%d', id_feature ='%d',value='%s'"),TABLE_ITEM_VALUE,id,id_feature,txt->GetValue());
 			my_query(sql);
 		}
 
@@ -873,11 +875,11 @@ void CDialogPanel::EditItem(wxString id)
 	delete ptr;
 }
 
-void CDialogPanel::EditSymbol(wxString id)
+void CDialogPanel::EditSymbol(int id)
 {
 	CNew *ptr = new CNew(m_ControlType);
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
@@ -901,45 +903,58 @@ void CDialogPanel::EditSymbol(wxString id)
 	ptr->Create();
 	
 	SetSymbolLight(ptr,id);
+	SetSymbolItem(ptr,id);
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s', name='%s', info ='%s' WHERE id = '%s'"),
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s', name='%s', info ='%s' WHERE id = '%d'"),
 			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		
 		//light
 		CLightPanel *pan = ptr->GetLightPanel();
 		
-		sql = wxString::Format(_("DELETE FROM `%s` WHERE id_symbol='%s'"),TABLE_SYMBOL_LIGHT,id);
+		sql = wxString::Format(_("DELETE FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_LIGHT,id);
 		my_query(sql);
 
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
 			CLight *Light = pan->GetLight(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', color='%d',coverage='%s',sector_from='%s',sector_to='%s'"),
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d',coverage='%s',sector_from='%s',sector_to='%s'"),
 			TABLE_SYMBOL_LIGHT,id,Light->GetColor().GetRGB(),Light->GetCoverage(),Light->GetSectorFrom(),Light->GetSectorTo());
 			my_query(sql);
 		}
 		
-		CItemPanel *ItemPanel = ptr->GetItemPanel();
 
+		// itemy
+		sql = wxString::Format(_("DELETE FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_ITEM,id);
+		my_query(sql);
+		
+		CItemPanel *ItemPanel = ptr->GetItemPanel();
 		for(size_t i = 0; i < ItemPanel->GetCount(); i++)
 		{
 			CItem *Item = ItemPanel->GetItem(i);
 			for(size_t j = 0 ;j < Item->GetCount(); j++)
 			{
 				CComboPanel *Combo = Item->GetCombo(j);
-				sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d', id_symbol ='%s'"),TABLE_SYMBOL_ITEM,Combo->_GetId(),id);
-				my_query(sql);
+				int _cid = Combo->_GetId();
+				if(_cid > 0)
+				{
+					sql = wxString::Format	(_("INSERT INTO `%s` SET id_item='%d', id_symbol ='%d'"),TABLE_SYMBOL_ITEM,_cid,id);
+					my_query(sql);
+				}
 			}
 		}
 
 		//picture
-		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%s'"),TABLE_SYMBOL_PICTURE,id);
+		sql = wxString::Format	(_("DELETE FROM `%s` WHERE id_symbol ='%d'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
-		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%s', id_picture='%s'"),TABLE_SYMBOL_PICTURE,id,ptr->GetPictureId());
-		my_query(sql);
+		int pid = ptr->GetPictureId();
+		if(pid > 0)
+		{
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', id_picture='%d'"),TABLE_SYMBOL_PICTURE,id,pid);
+			my_query(sql);
+		}
 
 		Clear();
 		Read();
@@ -949,9 +964,9 @@ void CDialogPanel::EditSymbol(wxString id)
 	delete ptr;
 }
 
-void CDialogPanel::EditName(wxString id)
+void CDialogPanel::EditName(int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
@@ -969,7 +984,7 @@ void CDialogPanel::EditName(wxString id)
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -979,9 +994,9 @@ void CDialogPanel::EditName(wxString id)
 	delete ptr;
 }
 
-void CDialogPanel::EditType(wxString id)
+void CDialogPanel::EditType(int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
@@ -1001,7 +1016,7 @@ void CDialogPanel::EditType(wxString id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetType(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET type= '%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetType(),ptr->GetInfo(),id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -1012,9 +1027,9 @@ void CDialogPanel::EditType(wxString id)
 	
 }
 
-void CDialogPanel::EditPicture(wxString id)
+void CDialogPanel::EditPicture(int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%s'"),m_Table,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
 	
 	if(!my_query(sql))
 		return;
@@ -1034,13 +1049,11 @@ void CDialogPanel::EditPicture(wxString id)
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name= '%s', info ='%s' WHERE id = '%s'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name= '%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		
 		wxImage img = ptr->GetPicture();
-		long _id;
-		id.ToLong(&_id);
-		UpdatePicture(img,_id);
+		UpdatePicture(img,id);
 		Clear();
 		Read();
 		Select();
@@ -1050,13 +1063,13 @@ void CDialogPanel::EditPicture(wxString id)
 	
 }
 
-void CDialogPanel::OnDelete(wxString id)
+void CDialogPanel::OnDelete(int id)
 {
 
 	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_DELETE_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
     if(MessageDialog->ShowModal() == wxID_YES)
 	{
-		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%s'"),m_Table,id);
+		wxString sql = wxString::Format(_("DELETE FROM %s WHERE id = '%d'"),m_Table,id);
 		my_query(sql);
 		Clear();
 		Read();
@@ -1078,7 +1091,7 @@ void CDialogPanel::OnColumnCLick(wxString field, int order)
 	Read();
 }
 
-void CDialogPanel::OnSelect(wxString id, wxString name)
+void CDialogPanel::OnSelect(int id, wxString name)
 {
 	m_ID = id;
 	m_Name = name;
@@ -1092,15 +1105,15 @@ void CDialogPanel::OnSelect(wxString id, wxString name)
 
 	if(m_ControlType == CONTROL_SYMBOL)
 	{
-		wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%s'"),TABLE_SYMBOL_PICTURE,id);
+		wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,id);
 		my_query(sql);
 
 		void *result = db_result();
 		char** row = (char**)db_fetch_row(result);
 		if(row)
-			m_ID = row[FI_SYMBOL_PICTURE_ID_PICTURE];
+			m_ID = atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]);
 		else
-			m_ID = wxEmptyString;
+			m_ID = -1;
 		
 		db_free_result(result);
 	}
@@ -1114,7 +1127,7 @@ void CDialogPanel::OnSelect(wxString id, wxString name)
 }
 
 
-wxString CDialogPanel::_GetId()
+int CDialogPanel::_GetId()
 {
 	return m_ID;
 }
@@ -1124,14 +1137,14 @@ wxString  CDialogPanel::_GetName()
 	return m_Name;
 }
 
-void CDialogPanel::_SetIdMaster(wxString id)
+void CDialogPanel::_SetIdMaster(int id)
 {
 	m_IDMaster = id;
 }
 
-void CDialogPanel::SetSymbolLight(CNew *ptr,wxString id)
+void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%s'"),TABLE_SYMBOL_LIGHT,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%d'"),TABLE_SYMBOL_LIGHT,id);
 	
 	if(!my_query(sql))
 		return;
@@ -1158,9 +1171,30 @@ void CDialogPanel::SetSymbolLight(CNew *ptr,wxString id)
 	db_free_result(result);
 }
 
-void CDialogPanel::SetSymbolPicture(CNew *ptr,wxString id)
+void CDialogPanel::SetSymbolItem(CNew *ptr,int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%s'"),TABLE_SYMBOL_PICTURE,id);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol = '%d'"),TABLE_SYMBOL_ITEM ,id);
+
+	if(!my_query(sql))
+		return;
+			
+	void *result = db_result();
+	char **row;
+	
+	CItemPanel *ItemPanel = ptr->GetItemPanel();
+
+	while(row = (char**)db_fetch_row(result))
+	{
+		ItemPanel->AppendCombo(atoi((row[FI_SYMBOL_ITEM_ID_ITEM])));
+	}
+	
+	db_free_result(result);
+}
+
+
+void CDialogPanel::SetSymbolPicture(CNew *ptr,int id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%d'"),TABLE_SYMBOL_PICTURE,id);
 	
 	if(!my_query(sql))
 		return;
@@ -1169,7 +1203,7 @@ void CDialogPanel::SetSymbolPicture(CNew *ptr,wxString id)
 	char **row;
 	
 	while(row = (char**)db_fetch_row(result))
-		ptr->SetPictureId(row[FI_SYMBOL_PICTURE_ID_PICTURE]);
+		ptr->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
 			
 	db_free_result(result);
 }

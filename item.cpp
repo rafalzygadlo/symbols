@@ -74,6 +74,32 @@ size_t CItemPanel::GetCount()
 	return m_Items.size();
 }
 
+void CItemPanel::AppendCombo(int item_id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id='%d'"),TABLE_ITEM,item_id);
+	my_query(sql);
+	
+	void *result = db_result();
+	char **row =  (char**)db_fetch_row(result);
+	
+	int id_type = atoi(row[FI_ITEM_ID_TYPE]);
+	
+	for(size_t i = 0; i < m_Items.size(); i++)
+	{
+		long _id;
+		CItem *Item = (CItem*)m_Items.Item(i);
+		Item->_GetId().ToLong(&_id);
+		if(_id == id_type)
+		{
+			CComboPanel *ComboPanel = Item->AppendCombo();
+			ComboPanel->SetSelection(item_id);
+
+		}
+	}
+
+	db_free_result(result);
+}
+
 BEGIN_EVENT_TABLE(CItem, wxPanel)
 	EVT_BUTTON(ID_NEW,CItem::OnNew)
 END_EVENT_TABLE()
@@ -83,14 +109,19 @@ CItem::CItem(CItemPanel *parent,wxString name)
 {
 	m_Counter = 1;
 	m_ItemPanel = parent;
-	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,name);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 	
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
 	
+	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(HSizer,0,wxALL|wxEXPAND,0);
+	
 	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	Sizer->Add(New,0,wxALL|wxALIGN_RIGHT,1);
+	HSizer->Add(New,0,wxALL,1);
+	wxStaticText *Text = new wxStaticText(this,wxID_ANY,name);
+	HSizer->Add(Text,0,wxALL,1);
 		
 }
 
@@ -99,7 +130,7 @@ CItem::~CItem()
 
 }
 
-void CItem::AppendCombo()
+CComboPanel *CItem::AppendCombo()
 {
 	CComboPanel *ComboPanel = new CComboPanel(this,m_Id);
 	this->GetSizer()->Add(ComboPanel,0,wxALL|wxEXPAND,1);
@@ -109,6 +140,7 @@ void CItem::AppendCombo()
 
 	m_List.Add(ComboPanel);
 
+	return ComboPanel;
 }
 
 void CItem::OnDelete(CComboPanel *panel)
@@ -210,4 +242,15 @@ void CComboPanel::Read(wxString query)
 int CComboPanel::_GetId()
 {
 	return (int)m_Combo->GetClientData(m_Combo->GetSelection());
+}
+
+void CComboPanel::SetSelection(int id)
+{
+	
+	for(size_t i = 0; i < m_Combo->GetCount(); i++)
+	{
+		int _id = (int)m_Combo->GetClientData(i);
+		if(_id == id)
+			m_Combo->SetSelection(i);
+	}
 }

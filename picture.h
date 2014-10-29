@@ -12,7 +12,7 @@ class CPicturePanel: public wxPanel
 	wxBoxSizer *m_PanelSizer;
 	wxStaticBitmap *m_StaticPicture;
 	wxImage m_Picture;
-	wxString m_ID;
+	int m_ID;
 	wxStaticText *m_Info;
 	
 	void OnNew(wxHyperlinkEvent &event);
@@ -25,9 +25,9 @@ public:
 	CPicturePanel(wxWindow *parent, int type = -1);
 	~CPicturePanel();
 	wxImage GetPicture();
-	void SetPictureId(wxString id);
-	wxString GetPictureId();
-	void _SetId(wxString id);
+	void SetPictureId(int id);
+	int GetPictureId();
+	void _SetId(int id);
 	void Read();
 	void Clear();
 

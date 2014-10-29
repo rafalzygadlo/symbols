@@ -16,6 +16,7 @@ END_EVENT_TABLE()
 CPicturePanel::CPicturePanel(wxWindow *parent, int type)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+	m_ID = -1;
 	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
 	SetSizer(Sizer);
 
@@ -49,7 +50,7 @@ wxImage CPicturePanel::GetPicture()
 	return m_Picture;
 }
 
-void CPicturePanel::SetPictureId(wxString id)
+void CPicturePanel::SetPictureId(int id)
 {
 	m_ID = id;
 	Clear();
@@ -59,7 +60,7 @@ void CPicturePanel::SetPictureId(wxString id)
 	//m_Picture->SetBitmap(bmp);
 }
 
-wxString CPicturePanel::GetPictureId()
+int CPicturePanel::GetPictureId()
 {
 	return m_ID;
 }
@@ -142,7 +143,7 @@ void CPicturePanel::Clear()
 	this->Refresh();
 }
 
-void CPicturePanel::_SetId(wxString id)
+void CPicturePanel::_SetId(int id)
 {
 	m_ID = id;
 }
@@ -150,7 +151,7 @@ void CPicturePanel::_SetId(wxString id)
 void CPicturePanel::Read()
 {
 	wxString sql;
-	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id = '%s'"),TABLE_PICTURE,m_ID);
+	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id = '%d'"),TABLE_PICTURE,m_ID);
 
 	my_query(sql);
 
@@ -159,7 +160,7 @@ void CPicturePanel::Read()
 	char **row = (char**)db_fetch_row(result);
 	
 	unsigned long *len = db_fetch_lengths(result);
-	m_StaticPicture->ClearBackground();
+	//m_StaticPicture->ClearBackground();
 	m_StaticPicture->SetBitmap(wxNullBitmap);
 
 	if(row && len)
@@ -181,10 +182,15 @@ void CPicturePanel::Read()
 				m_StaticPicture->SetBitmap(bmp);
 			}
 		}
+				
+	}else{
 		
-		this->Refresh();
-		this->Layout();
+		m_Info->SetLabel(GetMsg(MSG_NO_PICTURE));	
+	
 	}
+	
+	this->Refresh();
+	this->Layout();
 
 	db_free_result(result);
 	

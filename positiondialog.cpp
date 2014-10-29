@@ -151,6 +151,6 @@ void CPositionDialog::OnLat(wxCommandEvent &event)
 
 void CPositionDialog::_SetPosition(double lon, double lat)
 {
-	m_TextLon->SetValue(FormatLongitude(lon));
-	m_TextLat->SetValue(FormatLatitude(lat));
+//	m_TextLon->SetValue(FormatLongitude(lon));
+//	m_TextLat->SetValue(FormatLatitude(lat));
 }

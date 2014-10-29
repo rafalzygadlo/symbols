@@ -224,8 +224,8 @@ void CMyFrame::ShowWindow(bool show)
 		textname->SetValue(wxString::Format(_("%s"),MarkerSelectedPtr->name));
 		textdescription->SetValue(wxString::Format(_("%s"),MarkerSelectedPtr->description));
 		
-		textlon->SetLabel(FormatLongitude(to_x));
-		textlat->SetLabel(FormatLatitude(-to_y));
+//		textlon->SetLabel(FormatLongitude(to_x));
+//		textlat->SetLabel(FormatLatitude(-to_y));
 	}
 	
 	Show(show);
