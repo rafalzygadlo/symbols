@@ -14,6 +14,7 @@ class CListCtrl: public wxListCtrl
 	wxArrayPtrVoid m_ColumnArray;
 	wxArrayString m_DataArray;
 	wxArrayInt m_ColumnIds;
+	wxArrayInt m_Ids;
 	wxArrayString m_ColumnFields;
 	int m_FieldCount;
 	wxMenu *m_Menu;

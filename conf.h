@@ -160,6 +160,9 @@
 #define COVERAGE_MAX 100.00
 #define COVERAGE_DEFAULT_VALUE 0.0
 
+#define DEGREE_FORMAT_DDMMMM 0
+#define DEGREE_FORMAT_DDMMSS 1
+
 typedef struct Symbol
 {
 	float x;

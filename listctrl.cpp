@@ -117,7 +117,8 @@ void CListCtrl::Clear()
 		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
 		ptr->Clear();
 	}
-
+	
+	m_Ids.Clear();
 }
 
 void CListCtrl::Select()
@@ -152,6 +153,7 @@ void CListCtrl::Read(wxString query)
 			}
 		}
 		
+		m_Ids.Add(atoi(row[m_ColumnWithId]));
 		//m_Checked.Add(0);
 		rows++;
 	}
@@ -263,11 +265,13 @@ void CListCtrl::OnSelected(wxListEvent &event)
 {
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-	wxArrayString row = GetRow(m_SelectedItem);	
-	long id;
-	row[m_ColumnWithId].ToLong(&id);
-	wxString name = row[m_ColumnWithName];
-	m_Control->OnSelect(id,name);
+	//wxArrayString row = GetRow(m_SelectedItem);	
+	//long id;
+	//row[m_ColumnWithId].ToLong(&id);
+	//wxString name = row[m_ColumnWithName];
+	int id = m_Ids.Item(m_SelectedItem);
+	
+	m_Control->OnSelect(id);
 
 }
 
@@ -279,8 +283,9 @@ void CListCtrl::OnActivate(wxListEvent &event)
 
 void CListCtrl::OnEdit(wxCommandEvent &event)
 {
-	long id;
-	GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	//long id;
+	//GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	int id = m_Ids.Item(m_SelectedItem);
 	m_Control->OnEdit(id);
 }
 
@@ -291,8 +296,9 @@ void CListCtrl::OnNew(wxCommandEvent &event)
 
 void CListCtrl::OnDelete(wxCommandEvent &event)
 {
-	long id;
-	GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	//long id;
+	//GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
+	int id = m_Ids.Item(m_SelectedItem);
 	m_Control->OnDelete(id);
 }
 

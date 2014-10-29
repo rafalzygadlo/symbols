@@ -106,7 +106,7 @@ public:
 	void OnEdit(int id);
 	void OnDelete(int id);
 	void OnColumnCLick(wxString field, int order);
-	void OnSelect(int id, wxString name);
+	void OnSelect(int id);
 	void SetSlave(CDialogPanel *ptr);
 
 	int _GetId();

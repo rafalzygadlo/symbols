@@ -269,8 +269,8 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	FlexGridSizer->Add(m_TextLon,0,wxALL,5);
 	
-	m_TextLon->SetValue(FormatLongitude(m_Lon,0));
-	m_TextLat->SetValue(FormatLatitude(m_Lat,0));
+	m_TextLon->SetValue(FormatLongitude(m_Lon,DEGREE_FORMAT_DDMMMM));
+	m_TextLat->SetValue(FormatLatitude(m_Lat,DEGREE_FORMAT_DDMMMM));
 	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -487,13 +487,11 @@ void CNew::EditPicturePanel()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
-	wxStaticText *LabelPicture = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_PICTURE));
-	FlexGridSizer->Add(LabelPicture,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	
 	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_NEW);
 	m_PicturePanel->SetPictureId(m_PictureId);
 	FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
-		
+	FlexGridSizer->AddSpacer(1);
+
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -527,7 +525,7 @@ void CNew::EditPicturePanel()
 void CNew::OnLon(wxCommandEvent &event)
 {	
 	
-	if(_SetLon(m_TextLon->GetValue().char_str(),&m_Lon))
+	if(_SetLon(m_TextLon->GetValue().char_str(),&m_Lon,DEGREE_FORMAT_DDMMMM))
 	{
 		
 		//double y,to_x,to_y;
@@ -554,7 +552,7 @@ void CNew::OnLat(wxCommandEvent &event)
 	//if(MarkerSelectedPtr == NULL)
 		//return;
 			
-	if(_SetLat(m_TextLat->GetValue().char_str(),&m_Lat))
+	if(_SetLat(m_TextLat->GetValue().char_str(),&m_Lat,DEGREE_FORMAT_DDMMMM))
 	{
 		///double x,to_x,to_y;
 		//x = MarkerSelectedPtr->x;

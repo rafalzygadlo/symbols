@@ -139,14 +139,21 @@ void SetLangId(int id)
 wxString ConvertDegree(double degree,int type) 
 {
 	int decimal = (int)degree;
-    double minutes = (double)(degree - decimal) * 60;
-    double second = (double)(minutes - (int)(minutes)) * 60;
-	
+	double minutes;
 	if(type)
-		return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
+		minutes = (double)(degree - decimal) * 60;
 	else
-		return wxString::Format(_("%02d° %02.4f'"),decimal, minutes);
-      
+		minutes = (double)(degree - decimal) * 100;
+    
+	double second = (double)(minutes - (int)(minutes)) * 60;
+	
+	switch(type)
+	{
+		case DEGREE_FORMAT_DDMMSS:
+			return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
+		case DEGREE_FORMAT_DDMMMM:
+			return wxString::Format(_("%02d° %02.4f'"),decimal, minutes);
+	}  
 }
 
 wxString FormatLongitude(double x, int type) 
@@ -200,6 +207,24 @@ void nvPointOfIntersection(double a1, double b1,double a2, double b2, double *x,
 	*y = (a2 * b1 - b2 * a1) / (a2 - a1); 
 }
 
+bool _SetLat(char *text, double *val,int type)
+{
+	switch(type)
+	{
+		case DEGREE_FORMAT_DDMMMM :return _SetLat(text,val);
+		case DEGREE_FORMAT_DDMMSS :return _SetLatSec(text,val);
+	}
+}
+
+bool _SetLon(char *text, double *val,int type)
+{
+	switch(type)
+	{
+		case DEGREE_FORMAT_DDMMMM :return _SetLon(text,val);
+		case DEGREE_FORMAT_DDMMSS :return _SetLonSec(text,val);
+	}
+}
+
 bool _SetLat(char *text, double *val)
 {
 	int degree;
@@ -224,7 +249,7 @@ bool _SetLat(char *text, double *val)
 	
 	if(result)
 	{
-		y = degree + ((double)min);
+		y = degree + ((double)min/100);
 		
 		if(y > 90)
 			return false;
@@ -272,7 +297,7 @@ bool _SetLon(char *text, double *val)
 	if(result)
 	{
 		//_min = min;
-		x = degree + ((double)min);
+		x = degree + ((double)min/100);
 		
 		if(x > 180)
 			return false;

@@ -18,8 +18,13 @@ wxString GetDistanceUnit(size_t id);
 wxString GetDistanceName(size_t id);
 wxString GetProductInfo();
 wxString GetProductName();
+bool _SetLat(char *text, double *val, int type);
+bool _SetLon(char *text, double *val, int type);
 bool _SetLat(char *text, double *val);
 bool _SetLon(char *text, double *val);
+bool _SetLatSec(char *text, double *val);
+bool _SetLonSec(char *text, double *val);
+
 wxString GetWorkDir();
 wxString GetConfigFile();
 int _GetUID();
