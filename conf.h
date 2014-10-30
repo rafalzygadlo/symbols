@@ -91,6 +91,11 @@
 #define MSG_CHARACTERISTIC			43
 #define MSG_NO_PICTURE				44
 #define MSG_PROPERTIES				45
+#define MSG_ON_POSITION				46
+#define MSG_IN_MONITORING			47
+#define MSG_LONGITUDE_INVALID_VALUE 48
+#define MSG_LATITUDE_INVALID_VALUE	49
+#define MSG_SYMBOL_GROUP			50
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -100,15 +105,16 @@
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
 
-#define CONTROL_ITEM		1
-#define CONTROL_ITEM_TYPE	2
-#define CONTROL_SYMBOL		3
-#define CONTROL_NEW			4
-#define CONTROL_SEAWAY		5
-#define CONTROL_AREA		6
-#define CONTROL_SYMBOL_TYPE 7
-#define CONTROL_PICTURE		8
-#define CONTROL_SYMBOL_ITEM	9
+#define CONTROL_ITEM			1
+#define CONTROL_ITEM_TYPE		2
+#define CONTROL_SYMBOL			3
+#define CONTROL_NEW				4
+#define CONTROL_SEAWAY			5
+#define CONTROL_AREA			6
+#define CONTROL_SYMBOL_TYPE		7
+#define CONTROL_PICTURE			8
+#define CONTROL_SYMBOL_ITEM		9
+#define CONTROL_SYMBOL_GROUP	10
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -160,8 +166,15 @@
 #define COVERAGE_MAX 100.00
 #define COVERAGE_DEFAULT_VALUE 0.0
 
+#define DEFAULT_DEGREE_FORMAT 1
 #define DEGREE_FORMAT_DDMMMM 0
 #define DEGREE_FORMAT_DDMMSS 1
+
+#define DIR_LAT 0
+#define DIR_LON 1
+
+#define TEXT_INFO_WIDTH 320
+#define TEXT_INFO_HEIGHT 150
 
 typedef struct Symbol
 {

@@ -8,6 +8,7 @@
 #include <wx/statline.h>
 #include "tools.h"
 #include "light.h"
+#include "GeometryTools.h"
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_ITEM_TYPE,OnComboItem)
@@ -20,14 +21,16 @@ END_EVENT_TABLE()
 CNew::CNew(int type, int id_type, int item_id, bool edit)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
+	m_DegreeFormat = DEFAULT_DEGREE_FORMAT;
+	m_LonValid = m_LatValid = false;
 	m_PictureId = -1;
-	m_Lon = 0;
-	m_Lat = 0;
+	m_Lon = UNDEFINED_DOUBLE;
+	m_Lat = UNDEFINED_DOUBLE;
 	m_ControlType = type;
 	m_IDType = id_type;
 	m_ItemID = item_id;
 	m_Edit = edit;
-//	m_FeaturePanel = NULL;
+	m_OnPosition = m_InMonitoring = false;
 	m_TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
 	
@@ -171,19 +174,9 @@ wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 
 	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_PICKER);
 	m_PicturePanel->SetPictureId(m_PictureId);
-	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
+	Sizer->Add(m_PicturePanel,1,wxALL|wxEXPAND,5);
 
 	return Panel;
-}
-
-void CNew::ClearColors()
-{
-//	for(size_t i = 0; i < m_Color.size(); i++)
-//	{
-		//delete m_Color[i];
-	//}
-	
-	//m_Color.Clear();
 }
 
 wxPanel *CNew::GetLightPanel(wxWindow *Parent)
@@ -201,14 +194,12 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 	m_CharacteristicText->SetValidator(m_TextValidator);
 	FlexSizer->Add(m_CharacteristicText,0,wxALL|wxEXPAND,1);
 	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
-		
 	
 	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
 	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
 	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
-	
 	
 	m_LightPanel = new CLightPanel(Panel,Scroll);
 	ScrollSizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
@@ -225,25 +216,35 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
+	
+	m_CheckOnPosition = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_ON_POSITION));
+	m_CheckOnPosition->SetValue(m_OnPosition);
+	FlexGridSizer->Add(m_CheckOnPosition,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+	
+	m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
+	m_CheckInMonitoring->SetValue(m_InMonitoring);
+	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
 		
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(Panel,TABLE_AREA,m_AreaID);
 	m_AreaCombo->SetSelection(0);
 	FlexGridSizer->Add(m_AreaCombo,0,wxALL|wxEXPAND,5);
-
+	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SeawayCombo = GetCombo(Panel,TABLE_SEAWAY,m_SeawayID);
 	m_SeawayCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SeawayCombo,0,wxALL|wxEXPAND,5);
-
+	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SymbolTypeCombo = GetCombo(Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
 	m_SymbolTypeCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
-	
+		
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -251,34 +252,37 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_TextName->SetValue(m_Name);
 	m_TextName->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-
+	
 	wxStaticText *LabelNumber = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_NUMBER),wxDefaultPosition,wxDefaultSize);
 	FlexGridSizer->Add(LabelNumber,0,wxALL,5);
 	m_TextNumber = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 	m_TextNumber->SetValue(m_Number);
 	m_TextNumber->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextNumber,0,wxALL,5);
-	
-	wxStaticText *LabelLat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
+			
+	wxStaticText *LabelLat = new wxStaticText(Panel,wxID_ANY,wxString::Format(_("%s\n(%s)"),GetMsg(MSG_LATITUDE),GetDegreeFormat(DEGREE_FORMAT_DDMMSS,DIR_LAT)),wxDefaultPosition,wxDefaultSize);
 	FlexGridSizer->Add(LabelLat,0,wxALL,5);
 	m_TextLat = new wxTextCtrl(Panel,ID_LAT,wxEmptyString,wxDefaultPosition,wxDefaultSize);
 	FlexGridSizer->Add(m_TextLat,0,wxALL,5);
 	
-	wxStaticText *LabelLon = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LONGITUDE) ,wxDefaultPosition,wxDefaultSize);
+	wxStaticText *LabelLon = new wxStaticText(Panel,wxID_ANY,wxString::Format(_("%s\n(%s)"),GetMsg(MSG_LONGITUDE),GetDegreeFormat(DEGREE_FORMAT_DDMMSS,DIR_LON)),wxDefaultPosition,wxDefaultSize);
 	FlexGridSizer->Add(LabelLon,0,wxALL,5);
 	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	FlexGridSizer->Add(m_TextLon,0,wxALL,5);
 	
-	m_TextLon->SetValue(FormatLongitude(m_Lon,DEGREE_FORMAT_DDMMMM));
-	m_TextLat->SetValue(FormatLatitude(m_Lat,DEGREE_FORMAT_DDMMMM));
+	if(!UNDEFINED_VAL(m_Lon))
+		m_TextLon->SetValue(FormatLongitude(m_Lon,m_DegreeFormat));
+	if(!UNDEFINED_VAL(m_Lat))
+		m_TextLat->SetValue(FormatLatitude(m_Lat,m_DegreeFormat));
 	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddSpacer(1);
+		
 	return Panel;
 }
 
@@ -327,10 +331,10 @@ void CNew::EditItemPanel()
 		
 	wxStaticText *LabelInfo = new wxStaticText(m_Panel,wxID_ANY,GetMsg(MSG_INFO));
 	m_FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(m_Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
-	m_FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	m_FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	
 
 	GetItemFeaturePanel(m_Panel);
@@ -373,9 +377,9 @@ void CNew::EditTypePanel()
 		
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
-	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	m_TextInfo->SetValidator(m_TextValidator);
 		
 	wxPanel *Panel1 = new wxPanel(this);
@@ -416,10 +420,10 @@ void CNew::EditNamePanel()
 		
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
@@ -452,10 +456,7 @@ void CNew::EditSymbolPanel()
 	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
 	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
 	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));
-
-	//CLightDraw *d = new CLightDraw(Notebook);
-	//Notebook->AddPage(d,GetMsg(MSG_ITEMS));
-		
+			
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -489,9 +490,9 @@ void CNew::EditPicturePanel()
 	
 	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_NEW);
 	m_PicturePanel->SetPictureId(m_PictureId);
-	FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
-
+	FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
+	
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -502,10 +503,11 @@ void CNew::EditPicturePanel()
 			
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(300,80),wxTE_MULTILINE);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
-	FlexGridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	FlexGridSizer->AddGrowableRow(2);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 
 	wxPanel *Panel1 = new wxPanel(this);
 	Main->Add(Panel1,0,wxALL|wxEXPAND,5);
@@ -524,21 +526,21 @@ void CNew::EditPicturePanel()
 
 void CNew::OnLon(wxCommandEvent &event)
 {	
-	
-	if(_SetLon(m_TextLon->GetValue().char_str(),&m_Lon,DEGREE_FORMAT_DDMMMM))
+	if(m_TextLon->GetValue().empty())
 	{
+		m_LonValid = false;
+		return;
+	}
 		
-		//double y,to_x,to_y;
-		//y = MarkerSelectedPtr->y;
-		//_Parent->GetBroker()->Unproject(value,y,&to_x,&to_y);
-		//MarkerSelectedPtr->x = (float)to_x;
-					
-		//_Parent->GetBroker()->Refresh(_Parent->GetBroker()->GetParentPtr());
+	if(_SetLon(m_TextLon->GetValue().char_str(),&m_Lon,m_DegreeFormat))
+	{
+		m_LonValid = true;
 		m_TextLon->SetForegroundColour(wxSYS_COLOUR_WINDOWTEXT);
 		m_TextLon->Refresh();
 
 	}else{
 		
+		m_LonValid = false;
 		m_TextLon->SetForegroundColour(*wxRED);
 		m_TextLon->Refresh();
 	
@@ -548,23 +550,21 @@ void CNew::OnLon(wxCommandEvent &event)
 
 void CNew::OnLat(wxCommandEvent &event)
 {
-	//SMarker *MarkerSelectedPtr =_Parent->GetNewMarkerPtr();
-	//if(MarkerSelectedPtr == NULL)
-		//return;
-			
-	if(_SetLat(m_TextLat->GetValue().char_str(),&m_Lat,DEGREE_FORMAT_DDMMMM))
+	if(m_TextLat->GetValue().empty())
 	{
-		///double x,to_x,to_y;
-		//x = MarkerSelectedPtr->x;
-		//_Parent->GetBroker()->Unproject(x,value,&to_x,&to_y);
-		//MarkerSelectedPtr->y = (float)to_y;
-							
-		//_Parent->GetBroker()->Refresh(_Parent->GetBroker()->GetParentPtr());
+		m_LatValid = false;
+		return;
+	}
+			
+	if(_SetLat(m_TextLat->GetValue().char_str(),&m_Lat,m_DegreeFormat))
+	{
+		m_LatValid = true;
 		m_TextLat->SetForegroundColour(wxSYS_COLOUR_WINDOWTEXT);
 		m_TextLat->Refresh();
 
 	}else{
 		
+		m_LatValid = false;
 		m_TextLat->SetForegroundColour(*wxRED);
 		m_TextLat->Refresh();
 	}
@@ -577,7 +577,54 @@ bool CNew::Validate()
 		
 	wxString err;
 	bool result = true;
-		
+	
+	switch(m_ControlType)
+	{
+		case CONTROL_SYMBOL:	result = ValidateSymbol(); break;
+		default:				result = ValidateOthers();
+	}
+	
+	return result;
+	
+}
+
+bool CNew::ValidateSymbol()
+{
+	bool result = true;
+	wxString err;
+	
+	if(m_TextName->GetValue().empty())
+	{
+		result = false;
+		err << GetMsg(MSG_NAME_EMPTY) << "\n";
+	}
+	
+	
+	if(!m_LonValid)
+	{
+		result = false;
+		err << GetMsg(MSG_LONGITUDE_INVALID_VALUE) << "\n";
+	}
+
+	if(!m_LatValid)
+	{
+		result = false;
+		err << GetMsg(MSG_LATITUDE_INVALID_VALUE) << "\n";
+	}
+	
+	if(!result)
+	{
+		wxMessageBox(err);
+		return false;
+	}
+	
+	return true;
+}
+
+bool CNew::ValidateOthers()
+{
+	bool result = true;
+	wxString err;
 	
 	if(m_TextName->GetValue().empty())
 	{
@@ -591,10 +638,11 @@ bool CNew::Validate()
 		return false;
 	}
 	
-
 	return true;
 	
 }
+
+
 
 
 void CNew::OnComboItem(wxCommandEvent &event)
@@ -741,6 +789,17 @@ void CNew::SetCharacteristic(wxString v)
 	m_Characteristic = v;
 }
 
+void CNew::SetOnPosition(bool v)
+{
+	m_OnPosition = v;
+}
+
+void CNew::SetInMonitoring(bool v)
+{
+	m_InMonitoring = v;
+}
+
+
 //GET
 wxArrayPtrVoid CNew::GetFeatureControls()
 {
@@ -820,4 +879,14 @@ CItemPanel *CNew::GetItemPanel()
 CLightPanel *CNew::GetLightPanel()
 {
 	return m_LightPanel;
+}
+
+bool CNew::GetOnPosition()
+{
+	return m_CheckOnPosition->GetValue();
+}
+
+bool CNew::GetInMonitoring()
+{
+	return m_CheckInMonitoring->GetValue();
 }

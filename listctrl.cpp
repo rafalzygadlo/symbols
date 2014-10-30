@@ -160,6 +160,7 @@ void CListCtrl::Read(wxString query)
 
 	db_free_result(result);
 	SetItemCount(rows);
+	Refresh();
 }
 
 void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
@@ -179,6 +180,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);				break;
 		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
 		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);			break;
+		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);		break;
 	}
 	
 	if(_Menu)

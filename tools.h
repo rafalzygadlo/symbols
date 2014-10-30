@@ -12,7 +12,7 @@ wxString FormatLongitude(double x,int type);
 wxString FormatLatitude(double y,int type);
 double nvDistance(double lon1, double lat1, double lon2, double lat2, int distanceunit);
 void nvMidPoint(double lon1, double lat1,double lon2, double lat2, double *v1, double *v2);
-double nvToRad( double degree );
+//double nvToRad( double degree );
 void nvPointOfIntersection(double a1, double b1,double a2, double b2, double *x, double *y);
 wxString GetDistanceUnit(size_t id);
 wxString GetDistanceName(size_t id);
@@ -37,5 +37,6 @@ wxListBox *GetFilterList(wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
 wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel);
 
+const wchar_t *GetDegreeFormat(int id, int dir);
 #endif
 

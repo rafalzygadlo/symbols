@@ -12,15 +12,15 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[46][2] = 
+const wchar_t *nvLanguage[51][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
 	{L"New", L"Nowy  \tCtrl+N"},
 	{L"Name", L"Nazwa"},
 	{L"Description",L"Opis"},
-	{L"Longitude",	L"Longitude"},
-	{L"Latitude",L"Latitude"},
+	{L"Longitude",	L"D³ugoœæ geograficzna"},
+	{L"Latitude",L"Szerokoœæ geograficzna"},
 	{L"Close",	L"Zamknij"},
 	{L"OK",L"OK"},
 	{L"Cancel",L"Anuluj"},
@@ -61,8 +61,18 @@ const wchar_t *nvLanguage[46][2] =
 	{L"Characteristic",L"Charakterystyka"},
 	{L"No picture",L"Brak zdjêcia"},
 	{L"Properties",L"W³aœciwoœci"},
+	{L"On position",L"Na pozycji"},
+	{L"In monitor",L"Monitorowany"},
+	{L"Longitude invalid format",L"Nieprawid³owy format (D³ugoœæ geograficzna)"},
+	{L"Latitude invalid format",L"Nieprawid³owy format (Szerokoœæ geograficzna)"},
+	{L"Symbol group",L"Grupa"},
 };
-				
+
+const wchar_t *nvDegreeFormat[2][2] = 
+{ 
+	{L"DD MM.MMMM N(S)",L"DDD MM.MMMM W(E)" },
+	{L"DD MM SS.SSSS N(S)",L"DDD MM SS.SSSS W(E)"},
+};
 	
 const wxChar *nvDistanceN[2][3] = 
 { 
@@ -131,6 +141,12 @@ const wchar_t *GetMsg(int id)
 {
 	return nvLanguage[id][GlobalLanguageID];
 }
+
+const wchar_t *GetDegreeFormat(int id, int dir)
+{
+	return nvDegreeFormat[id][dir];
+}
+
 void SetLangId(int id)
 {
 	GlobalLanguageID = id;
@@ -150,9 +166,11 @@ wxString ConvertDegree(double degree,int type)
 	switch(type)
 	{
 		case DEGREE_FORMAT_DDMMSS:
-			return wxString::Format(_("%02d° %02d' %02.4f''"),decimal, (int)minutes, second);
+			return wxString::Format(_("%02d %02d %02.4f"),decimal, (int)minutes, second);
 		case DEGREE_FORMAT_DDMMMM:
-			return wxString::Format(_("%02d° %02.4f'"),decimal, minutes);
+			return wxString::Format(_("%02d %02.4f"),decimal, minutes);
+		default:
+			return wxString::Format(_("%02d %02.4f"),decimal, minutes);
 	}  
 }
 
@@ -213,6 +231,7 @@ bool _SetLat(char *text, double *val,int type)
 	{
 		case DEGREE_FORMAT_DDMMMM :return _SetLat(text,val);
 		case DEGREE_FORMAT_DDMMSS :return _SetLatSec(text,val);
+		default: return _SetLat(text,val);
 	}
 }
 
@@ -220,8 +239,9 @@ bool _SetLon(char *text, double *val,int type)
 {
 	switch(type)
 	{
-		case DEGREE_FORMAT_DDMMMM :return _SetLon(text,val);
-		case DEGREE_FORMAT_DDMMSS :return _SetLonSec(text,val);
+		case	DEGREE_FORMAT_DDMMMM :return _SetLon(text,val);
+		case	DEGREE_FORMAT_DDMMSS :return _SetLonSec(text,val);
+		default:return _SetLon(text,val);
 	}
 }
 
@@ -234,7 +254,7 @@ bool _SetLat(char *text, double *val)
 	char buffer[64];
 	sprintf(buffer,"%s",text);
 	
-	sscanf(buffer,"%d° %f' %c",&degree,&min,&dindicator);
+	sscanf(buffer,"%d %f %c",&degree,&min,&dindicator);
 	bool result = true;	
 	if(degree != 0 || min != 0)
 		if(dindicator != 'S' && dindicator != 'N')
@@ -281,7 +301,7 @@ bool _SetLon(char *text, double *val)
 	char buffer[64];
 	sprintf(buffer,"%s",text);
 
-	sscanf(buffer,"%d° %f' %c",&degree,&min,&dindicator);
+	sscanf(buffer,"%d %f %c",&degree,&min,&dindicator);
 	bool result = true;	
 	if(degree != 0 || min != 0 )
 		if(dindicator != 'W' && dindicator != 'E')
@@ -332,7 +352,7 @@ bool _SetLatSec(char *text, double *val)
 	char buffer[64];
 	sprintf(buffer,"%s",text);
 	
-	sscanf(buffer,"%d° %d' %f'' %c",&degree,&min,&sec,&dindicator);
+	sscanf(buffer,"%d %d %f %c",&degree,&min,&sec,&dindicator);
 	bool result = true;	
 	if(degree != 0 || min != 0 || sec != 0)
 		if(dindicator != 'S' && dindicator != 'N')
@@ -383,7 +403,7 @@ bool _SetLonSec(char *text, double *val)
 	char buffer[64];
 	sprintf(buffer,"%s",text);
 
-	sscanf(buffer,"%d° %d' %f'' %c",&degree,&min,&sec,&dindicator);
+	sscanf(buffer,"%d %d %f %c",&degree,&min,&sec,&dindicator);
 	bool result = true;	
 	if(degree != 0 || min != 0 || sec != 0)
 		if(dindicator != 'W' && dindicator != 'E')

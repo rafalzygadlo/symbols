@@ -36,6 +36,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Seaway = NULL;
 	m_SymbolType = NULL;
 	m_Picture = NULL;
+	m_SymbolGroup = NULL;
 		
 	NewPtr = NULL;
 	PositionDialog = NULL;	
@@ -96,6 +97,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Seaway;
 	delete m_SymbolType;
 	delete m_Picture;
+	delete m_SymbolGroup;
 
 	delete m_FileConfig;
 	delete MyFrame;
@@ -297,6 +299,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
 	// move marker RMB need this
 	// . . . . . . . . . . . . . . . . . . . . 
+	return;
 	if(FirstTime)
 		return;
 		
@@ -438,6 +441,13 @@ void CMapPlugin::Picture()
 	m_Picture->Show();
 }
 
+void CMapPlugin::SymbolGroup()
+{
+	if(m_SymbolGroup == NULL)
+		m_SymbolGroup = new CDialog(CONTROL_SYMBOL_GROUP);
+	m_SymbolGroup->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -448,8 +458,9 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_TYPE),this, MenuSymbolType);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_PICTURE),this,MenuPicture);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
-	
+		
 	/*
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BATTERY),this, MenuBattery);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMUNICATION_TYPE),this, MenuCommunication);
@@ -505,6 +516,14 @@ void *CMapPlugin::MenuSymbol(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuSymbolGroup(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_SYMBOL_GROUP);
+	
+	return NULL;	
+}
+
 void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -540,6 +559,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_SEAWAY:		Seaway();		break;
 		case CONTROL_SYMBOL_TYPE:	SymbolType();	break;
 		case CONTROL_PICTURE:		Picture();		break;
+		case CONTROL_SYMBOL_GROUP:	SymbolGroup();	break;
 	}
 
 }

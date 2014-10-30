@@ -43,6 +43,9 @@ SHeader Header[] =
 	//{CONTROL_PICTURE,0, {FI_PICTURE_ID  , FN_PICTURE_ID, MSG_ID} },
 	{CONTROL_PICTURE,250, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
 	{CONTROL_PICTURE,100, {FI_PICTURE_INFO  , FN_PICTURE_INFO, MSG_INFO} },
+
+	{CONTROL_SYMBOL_GROUP ,250, {FI_SYMBOL_GROUP_NAME  , FN_SYMBOL_GROUP_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_GROUP,100, {FI_SYMBOL_GROUP_INFO  , FN_SYMBOL_GROUP_INFO, MSG_INFO} },
 	
 	{-1},
 
@@ -57,6 +60,7 @@ SIds Id[] =
 	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
 	{CONTROL_SYMBOL_ITEM,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL},
 	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE}, 
+	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP}, 
 
 };
 
@@ -281,6 +285,7 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:
+		case CONTROL_SYMBOL_GROUP:
 				return GetPanelList(Parent);
 	}
 
@@ -464,6 +469,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_SEAWAY:		m_Table = TABLE_SEAWAY;			break;
 		case CONTROL_SYMBOL_TYPE:	m_Table = TABLE_SYMBOL_TYPE;	break;
 		case CONTROL_PICTURE:		m_Table = TABLE_PICTURE;		break;
+		case CONTROL_SYMBOL_GROUP:	m_Table = TABLE_SYMBOL_GROUP;	break;
 	
 	}
 }
@@ -472,14 +478,15 @@ void CDialogPanel::Read()
 {
 	switch(m_ControlType)
 	{
+		case CONTROL_PICTURE:		ReadPicture();		break;	
 		case CONTROL_ITEM:			ReadItems();		break;
 		case CONTROL_SYMBOL_ITEM:	ReadSymbolItems();	break;
 		case CONTROL_SYMBOL:
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		
+		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_SYMBOL_TYPE:	ReadOthers();		break;
-		case CONTROL_PICTURE:		ReadPicture();		break;
+		
 	}
 
 }
@@ -581,6 +588,7 @@ void CDialogPanel::OnNew()
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:
+		case CONTROL_SYMBOL_GROUP:
 			New();	
 		break;
 
@@ -618,6 +626,7 @@ void CDialogPanel::New()
 			case CONTROL_AREA:
 			case CONTROL_SEAWAY:
 			case CONTROL_SYMBOL_TYPE:
+			case CONTROL_SYMBOL_GROUP:
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
 				query = true;
 			break;
@@ -644,8 +653,8 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s', name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s',on_position='%d',in_monitoring='%d',name='%s', info='%s'"),
+		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetOnPosition(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(sql);
 	
 	int id = db_last_insert_id();
@@ -896,6 +905,8 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 	ptr->SetCharacteristic(Convert(row[FI_SYMBOL_CHARACTERISTIC]));
+	ptr->SetOnPosition(atoi(row[FI_SYMBOL_ON_POSITION]));
+	ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
 
 	db_free_result(result);	
 	SetSymbolPicture(ptr,id);
@@ -907,8 +918,8 @@ void CDialogPanel::EditSymbol(int id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s',on_position='%d',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
+			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetOnPosition(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(sql);
 		
 		//light

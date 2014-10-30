@@ -23,6 +23,12 @@ class CNew: public wxDialog
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
+	wxCheckBox *m_CheckOnPosition;
+	wxCheckBox *m_CheckInMonitoring;
+
+	bool m_LonValid,m_LatValid;
+	int m_DegreeFormat;
+
 	CLightPanel *m_LightPanel;
 	CItemPanel *m_ItemPanel;
 	
@@ -31,6 +37,7 @@ class CNew: public wxDialog
 	wxString m_Name,m_Info,m_Type;
 	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
 	int m_PictureId;
+	bool m_OnPosition,m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
 
 	wxListBox *m_ListBox;
@@ -64,8 +71,11 @@ class CNew: public wxDialog
 		
 	void OnComboItem(wxCommandEvent &event);
 	void OnComboFilter(wxCommandEvent &event);
+	
 	bool Validate();
-	void ClearColors();
+	bool ValidateSymbol();
+	bool ValidateOthers();
+		
 		
 public:
 
@@ -84,6 +94,10 @@ public:
 	wxString GetNumber();
 	int GetPictureId();
 	wxString GetCharacteristic();
+	CLightPanel *GetLightPanel();
+	CItemPanel *GetItemPanel();
+	bool GetOnPosition();
+	bool GetInMonitoring();
 		
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
@@ -101,9 +115,9 @@ public:
 	void SetNumber(wxString v);
 	void SetCoverage(wxString v);
 	void SetCharacteristic(wxString v);
-	CLightPanel *GetLightPanel();
-	CItemPanel *GetItemPanel();
-
+	void SetOnPosition(bool v);
+	void SetInMonitoring(bool v);
+	
 	void Create();
 
 	DECLARE_EVENT_TABLE();
