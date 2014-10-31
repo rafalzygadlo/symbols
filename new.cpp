@@ -290,12 +290,10 @@ void CNew::EditItemPanel()
 {
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Main);
-	
-	m_Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	m_Panel->SetBackgroundColour(*wxWHITE);
-	Main->Add(m_Panel,1,wxALL|wxEXPAND,0);
-	
 		
+	m_Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Main->Add(m_Panel,1,wxALL|wxEXPAND,0);
+			
 	m_FlexGridSizer = new wxFlexGridSizer(2);
 	m_FlexGridSizer->AddGrowableCol(1);
 	m_Panel->SetSizer(m_FlexGridSizer);
@@ -362,7 +360,6 @@ void CNew::EditTypePanel()
 	this->SetSizer(Sizer);
 			
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Panel->SetBackgroundColour(*wxWHITE);
 	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
@@ -404,7 +401,6 @@ void CNew::EditNamePanel()
 	this->SetSizer(Sizer);
 			
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Panel->SetBackgroundColour(*wxWHITE);
 	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
@@ -481,7 +477,6 @@ void CNew::EditPicturePanel()
 	this->SetSizer(Main);
 	
 	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
-	Panel->SetBackgroundColour(*wxWHITE);
 	Main->Add(Panel,1,wxALL|wxEXPAND,0);
 	
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);

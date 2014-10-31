@@ -35,7 +35,7 @@ wxString Convert(char *v);
 
 wxListBox *GetFilterList(wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
-wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel);
+wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel, bool all = false);
 
 const wchar_t *GetDegreeFormat(int id, int dir);
 #endif

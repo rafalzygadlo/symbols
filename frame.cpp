@@ -30,8 +30,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	AfterInit = false;
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 	Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	Panel->SetBackgroundColour(*wxWHITE);
-			
+				
 	// Page1
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
 		

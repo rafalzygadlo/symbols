@@ -12,7 +12,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[51][2] = 
+const wchar_t *nvLanguage[52][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -66,6 +66,7 @@ const wchar_t *nvLanguage[51][2] =
 	{L"Longitude invalid format",L"Nieprawid³owy format (D³ugoœæ geograficzna)"},
 	{L"Latitude invalid format",L"Nieprawid³owy format (Szerokoœæ geograficzna)"},
 	{L"Symbol group",L"Grupa"},
+	{L"Filter",L"Filtr"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -546,10 +547,17 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 }
 
 
-wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel)
+wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel, bool all)
 {
+	int i = 0;
 	wxComboBox *ptr = new wxComboBox(Parent,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
-		
+	if(all)
+	{
+		ptr->Append(GetMsg(MSG_ALL));
+		ptr->SetClientData(0,(int*)-1);
+		i = 1;
+	}
+
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
 	if(!my_query(sql))
 		return ptr;
@@ -558,7 +566,6 @@ wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel)
 	void *result = db_result();
 	char **row;
 		
-	int i = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
 		wxString name(row[FID_NAME],wxConvUTF8);

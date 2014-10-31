@@ -96,6 +96,7 @@
 #define MSG_LONGITUDE_INVALID_VALUE 48
 #define MSG_LATITUDE_INVALID_VALUE	49
 #define MSG_SYMBOL_GROUP			50
+#define MSG_FILTER					51
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -175,6 +176,8 @@
 
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
+
+
 
 typedef struct Symbol
 {

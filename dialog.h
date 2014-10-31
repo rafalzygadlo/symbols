@@ -5,7 +5,10 @@
 #include "listctrl.h"
 #include <wx/listbook.h>
 #include <wx/fileconf.h>
+#include <wx/srchctrl.h>
+#include <wx/timer.h>
 #include "new.h"
+
 
 class CListCtrl;
 class CDialogPanel;
@@ -24,12 +27,13 @@ class CDialog : public wxDialog
 	void WriteConfig();
 
 
+
 public:
 	CDialog(int control_type, bool picker = false);
 	CDialog(int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
-	//wxString _GetName();
+	
 	
 };
 
@@ -52,6 +56,10 @@ class CDialogPanel: public wxPanel
 	CPicturePanel *m_PicturePanel;
 	int m_IsSlave;
 	wxWindow *m_Parent;
+	wxSearchCtrl *m_SearchText;
+	wxString m_SearchTextValue;
+	wxTimer *m_Ticker;
+	bool m_SearchTextChanged;
 				
 	void New();
 	void EditArea(int id);
@@ -66,11 +74,8 @@ class CDialogPanel: public wxPanel
 	void EditPicture(int id);
 	
 	void Read();
-	void ReadAll();
-	void ReadItems();
-	void ReadOthers();
-	void ReadSymbolItems();
-	void ReadPicture();
+	wxString ReadItems();
+	
 
 	void Clear();
 	void Select();
@@ -85,6 +90,10 @@ class CDialogPanel: public wxPanel
 	void SetSymbolItem(CNew *ptr,int id);
 
 	void OnListBox(wxCommandEvent &event);
+	void OnTickSearch(wxTimerEvent &event);
+	void OnSearchText(wxCommandEvent &event);
+	void OnSearchEnter(wxCommandEvent &event);
+
 
 	void ReadConfig();
 	void WriteConfig();
@@ -97,6 +106,15 @@ class CDialogPanel: public wxPanel
 	wxPanel *GetSymbolItemPanel(wxWindow *Parent);
 	wxPanel *GetPanelList(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);
+	wxPanel *GetSearchPanel(wxWindow *Parent);
+	wxPanel *GetSymbolFilterPanel(wxWindow *Parent);
+
+
+	void SetSearchText(const wchar_t *txt);
+	const wchar_t *GetSearchText();
+	bool GetSearchTextChanged();
+	void SetSearchTextChanged(bool value);
+	
 
 public:
 	
@@ -119,6 +137,8 @@ public:
 	enum
 	{
 		ID_FILTER = 6214,
+		ID_SEARCH,
+		ID_TICK_SEARCH,
 	};
 
 };
