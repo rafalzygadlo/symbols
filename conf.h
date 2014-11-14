@@ -17,6 +17,7 @@
 #define DB_USER "navi_vts"
 #define DB_PASSWORD "navi_vts"
 #define DB_DB "navi_vts"
+#define DB_PORT 3306
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32

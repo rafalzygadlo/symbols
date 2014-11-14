@@ -252,7 +252,7 @@ void CMapPlugin::SetButtonAction(int action)
 
 void CMapPlugin::Run(void *Params)
 {
-	if(!db_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_DB))
+	if(!db_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_DB,DB_PORT))
 	{
 		wxString str(db_error());
 		wxMessageBox(str);
