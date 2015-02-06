@@ -5,14 +5,13 @@
 #include <wx/dirdlg.h>
 #include "NaviMapIOApi.h"
 #include "tools.h"
-
+#include "db.h"
 
 BEGIN_EVENT_TABLE(CMyFrame,wxDialog)
 	EVT_BUTTON(ID_CLOSE,CMyFrame::OnCloseButton)
 //	EVT_BUTTON(ID_SAVE,CMyFrame::OnSaveButton)
 	EVT_TEXT(ID_NAME,CMyFrame::OnTextChanged)
 	EVT_TEXT(ID_DESCRIPTION,CMyFrame::OnTextChanged)
-	EVT_BUTTON(ID_DELETE,CMyFrame::OnMarkerDelete)
 	EVT_TEXT(ID_LON,CMyFrame::OnLon)
 	EVT_TEXT(ID_LAT,CMyFrame::OnLat)
 END_EVENT_TABLE()
@@ -21,48 +20,47 @@ extern CNaviMapIOApi *ThisPtr;
 extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
-
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize)
 {
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
-	AfterInit = false;
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
-	Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 				
 	// Page1
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
-		
-	GridSizer = new wxFlexGridSizer(2,0,0);	
+	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	
+	m_PicturePanel = new CPicturePanel(Panel);
+	PanelSizer->Add(m_PicturePanel,0,wxALL,5);
+	wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);	
 	PanelSizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
 	
-	// marker name
+	
 	wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labelname,0,wxALL,5);
-	textname = new wxTextCtrl(Panel,ID_NAME,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	m_TextName = new wxTextCtrl(Panel,ID_NAME,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	GridSizer->AddGrowableCol(1);
 	GridSizer->AddGrowableRow(1);
-	GridSizer->Add(textname,0,wxALL|wxEXPAND,5);
+	GridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	
 	// marker description
 	wxStaticText *labeldescription = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DESCRIPTION),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labeldescription,0,wxALL,5);
-	textdescription = new wxTextCtrl(Panel,ID_DESCRIPTION,wxEmptyString,wxDefaultPosition,wxSize(250,100),wxTE_MULTILINE);
-	GridSizer->Add(textdescription,0,wxALL|wxEXPAND,5);
+	m_TextInfo = new wxTextCtrl(Panel,ID_DESCRIPTION,wxEmptyString,wxDefaultPosition,wxSize(250,100),wxTE_MULTILINE);
+	GridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
 		
 	wxStaticText *labellat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labellat,0,wxALL,5);
 	
-	textlat = new wxTextCtrl(Panel,ID_LAT,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-	
-	GridSizer->Add(textlat,0,wxALL,5);
+	m_TextLat = new wxTextCtrl(Panel,ID_LAT,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+	GridSizer->Add(m_TextLat,0,wxALL,5);
 	
 	wxStaticText *labellon = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LONGITUDE) ,wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labellon,0,wxALL,5);
 
-	textlon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	GridSizer->Add(textlon,0,wxALL,5);
+	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	GridSizer->Add(m_TextLon,0,wxALL,5);
 			
 	Panel->SetSizer(PanelSizer);
 		
@@ -77,9 +75,6 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 		GetSizer()->SetSizeHints(this);
 		
 	Center();
-
-	//this->SetTransparent(200);
-	AfterInit = true;
 }
 
 CMyFrame::~CMyFrame(void)
@@ -141,50 +136,17 @@ void CMyFrame::OnLat(wxCommandEvent &event)
 	*/
 }
 
-void CMyFrame::ShowIconChanger(bool show)
-{
-	PanelIcon->Show(show);
-	if(GetSizer())
-		GetSizer()->SetSizeHints(this);
-
-}
 
 void CMyFrame::OnTextChanged(wxCommandEvent &event)
 {	
-	if(!AfterInit)
-		return;
-	
-	if(event.GetId() == ID_NAME)
-	{
-		if(textname->GetValue().Length() >= SYMBOL_NAME_SIZE)
-			ButtonClose->Disable();
-		else
-			ButtonClose->Enable();
-	}
-
-	if(event.GetId() == ID_DESCRIPTION)
-	{
-		if(textdescription->GetValue().Length() >= SYMBOL_DESCRIPTION_SIZE)
-			ButtonClose->Disable();
-		else
-			ButtonClose->Enable();
-	}
-	
 	
 	// ButtonSave->Enable();
 }
 
-void CMyFrame::OnMarkerDelete(wxCommandEvent &event)
-{
-	int sel = markerlistbox->GetSelection();
-	MarkerList->erase(MarkerList->begin() + sel);
-	markerlistbox->Delete(sel);
-}
-
 void CMyFrame::OnCloseButton(wxCommandEvent &event)
 {	
-	wcscpy_s(MarkerSelectedPtr->name,SYMBOL_NAME_SIZE, textname->GetValue().wc_str()); 
-	wcscpy_s(MarkerSelectedPtr->description, SYMBOL_DESCRIPTION_SIZE, textdescription->GetValue().wc_str()); 
+	//wcscpy_s(MarkerSelectedPtr->name,SYMBOL_NAME_SIZE, textname->GetValue().wc_str()); 
+	//wcscpy_s(MarkerSelectedPtr->description, SYMBOL_DESCRIPTION_SIZE, textdescription->GetValue().wc_str()); 
 	Hide();
 }
 
@@ -200,31 +162,56 @@ void CMyFrame::ShowWindow(bool show)
 {
 	if(show)
 	{
-		
 		ParentX = _ParentPtr->GetScreenPosition().x;
 		ParentY = _ParentPtr->GetScreenPosition().y;
 		
 		double to_x, to_y;
-		MarkerSelectedPtr = m_DLL->GetSelectedPtr();
-		if(MarkerSelectedPtr == NULL)
+		SelectedPtr = m_DLL->GetSelectedPtr();
+		if(SelectedPtr == NULL)
 			return;
 		
-		m_DLL->GetBroker()->Project(MarkerSelectedPtr->x,MarkerSelectedPtr->y,&to_x,&to_y);
-	
+		m_DLL->GetBroker()->Project(SelectedPtr->lon,SelectedPtr->lat,&to_x,&to_y);
 		double vm[4];
 		m_DLL->GetBroker()->GetVisibleMap(vm);
 		
 		float scale = m_DLL->GetBroker()->GetMapScale();
 		wxPoint pt;
-		pt.x = (int)((-vm[0] + MarkerSelectedPtr->x) * scale) + ParentX;
-		pt.y = (int)((-vm[1] + MarkerSelectedPtr->y) * scale) + ParentY;
+		pt.x = (int)((-vm[0] + SelectedPtr->lon) * scale) + ParentX;
+		pt.y = (int)((-vm[1] + SelectedPtr->lat) * scale) + ParentY;
 			
 		this->SetPosition(pt);
-		textname->SetValue(wxString::Format(_("%s"),MarkerSelectedPtr->name));
-		textdescription->SetValue(wxString::Format(_("%s"),MarkerSelectedPtr->description));
 		
-//		textlon->SetLabel(FormatLongitude(to_x));
-//		textlat->SetLabel(FormatLatitude(-to_y));
+		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->id);
+		my_query(sql);
+			
+		void *result = db_result();
+		
+		char **row = NULL;
+		if(result == NULL)
+			return;
+		
+		row = (char**)db_fetch_row(result);
+		m_TextName->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+		m_TextInfo->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_INFO]).wc_str()));
+		db_free_result(result);
+		
+		m_TextLon->SetLabel(FormatLongitude(to_x,DEFAULT_DEGREE_FORMAT));
+		m_TextLat->SetLabel(FormatLatitude(-to_y,DEFAULT_DEGREE_FORMAT));
+
+		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,SelectedPtr->id);
+		my_query(sql);
+			
+		result = db_result();
+		if(result == NULL)
+			return;
+		
+		row = (char**)db_fetch_row(result);
+		if(row == NULL)
+			return;
+		
+		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
+
+		db_free_result(result);
 	}
 	
 	Show(show);

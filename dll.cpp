@@ -3,10 +3,8 @@
 #include "frame.h"
 #include "tools.h"
 #include "positiondialog.h"
-#include "icon.h"
+#include "images/icon.h"
 #include "db.h"
-
-
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -39,12 +37,12 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolGroup = NULL;
 		
 	NewPtr = NULL;
-	PositionDialog = NULL;	
+	//PositionDialog = NULL;	
 	m_Broker = NaviBroker;
 	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
 	PointsPath = wxString::Format(wxT("%s%s%s"),GetWorkDir(),wxT(DIR_SEPARATOR),_(DATA_FILE));
 	
-	HotSpotX = HotSpotY = 0;
+	m_HotSpotX = m_HotSpotY = 0;
 	Angle = 0.0;
 	Factor = DEFAULT_FACTOR; 
 	MoveMarker = false;
@@ -62,28 +60,27 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	MapX = 0.0;
 	MapY = 0.0;
 	FirstRun = true;
-	ShowWindow = false;
-	DisplaySignal = new CDisplaySignal(NDS_MANAGER);
+	//m_ShowWindow = false;
+	DisplaySignal = new CDisplaySignal(NDS_SYMBOL);
 	SelectedPtr = HighlightedPtr = NULL;
 	DBLClick = false;
-	ShipList = new wxArrayPtrVoid();
-
-	Font = new nvFastFont();
-	Font->Assign( (nvFastFont*)NaviBroker->GetFont( 1 ) );		// 1 = nvAriali 
-	Font->SetEffect( nvEFFECT_SMOOTH );
-	Font->SetEffect( nvEFFECT_GLOW );
+	
+	//Font = new nvFastFont();
+	//Font->Assign( (nvFastFont*)NaviBroker->GetFont( 1 ) );		// 1 = nvAriali 
+	//Font->SetEffect( nvEFFECT_SMOOTH );
+	//Font->SetEffect( nvEFFECT_GLOW );
     
-	Font->SetGlyphColor(1.0f, 0.0f, 0.0f);
+	//Font->SetGlyphColor(1.0f, 0.0f, 0.0f);
 	//Font->SetGlyphCenter(0.0001f);
     //Font->SetGlyphOffset( 0.5f );
 
-	Font->SetGlowColor(0.8f, 0.8f, 0.8f );
-	Font->SetGlowCenter( 4.0f );
+	//Font->SetGlowColor(0.8f, 0.8f, 0.8f );
+	//Font->SetGlowCenter( 4.0f );
 		
 	AddExecuteFunction("manager_GetThisPtr",GetThisPtrFunc);
 	AddExecuteFunction("manager_SetSelShip",SetSelectedShipFunc);
 		
-	MyFrame = NULL;
+	m_Frame = NULL;
 	FromLMB = false;
 	
 
@@ -100,13 +97,21 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolGroup;
 
 	delete m_FileConfig;
-	delete MyFrame;
+	delete m_Frame;
 	delete DisplaySignal;
-	delete ShipList;
-	if(PositionDialog != NULL)
-		delete PositionDialog;
+	
+	//if(PositionDialog != NULL)
+		//delete PositionDialog;
 
-	delete Font;
+	//delete Font;
+
+	for(size_t i = 0; i < m_SymbolList.Length(); i++)
+	{
+		free(m_SymbolList.Get(i));	
+	}
+	
+	m_SymbolList.Clear();
+	db_close();
 }
 
 void CMapPlugin::SetUID(int uid)
@@ -155,12 +160,7 @@ int CMapPlugin::GetDisplaySignal()
 
 void CMapPlugin::OnInitGL()
 {
-	Font->InitGL();
-}
-
-wxArrayPtrVoid *CMapPlugin::GetShipList()
-{
-	return ShipList;
+	//Font->InitGL();
 }
 
 void CMapPlugin::SetSmoothScaleFactor(double _Scale) 
@@ -177,16 +177,27 @@ void CMapPlugin::Read()
 	my_query(sql);
 	void *result = db_result();
 		
-	SSymbol *buffer = (SSymbol*)malloc(sizeof(SSymbol));
-	memset(buffer,0,sizeof(SSymbol));
-	
-	Add(buffer->x,buffer->y,buffer->name,buffer->description);
-	NewPtr = NULL;
-	free(buffer);
+    char **row = NULL;
+	if(result == NULL)
+		return;
 		
-	SendInsertSignal();
-}
+	while(row = (char**)db_fetch_row(result))
+	{
+		SSymbol *ptr = (SSymbol*)malloc(sizeof(SSymbol));
+		fprintf(stderr,"%s\n",row[FID_SYMBOL_LON]);
+		sscanf(row[FID_SYMBOL_ID],"%d",&ptr->id);
+		sscanf(row[FID_SYMBOL_LON],"%lf",&ptr->lon);
+		sscanf(row[FID_SYMBOL_LAT],"%lf",&ptr->lat);
+		double to_x,to_y;
+		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
+		ptr->lon = to_x;
+		ptr->lat = -to_y;
+		m_SymbolList.Append(ptr);
+	}
+	
+	db_free_result(result);
 
+}
 
 bool CMapPlugin::ShipIsSelected(SSymbol *ship)
 {
@@ -199,15 +210,6 @@ bool CMapPlugin::ShipIsSelected(SSymbol *ship)
 
 void CMapPlugin::WriteConfig()
 {
-		
-	if(_file.Open(PointsPath,wxFile::write))
-	{
-				
-		for(unsigned int i = 0; i < ShipList->size();i++)
-			_file.Write(ShipList->Item(i),sizeof(SSymbol));
-
-		_file.Close();
-	}
 	
 }
 
@@ -257,16 +259,7 @@ void CMapPlugin::Run(void *Params)
 		wxString str(db_error());
 		wxMessageBox(str);
 	}	
-
-	//FILE *File;
-    //if (wxFileExists(GetLog))
-      //  File = fopen(path.char_str(),"a");
-    //else
-      //  File = fopen(path.char_str(),"w");
-	//wxLogStderr *LogFile = new wxLogStderr(File);
-    //wxLog *Log = new wxLog();
-    //Log->SetActiveTarget(LogFile);
-
+	
 	Read();
 	CreateApiMenu(); // jezyki
 	// refresh dla wywolania renderu zeby skreowac ikony
@@ -277,13 +270,7 @@ void CMapPlugin::Kill(void)
 {
 	NeedExit = true;
 	WriteConfig();
-
-	for(size_t i = 0; i < ShipList->size(); i++)
-		free(ShipList->Item(i));
-
-	ShipList->Clear();
-	
-};
+}
 
 bool CMapPlugin::GetNeedExit(void) 
 {
@@ -299,7 +286,6 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
 	// move marker RMB need this
 	// . . . . . . . . . . . . . . . . . . . . 
-	return;
 	if(FirstTime)
 		return;
 		
@@ -322,7 +308,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	bool add = false;
 	SSymbol *ptr = NULL;
 	
-	if(ptr = SetMarker(MapX,MapY))
+	if(ptr = SetSelection(MapX,MapY))
 	{
 		add = true;
 		((wxWindow*)m_Broker->GetParentPtr())->SetCursor(wxCURSOR_HAND);
@@ -356,18 +342,19 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	
 }
 
-SSymbol *CMapPlugin::SetMarker(double x, double y)
-{
 
-	for(size_t i = 0; i < ShipList->size(); i++)
+SSymbol *CMapPlugin::SetSelection(double x, double y)
+{
+	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
-		SSymbol *Ship = (SSymbol*)ShipList->Item(i);
-		if(IsPointInsideBox(MapX, MapY, Ship->x - (RectWidth/2) + TranslationX, Ship->y - (RectHeight/2) + TranslationY, Ship->x + (RectWidth/2) + TranslationX , Ship->y + (RectHeight/2) + TranslationY))
-			return Ship;
+		SSymbol *ptr = m_SymbolList.Get(i);
+		if(IsPointInsideBox(MapX, MapY, ptr->lon - (RectWidth/2) + TranslationX, ptr->lat - (RectHeight/2) + TranslationY, ptr->lon + (RectWidth/2) + TranslationX , ptr->lat + (RectHeight/2) + TranslationY))
+			return ptr;
 	}
 	
 	return NULL;
 }
+
 
 void CMapPlugin::ShowPopupMenu(bool show)
 {
@@ -381,14 +368,14 @@ void CMapPlugin::ShowPopupMenu(bool show)
 
 void CMapPlugin::ShowFrameWindow(bool show)
 {
-	if(MyFrame == NULL)
-		MyFrame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
-	MyFrame->ShowWindow(show);
+	if(m_Frame == NULL)
+		m_Frame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
+	m_Frame->ShowWindow(show);
 }
 
 void CMapPlugin::MouseDBLClick(int x, int y)
 {
-	if(SetMarker(MapX,MapY))
+	if(SetSelection(MapX,MapY))
 		ShowFrameWindow(true);
 	else
 		ShowFrameWindow(false);
@@ -598,37 +585,16 @@ void CMapPlugin::Append()
 {
 	SSymbol *Marker = (SSymbol*)malloc(sizeof(SSymbol));
 	memcpy(Marker,NewPtr,sizeof(SSymbol));
-	ShipList->Add(Marker);
+	//ShipList->Add(Marker);
 	free(NewPtr);
 	NewPtr = NULL;
 	SendInsertSignal();
 }
 
-void CMapPlugin::Add(double x, double y, wchar_t *name, wchar_t *description,  bool _new)
-{
-		
-	SSymbol *Points = (SSymbol*)malloc(sizeof(SSymbol));
-	memset(Points,0,sizeof(SSymbol));
-	Points->x = x;
-	Points->y = y;
-			
-	if(_new)
-		NewPtr = Points;		
-		
-	if(name != NULL)
-		wcscpy_s(Points->name,SYMBOL_NAME_SIZE, name);
-	
-	if(description != NULL)
-		wcscpy_s(Points->description,SYMBOL_DESCRIPTION_SIZE,description);
-			
-	if(!_new)
-		ShipList->Add(Points);
-
-}
 
 void CMapPlugin::SetPosition(double x, double y)
 {
-		
+/*		
 	if(PositionDialog == NULL)
 		PositionDialog = new CPositionDialog(this);
 	
@@ -642,7 +608,7 @@ void CMapPlugin::SetPosition(double x, double y)
 	
 	PositionDialog->_SetPosition(to_x,to_y * -1);
 	m_Broker->Refresh(m_Broker->GetParentPtr());
-
+*/
 }
 
 SSymbol *CMapPlugin::GetNewMarkerPtr()
@@ -652,7 +618,7 @@ SSymbol *CMapPlugin::GetNewMarkerPtr()
 
 void CMapPlugin::New()
 {
-		
+	/*	
 	wchar_t text[255];
 	wsprintf(text,L"%s%d",GetMsg(MSG_MANAGER),ShipList->size());
 	
@@ -668,6 +634,7 @@ void CMapPlugin::New()
 	SetPosition(CenterX,CenterY);
 	PositionDialog->Show();
 	m_Broker->Refresh(m_Broker->GetParentPtr());
+	*/
 	
 }
 
@@ -694,32 +661,14 @@ void CMapPlugin::AddField(wchar_t *name, wchar_t *value, SSymbol *Marker )
 	
 }
 
-void CMapPlugin::Delete()
-{
-
-	for(size_t i = 0; i < ShipList->size(); i ++)
-	{
-		SSymbol *Marker = (SSymbol*)ShipList->Item(i);
-		if(SelectedPtr == Marker)
-		{
-			ShipList->Remove(Marker);
-			SelectedPtr = NULL;
-			SendInsertSignal();
-			return;
-		}
-		
-	}
-	
-}
-
 void CMapPlugin::Move()
 {
 	if(SelectedPtr == NULL)
 		return;
 	
-	SelectedPtr->x = MapX;
-	SelectedPtr->y = MapY;
-	GetBroker()->Refresh(GetBroker()->GetParentPtr());
+	//SelectedPtr->x = MapX;
+	//SelectedPtr->y = MapY;
+	//GetBroker()->Refresh(GetBroker()->GetParentPtr());
 	
 
 }
@@ -751,19 +700,19 @@ void CMapPlugin::SetValues()
 		
 	InfoHeight = INFO_HEIGHT/SmoothScaleFactor;
 	InfoWidth = INFO_WIDTH/SmoothScaleFactor;
-	HotSpotX = (RECT_WIDTH/2)/SmoothScaleFactor;
-	HotSpotY = (RECT_HEIGHT/2)/SmoothScaleFactor;
+	m_HotSpotX = (RECT_WIDTH/2)/SmoothScaleFactor;
+	m_HotSpotY = (RECT_HEIGHT/2)/SmoothScaleFactor;
 	InfoMargin = INFO_MARGIN/SmoothScaleFactor;
 
 	m_Broker->GetVisibleMap(VisibleMap);
 	
 }
 
-void CMapPlugin::	RenderSelected()
+void CMapPlugin::RenderSelected()
 {
 	double x,y;
-	x = SelectedPtr->x; 
-	y = SelectedPtr->y;
+	x = SelectedPtr->lon; 
+	y = SelectedPtr->lat;
 	
 	glPushMatrix();
 	
@@ -781,12 +730,12 @@ void CMapPlugin::	RenderSelected()
 		
 }
 
-void CMapPlugin::	RenderHighlighted()
+void CMapPlugin::RenderHighlighted()
 {
 			
 	double x,y;
-	x = HighlightedPtr->x; 
-	y = HighlightedPtr->y;
+	x = HighlightedPtr->lon; 
+	y = HighlightedPtr->lat;
 	
 	glPushMatrix();
 	
@@ -812,7 +761,7 @@ void CMapPlugin::RenderNew()
 	
 	glPushMatrix();
 	glColor3f(1.0f,0.0f,0.0f);	
-	glTranslatef(NewPtr->x,NewPtr->y,0.0f);
+	glTranslatef(NewPtr->lon,NewPtr->lat,0.0f);
 	glBindTexture( GL_TEXTURE_2D, TextureID_0 );
 	glBegin(GL_QUADS);
 		glTexCoord2f(1.0f,1.0f); glVertex2f(  RectWidth/2 + TranslationX,  -RectHeight/2 + TranslationY);	
@@ -829,13 +778,13 @@ void CMapPlugin::RenderMarkers()
 {
 	
 	glEnable(GL_TEXTURE_2D);
-	for(size_t i = 0; i < ShipList->size(); i++)
+	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
-		SSymbol *Marker = (SSymbol*)ShipList->Item(i);
+		SSymbol *ptr = m_SymbolList.Get(i);
 		glColor4f(1.0f,1.0f,1.0f,0.6f);
 		glPushMatrix();
 		
-		glTranslatef(Marker->x,Marker->y,0.0f);
+		glTranslatef(ptr->lon,ptr->lat,0.0f);
 		//glTranslatef(0.0f,-TranslationX,0.0f);
 		glRotatef(-Angle,0.0f,0.0f,1.0f);
 		glBindTexture( GL_TEXTURE_2D, TextureID_0);
@@ -885,7 +834,7 @@ void CMapPlugin::RenderTest()
 void CMapPlugin::Render(void)
 {
 	glEnable(GL_BLEND);
-	Font->Clear();
+	//Font->Clear();
 	
 	MapScale = m_Broker->GetMapScale();
 	Angle = GetBroker()->GetAngle();
@@ -909,9 +858,9 @@ void CMapPlugin::Render(void)
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
-	Font->ClearBuffers();
-	Font->CreateBuffers();
-	Font->Render();
+	//Font->ClearBuffers();
+	//Font->CreateBuffers();
+	//Font->Render();
 	glDisable(GL_BLEND);
 	
 }

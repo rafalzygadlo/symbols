@@ -449,6 +449,113 @@ bool _SetLonSec(char *text, double *val)
 		
 }
 
+bool my_query(wxString sql)
+{
+
+#ifdef DEBUG_SQL
+	wxMessageBox (sql);
+#endif
+	
+	if(db_query(sql.mb_str(wxConvUTF8))  != 0)
+	{
+#ifdef WIN32
+		wxLogError(db_error());
+#endif
+#ifdef linux
+		syslog(LOG_LOCAL0,db_error());
+#endif
+		return false;
+	}
+	
+	return true;
+}
+
+// taki ma³y wraper ¿eby nie pisaæ ci¹gle tego samego
+bool my_query(const char *sql, unsigned long length)
+{
+
+#ifdef DEBUG_SQL
+	wxMessageBox (sql);
+#endif
+	
+	if(db_query( sql, length)  != 0)
+	{
+#ifdef WIN32
+		wxLogError(db_error());
+#endif
+		return false;
+	}
+
+	return true;
+}
+
+
+void db_history(int uid, const char *module, const char *action )
+{
+
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE name='%s_%s'"),TABLE_RIGHT,module,action);
+	my_query(sql);
+
+	void *result = db_result();
+	char **row = (char**)db_fetch_row(result);
+	
+	sql = wxString::Format(_("INSERT INTO `%s` SET id_user='%d', id_right='%s'"),TABLE_HISTORY, uid, row[FI_RIGHT_ID]);
+	my_query(sql);
+		
+
+	db_free_result(result);
+
+}
+
+//uprawnienia
+bool db_check_right(const char *module, const char *action, int uid)
+{
+	// czy wbudowany user
+	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE built_in = '1' AND id = '%d'"),TABLE_USER,uid);
+	if(!my_query(query))
+		return false;
+
+	void *result = db_result();
+	int count = db_num_rows(result);
+	db_free_result(result);
+	if(count == 1)
+		return true;
+
+	query = wxString::Format(_("SELECT * FROM `%s` WHERE name = '%s_%s'"),TABLE_RIGHT,module,action);
+	if(!my_query(query))
+		return false;
+
+	result = db_result();
+	count = db_num_rows(result);
+
+	if(count == 0)
+	{
+		db_free_result(result);
+		wxString query = wxString::Format(_("INSERT INTO `%s` SET name = '%s_%s'"),TABLE_RIGHT,module,action);
+		my_query(query);
+		return false;
+		// nie ma rekordu z uprawnieniem
+	}
+	
+	char **row  = (char**)db_fetch_row(result);
+	query = wxString::Format(_("SELECT * FROM `%s`, `%s` WHERE %s.id_group = %s.id_group AND %s.id_user = '%d' AND %s.id_right='%s'"),TABLE_USER_TO_GROUP, TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,uid,TABLE_USER_GROUP_RIGHT,row[FI_RIGHT_ID]);	
+	db_free_result(result);
+	
+	if(!my_query(query))
+		return false;
+
+	result = db_result();
+	count = db_num_rows(result);
+	db_free_result(result);
+	
+	bool res = false;
+	if(count > 0)
+		res = true;
+	
+	return res;
+}
+
+
 
 int _GetUID()
 {

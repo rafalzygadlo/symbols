@@ -1,6 +1,7 @@
 #include "html.h"
+#include "conf.h"
+#include "tools.h"
 #include "db.h"
-
 
 wxString GetHtmlHeader()
 {

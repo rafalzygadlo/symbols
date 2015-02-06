@@ -9,6 +9,7 @@
 #include "tools.h"
 #include "light.h"
 #include "GeometryTools.h"
+#include "conf.h"
 
 BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_ITEM_TYPE,OnComboItem)

@@ -38,5 +38,10 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
 wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel, bool all = false);
 
 const wchar_t *GetDegreeFormat(int id, int dir);
+void db_history(int uid, const char *module, const char *action );
+bool db_check_right(const char *module, const char *action, int uid);
+bool my_query(wxString sql);
+bool my_query(const char *sql, unsigned long length);
+
 #endif
 

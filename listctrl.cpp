@@ -7,8 +7,7 @@
 #include "images/checkbox01.img"
 #include "images/checkbox02.img"
 #include "db.h"
-#include "db_actions.h"
-#include "db_right.h"
+//#include "db_actions.h"
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 

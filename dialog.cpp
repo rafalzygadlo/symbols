@@ -10,6 +10,7 @@
 #include <wx/statline.h>
 #include "wx/laywin.h"
 #include "light.h"
+#include "conf.h"
 
 SHeader Header[] =
 {
@@ -401,7 +402,6 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	
 	m_PicturePanel = new CPicturePanel(Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
-		
 	
 	return Panel;
 }
@@ -952,7 +952,7 @@ void CDialogPanel::UpdatePicture(wxImage image,int id)
 	char *chunk = (char*)malloc(st->GetBufferSize() * 2);
 	int data_size = db_escape_string( chunk, (const char*)st->GetBufferStart(), st->GetBufferSize());
 	int table_len = strlen(TABLE_PICTURE);
-	int new_sql_size = strlen(sql) + table_len + data_size;
+	int new_sql_size = (strlen(sql) + table_len + data_size)*2;
 	char *new_sql = (char*)malloc(new_sql_size);
 	memset(new_sql,0,new_sql_size);
 		

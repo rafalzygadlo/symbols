@@ -13,31 +13,26 @@ class CMyIcon;
 class CMyFrame: public wxDialog
 {
 	CMapPlugin *m_DLL;	
-	SSymbol *MarkerSelectedPtr;
-	wxTextCtrl *textname;
-	std::vector<SSymbol> *MarkerList;
-	wxListBox *markerlistbox;
-	wxFlexGridSizer *GridSizer;
-	wxPanel *Panel;
-	wxBoxSizer *AddFieldSizer;
-	wxTextCtrl *Value;
-	wxTextCtrl *textdescription;
+	SSymbol *SelectedPtr;
+	wxTextCtrl *m_TextName;
+	wxPanel *m_Panel;
+	wxTextCtrl *m_TextInfo;
+	CPicturePanel *m_PicturePanel;
+	
 	wxButton *ButtonClose;
-	wxPanel *PanelIcon;
-	CMyIcon *MarkerIcon;
-	wxTextCtrl *textlon;
-	wxTextCtrl *textlat;
+	//wxPanel *PanelIcon;
+	//CMyIcon *MarkerIcon;
+	wxTextCtrl *m_TextLon;
+	wxTextCtrl *m_TextLat;
 	int ParentX, ParentY;
 	wxWindow *_ParentPtr;
 
-	bool AfterInit;
-	void AddIconControls();
+	//bool AfterInit;
+	//void AddIconControls();
 	
 	void OnCloseButton(wxCommandEvent &event);
 	//void OnSaveButton(wxCommandEvent &event);
 	void OnClose(wxCloseEvent &event);
-	void OnMarkerList(wxCommandEvent &event);
-	void OnMarkerDelete(wxCommandEvent &event);
 	void OnTextChanged(wxCommandEvent &event);
 	void OnLeftClick(wxCommandEvent &event);
 	void OnPaint(wxPaintEvent &event);
@@ -48,7 +43,7 @@ class CMyFrame: public wxDialog
 public:
 
 	void ShowIconChanger(bool show);
-	void SetMarkerIcon(int id);
+	//void SetMarkerIcon(int id);
 	void ShowWindow(bool show);		
 	CMyFrame(void *Parent, wxWindow *ParentPtr);
 	~CMyFrame();

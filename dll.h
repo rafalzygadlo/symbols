@@ -29,17 +29,12 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Picture;
 	CDialog *m_SymbolGroup;
 
-	double CenterX, CenterY;
-	wxArrayPtrVoid TextureList;
-	CPositionDialog *PositionDialog;
-	CMyFrame *MyFrame;
-	bool ShowWindow;
-	double HotSpotX;
-	double HotSpotY;
-	//int SelectedTextureID;
-	//int SelectedIconID;
+	double m_CenterX, m_CenterY;
+	CMyFrame *m_Frame;
+	double m_HotSpotX;
+	double m_HotSpotY;
+	
 	SSymbol *NewPtr;
-	wxFile _file;
 	float Angle;
 	double Factor;
 	bool MoveMarker;
@@ -79,7 +74,7 @@ class CMapPlugin :public CNaviMapIOApi
 	nvFastFont *Font;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
-	wxArrayPtrVoid *ShipList;
+	CNaviArray <SSymbol*> m_SymbolList;
 
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateApiMenu(void);
@@ -123,7 +118,7 @@ class CMapPlugin :public CNaviMapIOApi
 	int Count();
 	SSymbol *Get(int id);
 	double Distance();
-	SSymbol* SetMarker(double x, double y);
+	SSymbol *SetSelection(double x, double y);
 	void SetPosition(double x, double y);
 	void RenderNew();
 	void RenderTest();
@@ -174,8 +169,7 @@ public:
 	void Remove();
 	bool ShipIsSelected(SSymbol *ship);
 	int GetDisplaySignal();
-	wxArrayPtrVoid *GetShipList();
-
+	
 	virtual void Run(void *Params); 
 	virtual void Kill(void);
 	virtual void Render(void);

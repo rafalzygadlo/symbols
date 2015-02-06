@@ -20,7 +20,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	Selected = NULL;
 	MapPlugin = NULL;
 	Broker = NULL;
-	SetDisplayID(NDS_MANAGER);
+	SetDisplayID(NDS_SYMBOL);
 	ControlName = Parent->GetLabel();
 	ReadConfig();
 	ShowControls();
@@ -170,7 +170,7 @@ bool CDisplayPlugin::IsValidSignal(CDisplaySignal *SignalID)
 	}
 
 	
-	if(SignalID->GetSignalID() == NDS_MANAGER)
+	if(SignalID->GetSignalID() == NDS_SYMBOL)
 	{
 		MapPlugin = (CMapPlugin*)SignalID->GetData();
 		//fprintf(stdout,"B: %p\n",MapPlugin);
@@ -234,8 +234,8 @@ void CDisplayPlugin::ShowInfoPanel(bool show, SSymbol *ship)
 	{
 		//ShipName->SetLabel(ship->name);
 		//ShipDesc->SetValue(ship->description);
-		double to_x,to_y;
-		MapPlugin->GetBroker()->Project(ship->x,ship->y,&to_x,&to_y);
+		//double to_x,to_y;
+		//MapPlugin->GetBroker()->Project(ship->x,ship->y,&to_x,&to_y);
 		//Lon->SetLabel(FormatLongitude(to_x));
 		//Lat->SetLabel(FormatLatitude(-to_y));
 	}
@@ -348,7 +348,7 @@ const wchar_t *NaviDisplayIntroduce(int LanguageID)
 
 const int NaviDisplayID()
 {
-	return NDS_MANAGER;
+	return NDS_SYMBOL;
 }
 
 CNaviDiaplayApi *CreateDisplayInstance(wxWindow *Parent, wxWindowID WindowID,int LangID) 
