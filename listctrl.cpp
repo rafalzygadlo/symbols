@@ -25,11 +25,12 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 END_EVENT_TABLE()
 
 
-CListCtrl::CListCtrl( wxWindow *Parent, int style )
+CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
 :wxListCtrl( Parent, ID_LIST, wxDefaultPosition, wxDefaultSize, style )
 {
 	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 	//SetDoubleBuffered(true);
+	m_DB = db;
 	m_ThisPtr = this;
 	m_FieldCount = 0;
 	m_SelectedItem = -1;
@@ -128,12 +129,12 @@ void CListCtrl::Select()
 
 void CListCtrl::Read(wxString query)
 {
-	if(!my_query(query))
+	if(!my_query(m_DB,query))
 		return;
 	
-	m_FieldCount = db_field_count();
+	m_FieldCount = db_field_count(m_DB);
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 		
 
@@ -180,6 +181,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
 		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);			break;
 		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);		break;
+		case CONTROL_BASE_STATION:	_Menu = Menu(m_SelectedItem,MODULE_BASE_STATION);		break;
 	}
 	
 	if(_Menu)
@@ -195,17 +197,17 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 	wxMenu *Menu = new wxMenu();
 	
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+	if(!db_check_right(m_DB,module ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(ID_NEW)->Enable(false);
 			
 	if(id > -1)
 	{
 		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_EDIT,_GetUID()))
 			Menu->FindItem(ID_EDIT)->Enable(false);
 		
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
 		
 	}
@@ -219,22 +221,22 @@ wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 	wxMenu *Menu = new wxMenu();
 	
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+	if(!db_check_right(m_DB,module ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(ID_NEW)->Enable(false);
 			
 	if(id > -1)
 	{
 		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_EDIT,_GetUID()))
 			Menu->FindItem(ID_EDIT)->Enable(false);
 		
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
 		
 		Menu->AppendSeparator();
 		Menu->Append(ID_PROPERTIES,GetMsg(MSG_PROPERTIES));
-		if(!db_check_right(module,ACTION_PROPERTIES,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_PROPERTIES,_GetUID()))
 			Menu->FindItem(ID_PROPERTIES)->Enable(false);
 	}
 		
@@ -247,13 +249,13 @@ wxMenu *CListCtrl::MenuSymbolItem(int id, const char *module)
 	wxMenu *Menu = new wxMenu();
 	
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+	if(!db_check_right(m_DB,module ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(ID_NEW)->Enable(false);
 			
 	if(id > -1)
 	{
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+		if(!db_check_right(m_DB,module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
 		
 	}

@@ -13,9 +13,10 @@ extern unsigned char add[];
 extern unsigned int	del_size;
 extern unsigned char del[]; 
 
-CItemPanel::CItemPanel(wxWindow *top, wxWindow *parent)
+CItemPanel::CItemPanel(void *db,wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+	m_DB = db;
 	m_Top = top;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 		
@@ -44,18 +45,18 @@ void CItemPanel::_Layout()
 
 void CItemPanel::Read(wxString query)
 {
-	if(!my_query(query))
+	if(!my_query(m_DB,query))
 		return;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 	
 	while(row = (char**)db_fetch_row(result))
 	{
 		wxString str(row[0],wxConvUTF8);
 		wxString name(row[1],wxConvUTF8);
-		CItem *Item = new CItem(this,name);
+		CItem *Item = new CItem(m_DB,this,name);
 		Item->_SetId(str);
 		m_Items.Add(Item);
 	}
@@ -77,9 +78,9 @@ size_t CItemPanel::GetCount()
 void CItemPanel::AppendCombo(int item_id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id='%d'"),TABLE_ITEM,item_id);
-	my_query(sql);
+	my_query(m_DB,sql);
 	
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row =  (char**)db_fetch_row(result);
 	
 	int id_type = atoi(row[FI_ITEM_ID_TYPE]);
@@ -104,9 +105,10 @@ BEGIN_EVENT_TABLE(CItem, wxPanel)
 	EVT_BUTTON(ID_NEW,CItem::OnNew)
 END_EVENT_TABLE()
 
-CItem::CItem(CItemPanel *parent,wxString name)
+CItem::CItem(void *db,CItemPanel *parent,wxString name)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
 {
+	m_DB = db;
 	m_Counter = 1;
 	m_ItemPanel = parent;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -132,7 +134,7 @@ CItem::~CItem()
 
 CComboPanel *CItem::AppendCombo()
 {
-	CComboPanel *ComboPanel = new CComboPanel(this,m_Id);
+	CComboPanel *ComboPanel = new CComboPanel(m_DB,this,m_Id);
 	this->GetSizer()->Add(ComboPanel,0,wxALL|wxEXPAND,1);
 	
 	m_ItemPanel->_Layout();
@@ -186,11 +188,11 @@ BEGIN_EVENT_TABLE(CComboPanel, wxPanel)
 	EVT_BUTTON(ID_DELETE,CComboPanel::OnDelete)
 END_EVENT_TABLE()
 
-CComboPanel::CComboPanel(CItem *parent, wxString id)
+CComboPanel::CComboPanel(void *db, CItem *parent, wxString id)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
 {
 	m_Parent = parent;
-	
+	m_DB = db;
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	this->SetSizer(PanelSizer);
 			
@@ -215,11 +217,11 @@ void CComboPanel::OnDelete(wxCommandEvent &event)
 
 void CComboPanel::Read(wxString query)
 {
-	if(!my_query(query))
+	if(!my_query(m_DB,query))
 		return;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 	int counter = 0;
 	while(row = (char**)db_fetch_row(result))

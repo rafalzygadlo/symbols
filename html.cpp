@@ -26,16 +26,16 @@ wxString PrintSymbol(int id)
 	wxString str;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,id);
 	
-	my_query(sql);
+//	my_query(sql);
 	
-	void *result = db_result();
-	char **row;
+//	void *result = db_result();
+//	char **row;
 
-	while(row = (char**)db_fetch_row(result))
-	{
+//	while(row = (char**)db_fetch_row(result))
+//	{
 	
 	
-	}
+//	}
 	
 	return str;
 }

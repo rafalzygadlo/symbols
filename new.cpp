@@ -19,9 +19,10 @@ BEGIN_EVENT_TABLE(CNew,wxDialog)
 END_EVENT_TABLE()
 
 
-CNew::CNew(int type, int id_type, int item_id, bool edit)
+CNew::CNew(void *db,int type, int id_type, int item_id, bool edit)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
 {
+	m_DB = db;
 	m_DegreeFormat = DEFAULT_DEGREE_FORMAT;
 	m_LonValid = m_LatValid = false;
 	m_PictureId = -1;
@@ -54,12 +55,13 @@ void CNew::GetPanel(int type)
 {
 	switch(type)
 	{
-		case CONTROL_ITEM:			EditItemPanel();	break;
-		case CONTROL_PICTURE:		EditPicturePanel();	break;
-		case CONTROL_SYMBOL:		EditSymbolPanel();	break;
+		case CONTROL_ITEM:			EditItemPanel();		break;
+		case CONTROL_PICTURE:		EditPicturePanel();		break;
+		case CONTROL_SYMBOL:		EditSymbolPanel();		break;
+		case CONTROL_BASE_STATION:	EditBaseStationPanel(); break;
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:	EditNamePanel();	break;
+		case CONTROL_SYMBOL_TYPE:	EditNamePanel();		break;
 		
 
 	}
@@ -68,11 +70,11 @@ void CNew::GetPanel(int type)
 void CNew::GetItemFeaturePanel(wxWindow *Parent)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE %s.id_type = '%d' AND `%s`.id = `%s`.id_feature ORDER BY name"),TABLE_ITEM_FEATURE, TABLE_ITEM_TYPE_FEATURE ,TABLE_ITEM_TYPE_FEATURE, m_IDType,TABLE_ITEM_FEATURE, TABLE_ITEM_TYPE_FEATURE );
-	if(!my_query(sql))
+	if(!my_query(m_DB,sql))
 		return;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 		
 	int i = 0;
@@ -95,9 +97,9 @@ void CNew::GetItemFeaturePanel(wxWindow *Parent)
 	{
 		wxTextCtrl *txt = (wxTextCtrl*)m_IDs.Item(i);
 		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_item = '%d' AND id_feature = '%d'"),TABLE_ITEM_VALUE,m_ItemID,(int)txt->GetClientData());
-		my_query(sql);
+		my_query(m_DB,sql);
 
-		void *result = db_result();
+		void *result = db_result(m_DB);
 		char **row = (char**)db_fetch_row(result);
 		
 		if(row)
@@ -114,11 +116,11 @@ wxComboBox *CNew::GetComboItemType(wxWindow *Parent)
 {
 	wxComboBox *ptr = new wxComboBox(Parent,ID_ITEM_TYPE,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
-	if(!my_query(sql))
+	if(!my_query(m_DB,sql))
 		return ptr;
 		
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 	bool selected = false;
 
@@ -160,7 +162,7 @@ wxPanel *CNew::GetItemPanel(wxWindow *Parent)
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
 
-	m_ItemPanel  = new CItemPanel(Panel,Scroll);
+	m_ItemPanel  = new CItemPanel(m_DB,Panel,Scroll);
 	ScrollSizer->Add(m_ItemPanel,1,wxALL|wxEXPAND,0);
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	
@@ -173,7 +175,7 @@ wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent);
 	Panel->SetSizer(Sizer);
 
-	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_PICKER);
+	m_PicturePanel = new CPicturePanel(m_DB,Panel,PICTURE_PANEL_PICKER);
 	m_PicturePanel->SetPictureId(m_PictureId);
 	Sizer->Add(m_PicturePanel,1,wxALL|wxEXPAND,5);
 
@@ -202,7 +204,7 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
 	
-	m_LightPanel = new CLightPanel(Panel,Scroll);
+	m_LightPanel = new CLightPanel(m_DB,Panel,Scroll);
 	ScrollSizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	
@@ -228,22 +230,28 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 		
+	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
+	FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID);
+	//m_BaseStationCombo->SetSelection(0);
+	FlexGridSizer->Add(m_BaseStationCombo,0,wxALL|wxEXPAND,5);
+
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_AreaCombo = GetCombo(Panel,TABLE_AREA,m_AreaID);
-	m_AreaCombo->SetSelection(0);
+	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID);
+	//m_AreaCombo->SetSelection(0);
 	FlexGridSizer->Add(m_AreaCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_SeawayCombo = GetCombo(Panel,TABLE_SEAWAY,m_SeawayID);
-	m_SeawayCombo->SetSelection(0);
+	m_SeawayCombo = GetCombo(m_DB,Panel,TABLE_SEAWAY,m_SeawayID);
+	//m_SeawayCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SeawayCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_SymbolTypeCombo = GetCombo(Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
-	m_SymbolTypeCombo->SetSelection(0);
+	m_SymbolTypeCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
+	//m_SymbolTypeCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 		
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
@@ -471,6 +479,68 @@ void CNew::EditSymbolPanel()
 	
 }
 
+void CNew::EditBaseStationPanel()
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+	
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);	
+	
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
+	m_TextName->SetValue(m_Name);
+	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
+	m_TextName->SetValidator(m_TextValidator);
+	
+	wxStaticText *LabelHost = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_HOST));
+	FlexGridSizer->Add(LabelHost,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextHost = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextHost->SetValue(m_Host);
+	FlexGridSizer->Add(m_TextHost,0,wxALL|wxEXPAND,5);
+	m_TextHost->SetValidator(m_TextValidator);
+
+	wxStaticText *LabelPort = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_PORT));
+	FlexGridSizer->Add(LabelPort,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextPort = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextPort->SetValue(m_Port);
+	FlexGridSizer->Add(m_TextPort,0,wxALL,5);
+	m_TextHost->SetValidator(m_TextValidator);
+	
+	
+	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
+	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
+	m_TextInfo->SetValue(m_Info);
+	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
+	
+
+	wxPanel *Panel1 = new wxPanel(this);
+	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+
+	Panel1Sizer->AddStretchSpacer();
+
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+
+	GetSizer()->SetSizeHints(this);
+	
+}
+
 
 void CNew::EditPicturePanel()
 {
@@ -671,11 +741,11 @@ void CNew::OnComboFilter(wxCommandEvent &event)
 	m_IDType = (int)m_ComboFilterType->GetClientData(id);
 	
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_type = '%d'"),TABLE_ITEM,m_IDType);
-	if(!my_query(sql))
+	if(!my_query(m_DB,sql))
 		return;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 
 	while(row = (char**)db_fetch_row(result))
@@ -795,6 +865,20 @@ void CNew::SetInMonitoring(bool v)
 	m_InMonitoring = v;
 }
 
+void CNew::SetHost(wxString v)
+{
+	m_Host = v;
+}
+
+void CNew::SetPort(wxString v)
+{
+	m_Port = v;
+}
+
+void CNew::SetBaseStation(wxString id)
+{
+	m_BaseStationID = id;
+}
 
 //GET
 wxArrayPtrVoid CNew::GetFeatureControls()
@@ -885,4 +969,21 @@ bool CNew::GetOnPosition()
 bool CNew::GetInMonitoring()
 {
 	return m_CheckInMonitoring->GetValue();
+}
+
+wxString CNew::GetHost()
+{
+	return m_TextHost->GetValue();
+}
+
+wxString CNew::GetPort()
+{
+	return m_TextPort->GetValue();
+}
+
+int CNew::GetBaseStationId()
+{
+	fprintf(stderr,"%d\n",m_BaseStationCombo->GetSelection());
+	int a = (int)m_BaseStationCombo->GetClientData(m_BaseStationCombo->GetSelection());
+	return a;
 }

@@ -20,9 +20,10 @@ extern CNaviMapIOApi *ThisPtr;
 extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
-CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
+CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize)
 {
+	m_DB = db;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
@@ -31,7 +32,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	// Page1
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	
-	m_PicturePanel = new CPicturePanel(Panel);
+	m_PicturePanel = new CPicturePanel(db,Panel);
 	PanelSizer->Add(m_PicturePanel,0,wxALL,5);
 	wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);	
 	PanelSizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
@@ -182,9 +183,9 @@ void CMyFrame::ShowWindow(bool show)
 		this->SetPosition(pt);
 		
 		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->id);
-		my_query(sql);
+		my_query(m_DB,sql);
 			
-		void *result = db_result();
+		void *result = db_result(m_DB);
 		
 		char **row = NULL;
 		if(result == NULL)
@@ -199,9 +200,9 @@ void CMyFrame::ShowWindow(bool show)
 		m_TextLat->SetLabel(FormatLatitude(-to_y,DEFAULT_DEGREE_FORMAT));
 
 		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,SelectedPtr->id);
-		my_query(sql);
+		my_query(m_DB,sql);
 			
-		result = db_result();
+		result = db_result(m_DB);
 		if(result == NULL)
 			return;
 		

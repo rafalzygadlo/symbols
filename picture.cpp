@@ -13,10 +13,11 @@ BEGIN_EVENT_TABLE(CPicturePanel, wxPanel)
 END_EVENT_TABLE()
 
 
-CPicturePanel::CPicturePanel(wxWindow *parent, int type)
+CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
 	m_ID = -1;
+	m_DB = db;
 	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
 	SetSizer(Sizer);
 
@@ -67,7 +68,7 @@ int CPicturePanel::GetPictureId()
 
 void CPicturePanel::OnPick(wxHyperlinkEvent &event)
 {
-	CDialog *Dialog = new CDialog(CONTROL_PICTURE,true);
+	CDialog *Dialog = new CDialog(m_DB,CONTROL_PICTURE,true);
 	if(Dialog->ShowModal() == wxID_OK)
 	{
 		SetPictureId(Dialog->_GetId());
@@ -153,9 +154,9 @@ void CPicturePanel::Read()
 	wxString sql;
 	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id = '%d'"),TABLE_PICTURE,m_ID);
 
-	my_query(sql);
+	my_query(m_DB,sql);
 
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	
 	char **row = (char**)db_fetch_row(result);
 	

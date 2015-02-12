@@ -10,13 +10,14 @@ class CItem;
 class CComboPanel;
 class CItemPanel: public wxPanel
 {
+	void *m_DB;
 	wxWindow *m_Top;
 	wxBoxSizer *m_Sizer;
 	wxArrayPtrVoid m_Items;
 				
 public:
 
-	CItemPanel(wxWindow *top, wxWindow *parent);
+	CItemPanel(void *db,wxWindow *top, wxWindow *parent);
 	~CItemPanel();
 	void Read(wxString query);
 	CItem *GetItem(int id);
@@ -28,6 +29,7 @@ public:
 
 class CItem: public wxPanel
 {
+	void *m_DB;
 	int m_Counter;
 	CItemPanel *m_ItemPanel;
 	wxString m_Id;
@@ -36,14 +38,13 @@ class CItem: public wxPanel
 	wxBoxSizer *m_ComboSizer;
 	wxScrolledWindow *m_Scroll;
 	wxArrayPtrVoid m_List;
-		
 	
 	void OnNew(wxCommandEvent &event);
 	
 
 public:
 
-	CItem(CItemPanel *parent,wxString name);
+	CItem(void *db, CItemPanel *parent,wxString name);
 	~CItem();
 	void _SetId(wxString v);
 	void _SetName(wxString v);
@@ -66,6 +67,7 @@ public:
 
 class CComboPanel: public wxPanel
 {
+	void *m_DB;
 	CItem *m_Parent;
 	wxBoxSizer *m_Sizer;
 	wxArrayPtrVoid m_Items;
@@ -73,7 +75,7 @@ class CComboPanel: public wxPanel
 
 public:
 
-	CComboPanel(CItem *parent, wxString id);
+	CComboPanel(void *db,CItem *parent, wxString id);
 	void OnDelete(wxCommandEvent &event);
 	void Read(wxString query);
 	int _GetId();

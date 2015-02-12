@@ -10,10 +10,14 @@ class CLightPanel;
 class CItemPanel;
 class CNew: public wxDialog
 {
+	void *m_DB;
 	int m_IDType;
 	int m_ControlType;
 	wxTextValidator m_TextValidator;
+	
 	wxTextCtrl *m_TextName;
+	wxTextCtrl *m_TextHost;
+	wxTextCtrl *m_TextPort;
 	wxTextCtrl *m_TextInfo;
 	wxTextCtrl *m_TextType;
 	wxTextCtrl *m_TextLat, *m_TextLon;
@@ -22,7 +26,7 @@ class CNew: public wxDialog
 	wxTextCtrl *m_CharacteristicText;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
-	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
+	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo,*m_BaseStationCombo;
 	wxCheckBox *m_CheckOnPosition;
 	wxCheckBox *m_CheckInMonitoring;
 
@@ -34,8 +38,8 @@ class CNew: public wxDialog
 	
 	wxString m_Number;
 	double m_Lon,m_Lat;
-	wxString m_Name,m_Info,m_Type;
-	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
+	wxString m_Name,m_Info,m_Type,m_Host,m_Port;
+	wxString m_SeawayID,m_AreaID,m_SymbolTypeID,m_BaseStationID;
 	int m_PictureId;
 	bool m_OnPosition,m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
@@ -57,6 +61,7 @@ class CNew: public wxDialog
 	void EditItemPanel();
 	void EditPicturePanel();
 	void EditSymbolPanel();
+	void EditBaseStationPanel();
 	void SymbolItem();
 	void _SetPosition(double lon, double lat);
 	
@@ -79,16 +84,19 @@ class CNew: public wxDialog
 		
 public:
 
-	CNew(int type, int id_type = -1, int item_id = -1, bool edit = false);
+	CNew(void *db,int type, int id_type = -1, int item_id = -1, bool edit = false);
 	~CNew();
 	wxString GetName();
 	wxString GetInfo();
 	wxString GetType();
+	wxString GetHost();
+	wxString GetPort();
 	int GetItemType();
 	wxImage GetPicture();
 	int GetSeawayId();
 	int GetAreaId();
 	int GetSymbolTypeId();
+	int GetBaseStationId();
 	double GetLon();
 	double GetLat();
 	wxString GetNumber();
@@ -98,11 +106,13 @@ public:
 	CItemPanel *GetItemPanel();
 	bool GetOnPosition();
 	bool GetInMonitoring();
-		
+			
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
 	void SetInfo(wxString v);
 	void SetType(wxString v);
+	void SetHost(wxString v);
+	void SetPort(wxString v);
 	void SetItemTypeID(int v);
 	void SetItemId(int v);
 	void SetPictureId(int id);
@@ -117,7 +127,8 @@ public:
 	void SetCharacteristic(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
-	
+	void SetBaseStation(wxString id);
+
 	void Create();
 
 	DECLARE_EVENT_TABLE();

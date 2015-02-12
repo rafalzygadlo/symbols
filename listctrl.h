@@ -10,6 +10,7 @@ class CDialog;
 class CDialogPanel;
 class CListCtrl: public wxListCtrl
 {
+	void *m_DB;
 	CListCtrl *m_ThisPtr;
 	wxArrayPtrVoid m_ColumnArray;
 	wxArrayString m_DataArray;
@@ -61,7 +62,7 @@ class CListCtrl: public wxListCtrl
 public:
 	
 		
-	CListCtrl( wxWindow *Parent, int style );
+	CListCtrl(void *db, wxWindow *Parent, int style );
 	~CListCtrl();
 
 	void SetControlType(int id, CDialogPanel *control);

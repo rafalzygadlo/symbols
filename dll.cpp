@@ -28,6 +28,7 @@ unsigned char PluginInfoBlock[] = {
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	SetUID(4);
+	m_DB = NULL;
 	m_Symbol = NULL;
 	m_Items = NULL;
 	m_Area = NULL;
@@ -35,6 +36,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolType = NULL;
 	m_Picture = NULL;
 	m_SymbolGroup = NULL;
+	m_BaseStation = NULL;
 		
 	NewPtr = NULL;
 	//PositionDialog = NULL;	
@@ -95,6 +97,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolType;
 	delete m_Picture;
 	delete m_SymbolGroup;
+	delete m_BaseStation;
 
 	delete m_FileConfig;
 	delete m_Frame;
@@ -111,7 +114,7 @@ CMapPlugin::~CMapPlugin()
 	}
 	
 	m_SymbolList.Clear();
-	db_close();
+	db_close(m_DB);
 }
 
 void CMapPlugin::SetUID(int uid)
@@ -174,8 +177,8 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 void CMapPlugin::Read()
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
-	my_query(sql);
-	void *result = db_result();
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
 		
     char **row = NULL;
 	if(result == NULL)
@@ -184,10 +187,9 @@ void CMapPlugin::Read()
 	while(row = (char**)db_fetch_row(result))
 	{
 		SSymbol *ptr = (SSymbol*)malloc(sizeof(SSymbol));
-		fprintf(stderr,"%s\n",row[FID_SYMBOL_LON]);
-		sscanf(row[FID_SYMBOL_ID],"%d",&ptr->id);
-		sscanf(row[FID_SYMBOL_LON],"%lf",&ptr->lon);
-		sscanf(row[FID_SYMBOL_LAT],"%lf",&ptr->lat);
+		sscanf(row[FI_SYMBOL_ID],"%d",&ptr->id);
+		sscanf(row[FI_SYMBOL_LON],"%lf",&ptr->lon);
+		sscanf(row[FI_SYMBOL_LAT],"%lf",&ptr->lat);
 		double to_x,to_y;
 		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
 		ptr->lon = to_x;
@@ -254,9 +256,10 @@ void CMapPlugin::SetButtonAction(int action)
 
 void CMapPlugin::Run(void *Params)
 {
-	if(!db_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_DB,DB_PORT))
+	m_DB = db_init(m_DB);
+	if(!db_connect(m_DB,DB_HOST,DB_USER,DB_PASSWORD,DB_DB,DB_PORT))
 	{
-		wxString str(db_error());
+		wxString str(db_error(m_DB));
 		wxMessageBox(str);
 	}	
 	
@@ -369,7 +372,7 @@ void CMapPlugin::ShowPopupMenu(bool show)
 void CMapPlugin::ShowFrameWindow(bool show)
 {
 	if(m_Frame == NULL)
-		m_Frame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
+		m_Frame = new CMyFrame(m_DB,this,(wxWindow*)m_Broker->GetParentPtr());
 	m_Frame->ShowWindow(show);
 }
 
@@ -386,52 +389,59 @@ void CMapPlugin::ShowProperties()
 	ShowFrameWindow(true);
 }
 
+void CMapPlugin::BaseStation()
+{
+	if(m_BaseStation == NULL)
+		m_BaseStation = new CDialog(m_DB, CONTROL_BASE_STATION);
+	m_BaseStation->Show();
+}
+
 void CMapPlugin::Symbol()
 {
 	if(m_Symbol == NULL)
-		m_Symbol = new CDialog(CONTROL_SYMBOL);
+		m_Symbol = new CDialog(m_DB, CONTROL_SYMBOL);
 	m_Symbol->Show();
 }
 
 void CMapPlugin::Items()
 {
 	if(m_Items == NULL)
-		m_Items = new CDialog(CONTROL_ITEM);
+		m_Items = new CDialog(m_DB, CONTROL_ITEM);
 	m_Items->Show();
 }
 
 void CMapPlugin::Area()
 {
 	if(m_Area == NULL)
-		m_Area = new CDialog(CONTROL_AREA);
+		m_Area = new CDialog(m_DB, CONTROL_AREA);
 	m_Area->Show();
 }
 
 void CMapPlugin::Seaway()
 {
 	if(m_Seaway == NULL)
-		m_Seaway = new CDialog(CONTROL_SEAWAY);
+		m_Seaway = new CDialog(m_DB, CONTROL_SEAWAY);
 	m_Seaway->Show();
 }
 
 void CMapPlugin::SymbolType()
 {
 	if(m_SymbolType == NULL)
-		m_SymbolType = new CDialog(CONTROL_SYMBOL_TYPE);
+		m_SymbolType = new CDialog(m_DB, CONTROL_SYMBOL_TYPE);
 	m_SymbolType->Show();
 }
 
 void CMapPlugin::Picture()
 {
 	if(m_Picture == NULL)
-		m_Picture = new CDialog(CONTROL_PICTURE);
+		m_Picture = new CDialog(m_DB, CONTROL_PICTURE);
 	m_Picture->Show();
 }
 
 void CMapPlugin::SymbolGroup()
 {
 	if(m_SymbolGroup == NULL)
-		m_SymbolGroup = new CDialog(CONTROL_SYMBOL_GROUP);
+		m_SymbolGroup = new CDialog(m_DB, CONTROL_SYMBOL_GROUP);
 	m_SymbolGroup->Show();
 }
 
@@ -446,6 +456,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_PICTURE),this,MenuPicture);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 		
 	/*
@@ -503,6 +514,14 @@ void *CMapPlugin::MenuSymbol(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuBaseStation(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_BASE_STATION);
+	
+	return NULL;	
+}
+
 void *CMapPlugin::MenuSymbolGroup(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -547,6 +566,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_SYMBOL_TYPE:	SymbolType();	break;
 		case CONTROL_PICTURE:		Picture();		break;
 		case CONTROL_SYMBOL_GROUP:	SymbolGroup();	break;
+		case CONTROL_BASE_STATION:	BaseStation();	break;
 	}
 
 }

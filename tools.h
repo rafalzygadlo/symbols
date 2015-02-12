@@ -33,15 +33,15 @@ void SetLanguageId(int id);
 int GetLanguageId();
 wxString Convert(char *v);
 
-wxListBox *GetFilterList(wxWindow *Parent, int wid);
+wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
-wxComboBox *GetCombo(wxWindow *Parent, wxString table , wxString sel, bool all = false);
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel, bool all = false);
 
 const wchar_t *GetDegreeFormat(int id, int dir);
 void db_history(int uid, const char *module, const char *action );
-bool db_check_right(const char *module, const char *action, int uid);
-bool my_query(wxString sql);
-bool my_query(const char *sql, unsigned long length);
+bool db_check_right(void *db,const char *module, const char *action, int uid);
+bool my_query(void *db,wxString sql);
+bool my_query(void *db,const char *sql, unsigned long length);
 
 #endif
 

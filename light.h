@@ -10,6 +10,7 @@
 class CLight;
 class CLightPanel: public wxPanel
 {
+	void *m_DB;
 	wxWindow *m_Top;
 	wxArrayPtrVoid m_List;
 	wxTextCtrl *m_CharacteristicText;
@@ -20,7 +21,7 @@ class CLightPanel: public wxPanel
 				
 public:
 
-	CLightPanel(wxWindow *top, wxWindow *parent);
+	CLightPanel(void *db,wxWindow *top, wxWindow *parent);
 	~CLightPanel();
 	void Read(wxString query);
 	wxArrayPtrVoid GetItems();

@@ -12,7 +12,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[52][2] = 
+const wchar_t *nvLanguage[55][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -67,6 +67,9 @@ const wchar_t *nvLanguage[52][2] =
 	{L"Latitude invalid format",L"Nieprawid³owy format (Szerokoœæ geograficzna)"},
 	{L"Symbol group",L"Grupa"},
 	{L"Filter",L"Filtr"},
+	{L"Host",L"Host"},
+	{L"Port",L"Port"},
+	{L"Base Station",L"Stacja bazowa"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -449,17 +452,17 @@ bool _SetLonSec(char *text, double *val)
 		
 }
 
-bool my_query(wxString sql)
+bool my_query(void *db,wxString sql)
 {
 
 #ifdef DEBUG_SQL
 	wxMessageBox (sql);
 #endif
 	
-	if(db_query(sql.mb_str(wxConvUTF8))  != 0)
+	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32
-		wxLogError(db_error());
+		wxLogError(db_error(db));
 #endif
 #ifdef linux
 		syslog(LOG_LOCAL0,db_error());
@@ -471,17 +474,17 @@ bool my_query(wxString sql)
 }
 
 // taki ma³y wraper ¿eby nie pisaæ ci¹gle tego samego
-bool my_query(const char *sql, unsigned long length)
+bool my_query(void *db,const char *sql, unsigned long length)
 {
 
 #ifdef DEBUG_SQL
 	wxMessageBox (sql);
 #endif
 	
-	if(db_query( sql, length)  != 0)
+	if(db_query(db, sql, length)  != 0)
 	{
 #ifdef WIN32
-		wxLogError(db_error());
+		wxLogError(db_error(db));
 #endif
 		return false;
 	}
@@ -490,49 +493,48 @@ bool my_query(const char *sql, unsigned long length)
 }
 
 
-void db_history(int uid, const char *module, const char *action )
+void db_history(void *db,int uid, const char *module, const char *action )
 {
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE name='%s_%s'"),TABLE_RIGHT,module,action);
-	my_query(sql);
+	my_query(db,sql);
 
-	void *result = db_result();
+	void *result = db_result(db);
 	char **row = (char**)db_fetch_row(result);
 	
 	sql = wxString::Format(_("INSERT INTO `%s` SET id_user='%d', id_right='%s'"),TABLE_HISTORY, uid, row[FI_RIGHT_ID]);
-	my_query(sql);
-		
+	my_query(db,sql);
 
 	db_free_result(result);
 
 }
 
 //uprawnienia
-bool db_check_right(const char *module, const char *action, int uid)
+bool db_check_right(void *db,const char *module, const char *action, int uid)
 {
 	// czy wbudowany user
 	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE built_in = '1' AND id = '%d'"),TABLE_USER,uid);
-	if(!my_query(query))
+	if(!my_query(db,query))
 		return false;
 
-	void *result = db_result();
+	void *result = db_result(db);
 	int count = db_num_rows(result);
 	db_free_result(result);
 	if(count == 1)
 		return true;
 
 	query = wxString::Format(_("SELECT * FROM `%s` WHERE name = '%s_%s'"),TABLE_RIGHT,module,action);
-	if(!my_query(query))
+	if(!my_query(db,query))
 		return false;
 
-	result = db_result();
+	result = db_result(db);
 	count = db_num_rows(result);
 
 	if(count == 0)
 	{
 		db_free_result(result);
 		wxString query = wxString::Format(_("INSERT INTO `%s` SET name = '%s_%s'"),TABLE_RIGHT,module,action);
-		my_query(query);
+		my_query(db,query);
 		return false;
 		// nie ma rekordu z uprawnieniem
 	}
@@ -541,10 +543,10 @@ bool db_check_right(const char *module, const char *action, int uid)
 	query = wxString::Format(_("SELECT * FROM `%s`, `%s` WHERE %s.id_group = %s.id_group AND %s.id_user = '%d' AND %s.id_right='%s'"),TABLE_USER_TO_GROUP, TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,uid,TABLE_USER_GROUP_RIGHT,row[FI_RIGHT_ID]);	
 	db_free_result(result);
 	
-	if(!my_query(query))
+	if(!my_query(db,query))
 		return false;
 
-	result = db_result();
+	result = db_result(db);
 	count = db_num_rows(result);
 	db_free_result(result);
 	
@@ -597,18 +599,18 @@ int GetItemTypeId(wxString name)
 */
 
 
-wxListBox *GetFilterList(wxWindow *Parent, int wid)
+wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid)
 {
 	wxListBox *Filter = new wxListBox(Parent,wid);
 	Filter->Append(GetMsg(MSG_ALL));
 
 	wxArrayString ar;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
-	if(!my_query(sql))
+	if(!my_query(db,sql))
 		return Filter;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(db);
 	char **row;
 		
 	int i = 0;
@@ -625,18 +627,18 @@ wxListBox *GetFilterList(wxWindow *Parent, int wid)
 	return Filter;
 }
 
-wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
+wxComboBox *GetFilterCombo(void *db,wxWindow *Parent, int wid)
 {
 	wxComboBox *Filter = new wxComboBox(Parent,wid,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
 	Filter->Append(GetMsg(MSG_ALL));
 
 	wxArrayString ar;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),TABLE_ITEM_TYPE);
-	if(!my_query(sql))
+	if(!my_query(db,sql))
 		return Filter;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(db);
 	char **row;
 		
 	int i = 0;
@@ -654,10 +656,11 @@ wxComboBox *GetFilterCombo(wxWindow *Parent, int wid)
 }
 
 
-wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel, bool all)
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, bool all)
 {
 	int i = 0;
 	wxComboBox *ptr = new wxComboBox(Parent,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	
 	if(all)
 	{
 		ptr->Append(GetMsg(MSG_ALL));
@@ -666,24 +669,26 @@ wxComboBox *GetCombo(wxWindow *Parent, wxString table, wxString sel, bool all)
 	}
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
-	if(!my_query(sql))
+	if(!my_query(db,sql))
 		return ptr;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(db);
 	char **row;
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxString name(row[FID_NAME],wxConvUTF8);
+		wxString name(row[FI_NAME],wxConvUTF8);
 		int id = ptr->Append(name);
-		int row_id = atoi(row[FID_ID]);
+		int row_id = atoi(row[FI_ID]);
 
 		long sid;
 		sel.ToLong(&sid);
 
 		if(sid == row_id)
 			ptr->SetSelection(id);
+		if(sid == 0)
+			ptr->SetSelection(0);
 
 		ptr->SetClientData(id,(int*)row_id);
 	}

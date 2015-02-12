@@ -17,9 +17,10 @@ extern unsigned char del[];
 BEGIN_EVENT_TABLE(CLightPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CLightPanel::OnNew)
 END_EVENT_TABLE()
-CLightPanel::CLightPanel(wxWindow *top, wxWindow *parent)
+CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+	m_DB = db;
 	m_Top = top;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
@@ -81,11 +82,11 @@ wxArrayPtrVoid CLightPanel::GetItems()
 
 void CLightPanel::Read(wxString query)
 {
-	if(!my_query(query))
+	if(!my_query(m_DB,query))
 		return;
 	
 	int rows = 0;
-	void *result = db_result();
+	void *result = db_result(m_DB);
 	char **row;
 	
 	while(row = (char**)db_fetch_row(result))

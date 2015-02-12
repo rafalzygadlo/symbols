@@ -12,6 +12,7 @@
 class CMyIcon;
 class CMyFrame: public wxDialog
 {
+	void *m_DB;
 	CMapPlugin *m_DLL;	
 	SSymbol *SelectedPtr;
 	wxTextCtrl *m_TextName;
@@ -45,7 +46,7 @@ public:
 	void ShowIconChanger(bool show);
 	//void SetMarkerIcon(int id);
 	void ShowWindow(bool show);		
-	CMyFrame(void *Parent, wxWindow *ParentPtr);
+	CMyFrame(void *db,void *Parent, wxWindow *ParentPtr);
 	~CMyFrame();
 		
 	DECLARE_EVENT_TABLE();

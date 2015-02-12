@@ -28,7 +28,9 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolType;
 	CDialog *m_Picture;
 	CDialog *m_SymbolGroup;
+	CDialog *m_BaseStation;
 
+	void *m_DB;
 	double m_CenterX, m_CenterY;
 	CMyFrame *m_Frame;
 	double m_HotSpotX;
@@ -131,11 +133,12 @@ class CMapPlugin :public CNaviMapIOApi
 	void SymbolType();
 	void Picture();
 	void SymbolGroup();
+	void BaseStation();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbolGroup(void *NaviMapIOApiPtr, void *Input);
-
+	static void *MenuBaseStation(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbolType(void *NaviMapIOApiPtr, void *Input);

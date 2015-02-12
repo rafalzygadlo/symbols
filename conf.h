@@ -98,6 +98,9 @@
 #define MSG_LATITUDE_INVALID_VALUE	49
 #define MSG_SYMBOL_GROUP			50
 #define MSG_FILTER					51
+#define MSG_HOST					52
+#define MSG_PORT					53
+#define MSG_BASE_STATION			54
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -117,6 +120,7 @@
 #define CONTROL_PICTURE			8
 #define CONTROL_SYMBOL_ITEM		9
 #define CONTROL_SYMBOL_GROUP	10
+#define CONTROL_BASE_STATION	11
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -133,10 +137,10 @@
 
 // globalne id dla pól takich samych
 // raz jest pole name a raz type
-#define FID_ID		0
-#define FID_NAME	1
-#define FID_TYPE	1
-#define FID_INFO	2
+#define FI_ID	0
+#define FI_NAME	1
+#define FI_TYPE	1
+#define FI_INFO	2
 
 #define PICTURE_MAX_WIDTH	200
 #define PICTURE_MAX_HEIGHT	200
@@ -186,10 +190,7 @@
 #define MODULE_ITEM "item"
 #define MODULE_PICTURE "picture"
 #define MODULE_SYMBOL_GROUP "symbol_group"
-
-#define FID_SYMBOL_ID 0
-#define FID_SYMBOL_LON 5
-#define FID_SYMBOL_LAT 6
+#define MODULE_BASE_STATION "base_station"
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -225,6 +226,7 @@
 #define TABLE_USER_GROUP		"user_group"
 #define TABLE_USER_GROUP_RIGHT	"user_group_right"
 #define TABLE_USER_TO_GROUP		"user_to_group"
+#define TABLE_BASE_STATION		"base_station"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -232,18 +234,20 @@
 #define FI_SYMBOL_ID_AREA			1
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
-#define FI_SYMBOL_NUMBER			4
-#define FI_SYMBOL_LON				5
-#define FI_SYMBOL_LAT				6
-#define FI_SYMBOL_CHARACTERISTIC	7
-#define FI_SYMBOL_ON_POSITION		8
-#define FI_SYMBOL_IN_MONITORING		9
-#define FI_SYMBOL_NAME				10
-#define FI_SYMBOL_INFO				11
+#define FI_SYMBOL_ID_BASE_STATION	4
+#define FI_SYMBOL_NUMBER			5
+#define FI_SYMBOL_LON				6
+#define FI_SYMBOL_LAT				7
+#define FI_SYMBOL_CHARACTERISTIC	8
+#define FI_SYMBOL_ON_POSITION		9
+#define FI_SYMBOL_IN_MONITORING		10
+#define FI_SYMBOL_NAME				11
+#define FI_SYMBOL_INFO				12
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
+#define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
@@ -367,6 +371,17 @@
 //#define FN_SYMBOL_COLOR_ID_SYMBOL	"id_symbol"
 //#define FN_SYMBOL_COLOR_COLOR		"color"
 
+// pola tabeli BASE_STATAION
+#define FI_BASE_STATION_ID		0
+#define FI_BASE_STATION_NAME	1
+#define FI_BASE_STATION_HOST	2
+#define FI_BASE_STATION_PORT	3
+#define FI_BASE_STATION_INFO	4
+#define FN_BASE_STATION_ID		"id"
+#define FN_BASE_STATION_NAME	"name"
+#define FN_BASE_STATION_HOST	"host"
+#define FN_BASE_STATION_PORT	"port"
+#define FN_BASE_STATION_INFO	"info"
 
 // pola widoku _VIEW_SYMBOL_TYPE
 #define FI_VIEW_SYMBOL_ITEM_ID			0

@@ -29,8 +29,8 @@ class CDialog : public wxDialog
 
 
 public:
-	CDialog(int control_type, bool picker = false);
-	CDialog(int control_master, int control_slave, bool picker = false);
+	CDialog(void *db, int control_type, bool picker = false);
+	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
 	
@@ -39,6 +39,7 @@ public:
 
 class CDialogPanel: public wxPanel
 {
+	void *m_DB;
 	wxString m_Field;	
 	wxString m_Order;
 	CListCtrl *m_List;	
@@ -67,6 +68,7 @@ class CDialogPanel: public wxPanel
 	void EditSeaway(int id);
 	void EditSymbol(int id);
 	void EditItem(int id);
+	void EditBaseStation(int id);
 	int GetItemTypeId(int id);
 			
 	void EditName(int id); // wszystkie tabele z polami [type]
@@ -118,7 +120,7 @@ class CDialogPanel: public wxPanel
 
 public:
 	
-	CDialogPanel(int control_type, wxWindow *parent, bool slave = false); // taki do pobrania tylko panela
+	CDialogPanel(void *db,int control_type, wxWindow *parent, bool slave = false); // taki do pobrania tylko panela
 	~CDialogPanel();	
 	void OnNew();
 	void OnEdit(int id);
