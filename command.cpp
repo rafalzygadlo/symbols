@@ -36,10 +36,13 @@ void CCommandPanel::Read()
 		return;
 	char **row = NULL;
 	
+	wxFont font;
+	font.SetPointSize(10);
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxHyperlinkCtrl *HyperLink = new wxHyperlinkCtrl(this,wxID_ANY,row[FI_COMMAND_NAME],wxEmptyString);
-		m_Sizer->Add(HyperLink,0,wxALL,5);
+		wxHyperlinkCtrl *HyperLink = new wxHyperlinkCtrl(this,wxID_ANY,Convert(row[FI_COMMAND_NAME]),wxEmptyString);
+		HyperLink->SetFont(font);
+		m_Sizer->Add(HyperLink,0,wxALL,2);
 	}
 	
 	db_free_result(result);

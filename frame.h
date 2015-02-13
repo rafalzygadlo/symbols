@@ -7,6 +7,7 @@
 #include <wx/mstream.h>
 #include "conf.h"
 #include "dll.h"
+#include "command.h"
 #include <vector>
 
 class CMyIcon;
@@ -19,6 +20,7 @@ class CMyFrame: public wxDialog
 	wxPanel *m_Panel;
 	wxTextCtrl *m_TextInfo;
 	CPicturePanel *m_PicturePanel;
+	CCommandPanel *m_CommandPanel;
 	
 	wxButton *ButtonClose;
 	//wxPanel *PanelIcon;

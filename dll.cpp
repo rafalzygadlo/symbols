@@ -305,6 +305,7 @@ void CMapPlugin::SetButtonAction(int action)
 
 void CMapPlugin::Run(void *Params)
 {
+	ReadDBConfig();
 	m_DB = db_init(m_DB);
 	if(!db_connect(m_DB,m_DBHost,m_DBUser,m_DBPassword,m_DBName,m_DBPort))
 	{

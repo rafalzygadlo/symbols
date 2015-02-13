@@ -27,16 +27,20 @@ CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-				
+		
+	m_CommandPanel = new CCommandPanel(db,this);
+	MainSizer->Add(m_CommandPanel,0,wxALL,5);
+
 	// Page1
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	
 	m_PicturePanel = new CPicturePanel(db,Panel);
 	PanelSizer->Add(m_PicturePanel,0,wxALL,5);
+			
 	wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);	
 	PanelSizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
-	
+		
 	
 	wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labelname,0,wxALL,5);
@@ -211,7 +215,7 @@ void CMyFrame::ShowWindow(bool show)
 			return;
 		
 		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
-
+		
 		db_free_result(result);
 	}
 	
