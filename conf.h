@@ -4,7 +4,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #define DIR_SEPARATOR "\\"
 #endif
-
+#define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "workdir"
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
@@ -13,11 +13,11 @@
 #define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"
 #define PRODUCT_VERSION "1.0"
 
-#define DB_HOST "212.160.178.24"
-#define DB_USER "navi_vts"
-#define DB_PASSWORD "navi_vts"
-#define DB_DB "navi_vts"
-#define DB_PORT 3306
+#define KEY_DB_USER	"db_user"
+#define	KEY_DB_HOST	"db_host"
+#define KEY_DB_PORT	"db_port"
+#define KEY_DB_NAME	"db_name"
+#define KEY_DB_PASSWORD	"db_password"
 
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -101,6 +101,7 @@
 #define MSG_HOST					52
 #define MSG_PORT					53
 #define MSG_BASE_STATION			54
+#define MSG_COMMAND					55
 //. . . . . . . . . . . . . . . . .
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
@@ -227,6 +228,7 @@
 #define TABLE_USER_GROUP_RIGHT	"user_group_right"
 #define TABLE_USER_TO_GROUP		"user_to_group"
 #define TABLE_BASE_STATION		"base_station"
+#define TABLE_COMMAND			"command"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -382,6 +384,17 @@
 #define FN_BASE_STATION_HOST	"host"
 #define FN_BASE_STATION_PORT	"port"
 #define FN_BASE_STATION_INFO	"info"
+
+//pola tabeli COMMAND
+#define FI_COMMAND_ID			0
+#define FI_COMMAND_NAME			1
+#define FI_COMMAND_CMD			2
+#define FI_COMMAND_INFO			3
+#define FN_COMMAND_ID			"id"
+#define FN_COMMAND_NAME			"name"
+#define FN_COMMAND_CMD			"cmd"
+#define FN_COMMAND_INFO			"info"
+
 
 // pola widoku _VIEW_SYMBOL_TYPE
 #define FI_VIEW_SYMBOL_ITEM_ID			0

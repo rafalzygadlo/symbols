@@ -31,6 +31,11 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_BaseStation;
 
 	void *m_DB;
+	wxString m_DBHost;
+	wxString m_DBUser;
+	wxString m_DBPassword;
+	wxString m_DBName;
+	int m_DBPort;
 	double m_CenterX, m_CenterY;
 	CMyFrame *m_Frame;
 	double m_HotSpotX;
@@ -78,6 +83,7 @@ class CMapPlugin :public CNaviMapIOApi
 	int DisplaySignalType;
 	CNaviArray <SSymbol*> m_SymbolList;
 
+	void ReadDBConfig();
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateApiMenu(void);
 	void SetButtonAction(int action);
@@ -125,7 +131,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderNew();
 	void RenderTest();
 	void SetSelectedShip(SSymbol *ship);
-
+	void WritePasswordConfig(char *v);
+	
 	void Items();
 	void Symbol();
 	void Area();

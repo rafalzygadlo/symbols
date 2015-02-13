@@ -5,6 +5,7 @@
 #include "positiondialog.h"
 #include "images/icon.h"
 #include "db.h"
+#include "NaviEncryption.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -117,10 +118,58 @@ CMapPlugin::~CMapPlugin()
 	db_close(m_DB);
 }
 
+void CMapPlugin::ReadDBConfig()
+{
+    wxString val;
+	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
+	FileConfig->Read(KEY_DB_USER,&m_DBUser);	
+    FileConfig->Read(KEY_DB_HOST,&m_DBHost);	
+	FileConfig->Read(KEY_DB_PORT,&m_DBPort);	
+    long port;
+    val.ToLong(&port);
+    if(val.empty())
+		m_DBPort = DEFAULT_MYSQL_PORT;
+    else
+    	m_DBPort = port;
+
+    FileConfig->Read(KEY_DB_NAME,&m_DBName);	
+    
+	FileConfig->Read(KEY_DB_PASSWORD,&val);	
+	
+	char * pass = (char*)val.mb_str().data();
+	int len = strlen(pass);
+
+	if(IsBase64(pass,len))
+	{
+		TMemBlock *unbase = Base64Decode((unsigned char*)pass,len);
+		val = unbase->Memory;
+		FreeMemBlock(unbase);
+	
+	}else{
+	
+		char *_pass = Base64Encode((unsigned char*)pass,len);
+		WritePasswordConfig(_pass);
+		free(_pass);
+	}
+		
+    m_DBPassword = val;
+     
+	delete FileConfig;
+	
+}
+
 void CMapPlugin::SetUID(int uid)
 {
 	_SetUID(uid);
-}					
+}
+
+void CMapPlugin::WritePasswordConfig(char *v)
+{
+	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
+	FileConfig->Write(KEY_DB_PASSWORD,wxString::Format(_("%s"),v));
+	delete FileConfig;
+}
+
 
 void CMapPlugin::SetLanguage(int LanguageID)
 {
@@ -257,7 +306,7 @@ void CMapPlugin::SetButtonAction(int action)
 void CMapPlugin::Run(void *Params)
 {
 	m_DB = db_init(m_DB);
-	if(!db_connect(m_DB,DB_HOST,DB_USER,DB_PASSWORD,DB_DB,DB_PORT))
+	if(!db_connect(m_DB,m_DBHost,m_DBUser,m_DBPassword,m_DBName,m_DBPort))
 	{
 		wxString str(db_error(m_DB));
 		wxMessageBox(str);
