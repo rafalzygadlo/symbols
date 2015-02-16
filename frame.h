@@ -19,8 +19,11 @@ class CMyFrame: public wxDialog
 	wxTextCtrl *m_TextName;
 	wxPanel *m_Panel;
 	wxTextCtrl *m_TextInfo;
+	
+	wxButton *m_ButtonCommand;
 	CPicturePanel *m_PicturePanel;
 	CCommandPanel *m_CommandPanel;
+
 	
 	wxButton *ButtonClose;
 	//wxPanel *PanelIcon;
@@ -30,11 +33,10 @@ class CMyFrame: public wxDialog
 	int ParentX, ParentY;
 	wxWindow *_ParentPtr;
 
-	//bool AfterInit;
-	//void AddIconControls();
-	
+	wxPanel *GetPage1(wxWindow *parent);
+	wxPanel *GetPage2(wxWindow *parent);
 	void OnCloseButton(wxCommandEvent &event);
-	//void OnSaveButton(wxCommandEvent &event);
+	void OnCommandButton(wxCommandEvent &event);
 	void OnClose(wxCloseEvent &event);
 	void OnTextChanged(wxCommandEvent &event);
 	void OnLeftClick(wxCommandEvent &event);
@@ -59,9 +61,9 @@ public:
 		ID_NAME,
 		ID_DESCRIPTION,
 		ID_DELETE,
-		ID_NEW_FIELD,
 		ID_LON,
 		ID_LAT,
+		ID_COMMAND,
 	
 	};
 

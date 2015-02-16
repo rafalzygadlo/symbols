@@ -45,7 +45,6 @@
 
 
 // Languages
-// . . . . . . . . . . . . . . . .
 #define MSG_MANAGER					0
 #define MSG_NEW_OBJECT				1
 #define MSG_NAME					2
@@ -102,7 +101,9 @@
 #define MSG_PORT					53
 #define MSG_BASE_STATION			54
 #define MSG_COMMAND					55
-//. . . . . . . . . . . . . . . . .
+#define MSG_MANAGEMENT				56
+#define MSG_POWER_OF_LIGHT			57
+
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -205,6 +206,7 @@
 #define ACTION_EDIT "edit"
 #define ACTION_DELETE "delete"
 #define ACTION_PROPERTIES "properties"
+#define ACTION_MANAGEMENT "management"
 
 #define TABLE_AREA				"area"
 #define TABLE_SEAWAY			"seaway"
@@ -229,6 +231,7 @@
 #define TABLE_USER_TO_GROUP		"user_to_group"
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
+#define TABLE_COMMAND_NAME		"command_name"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -237,19 +240,21 @@
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
 #define FI_SYMBOL_ID_BASE_STATION	4
-#define FI_SYMBOL_NUMBER			5
-#define FI_SYMBOL_LON				6
-#define FI_SYMBOL_LAT				7
-#define FI_SYMBOL_CHARACTERISTIC	8
-#define FI_SYMBOL_ON_POSITION		9
-#define FI_SYMBOL_IN_MONITORING		10
-#define FI_SYMBOL_NAME				11
-#define FI_SYMBOL_INFO				12
+#define FI_SYMBOL_ID_COMMUNICATION	5
+#define FI_SYMBOL_NUMBER			6
+#define FI_SYMBOL_LON				7
+#define FI_SYMBOL_LAT				8
+#define FI_SYMBOL_CHARACTERISTIC	9
+#define FI_SYMBOL_ON_POSITION		10
+#define FI_SYMBOL_IN_MONITORING		11
+#define FI_SYMBOL_NAME				12
+#define FI_SYMBOL_INFO				13
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
 #define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
+#define FN_SYMBOL_ID_COMMUNICATION	"id_communication"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
@@ -374,26 +379,33 @@
 //#define FN_SYMBOL_COLOR_COLOR		"color"
 
 // pola tabeli BASE_STATAION
-#define FI_BASE_STATION_ID		0
-#define FI_BASE_STATION_NAME	1
-#define FI_BASE_STATION_HOST	2
-#define FI_BASE_STATION_PORT	3
-#define FI_BASE_STATION_INFO	4
-#define FN_BASE_STATION_ID		"id"
-#define FN_BASE_STATION_NAME	"name"
-#define FN_BASE_STATION_HOST	"host"
-#define FN_BASE_STATION_PORT	"port"
-#define FN_BASE_STATION_INFO	"info"
+#define FI_BASE_STATION_ID					0
+#define FI_BASE_STATION_ID_COMMUNICATION	1
+#define FI_BASE_STATION_NAME				2
+#define FI_BASE_STATION_HOST				3
+#define FI_BASE_STATION_PORT				4
+#define FI_BASE_STATION_INFO				5
+#define FN_BASE_STATION_ID					"id"
+#define FN_BASE_STATION_ID_COMMUNICATION	"id_communication"
+#define FN_BASE_STATION_NAME				"name"
+#define FN_BASE_STATION_HOST				"host"
+#define FN_BASE_STATION_PORT				"port"
+#define FN_BASE_STATION_INFO				"info"
 
 //pola tabeli COMMAND
-#define FI_COMMAND_ID			0
-#define FI_COMMAND_NAME			1
-#define FI_COMMAND_CMD			2
-#define FI_COMMAND_INFO			3
-#define FN_COMMAND_ID			"id"
-#define FN_COMMAND_NAME			"name"
-#define FN_COMMAND_CMD			"cmd"
-#define FN_COMMAND_INFO			"info"
+#define FI_COMMAND_ID				0
+#define FI_COMMAND_ID_COMMUNICATION	1
+#define FI_COMMAND_CMD				2
+#define FN_COMMAND_ID				"id"
+#define FN_COMMAND_NAME				"id_communication"
+#define FN_COMMAND_CMD				"cmd"
+
+
+//pola tabeli COMMAND_NAME
+#define FI_COMMAND_NAME_ID			0
+#define FI_COMMAND_NAME_NAME		1
+#define FN_COMMAND_NAME_ID			"id"
+#define FN_COMMAND_NAME_NAME		"name"
 
 
 // pola widoku _VIEW_SYMBOL_TYPE

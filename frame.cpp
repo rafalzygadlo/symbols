@@ -9,7 +9,7 @@
 
 BEGIN_EVENT_TABLE(CMyFrame,wxDialog)
 	EVT_BUTTON(ID_CLOSE,CMyFrame::OnCloseButton)
-//	EVT_BUTTON(ID_SAVE,CMyFrame::OnSaveButton)
+	EVT_BUTTON(ID_COMMAND,CMyFrame::OnCommandButton)
 	EVT_TEXT(ID_NAME,CMyFrame::OnTextChanged)
 	EVT_TEXT(ID_DESCRIPTION,CMyFrame::OnTextChanged)
 	EVT_TEXT(ID_LON,CMyFrame::OnLon)
@@ -26,21 +26,49 @@ CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	m_DB = db;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
-	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
-		
-	m_CommandPanel = new CCommandPanel(db,this);
-	MainSizer->Add(m_CommandPanel,0,wxALL,5);
-
-	// Page1
-	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	
-	m_PicturePanel = new CPicturePanel(db,Panel);
-	PanelSizer->Add(m_PicturePanel,0,wxALL,5);
+	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
+
+	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY);
+	Notebook->AddPage(GetPage1(Notebook),GetMsg(MSG_INFO));
+	if(db_check_right(db,MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+		Notebook->AddPage(GetPage2(Notebook),GetMsg(MSG_MANAGEMENT));	
+
+	//Other
+	MainSizer->Add(Notebook,1,wxALL|wxEXPAND,0);
+	
+	wxPanel *ButtonPanel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	MainSizer->Add(ButtonPanel,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *ButtonPanelSizer = new wxBoxSizer(wxHORIZONTAL);
+	ButtonPanel->SetSizer(ButtonPanelSizer);
+		
+	ButtonPanelSizer->AddStretchSpacer(1);
+	ButtonClose = new wxButton(ButtonPanel,ID_CLOSE,GetMsg(MSG_CLOSE),wxDefaultPosition,wxDefaultSize);
+	ButtonPanelSizer->Add(ButtonClose,0,wxALL|wxALIGN_RIGHT,5);
+		
+	this->SetSizer(MainSizer);
+		
+	if(GetSizer())
+		GetSizer()->SetSizeHints(this);
+		
+	Center();
+}
+
+CMyFrame::~CMyFrame(void)
+{
+
+}
+
+wxPanel *CMyFrame::GetPage1(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_PicturePanel = new CPicturePanel(m_DB,Panel);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
 			
 	wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);	
-	PanelSizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
-		
+	Sizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
 	
 	wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labelname,0,wxALL,5);
@@ -67,24 +95,21 @@ CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
 	GridSizer->Add(m_TextLon,0,wxALL,5);
 			
-	Panel->SetSizer(PanelSizer);
+	Panel->SetSizer(Sizer);
+
+	return Panel;
 		
-	//Other
-	MainSizer->Add(Panel,1,wxALL|wxEXPAND,0);
-	ButtonClose = new wxButton(this,ID_CLOSE,GetMsg(MSG_CLOSE),wxDefaultPosition,wxDefaultSize);
-	MainSizer->Add(ButtonClose,0,wxALL|wxALIGN_RIGHT,5);
-		
-	this->SetSizer(MainSizer);
-		
-	if(GetSizer())
-		GetSizer()->SetSizeHints(this);
-		
-	Center();
+
 }
 
-CMyFrame::~CMyFrame(void)
+wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 {
-
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	Panel->SetSizer(Sizer);
+	m_CommandPanel = new CCommandPanel(m_DB,Panel);
+	Sizer->Add(m_CommandPanel,0,wxALL,5);
+	return Panel;
 }
 
 void CMyFrame::OnLon(wxCommandEvent &event)
@@ -150,10 +175,17 @@ void CMyFrame::OnTextChanged(wxCommandEvent &event)
 
 void CMyFrame::OnCloseButton(wxCommandEvent &event)
 {	
-	//wcscpy_s(MarkerSelectedPtr->name,SYMBOL_NAME_SIZE, textname->GetValue().wc_str()); 
-	//wcscpy_s(MarkerSelectedPtr->description, SYMBOL_DESCRIPTION_SIZE, textdescription->GetValue().wc_str()); 
 	Hide();
 }
+
+void CMyFrame::OnCommandButton(wxCommandEvent &event)
+{	
+	wxMenu *Menu = new wxMenu();
+	int x = m_ButtonCommand->GetSize().GetX();
+	int y = m_ButtonCommand->GetSize().GetY() + m_ButtonCommand->GetSize().GetHeight();
+	PopupMenu(Menu,x,y);
+}
+
 
 void CMyFrame::OnClose(wxCloseEvent &event)
 {

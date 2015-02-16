@@ -343,7 +343,8 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_BASE_STATION:
 				return GetPanelList(Parent);
 	}
-
+	
+	return NULL;
 }
 
 wxPanel *CDialogPanel::GetSymbolFilterPanel(wxWindow *Parent)

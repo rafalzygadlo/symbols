@@ -9,14 +9,15 @@ class CCommandPanel: public wxPanel
 {
 	void *m_DB;
 	wxStaticBoxSizer *m_Sizer;
-		
+	wxSlider *m_PowerOfLight;
+
+	void SetGui();
+
 public:
 
 	CCommandPanel(void *db, wxWindow *parent);
 	~CCommandPanel();
-	wxImage GetPicture();
-	void Read();
-	void Clear();
+		
 
 	DECLARE_EVENT_TABLE();
 	
