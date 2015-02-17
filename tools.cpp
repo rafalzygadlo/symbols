@@ -12,7 +12,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[58][2] = 
+const wchar_t *nvLanguage[62][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -72,7 +72,11 @@ const wchar_t *nvLanguage[58][2] =
 	{L"Base Station",L"Stacja bazowa"},
 	{L"Commands",L"Komendy"},
 	{L"Management",L"Zarz¹dzanie"},
-	{L"Power of light",L"Moc œwiat³a"},
+	{L"Flash Code",L"Charakterystyka œwiecenia"},
+	{L"Drive Current",L"Pr¹d podk³adu"},
+	{L"Power Of Light",L"Moc œwiat³a"},
+	{L"Forced Off",L"Serwisowe wy³¹czenie œwiat³a"},
+	{L"Season Control",L"Sezonowa praca"},
 	
 };
 

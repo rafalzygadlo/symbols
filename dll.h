@@ -11,6 +11,7 @@
 #include "positiondialog.h"
 #include "nvFastFont.h"
 #include "dialog.h"
+#include "ticker.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -30,6 +31,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolGroup;
 	CDialog *m_BaseStation;
 
+	CTicker *m_Ticker;
 	void *m_DB;
 	wxString m_DBHost;
 	wxString m_DBUser;
@@ -38,16 +40,9 @@ class CMapPlugin :public CNaviMapIOApi
 	int m_DBPort;
 	double m_CenterX, m_CenterY;
 	CMyFrame *m_Frame;
-	double m_HotSpotX;
-	double m_HotSpotY;
-	
-	SSymbol *NewPtr;
-	float Angle;
 	double Factor;
-	bool MoveMarker;
 	double MOM_X, MOM_Y;
 	SSymbol *SelectedPtr, *HighlightedPtr;
-	int ErrorCode;
 	double SmoothScaleFactor;
 	bool NeedExit;
 	bool IsData;
@@ -56,13 +51,8 @@ class CMapPlugin :public CNaviMapIOApi
 	int ButtonAction;
 	double MapX,MapY;
 	bool FirstRun;
-	wxString FilePath;
 	wxFileConfig *m_FileConfig;
-	wxString ConfigPath;		
 	CNaviBroker *m_Broker;
-	wxArrayString DataArray;
-	wxString PointsPath;
-	//std::vector <SMarker*> vPoints;
 	int MouseX,MouseY;
 	int Type;
 	double RectWidth;
@@ -74,7 +64,6 @@ class CMapPlugin :public CNaviMapIOApi
 	TTexture *TextureTGA_0;
 	GLuint TextureID_0;
 	bool DBLClick;
-	//CNaviPixmapFont *Font;
 	double MarkerX,MarkerY;
 	double VisibleMap[4];
 	bool FromLMB;
@@ -86,53 +75,42 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadDBConfig();
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateApiMenu(void);
-	void SetButtonAction(int action);
 	void Menu(int type);
 	void WritecConfig();
 	void Read();
 	void CreateTextures(void);
 	void WriteConfig();
-	std::vector <SSymbol*> GetPoints();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
-	void SetClickedOnButton(bool value);
 	int GetType();
 	void SetMOM(double x, double y);
-	bool GetClickedOnButton();
-	void Add(double x, double y, wchar_t *name, wchar_t *description, bool _new = false);
+	
 	void SendInsertSignal();
 	void SendSelectSignal();
 	void SetDisplaySignal(int type);
-	
-	void New();	
-	void RenderIcons();
-	void RenderMarkers();
+		
+	void RenderSymbols();
 	void RenderSelected();
 	void RenderHighlighted();
-	void RenderHotSpot();
 	void RenderMouseSelection();
+	void RenderBusy();
+
 	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
 	void RenderText(double x, double y, wchar_t *text);
-	bool IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2); 
+	bool IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2);
 	void RenderPositionMarker(double x, double y);
 	void SetValues();
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void SetSmoothScaleFactor(double _Scale);
 	void ShowProperties();
 	void ShowInfo(int x, int y);
-	void HideInfo();
-	void Move();
-	void ReadHeader();
+		
 	int Count();
 	SSymbol *Get(int id);
-	double Distance();
 	SSymbol *SetSelection(double x, double y);
 	void SetPosition(double x, double y);
-	void RenderNew();
-	void RenderTest();
-	void SetSelectedShip(SSymbol *ship);
 	void WritePasswordConfig(char *v);
-	
+		
 	void Items();
 	void Symbol();
 	void Area();
@@ -149,7 +127,6 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbolType(void *NaviMapIOApiPtr, void *Input);
-
 	static void *MenuItems(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuPicture(void *NaviMapIOApiPtr, void *Input);
 
@@ -160,26 +137,25 @@ public:
 	
 
 	CNaviBroker *GetBroker();
-	void Delete();
-	bool GetNeedExit(void);
-	wxString GetFilePath();
-	wxArrayString *GetDataArray();
-	int GetErrorCode();
 	SSymbol *GetSelectedPtr();
-	size_t GetMarkerIconsCount();
-	void AddField(wchar_t *name, wchar_t *value, SSymbol *Marker);
-	void SetErrorCode(int er);
-	void SetFilePath(wxString file);
-	void SetMarkerTextureID(int id);
-	void SetMarkerIconID(int id);
-	void ShowPopupMenu(bool show);
+	//void Delete();
+	//bool GetNeedExit(void);
+	//wxString GetFilePath();
+	//wxArrayString *GetDataArray();
+	//int GetErrorCode();
+	//size_t GetMarkerIconsCount();
+	//void AddField(wchar_t *name, wchar_t *value, SSymbol *Marker);
+	//void SetErrorCode(int er);
+	//void SetFilePath(wxString file);
+	//void SetMarkerTextureID(int id);
+	//void SetMarkerIconID(int id);
+	//void ShowPopupMenu(bool show);
 	void ShowFrameWindow(bool show);
-	SSymbol *GetNewMarkerPtr();
-	void Append();
-	void Remove();
-	bool ShipIsSelected(SSymbol *ship);
+	//SSymbol *GetNewMarkerPtr();
+	//bool ShipIsSelected(SSymbol *ship);
 	int GetDisplaySignal();
-	
+	void OnTickCommand();
+
 	virtual void Run(void *Params); 
 	virtual void Kill(void);
 	virtual void Render(void);
@@ -190,7 +166,7 @@ public:
 	virtual void SetLanguage(int LanguageID);					
 	
 	static void *GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params);
-	static void *SetSelectedShipFunc(void *NaviMapIOApiPtr, void *Params);
+	
 };
 
 

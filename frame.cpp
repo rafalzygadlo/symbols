@@ -6,6 +6,7 @@
 #include "NaviMapIOApi.h"
 #include "tools.h"
 #include "db.h"
+#include "GeometryTools.h"
 
 BEGIN_EVENT_TABLE(CMyFrame,wxDialog)
 	EVT_BUTTON(ID_CLOSE,CMyFrame::OnCloseButton)
@@ -108,7 +109,7 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
 	m_CommandPanel = new CCommandPanel(m_DB,Panel);
-	Sizer->Add(m_CommandPanel,0,wxALL,5);
+	Sizer->Add(m_CommandPanel,0,wxALL|wxEXPAND,5);
 	return Panel;
 }
 
@@ -197,6 +198,8 @@ void CMyFrame::OnLeftClick(wxCommandEvent &event)
 }
 void CMyFrame::ShowWindow(bool show)
 {
+	m_CommandPanel->ButtonDisable();
+
 	if(show)
 	{
 		ParentX = _ParentPtr->GetScreenPosition().x;
@@ -215,7 +218,26 @@ void CMyFrame::ShowWindow(bool show)
 		wxPoint pt;
 		pt.x = (int)((-vm[0] + SelectedPtr->lon) * scale) + ParentX;
 		pt.y = (int)((-vm[1] + SelectedPtr->lat) * scale) + ParentY;
-			
+		
+		wxPoint p2,p4;
+		wxSize size = this->GetSize();
+				
+		p2.x = pt.x + size.GetWidth(); p2.y = pt.y;
+				
+		if(!IsOnScreen(p2.x,p2.y))
+		{
+			pt.x = pt.x - size.GetWidth();
+			pt.y = pt.y;
+		}
+						
+		p4.x = pt.x; p4.y = pt.y + size.GetHeight();
+
+		if(!IsOnScreen(p4.x,p4.y))
+		{
+			pt.x = pt.x;
+			pt.y = pt.y - size.GetHeight();
+		}
+		
 		this->SetPosition(pt);
 		
 		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->id);
@@ -254,3 +276,14 @@ void CMyFrame::ShowWindow(bool show)
 	Show(show);
 }
 
+bool CMyFrame::IsOnScreen(int x, int y)
+{
+	int sWidth;
+	int sHeight;
+	wxDisplaySize(&sWidth,&sHeight);
+	
+	if(IsPointInsideBox(x, y, 0 , 0, sWidth, sHeight))
+		return true;
+
+	return false;
+}

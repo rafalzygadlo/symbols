@@ -254,19 +254,21 @@ void CDisplayPlugin::SignalInsert()
 //	ShipList->Refresh();
 }
 
+/*
 bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
 {
-	return MapPlugin->ShipIsSelected(ship);
+//	return MapPlugin->ShipIsSelected(ship);
 }
+*/
 
 void CDisplayPlugin::SignalSelect()
 {
-	Selected = MapPlugin->GetSelectedPtr();
+	//Selected = MapPlugin->GetSelectedPtr();
 	
-	if(Selected == NULL)
-		ShowInfoPanel(false,Selected);
-	else
-		ShowInfoPanel(true,Selected);
+	//if(Selected == NULL)
+		//ShowInfoPanel(false,Selected);
+	//else
+		//ShowInfoPanel(true,Selected);
 	
 	//ShipList->_SetSelection(Selected);
 }

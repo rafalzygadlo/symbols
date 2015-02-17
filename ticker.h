@@ -3,8 +3,8 @@
 #if defined (_WIN32) || defined(_WIN64)
 #include <windows.h>
 #endif
-
-
+#include <wx/wx.h>
+#include "conf.h"
 
 class CTicker
 #ifdef TIMER	

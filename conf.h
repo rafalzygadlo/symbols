@@ -4,6 +4,8 @@
 #if defined(_WIN32) || defined(_WIN64)
 #define DIR_SEPARATOR "\\"
 #endif
+
+#define THREAD
 #define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "workdir"
 #define CONFIG_FILE "symbol.conf"
@@ -43,6 +45,11 @@
 #define KEY_COLUMN_1_WIDTH "column_width_1"
 #define KEY_COLUMN_2_WIDTH "column_width_2"
 
+#define POWER_OF_LIGHT_MIN 1
+#define POWER_OF_LIGHT_MAX 100
+
+#define DRIVE_CURRENT_MIN 1
+#define DRIVE_CURRENT_MAX 1000
 
 // Languages
 #define MSG_MANAGER					0
@@ -102,8 +109,11 @@
 #define MSG_BASE_STATION			54
 #define MSG_COMMAND					55
 #define MSG_MANAGEMENT				56
-#define MSG_POWER_OF_LIGHT			57
-
+#define MSG_FLASH_CODE				57
+#define MSG_DRIVE_CURRENT			58
+#define MSG_POWER_OF_LIGHT			59
+#define MSG_FORCED_OFF				60
+#define MSG_SEASON_CONTROL			61
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -231,7 +241,7 @@
 #define TABLE_USER_TO_GROUP		"user_to_group"
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
-#define TABLE_COMMAND_NAME		"command_name"
+
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -240,21 +250,19 @@
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
 #define FI_SYMBOL_ID_BASE_STATION	4
-#define FI_SYMBOL_ID_COMMUNICATION	5
-#define FI_SYMBOL_NUMBER			6
-#define FI_SYMBOL_LON				7
-#define FI_SYMBOL_LAT				8
-#define FI_SYMBOL_CHARACTERISTIC	9
-#define FI_SYMBOL_ON_POSITION		10
-#define FI_SYMBOL_IN_MONITORING		11
-#define FI_SYMBOL_NAME				12
-#define FI_SYMBOL_INFO				13
+#define FI_SYMBOL_NUMBER			5
+#define FI_SYMBOL_LON				6
+#define FI_SYMBOL_LAT				7
+#define FI_SYMBOL_CHARACTERISTIC	8
+#define FI_SYMBOL_ON_POSITION		9
+#define FI_SYMBOL_IN_MONITORING		10
+#define FI_SYMBOL_NAME				11
+#define FI_SYMBOL_INFO				12
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
 #define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
-#define FN_SYMBOL_ID_COMMUNICATION	"id_communication"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
@@ -397,16 +405,9 @@
 #define FI_COMMAND_ID_COMMUNICATION	1
 #define FI_COMMAND_CMD				2
 #define FN_COMMAND_ID				"id"
-#define FN_COMMAND_NAME				"id_communication"
-#define FN_COMMAND_CMD				"cmd"
-
-
-//pola tabeli COMMAND_NAME
-#define FI_COMMAND_NAME_ID			0
-#define FI_COMMAND_NAME_NAME		1
-#define FN_COMMAND_NAME_ID			"id"
-#define FN_COMMAND_NAME_NAME		"name"
-
+#define FN_COMMAND_ID_SYMBOL		"id_symbol"
+#define FN_COMMAND_ID_COMMAND		"id_command"
+#define FN_COMMAND_STATUS			"status"
 
 // pola widoku _VIEW_SYMBOL_TYPE
 #define FI_VIEW_SYMBOL_ITEM_ID			0
@@ -425,7 +426,22 @@
 #define FI_RIGHT_NAME				1
 #define FI_RIGHT_INFO				2
 
+#define TICK_COMMAND 0
 
+//komendy zmiany ustawień do schedulera
+#define COMMAND_FLASH_CODE				1 //charakterystyka świecenia
+#define COMMAND_DRIVE_CURRENT			2 //prąd podkładu
+#define COMMAND_POWER_OF_LIGHT			3 //moc
+#define COMMAND_FORCED_OFF				4 //serwisowe wyłączenie
+#define COMMAND_SEASON_CONTROL			5 //praca sezonowa ON/OFF
+#define COMMAND_PHOTO_CELL_RESISTANCE	6 //fotorezystor czułość
+#define COMMAND_RIPLE_DELAY				7 //opóźnienie impulsu
+#define COMMAND_POWER_OFF				8 //ręczne wyłączenie
+
+//typy komunikacji
+#define COMMUNICATION_RADIO 1
+#define COMMUNICATION_AIS	2
+#define COMMUNICATION_GPRS	3
 
 typedef struct Symbol
 {
@@ -434,6 +450,7 @@ typedef struct Symbol
 	double lat;
 	wchar_t name[SYMBOL_NAME_SIZE + 1];
 	wchar_t description[SYMBOL_DESCRIPTION_SIZE + 1];
+	bool on_command;
 		
 }SSymbol;
 
