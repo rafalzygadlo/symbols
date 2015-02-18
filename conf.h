@@ -428,6 +428,7 @@
 
 #define TICK_COMMAND 0
 
+// . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
 #define COMMAND_FLASH_CODE				1 //charakterystyka świecenia
 #define COMMAND_DRIVE_CURRENT			2 //prąd podkładu
@@ -437,6 +438,9 @@
 #define COMMAND_PHOTO_CELL_RESISTANCE	6 //fotorezystor czułość
 #define COMMAND_RIPLE_DELAY				7 //opóźnienie impulsu
 #define COMMAND_POWER_OFF				8 //ręczne wyłączenie
+
+#define COMMAND_COUNT 9 //ilosc komend
+// . . . . . . . . . . . . . . . . . . . .
 
 //typy komunikacji
 #define COMMUNICATION_RADIO 1
