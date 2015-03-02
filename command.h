@@ -30,6 +30,8 @@ class CCommandPanel: public wxPanel
 	void  OnSeasonControl(wxCommandEvent &event);
 	
 	void OnButtonOk(wxCommandEvent &event);
+	void SetButtonState();
+	wxPanel *CharacteristicPanel(wxPanel *parent);
 	void SetGui();
 
 public:
@@ -48,6 +50,9 @@ public:
 		ID_SEASON_CONTROL,
 		ID_FORCED_OFF,
 		ID_BUTTON_OK,
+		ID_LISTBOX,
+		ID_NEW,
+		ID_DELETE,
 	};
 
 };

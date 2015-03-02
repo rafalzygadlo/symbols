@@ -5,6 +5,7 @@
 #include "picture.h"
 #include "light.h"
 #include "item.h"
+#include "time.h"
 
 class CLightPanel;
 class CItemPanel;
@@ -24,6 +25,9 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextNumber;
 	wxTextCtrl *m_TextColor;
 	wxTextCtrl *m_CharacteristicText;
+	wxTextCtrl *m_TextCode;
+	wxTextCtrl *m_TextIala;
+	wxTextCtrl *m_TextTime;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo,*m_BaseStationCombo;
@@ -35,7 +39,8 @@ class CNew: public wxDialog
 
 	CLightPanel *m_LightPanel;
 	CItemPanel *m_ItemPanel;
-	
+	CTimePanel *m_TimePanel;
+
 	wxString m_Number;
 	double m_Lon,m_Lat;
 	wxString m_Name,m_Info,m_Type,m_Host,m_Port;
@@ -53,15 +58,20 @@ class CNew: public wxDialog
 	wxString m_Color;
 	wxString m_Coverage;
 	wxString m_Characteristic;
+
+	wxString m_Time;
+	wxString m_Iala;
+	wxString m_Code;
+
 		
 	void GetPanel(int type);
-
 	void EditNamePanel();
 	void EditTypePanel();
 	void EditItemPanel();
 	void EditPicturePanel();
 	void EditSymbolPanel();
 	void EditBaseStationPanel();
+	void EditCharacteristicPanel();
 	void SymbolItem();
 	void _SetPosition(double lon, double lat);
 	
@@ -80,6 +90,7 @@ class CNew: public wxDialog
 	bool Validate();
 	bool ValidateSymbol();
 	bool ValidateOthers();
+	bool ValidateCharacteristic();
 		
 		
 public:
@@ -106,6 +117,10 @@ public:
 	CItemPanel *GetItemPanel();
 	bool GetOnPosition();
 	bool GetInMonitoring();
+	wxString GetCode();
+	wxString GetIala();
+	wxString GetTime();
+	CTimePanel *GetTimePanel();
 			
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);
@@ -128,6 +143,9 @@ public:
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetBaseStation(wxString id);
+	void SetCode(wxString v);
+	void SetIala(wxString v);
+	void SetTime(wxString v);
 
 	void Create();
 

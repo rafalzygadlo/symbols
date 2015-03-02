@@ -20,7 +20,7 @@ END_EVENT_TABLE()
 
 
 CNew::CNew(void *db,int type, int id_type, int item_id, bool edit)
-	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize)
+:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 {
 	m_DB = db;
 	m_DegreeFormat = DEFAULT_DEGREE_FORMAT;
@@ -55,13 +55,16 @@ void CNew::GetPanel(int type)
 {
 	switch(type)
 	{
-		case CONTROL_ITEM:			EditItemPanel();		break;
-		case CONTROL_PICTURE:		EditPicturePanel();		break;
-		case CONTROL_SYMBOL:		EditSymbolPanel();		break;
-		case CONTROL_BASE_STATION:	EditBaseStationPanel(); break;
+		case CONTROL_ITEM:			EditItemPanel();			break;
+		case CONTROL_PICTURE:		EditPicturePanel();			break;
+		case CONTROL_SYMBOL:		EditSymbolPanel();			break;
+		case CONTROL_BASE_STATION:	EditBaseStationPanel();		break;
+		case CONTROL_CHARACTERISTIC:EditCharacteristicPanel();	break;
+		
+		case CONTROL_SYMBOL_TYPE:	
 		case CONTROL_AREA:
-		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:	EditNamePanel();		break;
+		case CONTROL_SEAWAY:		EditNamePanel(); break;
+		
 		
 
 	}
@@ -542,6 +545,69 @@ void CNew::EditBaseStationPanel()
 }
 
 
+void CNew::EditCharacteristicPanel()
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+	
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,0,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);	
+	
+	wxStaticText *LabelCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CODE));
+	FlexGridSizer->Add(LabelCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextCode = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextCode->SetFocus();
+	m_TextCode->SetValue(m_Code);
+	FlexGridSizer->Add(m_TextCode,0,wxALL|wxEXPAND,5);
+	m_TextCode->SetValidator(m_TextValidator);
+	
+	wxStaticText *LabelIala = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_IALA));
+	FlexGridSizer->Add(LabelIala,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextIala = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextIala->SetValue(m_Iala);
+	FlexGridSizer->Add(m_TextIala,0,wxALL|wxEXPAND,5);
+	m_TextIala->SetValidator(m_TextValidator);
+
+	wxStaticText *LabelTime = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TIME));
+	FlexGridSizer->Add(LabelTime,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	
+	m_TextTime = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextTime->SetValue(m_Time);
+	FlexGridSizer->Add(m_TextTime,0,wxALL,5);
+	m_TextTime->SetValidator(m_TextValidator);
+	
+	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow *Scroll = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxSize(400,200));
+	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
+	Scroll->SetFocusIgnoringChildren();
+	Scroll->SetSizer(ScrollSizer);
+		
+	m_TimePanel = new CTimePanel(m_DB,this,Scroll);
+	ScrollSizer->Add(m_TimePanel,0,wxALL|wxEXPAND,5);
+	Scroll->SetScrollbars(20, 20, 20, 20);
+	
+	wxPanel *Panel1 = new wxPanel(this);
+	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+
+	Panel1Sizer->AddStretchSpacer();
+
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+
+	GetSizer()->SetSizeHints(this);
+	
+}
+
 void CNew::EditPicturePanel()
 {
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
@@ -646,7 +712,8 @@ bool CNew::Validate()
 	
 	switch(m_ControlType)
 	{
-		case CONTROL_SYMBOL:	result = ValidateSymbol(); break;
+		case CONTROL_SYMBOL:			result = ValidateSymbol();			break;
+		case CONTROL_CHARACTERISTIC:	result = ValidateCharacteristic();	break;
 		default:				result = ValidateOthers();
 	}
 	
@@ -687,6 +754,38 @@ bool CNew::ValidateSymbol()
 	return true;
 }
 
+bool CNew::ValidateCharacteristic()
+{
+	bool result = true;
+	wxString err;
+	
+	if(m_TextCode->GetValue().empty())
+	{
+		result = false;
+		err << GetMsg(MSG_CODE_EMPTY) << "\n";
+	}
+	
+	if(m_TextIala->GetValue().empty())
+	{
+		result = false;
+		err << GetMsg(MSG_IALA_EMPTY) << "\n";
+	}
+	
+	if(m_TextTime->GetValue().empty())
+	{
+		result = false;
+		err << GetMsg(MSG_TIME_EMPTY) << "\n";
+	}
+	
+	if(!result)
+	{
+		wxMessageBox(err);
+		return false;
+	}
+	
+	return true;
+}
+
 bool CNew::ValidateOthers()
 {
 	bool result = true;
@@ -707,8 +806,6 @@ bool CNew::ValidateOthers()
 	return true;
 	
 }
-
-
 
 
 void CNew::OnComboItem(wxCommandEvent &event)
@@ -757,8 +854,6 @@ void CNew::OnComboFilter(wxCommandEvent &event)
 	db_free_result(result);
 		
 }
-
-
 
 
 //SET
@@ -880,6 +975,21 @@ void CNew::SetBaseStation(wxString id)
 	m_BaseStationID = id;
 }
 
+void CNew::SetTime(wxString v)
+{
+	m_Time = v;
+}
+
+void CNew::SetIala(wxString v)
+{
+	m_Iala = v;
+}
+
+void CNew::SetCode(wxString v)
+{
+	m_Code = v;
+}
+
 //GET
 wxArrayPtrVoid CNew::GetFeatureControls()
 {
@@ -961,6 +1071,11 @@ CLightPanel *CNew::GetLightPanel()
 	return m_LightPanel;
 }
 
+CTimePanel *CNew::GetTimePanel()
+{
+	return m_TimePanel;
+}
+
 bool CNew::GetOnPosition()
 {
 	return m_CheckOnPosition->GetValue();
@@ -983,7 +1098,20 @@ wxString CNew::GetPort()
 
 int CNew::GetBaseStationId()
 {
-	fprintf(stderr,"%d\n",m_BaseStationCombo->GetSelection());
-	int a = (int)m_BaseStationCombo->GetClientData(m_BaseStationCombo->GetSelection());
-	return a;
+	return (int)m_BaseStationCombo->GetClientData(m_BaseStationCombo->GetSelection());
+}
+
+wxString CNew::GetCode()
+{
+	return m_TextCode->GetValue();
+}
+
+wxString CNew::GetIala()
+{
+	return m_TextIala->GetValue();
+}
+
+wxString CNew::GetTime()
+{
+	return m_TextTime->GetValue();
 }

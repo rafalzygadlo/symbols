@@ -30,6 +30,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Picture;
 	CDialog *m_SymbolGroup;
 	CDialog *m_BaseStation;
+	CDialog *m_Characteristic;
 
 	CTicker *m_Ticker;
 	void *m_DB;
@@ -63,6 +64,7 @@ class CMapPlugin :public CNaviMapIOApi
 	bool ClickedOnButton;
 	TTexture *TextureTGA_0;
 	GLuint TextureID_0;
+	GLuint TextureID_1;
 	bool DBLClick;
 	double MarkerX,MarkerY;
 	double VisibleMap[4];
@@ -71,6 +73,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
 	CNaviArray <SSymbol*> m_SymbolList;
+	float m_AnimMarkerSize;
 
 	void ReadDBConfig();
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -94,6 +97,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderHighlighted();
 	void RenderMouseSelection();
 	void RenderBusy();
+	void RenderAnimation();
 
 	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
 	void RenderText(double x, double y, wchar_t *text);
@@ -119,10 +123,12 @@ class CMapPlugin :public CNaviMapIOApi
 	void Picture();
 	void SymbolGroup();
 	void BaseStation();
+	void Characteristic();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbolGroup(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuCharacteristic(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuBaseStation(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuArea(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSeaway(void *NaviMapIOApiPtr, void *Input);

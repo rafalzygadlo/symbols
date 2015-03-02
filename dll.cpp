@@ -5,6 +5,7 @@
 #include "positiondialog.h"
 #include "images/icon.h"
 #include "db.h"
+#include "animpos.h"
 #include "NaviEncryption.h"
 
 unsigned char PluginInfoBlock[] = {
@@ -38,7 +39,9 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Picture = NULL;
 	m_SymbolGroup = NULL;
 	m_BaseStation = NULL;
+	m_Characteristic = NULL;
 
+	m_AnimMarkerSize = 5.0f;	
 	m_Broker = NaviBroker;
 	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
 	Factor = DEFAULT_FACTOR; 
@@ -79,6 +82,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	FromLMB = false;
 	m_Ticker = new CTicker(this,TICK_COMMAND);
 	m_Ticker->Start(1000);
+
+	m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 	
 }
 
@@ -94,6 +99,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_Picture;
 	delete m_SymbolGroup;
 	delete m_BaseStation;
+	delete m_Characteristic;
 
 	delete m_FileConfig;
 	delete m_Frame;
@@ -213,6 +219,7 @@ void CMapPlugin::Read()
 	while(row = (char**)db_fetch_row(result))
 	{
 		SSymbol *ptr = (SSymbol*)malloc(sizeof(SSymbol));
+		ptr->on_command = false;
 		sscanf(row[FI_SYMBOL_ID],"%d",&ptr->id);
 		sscanf(row[FI_SYMBOL_LON],"%lf",&ptr->lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&ptr->lat);
@@ -387,6 +394,13 @@ void CMapPlugin::BaseStation()
 	m_BaseStation->Show();
 }
 
+void CMapPlugin::Characteristic()
+{
+	if(m_Characteristic == NULL)
+		m_Characteristic = new CDialog(m_DB, CONTROL_CHARACTERISTIC);
+	m_Characteristic->Show();
+}
+
 void CMapPlugin::Symbol()
 {
 	if(m_Symbol == NULL)
@@ -447,6 +461,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_PICTURE),this,MenuPicture);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHARACTERISTIC),this, MenuCharacteristic );
 	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	
@@ -501,6 +516,14 @@ void *CMapPlugin::MenuSymbolGroup(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuCharacteristic(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_CHARACTERISTIC);
+	
+	return NULL;	
+}
+
 void *CMapPlugin::MenuArea(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -529,14 +552,15 @@ void CMapPlugin::Menu(int type)
 {
 	switch(type)
 	{
-		case CONTROL_SYMBOL:		Symbol();		break;
-		case CONTROL_ITEM:			Items();		break;
-		case CONTROL_AREA:			Area();			break;
-		case CONTROL_SEAWAY:		Seaway();		break;
-		case CONTROL_SYMBOL_TYPE:	SymbolType();	break;
-		case CONTROL_PICTURE:		Picture();		break;
-		case CONTROL_SYMBOL_GROUP:	SymbolGroup();	break;
-		case CONTROL_BASE_STATION:	BaseStation();	break;
+		case CONTROL_SYMBOL:			Symbol();			break;
+		case CONTROL_ITEM:				Items();			break;
+		case CONTROL_AREA:				Area();				break;
+		case CONTROL_SEAWAY:			Seaway();			break;
+		case CONTROL_SYMBOL_TYPE:		SymbolType();		break;
+		case CONTROL_PICTURE:			Picture();			break;
+		case CONTROL_SYMBOL_GROUP:		SymbolGroup();		break;
+		case CONTROL_BASE_STATION:		BaseStation();		break;
+		case CONTROL_CHARACTERISTIC:	Characteristic();	break;
 	}
 
 }
@@ -563,6 +587,8 @@ void CMapPlugin::CreateTextures(void)
 {
 	CreateSymbol(icon, icon_size);
 	CreateTexture( TextureTGA_0,  &TextureID_0 );
+	CreateSymbol(animpos, animpos_size);
+	CreateTexture( TextureTGA_0,  &TextureID_1 );
 }
 
 // from NaviGeometry
@@ -672,7 +698,7 @@ void CMapPlugin::RenderBusy()
 				
 	}
 	
-	glDisable(GL_TEXTURE_2D);			
+	glDisable(GL_TEXTURE_2D);
 		
 }
 
@@ -706,9 +732,52 @@ void CMapPlugin::RenderSymbols()
 		
 }
 
+
+void CMapPlugin::RenderAnimation()
+{
+	//if(!m_AnimStarted)
+		//return;
+	if(SelectedPtr == NULL)
+		return;
+	
+	double x,y;
+	x = SelectedPtr->lon; 
+	y = SelectedPtr->lat;
+
+	double Factor = 10.0;
+	float MarkerSize = m_AnimMarkerSize / GetBroker()->GetMapScale();
+	
+	// animation
+	//if(NmeaInfo.sig == 0)         
+		//glColor4ub( 255, 0, 0, 255 - ((m_AnimMarkerSize / 1000.0f) * 255) );
+	//else
+		glColor4ub( 0, 0, 255, 255 - ((m_AnimMarkerSize / 1000.0f) * 255) );
+	
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+		glBindTexture( GL_TEXTURE_2D, TextureID_1  );
+		glTranslated(x,y,0.0);
+		glBegin(GL_QUADS);
+			glTexCoord2f(1.0f, 0.0f); glVertex2f( -(MarkerSize), -(MarkerSize));
+			glTexCoord2f(0.0f, 0.0f); glVertex2f( MarkerSize, -(MarkerSize));
+			glTexCoord2f(0.0f, 1.0f); glVertex2f( MarkerSize, MarkerSize );
+			glTexCoord2f(1.0f, 1.0f); glVertex2f( -(MarkerSize), MarkerSize );
+		glEnd();
+		
+	glDisable(GL_TEXTURE_2D);	
+	glDisable(GL_BLEND);	
+	glPopMatrix();
+
+	m_AnimMarkerSize += 5.0f;
+	if( m_AnimMarkerSize > 50.0f)
+		m_AnimMarkerSize = 1.0f;
+
+}
+
 void CMapPlugin::Render(void)
 {
-	glEnable(GL_BLEND);
+	
 	//Font->Clear();
 	
 	MapScale = m_Broker->GetMapScale();
@@ -724,7 +793,10 @@ void CMapPlugin::Render(void)
 	RenderBusy();
 			
 	if(SelectedPtr != NULL)
+	{
 		RenderSelected();
+		//RenderAnimation();
+	}
 		
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
@@ -732,7 +804,7 @@ void CMapPlugin::Render(void)
 	//Font->ClearBuffers();
 	//Font->CreateBuffers();
 	//Font->Render();
-	glDisable(GL_BLEND);
+	
 	
 }
 
@@ -744,7 +816,7 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTickCommand()
 {
-
+	
 }
 
 ////////////////////////////////////////////////////////////////////////////

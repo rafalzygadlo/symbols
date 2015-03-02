@@ -67,6 +67,7 @@ class CDialogPanel: public wxPanel
 	void EditSymbolType(int id);
 	void EditSeaway(int id);
 	void EditSymbol(int id);
+	void EditCharacteristic(int id);
 	void EditItem(int id);
 	void EditBaseStation(int id);
 	int GetItemTypeId(int id);
@@ -84,12 +85,14 @@ class CDialogPanel: public wxPanel
 	void SetTable();
 	void NewItem(CNew *ptr);
 	void NewSymbol(CNew *ptr);
+	void NewCharacteristic(CNew *ptr);
 	void NewSymbolItem();
 	void NewPicture();
 	void UpdatePicture(wxImage image, int id);
 	void SetSymbolLight(CNew *ptr,int id);
 	void SetSymbolPicture(CNew *ptr,int id);
 	void SetSymbolItem(CNew *ptr,int id);
+	void SetCharacteristicTime(CNew *ptr,int id);
 
 	void OnListBox(wxCommandEvent &event);
 	void OnTickSearch(wxTimerEvent &event);

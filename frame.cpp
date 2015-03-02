@@ -30,7 +30,7 @@ CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 
-	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY);
+	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	Notebook->AddPage(GetPage1(Notebook),GetMsg(MSG_INFO));
 	if(db_check_right(db,MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
 		Notebook->AddPage(GetPage2(Notebook),GetMsg(MSG_MANAGEMENT));	
@@ -73,16 +73,16 @@ wxPanel *CMyFrame::GetPage1(wxWindow *parent)
 	
 	wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labelname,0,wxALL,5);
-	m_TextName = new wxTextCtrl(Panel,ID_NAME,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	m_TextName = new wxTextCtrl(Panel,ID_NAME,wxEmptyString, wxDefaultPosition, wxSize(250,-1));
 	GridSizer->AddGrowableCol(1);
 	GridSizer->AddGrowableRow(1);
 	GridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	
 	// marker description
-	wxStaticText *labeldescription = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DESCRIPTION),wxDefaultPosition,wxDefaultSize);
-	GridSizer->Add(labeldescription,0,wxALL,5);
-	m_TextInfo = new wxTextCtrl(Panel,ID_DESCRIPTION,wxEmptyString,wxDefaultPosition,wxSize(250,100),wxTE_MULTILINE);
-	GridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
+	//wxStaticText *labeldescription = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DESCRIPTION),wxDefaultPosition,wxDefaultSize);
+	//GridSizer->Add(labeldescription,0,wxALL,5);
+	//m_TextInfo = new wxTextCtrl(Panel,ID_DESCRIPTION,wxEmptyString,wxDefaultPosition,wxSize(250,100),wxTE_MULTILINE);
+	//GridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
 		
 	wxStaticText *labellat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
 	GridSizer->Add(labellat,0,wxALL,5);
@@ -251,7 +251,7 @@ void CMyFrame::ShowWindow(bool show)
 		
 		row = (char**)db_fetch_row(result);
 		m_TextName->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-		m_TextInfo->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_INFO]).wc_str()));
+		//m_TextInfo->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_INFO]).wc_str()));
 		db_free_result(result);
 		
 		m_TextLon->SetLabel(FormatLongitude(to_x,DEFAULT_DEGREE_FORMAT));

@@ -114,6 +114,14 @@
 #define MSG_POWER_OF_LIGHT			59
 #define MSG_FORCED_OFF				60
 #define MSG_SEASON_CONTROL			61
+#define MSG_CODE					62
+#define MSG_IALA					63
+#define MSG_TIME					64
+#define MSG_TIME_ON					65
+#define MSG_TIME_OFF				66
+#define MSG_CODE_EMPTY				67
+#define MSG_IALA_EMPTY				68
+#define MSG_TIME_EMPTY				69
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -133,6 +141,7 @@
 #define CONTROL_SYMBOL_ITEM		9
 #define CONTROL_SYMBOL_GROUP	10
 #define CONTROL_BASE_STATION	11
+#define CONTROL_CHARACTERISTIC	12
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -179,6 +188,9 @@
 #define SECTOR_FROM_DEFAULT_VALUE 0.00
 #define SECTOR_TO_DEFAULT_VALUE 360.00
 
+#define CHRACTERISTIC_ON_DEFAULT_VALUE 0.20
+#define CHRACTERISTIC_OFF_DEFAULT_VALUE 5.00
+
 #define COVERAGE_PRECISION 2
 #define COVERAGE_MIN 0.00
 #define COVERAGE_MAX 100.00
@@ -203,6 +215,8 @@
 #define MODULE_PICTURE "picture"
 #define MODULE_SYMBOL_GROUP "symbol_group"
 #define MODULE_BASE_STATION "base_station"
+#define MODULE_CHARACTERISTIC "characteristic"
+#define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -241,6 +255,7 @@
 #define TABLE_USER_TO_GROUP		"user_to_group"
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
+#define TABLE_CHARACTERISTIC	"characteristic"
 
 
 // pola tabeli SYMBOL
@@ -408,6 +423,24 @@
 #define FN_COMMAND_ID_SYMBOL		"id_symbol"
 #define FN_COMMAND_ID_COMMAND		"id_command"
 #define FN_COMMAND_STATUS			"status"
+
+// pola tabeli CHARACTERISTIC
+#define FI_CHARACTERISTIC_ID		0
+#define FI_CHARACTERISTIC_CODE		1
+#define FI_CHARACTERISTIC_IALA		2
+#define FI_CHARACTERISTIC_TIME		3
+#define FN_CHARACTERISTIC_ID		"id"
+#define FN_CHARACTERISTIC_CODE		"code"
+#define FN_CHARACTERISTIC_IALA		"iala"
+#define FN_CHARACTERISTIC_TIME		"time"
+
+//pola tabeli CHARACTERISTIC_ON_OFF
+#define FI_CHARACTERISTIC_ON_OFF_ID		0
+#define FI_CHARACTERISTIC_ON_OFF_ON		1
+#define FI_CHARACTERISTIC_ON_OFF_OFF	2
+#define FN_CHARACTERISTIC_ON_OFF_ID		"id"
+#define FN_CHARACTERISTIC_ON_OFF_ON		"_on"
+#define FN_CHARACTERISTIC_ON_OFF_OFF	"_off"
 
 // pola widoku _VIEW_SYMBOL_TYPE
 #define FI_VIEW_SYMBOL_ITEM_ID			0

@@ -44,6 +44,9 @@ SHeader Header[] =
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_PORT  , FN_BASE_STATION_PORT, MSG_PORT} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_INFO  , FN_BASE_STATION_INFO, MSG_INFO } },
 
+	{CONTROL_CHARACTERISTIC ,250, {FI_CHARACTERISTIC_CODE  , FN_CHARACTERISTIC_CODE, MSG_CODE} },
+	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_IALA  , FN_CHARACTERISTIC_IALA, MSG_IALA} },
+	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_TIME  , FN_CHARACTERISTIC_TIME, MSG_TIME} },
 	{-1},
 
 };
@@ -341,6 +344,7 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_BASE_STATION:
+		case CONTROL_CHARACTERISTIC:
 				return GetPanelList(Parent);
 	}
 	
@@ -571,15 +575,16 @@ void CDialogPanel::SetTable()
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_SYMBOL:		m_Table = TABLE_SYMBOL;			break;
-		case CONTROL_SYMBOL_ITEM:	m_Table = TABLE_SYMBOL_ITEM;	break;
-		case CONTROL_ITEM:			m_Table = TABLE_ITEM;			break;
-		case CONTROL_AREA:			m_Table = TABLE_AREA;			break;
-		case CONTROL_SEAWAY:		m_Table = TABLE_SEAWAY;			break;
-		case CONTROL_SYMBOL_TYPE:	m_Table = TABLE_SYMBOL_TYPE;	break;
-		case CONTROL_PICTURE:		m_Table = TABLE_PICTURE;		break;
-		case CONTROL_SYMBOL_GROUP:	m_Table = TABLE_SYMBOL_GROUP;	break;
-		case CONTROL_BASE_STATION:	m_Table = TABLE_BASE_STATION;	break;	
+		case CONTROL_SYMBOL:			m_Table = TABLE_SYMBOL;			break;
+		case CONTROL_SYMBOL_ITEM:		m_Table = TABLE_SYMBOL_ITEM;	break;
+		case CONTROL_ITEM:				m_Table = TABLE_ITEM;			break;
+		case CONTROL_AREA:				m_Table = TABLE_AREA;			break;
+		case CONTROL_SEAWAY:			m_Table = TABLE_SEAWAY;			break;
+		case CONTROL_SYMBOL_TYPE:		m_Table = TABLE_SYMBOL_TYPE;	break;
+		case CONTROL_PICTURE:			m_Table = TABLE_PICTURE;		break;
+		case CONTROL_SYMBOL_GROUP:		m_Table = TABLE_SYMBOL_GROUP;	break;
+		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
+		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
 	
 	}
 }
@@ -601,6 +606,7 @@ void CDialogPanel::Read()
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_BASE_STATION:
+		case CONTROL_CHARACTERISTIC:
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table);
 		break;
 	}
@@ -759,6 +765,7 @@ void CDialogPanel::OnNew()
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_BASE_STATION:
+		case CONTROL_CHARACTERISTIC:
 			New();	
 		break;
 				
@@ -780,6 +787,9 @@ void CDialogPanel::New()
 		bool query = false;
 		switch(m_ControlType)
 		{
+			case CONTROL_CHARACTERISTIC:
+				NewCharacteristic(ptr);
+			break;
 			case CONTROL_ITEM:
 				NewItem(ptr);
 			break;
@@ -867,6 +877,27 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 
 }
 
+void CDialogPanel::NewCharacteristic(CNew *ptr)
+{
+	wxString sql;
+	
+	sql = wxString::Format(_("INSERT INTO %s SET code ='%s', iala='%s', time='%s'"),m_Table,ptr->GetCode(),ptr->GetIala(),ptr->GetTime());
+	if(!my_query(m_DB,sql))
+		return;
+	
+	int id = db_last_insert_id(m_DB);
+	//time panel
+	CTimePanel *TimePanel = ptr->GetTimePanel();
+
+	for(size_t i = 0; i < TimePanel->GetCount(); i++)
+	{
+		CTime *ptr = TimePanel->GetTime(i);
+		sql = wxString::Format	(_("INSERT INTO `%s` SET id_characteristic ='%d', _on='%s',_off='%s'"),TABLE_CHARACTERISTIC_ON_OFF,id,ptr->GetOn(),ptr->GetOff());
+		my_query(m_DB,sql);
+	}
+	
+}
+
 void CDialogPanel::NewSymbolItem()
 {
 	if(m_IDMaster == -1)
@@ -915,6 +946,7 @@ void CDialogPanel::NewItem(CNew *ptr)
 	sql = wxString::Format(_("INSERT INTO %s SET id_type ='%d', name='%s', type='%s', info='%s'"),m_Table,ptr->GetItemType(),ptr->GetName(),ptr->GetType(),ptr->GetInfo());
 	if(!my_query(m_DB,sql))
 		return;
+
 	int id = db_last_insert_id(m_DB);
 	wxArrayPtrVoid controls = ptr->GetFeatureControls();
 
@@ -983,10 +1015,12 @@ void CDialogPanel::OnEdit(int id)
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_PICTURE:		EditPicture(id);	break;
-		case CONTROL_SYMBOL:		EditSymbol(id);		break;
-		case CONTROL_ITEM:			EditItem(id);		break;
-		case CONTROL_BASE_STATION:	EditBaseStation(id);break;
+		case CONTROL_PICTURE:			EditPicture(id);		break;
+		case CONTROL_SYMBOL:			EditSymbol(id);			break;
+		case CONTROL_ITEM:				EditItem(id);			break;
+		case CONTROL_BASE_STATION:		EditBaseStation(id);	break;
+		case CONTROL_CHARACTERISTIC:	EditCharacteristic(id);	break;
+
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
 		case CONTROL_SYMBOL_TYPE:	EditName(id);		break;
@@ -1148,6 +1182,56 @@ void CDialogPanel::EditSymbol(int id)
 
 	delete ptr;
 }
+
+
+void CDialogPanel::EditCharacteristic(int id)
+{
+	CNew *ptr = new CNew(m_DB,m_ControlType);
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
+	
+	if(!my_query(m_DB,sql))
+		return;
+				
+	void *result = db_result(m_DB);
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetCode(Convert(row[FI_CHARACTERISTIC_CODE]));
+	ptr->SetIala(Convert(row[FI_CHARACTERISTIC_IALA]));
+	ptr->SetTime(Convert(row[FI_CHARACTERISTIC_TIME]));
+	
+
+	db_free_result(result);	
+	ptr->Create();
+	SetCharacteristicTime(ptr,id);
+			
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET code='%s',iala='%s',time='%s' WHERE id = '%d'"),m_Table,ptr->GetCode(),ptr->GetIala(),ptr->GetTime(),id);
+		my_query(m_DB,sql);
+		
+		//time
+		CTimePanel *pan = ptr->GetTimePanel();
+		
+		sql = wxString::Format(_("DELETE FROM `%s` WHERE id_characteristic='%d'"),TABLE_CHARACTERISTIC_ON_OFF,id);
+		my_query(m_DB,sql);
+
+		for(size_t i = 0; i < pan->GetCount(); i++)
+		{
+			CTime *Time = pan->GetTime(i);
+			sql = wxString::Format(_("INSERT INTO %s SET id_characteristic='%d', _on='%s',_off='%s'"),TABLE_CHARACTERISTIC_ON_OFF,id,Time->GetOn(),Time->GetOff());
+			my_query(m_DB,sql);
+		}
+		
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+}
+
+
 
 void CDialogPanel::EditName(int id)
 {
@@ -1357,6 +1441,30 @@ void CDialogPanel::_SetIdMaster(int id)
 	m_IDMaster = id;
 }
 
+void CDialogPanel::SetCharacteristicTime(CNew *ptr,int id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,id);
+	
+	if(!my_query(m_DB,sql))
+		return;
+			
+	void *result = db_result(m_DB);
+	char **row;
+	
+	CTimePanel *TimePanel = ptr->GetTimePanel();
+
+	while(row = (char**)db_fetch_row(result))
+	{
+		CTime *Time = new CTime(TimePanel);
+		Time->SetOn(row[FI_CHARACTERISTIC_ON_OFF_ON]);
+		Time->SetOff(row[FI_CHARACTERISTIC_ON_OFF_OFF]);
+		TimePanel->AppendPanel(Time);
+	}
+	
+	
+	db_free_result(result);
+}
+
 void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol = '%d'"),TABLE_SYMBOL_LIGHT,id);
@@ -1385,6 +1493,8 @@ void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 	
 	db_free_result(result);
 }
+
+
 
 void CDialogPanel::SetSymbolItem(CNew *ptr,int id)
 {

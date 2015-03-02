@@ -18,7 +18,7 @@ class CMyFrame: public wxDialog
 	SSymbol *SelectedPtr;
 	wxTextCtrl *m_TextName;
 	wxPanel *m_Panel;
-	wxTextCtrl *m_TextInfo;
+	//wxTextCtrl *m_TextInfo;
 	
 	wxButton *m_ButtonCommand;
 	CPicturePanel *m_PicturePanel;
@@ -47,9 +47,7 @@ class CMyFrame: public wxDialog
 
 					
 public:
-
-	void ShowIconChanger(bool show);
-	//void SetMarkerIcon(int id);
+		
 	void ShowWindow(bool show);		
 	CMyFrame(void *db,void *Parent, wxWindow *ParentPtr);
 	~CMyFrame();

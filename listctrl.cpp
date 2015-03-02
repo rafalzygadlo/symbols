@@ -182,6 +182,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);			break;
 		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);		break;
 		case CONTROL_BASE_STATION:	_Menu = Menu(m_SelectedItem,MODULE_BASE_STATION);		break;
+		case CONTROL_CHARACTERISTIC:_Menu = Menu(m_SelectedItem,MODULE_CHARACTERISTIC);		break;
 	}
 	
 	if(_Menu)

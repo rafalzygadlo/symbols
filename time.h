@@ -1,0 +1,82 @@
+#ifndef __TIME_H
+#define __TIME_H
+
+#include <wx/wx.h>
+#include <wx/wrapsizer.h>
+
+class CTime;
+class CTimePanel: public wxPanel
+{
+	void *m_DB;
+	wxWindow *m_Top;
+	wxArrayPtrVoid m_List;
+	wxTextCtrl *m_CharacteristicText;
+	wxWrapSizer *m_Sizer;
+
+	void OnNew(wxCommandEvent &event);
+	void RemovePanel(CTime *panel);
+				
+public:
+
+	CTimePanel(void *db,wxWindow *top, wxWindow *parent);
+	~CTimePanel();
+	void Read(wxString query);
+	wxArrayPtrVoid GetItems();
+	void OnDelete(CTime *panel);
+	void OnNewSector();
+	void OnDeleteSector();
+	void AppendPanel(CTime *panel);
+	
+	size_t GetCount();
+	CTime *GetTime(int id);
+
+
+	DECLARE_EVENT_TABLE();
+	enum
+	{
+		ID_DELETE = 8124,
+		ID_NEW,
+		ID_EDIT,
+	};
+	
+};
+
+class CTime: public wxPanel
+{
+	CTimePanel *m_Panel;
+	wxString m_Id;
+	wxTextCtrl *m_TextOn;
+	wxTextCtrl *m_TextOff;
+		
+	void OnNew(wxCommandEvent &event);
+	void OnDelete(wxCommandEvent &event);
+	
+public:
+
+	CTime(CTimePanel *parent);
+	~CTime();
+		
+	wxString _GetId();
+	wxString GetOn();
+	wxString GetOff();
+
+
+	void _SetId(wxString v);
+	void SetOn(wxString v);
+	void SetOff(wxString v);
+	
+
+		
+	DECLARE_EVENT_TABLE();
+	
+	enum
+	{
+		ID_DELETE = 8124,
+		ID_NEW,
+		
+	};
+
+};
+
+
+#endif
