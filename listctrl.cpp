@@ -6,6 +6,7 @@
 #include "images/down_sort.img"
 #include "images/checkbox01.img"
 #include "images/checkbox02.img"
+#include "images/file.img"
 #include "db.h"
 //#include "db_actions.h"
 
@@ -55,6 +56,11 @@ CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
 	wxMemoryInputStream in_4((const unsigned char*)checkbox02,checkbox02_size);
     wxImage myImage_4(in_4, wxBITMAP_TYPE_PNG);
     m_ImageListSmall->Add(myImage_4);
+
+	wxMemoryInputStream in_5((const unsigned char*)file,file_size);
+    wxImage myImage_5(in_5, wxBITMAP_TYPE_PNG);
+    m_ImageListSmall->Add(myImage_5);
+
 	 	
 	SetImageList(m_ImageListSmall, wxIMAGE_LIST_SMALL);
 	
@@ -484,10 +490,10 @@ void CListCtrl::Sort()
 	Refresh();
 }
 
-
+/*
 int CListCtrl::OnGetItemColumnImage(long item, long column) const
 {
-	return -1;
+	
 	if(column == 0)
 	{
 		if(m_ThisPtr->IsChecked(item))
@@ -499,10 +505,11 @@ int CListCtrl::OnGetItemColumnImage(long item, long column) const
 		return -1;
 	}
 	
-		
+	return 1;
 }
+*/
 
 int CListCtrl::OnGetItemImage(long item) const
 {
-	return -1;
+	return 4;
 }

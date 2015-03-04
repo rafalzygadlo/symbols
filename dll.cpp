@@ -2,7 +2,6 @@
 #include "dll.h"
 #include "frame.h"
 #include "tools.h"
-#include "positiondialog.h"
 #include "images/icon.h"
 #include "db.h"
 #include "animpos.h"
@@ -41,6 +40,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
 
+	m_On = false;
 	m_AnimMarkerSize = 5.0f;	
 	m_Broker = NaviBroker;
 	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
@@ -52,7 +52,6 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	RectHeight = 0;
 	TranslationX = 0;
 	TranslationY = 0;
-	MapScale = 0;
 	ClickedOnButton = false;
 	FirstTime = true;
 	MapX = 0.0;
@@ -111,10 +110,8 @@ CMapPlugin::~CMapPlugin()
 	//delete Font;
 
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
-	{
-		free(m_SymbolList.Get(i));	
-	}
-	
+		delete m_SymbolList.Get(i);	
+		
 	m_SymbolList.Clear();
 	db_close(m_DB);
 }
@@ -183,7 +180,7 @@ void *CMapPlugin::GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params)
 	return ThisPtr;
 }
 
-SSymbol *CMapPlugin::GetSelectedPtr()
+CSymbol *CMapPlugin::GetSelectedPtr()
 {
 	return SelectedPtr;
 }
@@ -218,15 +215,21 @@ void CMapPlugin::Read()
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		SSymbol *ptr = (SSymbol*)malloc(sizeof(SSymbol));
-		ptr->on_command = false;
-		sscanf(row[FI_SYMBOL_ID],"%d",&ptr->id);
-		sscanf(row[FI_SYMBOL_LON],"%lf",&ptr->lon);
-		sscanf(row[FI_SYMBOL_LAT],"%lf",&ptr->lat);
+		CSymbol *ptr = new CSymbol(m_DB,m_Broker);
+		
+		double lon,lat;
+		int id;
+		sscanf(row[FI_SYMBOL_ID],"%d",&id);
+		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
+		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
+		
 		double to_x,to_y;
-		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
-		ptr->lon = to_x;
-		ptr->lat = -to_y;
+		m_Broker->Unproject(lon,lat,&to_x,&to_y);
+				
+		ptr->SetId(id);
+		ptr->SetLon(to_x);
+		ptr->SetLat(-to_y);
+		
 		m_SymbolList.Append(ptr);
 	}
 	
@@ -306,7 +309,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	double mom[2];
 	double _x,_y;
 	m_Broker->GetMouseOM(mom);
-	MapScale = m_Broker->GetMapScale();
+	//MapScale = m_Broker->GetMapScale();
 	m_Broker->Unproject(mom[0],mom[1],&_x,&_y);
 	
 	MouseX = mom[0];
@@ -320,7 +323,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 		
 	bool add = false;
-	SSymbol *ptr = NULL;
+	CSymbol *ptr = NULL;
 	
 	if(ptr = SetSelection(MapX,MapY))
 	{
@@ -355,13 +358,13 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	
 }
 
-SSymbol *CMapPlugin::SetSelection(double x, double y)
+CSymbol *CMapPlugin::SetSelection(double x, double y)
 {
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
-		SSymbol *ptr = m_SymbolList.Get(i);
-		if(IsPointInsideBox(MapX, MapY, ptr->lon - (RectWidth/2) + TranslationX, ptr->lat - (RectHeight/2) + TranslationY, ptr->lon + (RectWidth/2) + TranslationX , ptr->lat + (RectHeight/2) + TranslationY))
-			return ptr;
+		CSymbol *ptr = m_SymbolList.Get(i);
+		//if(IsPointInsideBox(MapX, MapY, ptr->GetLon() - (RectWidth/2) + TranslationX, ptr->Getlat - (RectHeight/2) + TranslationY, ptr->lon + (RectWidth/2) + TranslationX , ptr->lat + (RectHeight/2) + TranslationY))
+			//return ptr;
 	}
 	
 	return NULL;
@@ -627,8 +630,8 @@ void CMapPlugin::SetValues()
 void CMapPlugin::RenderSelected()
 {
 	double x,y;
-	x = SelectedPtr->lon; 
-	y = SelectedPtr->lat;
+	x = SelectedPtr->GetLon(); 
+	y = SelectedPtr->GetLat();
 	
 	glPushMatrix();
 	
@@ -650,8 +653,8 @@ void CMapPlugin::RenderHighlighted()
 {
 			
 	double x,y;
-	x = HighlightedPtr->lon; 
-	y = HighlightedPtr->lat;
+	x = HighlightedPtr->GetLon(); 
+	y = HighlightedPtr->GetLat();
 	
 	glPushMatrix();
 	
@@ -671,108 +674,12 @@ void CMapPlugin::RenderHighlighted()
 	
 }
 
-void CMapPlugin::RenderBusy()
-{
-	glEnable(GL_TEXTURE_2D);
-	for(size_t i = 0; i < m_SymbolList.Length(); i++)
-	{
-		SSymbol *ptr = m_SymbolList.Get(i);
-		if(ptr->on_command)
-		{
-			glColor4f(1.0f,0.0f,0.0f,0.9f);
-			glPushMatrix();
-		
-			glTranslatef(ptr->lon,ptr->lat,0.0f);
-			//glTranslatef(0.0f,-TranslationX,0.0f);
-			glBindTexture( GL_TEXTURE_2D, TextureID_0);
-				
-			glBegin(GL_QUADS);
-				glTexCoord2f(1.0f,1.0f); glVertex2f(  RectWidth/2 + TranslationX,  -RectHeight/2 + TranslationY);	
-				glTexCoord2f(1.0f,0.0f); glVertex2f(  RectWidth/2 + TranslationX,   RectHeight/2 + TranslationY);
-				glTexCoord2f(0.0f,0.0f); glVertex2f( -RectWidth/2 + TranslationX,   RectHeight/2 + TranslationY);
-				glTexCoord2f(0.0f,1.0f); glVertex2f( -RectWidth/2 + TranslationX,  -RectHeight/2 + TranslationY);
-			glEnd();
-	
-			glPopMatrix();
-		}
-				
-	}
-	
-	glDisable(GL_TEXTURE_2D);
-		
-}
-
-
 void CMapPlugin::RenderSymbols()
 {
-	
-	glEnable(GL_TEXTURE_2D);
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
-		SSymbol *ptr = m_SymbolList.Get(i);
-		glColor4f(1.0f,1.0f,1.0f,0.6f);
-		glPushMatrix();
-		
-		glTranslatef(ptr->lon,ptr->lat,0.0f);
-		//glTranslatef(0.0f,-TranslationX,0.0f);
-		glBindTexture( GL_TEXTURE_2D, TextureID_0);
-				
-		glBegin(GL_QUADS);
-			glTexCoord2f(1.0f,1.0f); glVertex2f(  RectWidth/2 + TranslationX,  -RectHeight/2 + TranslationY);	
-			glTexCoord2f(1.0f,0.0f); glVertex2f(  RectWidth/2 + TranslationX,   RectHeight/2 + TranslationY);
-			glTexCoord2f(0.0f,0.0f); glVertex2f( -RectWidth/2 + TranslationX,   RectHeight/2 + TranslationY);
-			glTexCoord2f(0.0f,1.0f); glVertex2f( -RectWidth/2 + TranslationX,  -RectHeight/2 + TranslationY);
-		glEnd();
-	
-		glPopMatrix();
-				
+		m_SymbolList.Get(i)->Render();
 	}
-	
-	glDisable(GL_TEXTURE_2D);			
-		
-}
-
-
-void CMapPlugin::RenderAnimation()
-{
-	//if(!m_AnimStarted)
-		//return;
-	if(SelectedPtr == NULL)
-		return;
-	
-	double x,y;
-	x = SelectedPtr->lon; 
-	y = SelectedPtr->lat;
-
-	double Factor = 10.0;
-	float MarkerSize = m_AnimMarkerSize / GetBroker()->GetMapScale();
-	
-	// animation
-	//if(NmeaInfo.sig == 0)         
-		//glColor4ub( 255, 0, 0, 255 - ((m_AnimMarkerSize / 1000.0f) * 255) );
-	//else
-		glColor4ub( 0, 0, 255, 255 - ((m_AnimMarkerSize / 1000.0f) * 255) );
-	
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-		glBindTexture( GL_TEXTURE_2D, TextureID_1  );
-		glTranslated(x,y,0.0);
-		glBegin(GL_QUADS);
-			glTexCoord2f(1.0f, 0.0f); glVertex2f( -(MarkerSize), -(MarkerSize));
-			glTexCoord2f(0.0f, 0.0f); glVertex2f( MarkerSize, -(MarkerSize));
-			glTexCoord2f(0.0f, 1.0f); glVertex2f( MarkerSize, MarkerSize );
-			glTexCoord2f(1.0f, 1.0f); glVertex2f( -(MarkerSize), MarkerSize );
-		glEnd();
-		
-	glDisable(GL_TEXTURE_2D);	
-	glDisable(GL_BLEND);	
-	glPopMatrix();
-
-	m_AnimMarkerSize += 5.0f;
-	if( m_AnimMarkerSize > 50.0f)
-		m_AnimMarkerSize = 1.0f;
-
 }
 
 void CMapPlugin::Render(void)
@@ -790,7 +697,7 @@ void CMapPlugin::Render(void)
 	}
 		
 	RenderSymbols();
-	RenderBusy();
+	//RenderBusy();
 			
 	if(SelectedPtr != NULL)
 	{
@@ -804,8 +711,7 @@ void CMapPlugin::Render(void)
 	//Font->ClearBuffers();
 	//Font->CreateBuffers();
 	//Font->Render();
-	
-	
+		
 }
 
 void CMapPlugin::SetMouseXY(int x, int y)
@@ -816,7 +722,8 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTickCommand()
 {
-	
+	m_Broker->Refresh(m_Broker->GetParentPtr());
+	m_On = !m_On;
 }
 
 ////////////////////////////////////////////////////////////////////////////

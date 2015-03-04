@@ -228,23 +228,6 @@ void CDisplayPlugin::SwitchAction()
 
 }
 
-void CDisplayPlugin::ShowInfoPanel(bool show, SSymbol *ship)
-{
-	if(ship != NULL)
-	{
-		//ShipName->SetLabel(ship->name);
-		//ShipDesc->SetValue(ship->description);
-		//double to_x,to_y;
-		//MapPlugin->GetBroker()->Project(ship->x,ship->y,&to_x,&to_y);
-		//Lon->SetLabel(FormatLongitude(to_x));
-		//Lat->SetLabel(FormatLatitude(-to_y));
-	}
-	
-	//InfoPanel->Show(show);
-	ControlPanel->Show(show);
-	Page1Sizer->Layout();
-}
-
 void CDisplayPlugin::SignalInsert()
 {
 	if(MapPlugin == NULL)		
@@ -276,45 +259,6 @@ void CDisplayPlugin::SignalSelect()
 void CDisplayPlugin::SignalClear()
 {
 	//ShipList->ClearList();
-}
-
-void CDisplayPlugin::SetSelectedShip(SSymbol *ship)
-{
-
-	Selected = ship;
-	
-	if(Broker != NULL)
-		Broker->ExecuteFunction(Broker->GetParentPtr(),"manager_SetSelShip",ship);
-}
-
-void CDisplayPlugin::ShipProperties(SSymbol *ship)
-{
-	//if(Broker != NULL)
-		//Broker->ExecuteFunction(Broker->GetParentPtr(),"tracker2_ShPropert",ship);
-}
-
-void CDisplayPlugin::ShipConfig(SSymbol *ship)
-{
-	//if(Broker != NULL)
-		//Broker->ExecuteFunction(Broker->GetParentPtr(),"tracker2_ShConfig",ship);
-}
-
-void CDisplayPlugin::ShipData(SSymbol *ship)
-{
-	//if(Broker != NULL)
-		//Broker->ExecuteFunction(Broker->GetParentPtr(),"tracker2_ShData",ship);
-}
-
-void CDisplayPlugin::ShipReport(SSymbol *ship)
-{
-	//if(Broker != NULL)
-		//Broker->ExecuteFunction(Broker->GetParentPtr(),"tracker2_ShReport",ship);
-}
-
-void CDisplayPlugin::ShipReportConfig(SSymbol *ship)
-{
-	//if(Broker != NULL)
-		//Broker->ExecuteFunction(Broker->GetParentPtr(),"tracker2_ShReportConfig",ship);
 }
 
 void CDisplayPlugin::OnRender(wxGCDC &dc) 

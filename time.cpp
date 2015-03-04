@@ -107,18 +107,12 @@ CTime::CTime(CTimePanel *parent)
 {
 	m_Panel = parent;
 
-	wxFloatingPointValidator<float> CoverageValidator;
-	CoverageValidator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
-	CoverageValidator.SetMin(COVERAGE_MIN);
-	CoverageValidator.SetMax(COVERAGE_MAX);
-	CoverageValidator.SetPrecision(COVERAGE_PRECISION);
-
-	wxFloatingPointValidator<float> SectorValidator;
-	SectorValidator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
-	SectorValidator.SetMin(SECTOR_MIN);
-	SectorValidator.SetMax(SECTOR_MAX);
-	SectorValidator.SetPrecision(COVERAGE_PRECISION);
-
+	wxFloatingPointValidator<float> Validator;
+	Validator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
+	Validator.SetMin(CHARACTERISTIC_MIN);
+	Validator.SetMax(CHARACTERISTIC_MAX);
+	Validator.SetPrecision(CHARACTERISTIC_PRECISION);
+	
 	wxTextValidator TextValidator;
 	TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	TextValidator.SetCharExcludes(_("'\"\\;?"));
@@ -140,7 +134,7 @@ CTime::CTime(CTimePanel *parent)
 	wxStaticText *LabelFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_TIME_ON));
 	FlexSizer->Add(LabelFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_TextOn = new wxTextCtrl(this,wxID_ANY);
-	m_TextOn->SetValidator(SectorValidator);
+	m_TextOn->SetValidator(Validator);
 	m_TextOn->SetValue(wxString::Format(_("%4.2f"),CHRACTERISTIC_ON_DEFAULT_VALUE));
 	FlexSizer->Add(m_TextOn,0,wxALL,1);
 	
@@ -148,7 +142,7 @@ CTime::CTime(CTimePanel *parent)
 	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
 	m_TextOff = new wxTextCtrl(this,wxID_ANY);
 	m_TextOff->SetValue(wxString::Format(_("%4.2f"),CHRACTERISTIC_OFF_DEFAULT_VALUE));
-	m_TextOff->SetValidator(SectorValidator);
+	m_TextOff->SetValidator(Validator);
 	FlexSizer->Add(m_TextOff,0,wxALL,1);
 		
 }
@@ -173,22 +167,26 @@ void CTime::_SetId(wxString v)
 	m_Id = v;
 }
 
-void CTime::SetOn(wxString v)
+void CTime::SetOn(float v)
 {
-	m_TextOn->SetValue(v);
+	m_TextOn->SetValue(wxString::Format(_("%4.2f"),v));
 }
 
-void CTime::SetOff(wxString v)
+void CTime::SetOff(float v)
 {
-	m_TextOff->SetValue(v);
+	m_TextOff->SetValue(wxString::Format(_("%4.2f"),v));
 }
 
-wxString CTime::GetOn()
+float CTime::GetOn()
 {
-	return m_TextOn->GetValue();
+	double v;
+	m_TextOn->GetValue().ToCDouble(&v);
+	return v;
 }
 
-wxString CTime::GetOff()
+float CTime::GetOff()
 {
-	return m_TextOff->GetValue();
+	double v;
+	m_TextOff->GetValue().ToCDouble(&v);
+	return v;
 }

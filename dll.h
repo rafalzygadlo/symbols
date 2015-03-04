@@ -12,6 +12,7 @@
 #include "nvFastFont.h"
 #include "dialog.h"
 #include "ticker.h"
+#include "symbol.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -32,6 +33,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
 
+	bool m_On;
 	CTicker *m_Ticker;
 	void *m_DB;
 	wxString m_DBHost;
@@ -43,7 +45,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CMyFrame *m_Frame;
 	double Factor;
 	double MOM_X, MOM_Y;
-	SSymbol *SelectedPtr, *HighlightedPtr;
+	CSymbol *SelectedPtr, *HighlightedPtr;
 	double SmoothScaleFactor;
 	bool NeedExit;
 	bool IsData;
@@ -72,7 +74,7 @@ class CMapPlugin :public CNaviMapIOApi
 	nvFastFont *Font;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
-	CNaviArray <SSymbol*> m_SymbolList;
+	CNaviArray <CSymbol*> m_SymbolList;
 	float m_AnimMarkerSize;
 
 	void ReadDBConfig();
@@ -110,8 +112,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowInfo(int x, int y);
 		
 	int Count();
-	SSymbol *Get(int id);
-	SSymbol *SetSelection(double x, double y);
+	CSymbol *Get(int id);
+	CSymbol *SetSelection(double x, double y);
 	void SetPosition(double x, double y);
 	void WritePasswordConfig(char *v);
 		
@@ -143,7 +145,7 @@ public:
 	
 
 	CNaviBroker *GetBroker();
-	SSymbol *GetSelectedPtr();
+	CSymbol *GetSelectedPtr();
 	//void Delete();
 	//bool GetNeedExit(void);
 	//wxString GetFilePath();

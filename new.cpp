@@ -620,7 +620,7 @@ void CNew::EditPicturePanel()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 	
-	m_PicturePanel = new CPicturePanel(Panel,PICTURE_PANEL_NEW);
+	m_PicturePanel = new CPicturePanel(m_DB,Panel,PICTURE_PANEL_NEW);
 	m_PicturePanel->SetPictureId(m_PictureId);
 	FlexGridSizer->AddSpacer(1);
 	FlexGridSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);

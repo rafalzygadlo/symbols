@@ -150,6 +150,7 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(PanelSizer);	
 	
+	
 	if(m_Picker)
 	{
 		PanelSizer->AddStretchSpacer();
@@ -164,6 +165,7 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 		PanelSizer->Add(ButtonClose,0,wxALL,2);
 	
 	}
+	
 
 	return Panel;
 }
@@ -173,11 +175,11 @@ int CDialog::_GetId()
 	return m_DialogPanel->_GetId();
 }
 
-
 BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
 	EVT_LISTBOX(ID_FILTER,OnListBox)
 	EVT_TIMER(ID_TICK_SEARCH,OnTickSearch)
 	EVT_TEXT(ID_SEARCH,OnSearchText)
+	EVT_BUTTON(ID_REFRESH,OnRefresh)
 END_EVENT_TABLE()
 
 CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slave)
@@ -307,6 +309,13 @@ void CDialogPanel::OnSearchEnter(wxCommandEvent &event)
 	m_SearchTextChanged = true;
 }
 
+void CDialogPanel::OnRefresh(wxCommandEvent &event)
+{
+	Clear();
+	Read();
+	Select();
+}
+
 void CDialogPanel::SetSearchText(const wchar_t *txt)
 {
 	m_SearchTextValue = txt;
@@ -397,6 +406,9 @@ wxPanel *CDialogPanel::GetSearchPanel(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
+
+	wxButton *ButtonRefresh = new wxButton(Panel,ID_REFRESH,GetMsg(MSG_REFRESH));
+	Sizer->Add(ButtonRefresh,0,wxALL,2);
 	m_SearchText = new wxSearchCtrl(Panel,ID_SEARCH,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	Sizer->AddStretchSpacer(1);
 	Sizer->Add(m_SearchText,0,wxALL|wxALIGN_RIGHT,0);
@@ -977,7 +989,7 @@ void CDialogPanel::NewPicture()
 		
 		int id = db_last_insert_id(m_DB);
 		wxImage img =  ptr->GetPicture();
-		UpdatePicture(img,id);
+		UpdatePicture(img,id,img.GetType());
 		Clear();
 		Read();
 	}
@@ -985,7 +997,7 @@ void CDialogPanel::NewPicture()
 	delete ptr;
 
 }
-void CDialogPanel::UpdatePicture(wxImage image,int id)
+void CDialogPanel::UpdatePicture(wxImage image,int id, int type)
 {	
 						
 	if(!image.IsOk())
@@ -993,7 +1005,7 @@ void CDialogPanel::UpdatePicture(wxImage image,int id)
 	
 	const char *sql = "UPDATE `%s` SET data='%s' WHERE id = '%d'";
 	wxMemoryOutputStream stream;
-	if(!image.SaveFile(stream,wxBITMAP_TYPE_JPEG))
+	if(!image.SaveFile(stream,type))
 		return;
 	wxStreamBuffer *st = stream.GetOutputStreamBuffer();
 	
@@ -1219,7 +1231,7 @@ void CDialogPanel::EditCharacteristic(int id)
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
 			CTime *Time = pan->GetTime(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_characteristic='%d', _on='%s',_off='%s'"),TABLE_CHARACTERISTIC_ON_OFF,id,Time->GetOn(),Time->GetOff());
+			sql = wxString::Format(_("INSERT INTO %s SET id_characteristic='%d', _on='%4.2f',_off='%4.2f'"),TABLE_CHARACTERISTIC_ON_OFF,id,Time->GetOn(),Time->GetOff());
 			my_query(m_DB,sql);
 		}
 		
@@ -1353,7 +1365,7 @@ void CDialogPanel::EditPicture(int id)
 		my_query(m_DB,sql);
 		
 		wxImage img = ptr->GetPicture();
-		UpdatePicture(img,id);
+		UpdatePicture(img,ptr->GetPictureId(),img.GetType());
 		Clear();
 		Read();
 		Select();
@@ -1456,8 +1468,8 @@ void CDialogPanel::SetCharacteristicTime(CNew *ptr,int id)
 	while(row = (char**)db_fetch_row(result))
 	{
 		CTime *Time = new CTime(TimePanel);
-		Time->SetOn(row[FI_CHARACTERISTIC_ON_OFF_ON]);
-		Time->SetOff(row[FI_CHARACTERISTIC_ON_OFF_OFF]);
+		Time->SetOn(atof(row[FI_CHARACTERISTIC_ON_OFF_ON]));
+		Time->SetOff(atof(row[FI_CHARACTERISTIC_ON_OFF_OFF]));
 		TimePanel->AppendPanel(Time);
 	}
 	

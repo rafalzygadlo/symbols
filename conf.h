@@ -122,6 +122,7 @@
 #define MSG_CODE_EMPTY				67
 #define MSG_IALA_EMPTY				68
 #define MSG_TIME_EMPTY				69
+#define MSG_REFRESH					70
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -190,6 +191,9 @@
 
 #define CHRACTERISTIC_ON_DEFAULT_VALUE 0.20
 #define CHRACTERISTIC_OFF_DEFAULT_VALUE 5.00
+#define CHARACTERISTIC_MIN 0.00
+#define CHARACTERISTIC_MAX 100.00
+#define CHARACTERISTIC_PRECISION 2
 
 #define COVERAGE_PRECISION 2
 #define COVERAGE_MIN 0.00
@@ -459,7 +463,8 @@
 #define FI_RIGHT_NAME				1
 #define FI_RIGHT_INFO				2
 
-#define TICK_COMMAND 0
+#define TICK_COMMAND	0
+#define TICK_SYMBOL		1
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
@@ -480,6 +485,7 @@
 #define COMMUNICATION_AIS	2
 #define COMMUNICATION_GPRS	3
 
+/*
 typedef struct Symbol
 {
 	int id;
@@ -490,7 +496,7 @@ typedef struct Symbol
 	bool on_command;
 		
 }SSymbol;
-
+*/
 
 typedef struct Column
 {

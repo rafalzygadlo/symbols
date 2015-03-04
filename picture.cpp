@@ -110,7 +110,7 @@ void CPicturePanel::New()
 			if(image.IsOk())
 			{
 				wxMemoryOutputStream stream;
-				if(!image.SaveFile(stream,wxBITMAP_TYPE_JPEG))
+				if(!image.SaveFile(stream,wxBITMAP_TYPE_PNG))
 					return;
 				
 				if(stream.GetOutputStreamBuffer()->GetBufferSize() > PICTURE_MAX_SIZE)
@@ -148,6 +148,7 @@ void CPicturePanel::_SetId(int id)
 {
 	m_ID = id;
 }
+
 
 void CPicturePanel::Read()
 {

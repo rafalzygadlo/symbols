@@ -210,14 +210,14 @@ void CMyFrame::ShowWindow(bool show)
 		if(SelectedPtr == NULL)
 			return;
 		
-		m_DLL->GetBroker()->Project(SelectedPtr->lon,SelectedPtr->lat,&to_x,&to_y);
+		m_DLL->GetBroker()->Project(SelectedPtr->GetLon(),SelectedPtr->GetLat(),&to_x,&to_y);
 		double vm[4];
 		m_DLL->GetBroker()->GetVisibleMap(vm);
 		
 		float scale = m_DLL->GetBroker()->GetMapScale();
 		wxPoint pt;
-		pt.x = (int)((-vm[0] + SelectedPtr->lon) * scale) + ParentX;
-		pt.y = (int)((-vm[1] + SelectedPtr->lat) * scale) + ParentY;
+		pt.x = (int)((-vm[0] + SelectedPtr->GetLon()) * scale) + ParentX;
+		pt.y = (int)((-vm[1] + SelectedPtr->GetLat()) * scale) + ParentY;
 		
 		wxPoint p2,p4;
 		wxSize size = this->GetSize();
@@ -240,7 +240,7 @@ void CMyFrame::ShowWindow(bool show)
 		
 		this->SetPosition(pt);
 		
-		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->id);
+		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->GetId());
 		my_query(m_DB,sql);
 			
 		void *result = db_result(m_DB);
@@ -257,7 +257,7 @@ void CMyFrame::ShowWindow(bool show)
 		m_TextLon->SetLabel(FormatLongitude(to_x,DEFAULT_DEGREE_FORMAT));
 		m_TextLat->SetLabel(FormatLatitude(-to_y,DEFAULT_DEGREE_FORMAT));
 
-		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,SelectedPtr->id);
+		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,SelectedPtr->GetId());
 		my_query(m_DB,sql);
 			
 		result = db_result(m_DB);

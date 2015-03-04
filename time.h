@@ -57,13 +57,13 @@ public:
 	~CTime();
 		
 	wxString _GetId();
-	wxString GetOn();
-	wxString GetOff();
+	float GetOn();
+	float GetOff();
 
 
 	void _SetId(wxString v);
-	void SetOn(wxString v);
-	void SetOff(wxString v);
+	void SetOn(float v);
+	void SetOff(float v);
 	
 
 		

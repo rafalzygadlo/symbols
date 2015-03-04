@@ -15,7 +15,7 @@ class CMyFrame: public wxDialog
 {
 	void *m_DB;
 	CMapPlugin *m_DLL;	
-	SSymbol *SelectedPtr;
+	CSymbol *SelectedPtr;
 	wxTextCtrl *m_TextName;
 	wxPanel *m_Panel;
 	//wxTextCtrl *m_TextInfo;

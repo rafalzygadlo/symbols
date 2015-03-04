@@ -25,15 +25,15 @@ class CDialog : public wxDialog
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	void ReadConfig();
 	void WriteConfig();
-
-
+	void OnRefresh(wxCommandEvent &event);
+	
 
 public:
 	CDialog(void *db, int control_type, bool picker = false);
 	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
-	
+		
 	
 };
 
@@ -88,7 +88,7 @@ class CDialogPanel: public wxPanel
 	void NewCharacteristic(CNew *ptr);
 	void NewSymbolItem();
 	void NewPicture();
-	void UpdatePicture(wxImage image, int id);
+	void UpdatePicture(wxImage image, int id,int type);
 	void SetSymbolLight(CNew *ptr,int id);
 	void SetSymbolPicture(CNew *ptr,int id);
 	void SetSymbolItem(CNew *ptr,int id);
@@ -98,6 +98,7 @@ class CDialogPanel: public wxPanel
 	void OnTickSearch(wxTimerEvent &event);
 	void OnSearchText(wxCommandEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
+	void OnRefresh(wxCommandEvent &event);
 
 
 	void ReadConfig();
@@ -144,6 +145,8 @@ public:
 		ID_FILTER = 6214,
 		ID_SEARCH,
 		ID_TICK_SEARCH,
+		ID_REFRESH,
+		
 	};
 
 };

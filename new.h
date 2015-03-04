@@ -63,6 +63,7 @@ class CNew: public wxDialog
 	wxString m_Iala;
 	wxString m_Code;
 
+	int m_PictureType;
 		
 	void GetPanel(int type);
 	void EditNamePanel();
@@ -121,6 +122,7 @@ public:
 	wxString GetIala();
 	wxString GetTime();
 	CTimePanel *GetTimePanel();
+	int GetPictureType();
 			
 	wxArrayPtrVoid GetFeatureControls();
 	void SetName(wxString v);

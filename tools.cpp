@@ -12,7 +12,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[70][2] = 
+const wchar_t *nvLanguage[71][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -85,7 +85,7 @@ const wchar_t *nvLanguage[70][2] =
 	{L"Empty Code",L"Kod nie mo¿e byæ pusty"},
 	{L"Empty IALA",L"IALA nie mo¿e byæ puste"},
 	{L"Empty Time",L"Czas nie mo¿e byæ pusty"},
-	
+	{L"Refresh",L"Odœwie¿"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

@@ -260,8 +260,6 @@ void CLightDraw::OnPaint(wxPaintEvent &event)
 	//wxSize s = GetSize();
 
 	int r = (m_Width*m_Height)*2 / ((2*m_Width) + (2*m_Height)); 
-
-	//dc.DrawAr
-
+	
 	dc.DrawCircle(m_Width/2,m_Height/2,r);
 }

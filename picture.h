@@ -15,7 +15,7 @@ class CPicturePanel: public wxPanel
 	wxImage m_Picture;
 	int m_ID;
 	wxStaticText *m_Info;
-	
+		
 	void OnNew(wxHyperlinkEvent &event);
 	void OnPick(wxHyperlinkEvent &event);
 	void OnDelete(wxCommandEvent &event);
@@ -28,6 +28,7 @@ public:
 	wxImage GetPicture();
 	void SetPictureId(int id);
 	int GetPictureId();
+	int GetPictureType();
 	void _SetId(int id);
 	void Read();
 	void Clear();

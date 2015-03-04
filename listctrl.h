@@ -56,7 +56,7 @@ class CListCtrl: public wxListCtrl
 	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
-	int OnGetItemColumnImage(long item, long column) const; 
+	//int OnGetItemColumnImage(long item, long column) const; 
 	int OnGetItemImage(long item) const;
 
 public:
