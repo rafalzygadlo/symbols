@@ -235,25 +235,25 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 		
 	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
 	FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID);
+	m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID,FI_BASE_STATION_ID,FI_BASE_STATION_NAME);
 	//m_BaseStationCombo->SetSelection(0);
 	FlexGridSizer->Add(m_BaseStationCombo,0,wxALL|wxEXPAND,5);
 
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID);
+	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID,FI_AREA_ID,FI_AREA_NAME);
 	//m_AreaCombo->SetSelection(0);
 	FlexGridSizer->Add(m_AreaCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_SeawayCombo = GetCombo(m_DB,Panel,TABLE_SEAWAY,m_SeawayID);
+	m_SeawayCombo = GetCombo(m_DB,Panel,TABLE_SEAWAY,m_SeawayID,FI_SEAWAY_ID,FI_SEAWAY_NAME);
 	//m_SeawayCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SeawayCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_SymbolTypeCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID);
+	m_SymbolTypeCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID,FI_SYMBOL_TYPE_ID,FI_SYMBOL_TYPE_NAME);
 	//m_SymbolTypeCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 		

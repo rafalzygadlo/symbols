@@ -381,19 +381,19 @@ wxPanel *CDialogPanel::GetSymbolFilterPanel(wxWindow *Parent)
 		
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexSizer->Add(LabelArea,0,wxALL,2);
-	wxComboBox *ComboArea = GetCombo(m_DB,Panel,TABLE_AREA,wxEmptyString,true);
+	wxComboBox *ComboArea = GetCombo(m_DB,Panel,TABLE_AREA,wxEmptyString,FI_AREA_ID,FI_AREA_NAME, true);
 	ComboArea->SetSelection(0);
 	FlexSizer->Add(ComboArea,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexSizer->Add(LabelSeaway,0,wxALL,2);
-	wxComboBox *ComboSeaway = GetCombo(m_DB,Panel,TABLE_SEAWAY,wxEmptyString,true);
+	wxComboBox *ComboSeaway = GetCombo(m_DB,Panel,TABLE_SEAWAY,wxEmptyString,FI_SEAWAY_ID,FI_SEAWAY_NAME, true);
 	ComboSeaway->SetSelection(0);
 	FlexSizer->Add(ComboSeaway,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexSizer->Add(LabelSymbolType,0,wxALL,2);
-	wxComboBox *ComboSymbolType = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,wxEmptyString,true);
+	wxComboBox *ComboSymbolType = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,wxEmptyString,FI_SYMBOL_TYPE_ID,FI_SYMBOL_TYPE_NAME, true);
 	ComboSymbolType->SetSelection(0);
 	FlexSizer->Add(ComboSymbolType,0,wxALL|wxEXPAND,2);
 
@@ -1124,7 +1124,7 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
-	ptr->SetCharacteristic(Convert(row[FI_SYMBOL_CHARACTERISTIC]));
+	ptr->SetCharacteristic(Convert(row[FI_SYMBOL_ID_CHARACTERISTIC]));
 	ptr->SetOnPosition(atoi(row[FI_SYMBOL_ON_POSITION]));
 	ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
 

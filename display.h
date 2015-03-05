@@ -3,11 +3,11 @@
 
 #include "dll.h"
 #include "listctrl.h"
-#include "NaviMapIOApi.h"
+#include "navimapioapi.h"
 #include <wx/fileconf.h>
 #include <vector>
 #include <wx/wx.h>
-#include "NaviDisplayApi.h"
+#include "navidisplayapi.h"
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
 #include <wx/hyperlink.h>

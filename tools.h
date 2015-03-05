@@ -35,7 +35,7 @@ wxString Convert(char *v);
 
 wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
-wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel, bool all = false);
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel,int field_id, int field_name, bool all = false);
 
 const wchar_t *GetDegreeFormat(int id, int dir);
 void db_history(int uid, const char *module, const char *action );

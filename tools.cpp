@@ -672,7 +672,7 @@ wxComboBox *GetFilterCombo(void *db,wxWindow *Parent, int wid)
 }
 
 
-wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, bool all)
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all)
 {
 	int i = 0;
 	wxComboBox *ptr = new wxComboBox(Parent,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
@@ -694,9 +694,9 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, bo
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		wxString name(row[FI_NAME],wxConvUTF8);
+		wxString name(row[field_name],wxConvUTF8);
 		int id = ptr->Append(name);
-		int row_id = atoi(row[FI_ID]);
+		int row_id = atoi(row[field_id]);
 
 		long sid;
 		sel.ToLong(&sid);

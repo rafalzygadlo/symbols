@@ -136,7 +136,6 @@ void CMyFrame::OnLon(wxCommandEvent &event)
 	
 	}
 	*/
-
 }
 
 void CMyFrame::OnLat(wxCommandEvent &event)

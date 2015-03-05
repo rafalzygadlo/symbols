@@ -7,6 +7,7 @@
 #include <wx/dataview.h>
 #include "images/del.img"
 #include "images/add.img"
+#include "geometrytools.h"
 #include <wx/valnum.h>
 
 extern unsigned int	add_size;
@@ -16,6 +17,8 @@ extern unsigned char del[];
 
 BEGIN_EVENT_TABLE(CLightPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CLightPanel::OnNew)
+	EVT_SIZE(OnSize)
+	EVT_PAINT(OnPaint)
 END_EVENT_TABLE()
 CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
@@ -27,8 +30,8 @@ CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 	
 	wxMemoryInputStream in_1((const unsigned char*)add,add_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	Sizer->Add(New,0,wxALL,1);
+	//wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
+	//Sizer->Add(New,0,wxALL,1);
 
 	m_Sizer = new wxWrapSizer(wxHORIZONTAL);
 	Sizer->Add(m_Sizer,1,wxALL|wxEXPAND,0);
@@ -37,6 +40,57 @@ CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 
 CLightPanel::~CLightPanel()
 {
+	
+}
+
+void CLightPanel::OnSize(wxSizeEvent &event)
+{
+	GetClientSize(&m_Width, &m_Height);
+
+	m_CenterX = m_Width/2;
+	m_CenterY = m_Height/2;
+}
+
+void CLightPanel::OnPaint(wxPaintEvent &event)
+{
+	wxPaintDC dc(this);
+	
+	//wxSize s = GetSize();
+
+	int r = (m_Width*m_Height)*2 / ((2*m_Width) + (2*m_Height)); 
+	r = m_Width/3;
+	dc.DrawCircle(m_Width/2,m_Height/2,r);
+
+	for(size_t i = 0; i < m_List.size();i++)
+	{
+		CLight *Light = (CLight*)m_List.Item(i);
+		
+		long from,to;
+		
+		wxPoint pt[3];
+		Light->GetSectorFrom().ToLong(&from);
+				
+		wxPoint p1;
+		p1.x = m_CenterX + (r * cos(nvToRad(from)));
+		p1.y = m_CenterY + (r * sin(nvToRad(from)));
+		dc.DrawLine(m_CenterX,m_CenterY, p1.x  , p1.y );
+		
+		wxPoint p2;		
+		Light->GetSectorTo().ToLong(&to);
+		p2.x = m_CenterX + (r * cos(nvToRad(to)));
+		p2.y = m_CenterY + (r * sin(nvToRad(to)));
+		dc.DrawLine(m_CenterX,m_CenterY, p2.x  , p2.y );
+						
+		wxBrush brush;
+		brush.SetColour(wxColor(255,0,0));
+		dc.SetBrush(brush);
+		
+		
+		dc.DrawEllipticArc(p1,wxSize(100,100), from,to);
+		
+	
+	}
+
 	
 }
 
@@ -63,8 +117,8 @@ void CLightPanel::OnDelete(CLight *panel)
 void CLightPanel::AppendPanel(CLight *light)
 {
 	m_List.Add(light);
-	m_Sizer->Add(light,1,wxALL|wxEXPAND,1);
-	m_Top->Layout();
+	//m_Sizer->Add(light,1,wxALL|wxEXPAND,1);
+	//m_Top->Layout();
 }
 
 void CLightPanel::RemovePanel(CLight *panel)

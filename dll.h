@@ -1,12 +1,12 @@
 #ifndef __DLL
 #define __DLL
-#include "NaviMapIOApi.h"
+#include "navimapioapi.h"
 #include <wx/wx.h>
 #include <wx/fileconf.h>
 #include <wx/notebook.h>
 #include "tgamem.h"
-#include <GL/gl.h>
-#include "NaviDisplayApi.h"
+#include <gl/gl.h>
+#include "navidisplayapi.h"
 #include "conf.h"
 #include "positiondialog.h"
 #include "nvFastFont.h"
@@ -50,7 +50,6 @@ class CMapPlugin :public CNaviMapIOApi
 	bool NeedExit;
 	bool IsData;
 	double MapScale;
-	bool FirstTime;
 	int ButtonAction;
 	double MapX,MapY;
 	bool FirstRun;
@@ -78,12 +77,10 @@ class CMapPlugin :public CNaviMapIOApi
 	float m_AnimMarkerSize;
 
 	void ReadDBConfig();
-	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateApiMenu(void);
 	void Menu(int type);
 	void WritecConfig();
 	void Read();
-	void CreateTextures(void);
 	void WriteConfig();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);

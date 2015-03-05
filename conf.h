@@ -5,6 +5,7 @@
 #define DIR_SEPARATOR "\\"
 #endif
 
+#define nvPI 3.1415926535897932384626433832795
 #define THREAD
 #define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "workdir"
@@ -269,10 +270,10 @@
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
 #define FI_SYMBOL_ID_BASE_STATION	4
-#define FI_SYMBOL_NUMBER			5
-#define FI_SYMBOL_LON				6
-#define FI_SYMBOL_LAT				7
-#define FI_SYMBOL_CHARACTERISTIC	8
+#define FI_SYMBOL_ID_CHARACTERISTIC	5
+#define FI_SYMBOL_NUMBER			6
+#define FI_SYMBOL_LON				7
+#define FI_SYMBOL_LAT				8
 #define FI_SYMBOL_ON_POSITION		9
 #define FI_SYMBOL_IN_MONITORING		10
 #define FI_SYMBOL_NAME				11
@@ -282,10 +283,10 @@
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
 #define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
+#define FN_SYMBOL_ID_CHARACTERISTIC	"id_characteristic"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
-#define FN_SYMBOL_CHARACTERISTIC	"characteristic"
 #define FN_SYMBOL_ON_POSITION		"on_position"
 #define FN_SYMBOL_IN_MONITORING		"in_monitoring"
 #define FN_SYMBOL_NAME				"name"
@@ -430,10 +431,12 @@
 
 // pola tabeli CHARACTERISTIC
 #define FI_CHARACTERISTIC_ID		0
-#define FI_CHARACTERISTIC_CODE		1
-#define FI_CHARACTERISTIC_IALA		2
-#define FI_CHARACTERISTIC_TIME		3
+#define FI_CHARACTERISTIC_NAME		1
+#define FI_CHARACTERISTIC_CODE		2
+#define FI_CHARACTERISTIC_IALA		3
+#define FI_CHARACTERISTIC_TIME		4
 #define FN_CHARACTERISTIC_ID		"id"
+#define FN_CHARACTERISTIC_NAME		"name"
 #define FN_CHARACTERISTIC_CODE		"code"
 #define FN_CHARACTERISTIC_IALA		"iala"
 #define FN_CHARACTERISTIC_TIME		"time"
@@ -531,4 +534,10 @@ typedef struct _Types
 
 }SType;
 
+typedef struct OnOff
+{
+	int on; //miliseconds
+	int off;
+
+}SOnOff;
 #endif

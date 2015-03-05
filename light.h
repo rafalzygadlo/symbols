@@ -15,8 +15,12 @@ class CLightPanel: public wxPanel
 	wxArrayPtrVoid m_List;
 	wxTextCtrl *m_CharacteristicText;
 	wxWrapSizer *m_Sizer;
+	int m_Width,m_Height;
+	int m_CenterX,m_CenterY;
 
 	void OnNew(wxCommandEvent &event);
+	void OnSize(wxSizeEvent &event);
+	void OnPaint(wxPaintEvent &event);
 	void RemovePanel(CLight *panel);
 				
 public:

@@ -2,7 +2,6 @@
 #include "dll.h"
 #include "frame.h"
 #include "tools.h"
-#include "images/icon.h"
 #include "db.h"
 #include "animpos.h"
 #include "NaviEncryption.h"
@@ -53,7 +52,6 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	TranslationX = 0;
 	TranslationY = 0;
 	ClickedOnButton = false;
-	FirstTime = true;
 	MapX = 0.0;
 	MapY = 0.0;
 	FirstRun = true;
@@ -217,11 +215,14 @@ void CMapPlugin::Read()
 	{
 		CSymbol *ptr = new CSymbol(m_DB,m_Broker);
 		
-		double lon,lat;
+		double lon;
+		double lat;
 		int id;
+		int id_characteristic;
 		sscanf(row[FI_SYMBOL_ID],"%d",&id);
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
+		sscanf(row[FI_SYMBOL_ID_CHARACTERISTIC],"%d",&id_characteristic);
 		
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
@@ -229,7 +230,9 @@ void CMapPlugin::Read()
 		ptr->SetId(id);
 		ptr->SetLon(to_x);
 		ptr->SetLat(-to_y);
-		
+		ptr->SetCharacteristicId(id_characteristic);
+		ptr->Read();
+		ptr->Start();	
 		m_SymbolList.Append(ptr);
 	}
 	
@@ -303,8 +306,6 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
 	// move marker RMB need this
 	// . . . . . . . . . . . . . . . . . . . . 
-	if(FirstTime)
-		return;
 		
 	double mom[2];
 	double _x,_y;
@@ -363,8 +364,8 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
 		CSymbol *ptr = m_SymbolList.Get(i);
-		//if(IsPointInsideBox(MapX, MapY, ptr->GetLon() - (RectWidth/2) + TranslationX, ptr->Getlat - (RectHeight/2) + TranslationY, ptr->lon + (RectWidth/2) + TranslationX , ptr->lat + (RectHeight/2) + TranslationY))
-			//return ptr;
+		if(IsPointInsideBox(MapX, MapY, ptr->GetLon() - (RectWidth/2) + TranslationX, ptr->GetLat() - (RectHeight/2) + TranslationY, ptr->GetLon() + (RectWidth/2) + TranslationX , ptr->GetLat() + (RectHeight/2) + TranslationY))
+			return ptr;
 	}
 	
 	return NULL;
@@ -568,31 +569,6 @@ void CMapPlugin::Menu(int type)
 
 }
 
-void CMapPlugin::CreateSymbol(void *MemoryBlock,long MemoryBlockSize)
-{
-	TMemoryBlock BlockTGA_0;
-	BlockTGA_0.Ptr = MemoryBlock;
-	BlockTGA_0.Size = MemoryBlockSize;
-	TextureTGA_0 = LoadFromMemoryBlockTGA( &BlockTGA_0 );
-}
-
-void CMapPlugin::CreateTexture(TTexture *Texture, GLuint *TextureID)
-{
-	glGenTextures(1, TextureID );
-	glBindTexture(GL_TEXTURE_2D, *TextureID );
-	glTexImage2D(GL_TEXTURE_2D, 0, Texture->Bpp / 8, Texture->Width, Texture->Height, 0, Texture->Type, GL_UNSIGNED_BYTE, Texture->Data );
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	FreeTexture( Texture );
-}
-
-void CMapPlugin::CreateTextures(void) 
-{
-	CreateSymbol(icon, icon_size);
-	CreateTexture( TextureTGA_0,  &TextureID_0 );
-	CreateSymbol(animpos, animpos_size);
-	CreateTexture( TextureTGA_0,  &TextureID_1 );
-}
 
 // from NaviGeometry
 bool CMapPlugin::IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2) 
@@ -684,17 +660,10 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::Render(void)
 {
-	
 	//Font->Clear();
 	
 	MapScale = m_Broker->GetMapScale();
 	SetValues();
-		
-	if(FirstTime)
-	{
-		CreateTextures();
-		FirstTime = false;
-	}
 		
 	RenderSymbols();
 	//RenderBusy();
@@ -722,8 +691,8 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTickCommand()
 {
-	m_Broker->Refresh(m_Broker->GetParentPtr());
-	m_On = !m_On;
+	//m_Broker->Refresh(m_Broker->GetParentPtr());
+	//m_On = !m_On;
 }
 
 ////////////////////////////////////////////////////////////////////////////
