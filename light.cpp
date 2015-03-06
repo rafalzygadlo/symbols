@@ -19,6 +19,7 @@ BEGIN_EVENT_TABLE(CLightPanel, wxPanel)
 	EVT_BUTTON(ID_NEW,CLightPanel::OnNew)
 	EVT_SIZE(OnSize)
 	EVT_PAINT(OnPaint)
+	EVT_MOUSE_EVENTS(OnMouse)
 END_EVENT_TABLE()
 CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
@@ -43,24 +44,43 @@ CLightPanel::~CLightPanel()
 	
 }
 
+void CLightPanel::OnMouse(wxMouseEvent &event)
+{
+	m_MouseX = event.GetX();
+	m_MouseY = event.GetY();
+	Refresh();
+}
+
 void CLightPanel::OnSize(wxSizeEvent &event)
 {
 	GetClientSize(&m_Width, &m_Height);
 
 	m_CenterX = m_Width/2;
 	m_CenterY = m_Height/2;
+	Refresh();
 }
 
 void CLightPanel::OnPaint(wxPaintEvent &event)
 {
 	wxPaintDC dc(this);
 	
-	//wxSize s = GetSize();
+	int X = m_MouseX - m_CenterX;
+	int Y = m_MouseY - m_CenterY;
+	double rad_angle = atan2((double)X, (double)Y);
+	double angle = (nvToDegree(rad_angle) - 180) * -1;
+	m_Radius = m_Width/3;	
 
-	int r = (m_Width*m_Height)*2 / ((2*m_Width) + (2*m_Height)); 
-	r = m_Width/3;
-	dc.DrawCircle(m_Width/2,m_Height/2,r);
+	dc.DrawText(wxString::Format(_("%f %d %d"),angle,m_MouseX,m_MouseY),50,10);
 
+	dc.DrawCircle(m_CenterX,m_CenterY ,m_Radius);
+	DrawSectors(dc);
+		
+}
+
+void CLightPanel::DrawSectors(wxDC &dc)
+{
+	dc.DrawLine(m_CenterX,m_CenterY,m_MouseX,m_MouseY);
+	
 	for(size_t i = 0; i < m_List.size();i++)
 	{
 		CLight *Light = (CLight*)m_List.Item(i);
@@ -71,27 +91,27 @@ void CLightPanel::OnPaint(wxPaintEvent &event)
 		Light->GetSectorFrom().ToLong(&from);
 				
 		wxPoint p1;
-		p1.x = m_CenterX + (r * cos(nvToRad(from)));
-		p1.y = m_CenterY + (r * sin(nvToRad(from)));
+		p1.x = m_CenterX + (m_Radius * cos(nvToRad(from)));
+		p1.y = m_CenterY + (m_Radius * sin(nvToRad(from)));
 		dc.DrawLine(m_CenterX,m_CenterY, p1.x  , p1.y );
 		
-		wxPoint p2;		
+		wxPoint p2;
 		Light->GetSectorTo().ToLong(&to);
-		p2.x = m_CenterX + (r * cos(nvToRad(to)));
-		p2.y = m_CenterY + (r * sin(nvToRad(to)));
+		p2.x = m_CenterX + (m_Radius * cos(nvToRad(to)));
+		p2.y = m_CenterY + (m_Radius * sin(nvToRad(to)));
 		dc.DrawLine(m_CenterX,m_CenterY, p2.x  , p2.y );
-						
+
 		wxBrush brush;
 		brush.SetColour(wxColor(255,0,0));
 		dc.SetBrush(brush);
 		
+		wxPoint p0;
+		p0.x = 0;//m_CenterX;
+		p0.y = 0;//m_CenterY;
+		dc.DrawEllipticArc(p0,wxSize(m_Radius,m_Radius), 0,180);
 		
-		dc.DrawEllipticArc(p1,wxSize(100,100), from,to);
-		
-	
 	}
 
-	
 }
 
 size_t CLightPanel::GetCount()
@@ -107,6 +127,7 @@ CLight *CLightPanel::GetLight(int id)
 void CLightPanel::OnNew(wxCommandEvent &event)
 {
 	CLight *Light = new CLight(this);
+	Light->Hide();
 	AppendPanel(Light);
 }
 void CLightPanel::OnDelete(CLight *panel)
@@ -163,7 +184,7 @@ END_EVENT_TABLE()
 CLight::CLight(CLightPanel *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition)
 {
-		
+	
 	wxFloatingPointValidator<float> CoverageValidator;
 	CoverageValidator.SetStyle(wxFILTER_INCLUDE_CHAR_LIST);
 	CoverageValidator.SetMin(COVERAGE_MIN);
@@ -186,8 +207,8 @@ CLight::CLight(CLightPanel *parent)
 		
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	Sizer->Add(Del,0,wxALL,0);
+	//wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
+	//Sizer->Add(Del,0,wxALL,0);
 	
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
@@ -262,7 +283,6 @@ void CLight::SetSectorTo(wxString v)
 {
 	m_SectorTextTo->SetValue(v);
 }
-
 
 wxColor CLight::GetColor()
 {

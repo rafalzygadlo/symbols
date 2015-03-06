@@ -17,10 +17,14 @@ class CLightPanel: public wxPanel
 	wxWrapSizer *m_Sizer;
 	int m_Width,m_Height;
 	int m_CenterX,m_CenterY;
-
+	int m_MouseX, m_MouseY;
+	int m_Radius;
+	
+	void DrawSectors(wxDC &dc);
 	void OnNew(wxCommandEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnPaint(wxPaintEvent &event);
+	void OnMouse(wxMouseEvent &event);
 	void RemovePanel(CLight *panel);
 				
 public:
