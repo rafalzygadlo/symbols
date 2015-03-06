@@ -6,9 +6,10 @@
 #include <wx/spinctrl.h>
 #include <wx/clrpicker.h>
 #include <wx/wrapsizer.h>
+#include <wx/glcanvas.h>
 
 class CLight;
-class CLightPanel: public wxPanel
+class CLightPanel: public wxGLCanvas
 {
 	void *m_DB;
 	wxWindow *m_Top;
@@ -18,7 +19,8 @@ class CLightPanel: public wxPanel
 	int m_Width,m_Height;
 	int m_CenterX,m_CenterY;
 	int m_MouseX, m_MouseY;
-	int m_Radius;
+	float m_Radius;
+	wxGLContext *GLContext;
 	
 	void DrawSectors(wxDC &dc);
 	void OnNew(wxCommandEvent &event);
@@ -26,6 +28,11 @@ class CLightPanel: public wxPanel
 	void OnPaint(wxPaintEvent &event);
 	void OnMouse(wxMouseEvent &event);
 	void RemovePanel(CLight *panel);
+	void SetValues();
+	void UpdateViewPort();
+	void RenderSectors();
+	void RenderLight();
+	void Render();
 				
 public:
 

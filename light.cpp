@@ -9,21 +9,26 @@
 #include "images/add.img"
 #include "geometrytools.h"
 #include <wx/valnum.h>
+#include "navidrawer.h"
 
 extern unsigned int	add_size;
 extern unsigned char add[]; 
 extern unsigned int	del_size;
 extern unsigned char del[]; 
 
-BEGIN_EVENT_TABLE(CLightPanel, wxPanel)
-	EVT_BUTTON(ID_NEW,CLightPanel::OnNew)
+BEGIN_EVENT_TABLE(CLightPanel, wxGLCanvas)
+	EVT_BUTTON(ID_NEW,OnNew)
 	EVT_SIZE(OnSize)
 	EVT_PAINT(OnPaint)
 	EVT_MOUSE_EVENTS(OnMouse)
 END_EVENT_TABLE()
 CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
-	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
+	
+	:wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
+	//:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+
+	GLContext = new wxGLContext(this);
 	m_DB = db;
 	m_Top = top;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
@@ -41,7 +46,7 @@ CLightPanel::CLightPanel(void *db,wxWindow *top, wxWindow *parent)
 
 CLightPanel::~CLightPanel()
 {
-	
+	delete GLContext;
 }
 
 void CLightPanel::OnMouse(wxMouseEvent &event)
@@ -55,8 +60,7 @@ void CLightPanel::OnSize(wxSizeEvent &event)
 {
 	GetClientSize(&m_Width, &m_Height);
 
-	m_CenterX = m_Width/2;
-	m_CenterY = m_Height/2;
+	
 	Refresh();
 }
 
@@ -68,14 +72,115 @@ void CLightPanel::OnPaint(wxPaintEvent &event)
 	int Y = m_MouseY - m_CenterY;
 	double rad_angle = atan2((double)X, (double)Y);
 	double angle = (nvToDegree(rad_angle) - 180) * -1;
-	m_Radius = m_Width/3;	
+	
 
-	dc.DrawText(wxString::Format(_("%f %d %d"),angle,m_MouseX,m_MouseY),50,10);
+	SetCurrent(*GLContext);
+	Render();
+	event.Skip();
+		
+	//dc.DrawText(wxString::Format(_("%f %d %d"),angle,m_MouseX,m_MouseY),50,10);
 
-	dc.DrawCircle(m_CenterX,m_CenterY ,m_Radius);
-	DrawSectors(dc);
+	//dc.DrawCircle(m_CenterX,m_CenterY ,m_Radius);
+	//DrawSectors(dc);
 		
 }
+
+void CLightPanel::UpdateViewPort()
+{
+	glViewport(0, 0, (GLint)  m_Width, (GLint) m_Height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+	
+	
+	//glOrtho(0, m_ScreenWidth, m_ScreenHeight, 0, -1.0, 1.0f);
+		
+	glOrtho(-m_Width,  m_Width, -m_Height , m_Height, -1.0, 1.0f);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+		
+	//glTranslatef(m_MoveX*m_XScale ,m_MoveY*m_YScale,0.0);
+	//glScalef(m_Scale,1.0,1.0);
+	
+	//glTranslatef(-m_Buffer->GetLength(),-GetLastAccuracy(),0.0);
+	//glTranslatef(m_ScreenWidth-10,m_ScreenHeight/2,0.0);
+}
+
+void CLightPanel::SetValues()
+{
+	m_CenterX = 0;
+	m_CenterY = 0;
+	m_Radius = m_Width/1.5;	
+}
+
+void CLightPanel::RenderSectors()
+{
+	glPointSize(5);
+	for(size_t i = 0; i < m_List.size();i++)
+	{
+		CLight *Light = (CLight*)m_List.Item(i);
+		
+		double from,to;
+		
+		wxPoint pt[3];
+		Light->GetSectorFrom().ToDouble(&from);
+		Light->GetSectorTo().ToDouble(&to);
+		
+		float x = (m_Radius * cos(nvToRad(from+90)));
+		float y = (m_Radius * sin(nvToRad(from+90)));
+		glBegin(GL_LINES);
+			glVertex2f(m_CenterX,m_CenterY);
+			glVertex2f(x,y);
+		glEnd();
+				
+		x = (m_Radius * cos(nvToRad(to+90)));
+		y = (m_Radius * sin(nvToRad(to+90)));
+		glBegin(GL_LINES);
+			glVertex2f(m_CenterX,m_CenterY);
+			glVertex2f(x,y);
+		glEnd();
+		
+		
+		
+		//p2.x = m_CenterX + (m_Radius * cos(nvToRad(to)));
+		//p2.y = m_CenterY + (m_Radius * sin(nvToRad(to)));
+	}
+}
+
+void CLightPanel::RenderLight()
+{
+
+	nvCircle c;
+	c.Center.x = m_CenterX;
+	c.Center.y = m_CenterY;
+	c.Radius = m_Radius;
+	
+	glColor3f(1.0,0.0,0.0);
+	nvDrawCircle(&c);
+}
+
+void CLightPanel::Render()
+{
+
+	if( !this->IsShownOnScreen() )
+		return;
+	
+	SetValues();
+	UpdateViewPort();
+	glClearColor(0/255, 0/255,0/255, 1.0f);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    
+	glEnable(GL_POINT_SMOOTH);
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	RenderSectors();
+	RenderLight();
+    SwapBuffers();
+	
+	glDisable(GL_BLEND);
+	glDisable(GL_POINT_SMOOTH);
+}
+
 
 void CLightPanel::DrawSectors(wxDC &dc)
 {
@@ -130,6 +235,7 @@ void CLightPanel::OnNew(wxCommandEvent &event)
 	Light->Hide();
 	AppendPanel(Light);
 }
+
 void CLightPanel::OnDelete(CLight *panel)
 {
 	RemovePanel(panel);
