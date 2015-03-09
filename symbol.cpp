@@ -5,6 +5,7 @@
 #include "db.h"
 #include "images/icon.h"
 #include "navidrawer.h"
+#include "geometrytools.h"
 
 CSymbol::CSymbol(void *db, CNaviBroker *broker)
 {
@@ -20,25 +21,37 @@ CSymbol::CSymbol(void *db, CNaviBroker *broker)
 	m_On = true;
 	m_FirstTime = true;
 	m_Step = 0;
-	m_Tick = 0;
+	m_BlinkTick = 0;
 	m_CharacteristicId = 0;	
+	m_CommandTick = 1;
+	m_BlinkTick = 0;
+	m_Busy = false;
+	m_Ticker0 = NULL;
+	m_Ticker1 = NULL;
+	
 }
 
 CSymbol::~CSymbol()
 {
-	m_Ticker->Stop();
-	delete m_Ticker;
+	m_Ticker0->Stop();
+	delete m_Ticker0;
+	m_Ticker1->Stop();
+	delete m_Ticker1;
 }
 
 void CSymbol::Start()
 {
-	m_Ticker = new CTicker(this,TICK_SYMBOL);
-	m_Ticker->Start(100);
+	m_Ticker0 = new CTicker(this,TICK_SYMBOL_BLINK);
+	m_Ticker0->Start(100);
+
+	m_Ticker1 = new CTicker(this,TICK_SYMBOL_COMMAND);
+	m_Ticker1->Start(100);
+
 }
 
 void CSymbol::Read()
 {
-
+	
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,m_CharacteristicId);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -56,35 +69,42 @@ void CSymbol::Read()
 		ptr.on = on * 10;
 		ptr.off = off * 10;
 		m_OnList.Append(ptr);
+		
 	}
+	
 	
 	db_free_result(result);
 
 }
 
-void CSymbol::OnTick()
+void CSymbol::OnBlink()
+{
+	Blink();
+}
+
+void CSymbol::Blink()
 {
 	if(m_OnList.Length() == 0)
 		return;
 		
-	m_Tick++;	
+	m_BlinkTick++;	
 	SOnOff ptr = m_OnList.Get(m_Step);
 	
 	if(m_On)
 	{
-		if(ptr.on <= m_Tick)
+		if(ptr.on <= m_BlinkTick)
 		{
 			m_On = false;
-			m_Tick = 0;
+			m_BlinkTick = 0;
 		}
 	}
 
 	if(!m_On)
 	{
-		if(ptr.off <= m_Tick)
+		if(ptr.off <= m_BlinkTick)
 		{
 			m_On = true;
-			m_Tick = 0;
+			m_BlinkTick = 0;
 			m_Step++;
 		}
 	}
@@ -93,9 +113,45 @@ void CSymbol::OnTick()
 	{
 		m_Step = 0;
 	}
-	
-		
+
 	m_Broker->Refresh(m_Broker->GetParentPtr());
+
+}
+
+void CSymbol::OnCommand()
+{
+	GetMutex()->Lock();
+	CheckCommand();
+	GetMutex()->Unlock();
+}
+
+void  CSymbol::CheckCommand()
+{
+	m_CommandTick++;
+	if(m_CommandTick <= CHECK_COMMAND_TICK)
+		return;
+		
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol='%d'"),TABLE_COMMAND,m_Id);
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+	
+    char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	m_Busy = false;
+	while(row = (char**)db_fetch_row(result))
+	{
+		int cmd;
+		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
+		fprintf(stderr,"%d\n",cmd);
+		m_Busy = true;
+	}
+	
+	db_free_result(result);
+		
+	m_CommandTick = 1;
+	
 }
 
 void CSymbol::CreateSymbol(void *MemoryBlock,long MemoryBlockSize)
@@ -145,30 +201,63 @@ void CSymbol::SetValues()
 	
 }
 
+void CSymbol::RenderPoint(float x, float y)
+{
+	glBegin(GL_POINTS);
+		glVertex2f(x,y);
+	glEnd();
+}
+
 void CSymbol::RenderOn()
 {
 	if(!m_On)
 		return;
 		
-	glEnable(GL_POINT_SMOOTH);
-	glColor4f(1.0f,1.0f,1.0f,0.9f);
-	
 	glPushMatrix();
+	glColor4f(1.0f,1.0f,1.0f,0.9f);
 	glTranslatef(m_Lon,m_Lat,0.0f);
 
 	glPointSize(10);
-	glBegin(GL_POINTS);
-		glVertex2f(  0.0,  0.0);
+
+	glBegin(GL_QUADS);
+		glVertex2f(  m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
+		glVertex2f(  m_RectWidth/2 + m_TranslationX,   m_RectHeight/2 + m_TranslationY);
+		glVertex2f( -m_RectWidth/2 + m_TranslationX,   m_RectHeight/2 + m_TranslationY);
+		glVertex2f( -m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
 	glEnd();
 
+	RenderPoint(0.0,0.0);
 	glPopMatrix();
+		
+}
 
-	glDisable(GL_POINT_SMOOTH);
+void CSymbol::RenderBusy()
+{
+	if(!m_Busy)
+		return;
+
+	float angle = (float)(360.0/CHECK_COMMAND_TICK) * m_CommandTick;
+
+	float x = m_RectWidth/4 * cos(nvToRad(angle));
+	float y = m_RectWidth/4 * sin(nvToRad(angle));
+
+	glPushMatrix();
+	glColor4f(1.0,0.0f,0.0f,0.8);
+	glTranslatef(m_Lon - m_RectWidth,m_Lat - m_RectWidth,0.0f);
+
+	glPointSize(10);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth/4;
+	nvDrawCircle(&c);
+	RenderPoint(x,y);
+	glPopMatrix();
+	
 }
 
 void CSymbol::RenderSymbol()
 {
-	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 	
 	glColor4f(1.0f,1.0f,1.0f,0.8f);
@@ -184,8 +273,7 @@ void CSymbol::RenderSymbol()
 	glEnd();
 	
 	glPopMatrix();
-			
-	glDisable(GL_TEXTURE_2D);			
+
 	glDisable(GL_TEXTURE_2D);
 
 }
@@ -199,9 +287,18 @@ void CSymbol::Render()
 		m_FirstTime = false;
 	}
 	
+	glEnable(GL_BLEND);
+	//glEnable(GL_TEXTURE_2D);
+	glEnable(GL_POINT_SMOOTH);
+
 	SetValues();
 	RenderOn();
+	RenderBusy();
 	RenderSymbol();
+	
+	
+	glDisable(GL_BLEND);
+	glDisable(GL_POINT_SMOOTH);
 }
 
 

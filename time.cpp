@@ -26,7 +26,7 @@ CTimePanel::CTimePanel(void *db,wxWindow *top, wxWindow *parent)
 	wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
 	Sizer->Add(New,0,wxALL,1);
 
-	m_Sizer = new wxWrapSizer(wxHORIZONTAL);
+	m_Sizer = new wxBoxSizer(wxVERTICAL);
 	Sizer->Add(m_Sizer,1,wxALL|wxEXPAND,0);
 		
 }
@@ -125,25 +125,25 @@ CTime::CTime(CTimePanel *parent)
 		
 	wxMemoryInputStream in_1((const unsigned char*)del,del_size);
     wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
-	Sizer->Add(Del,0,wxALL,0);
-	
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(5);
 	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
-			
+					
 	wxStaticText *LabelFrom = new wxStaticText(this,wxID_ANY,GetMsg(MSG_TIME_ON));
-	FlexSizer->Add(LabelFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	FlexSizer->Add(LabelFrom,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	m_TextOn = new wxTextCtrl(this,wxID_ANY);
 	m_TextOn->SetValidator(Validator);
 	m_TextOn->SetValue(wxString::Format(_("%4.2f"),CHRACTERISTIC_ON_DEFAULT_VALUE));
-	FlexSizer->Add(m_TextOn,0,wxALL,1);
+	FlexSizer->Add(m_TextOn,0,wxALL,2);
 	
 	wxStaticText *LabelSectorTo = new wxStaticText(this,wxID_ANY,GetMsg(MSG_TIME_OFF));
-	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	FlexSizer->Add(LabelSectorTo,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	m_TextOff = new wxTextCtrl(this,wxID_ANY);
 	m_TextOff->SetValue(wxString::Format(_("%4.2f"),CHRACTERISTIC_OFF_DEFAULT_VALUE));
 	m_TextOff->SetValidator(Validator);
-	FlexSizer->Add(m_TextOff,0,wxALL,1);
+	FlexSizer->Add(m_TextOff,0,wxALL,2);
+	
+	wxButton *Del = new wxBitmapButton(this,ID_DELETE,wxBitmap(myImage_1));
+	FlexSizer->Add(Del,0,wxALL,2);
 		
 }
 

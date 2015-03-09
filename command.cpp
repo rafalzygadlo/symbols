@@ -95,11 +95,11 @@ void CCommandPanel::ButtonDisable()
 
 void CCommandPanel::OnButtonOk(wxCommandEvent &event)
 {
+	Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
-	{		
-		
-	}
+	{
 	
+	}
 }
 
 wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)

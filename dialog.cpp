@@ -36,15 +36,16 @@ SHeader Header[] =
 	{CONTROL_PICTURE,250, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
 	{CONTROL_PICTURE,100, {FI_PICTURE_INFO  , FN_PICTURE_INFO, MSG_INFO} },
 
-	{CONTROL_SYMBOL_GROUP ,250, {FI_SYMBOL_GROUP_NAME  , FN_SYMBOL_GROUP_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_GROUP,250, {FI_SYMBOL_GROUP_NAME  , FN_SYMBOL_GROUP_NAME, MSG_NAME} },
 	{CONTROL_SYMBOL_GROUP,100, {FI_SYMBOL_GROUP_INFO  , FN_SYMBOL_GROUP_INFO, MSG_INFO} },
 	
-	{CONTROL_BASE_STATION ,250, {FI_BASE_STATION_NAME  , FN_BASE_STATION_NAME, MSG_NAME} },
+	{CONTROL_BASE_STATION,250, {FI_BASE_STATION_NAME  , FN_BASE_STATION_NAME, MSG_NAME} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_HOST  , FN_BASE_STATION_HOST, MSG_HOST} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_PORT  , FN_BASE_STATION_PORT, MSG_PORT} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_INFO  , FN_BASE_STATION_INFO, MSG_INFO } },
 
-	{CONTROL_CHARACTERISTIC ,250, {FI_CHARACTERISTIC_CODE  , FN_CHARACTERISTIC_CODE, MSG_CODE} },
+	{CONTROL_CHARACTERISTIC,250, {FI_CHARACTERISTIC_NAME  , FN_CHARACTERISTIC_NAME, MSG_NAME} },
+	{CONTROL_CHARACTERISTIC,50, {FI_CHARACTERISTIC_CODE  , FN_CHARACTERISTIC_CODE, MSG_CODE} },
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_IALA  , FN_CHARACTERISTIC_IALA, MSG_IALA} },
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_TIME  , FN_CHARACTERISTIC_TIME, MSG_TIME} },
 	{-1},
@@ -846,7 +847,7 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',characteristic='%s',on_position='%d',in_monitoring='%d',name='%s', info='%s'"),
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',id_characteristic='%d',on_position='%d',in_monitoring='%d',name='%s', info='%s'"),
 		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetOnPosition(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
@@ -893,7 +894,7 @@ void CDialogPanel::NewCharacteristic(CNew *ptr)
 {
 	wxString sql;
 	
-	sql = wxString::Format(_("INSERT INTO %s SET code ='%s', iala='%s', time='%s'"),m_Table,ptr->GetCode(),ptr->GetIala(),ptr->GetTime());
+	sql = wxString::Format(_("INSERT INTO %s SET name='%s',code ='%s', iala='%s', time='%s'"),m_Table,ptr->GetName(),ptr->GetCode(),ptr->GetIala(),ptr->GetTime());
 	if(!my_query(m_DB,sql))
 		return;
 	
@@ -1208,6 +1209,7 @@ void CDialogPanel::EditCharacteristic(int id)
 	void *result = db_result(m_DB);
 	char **row = (char**)db_fetch_row(result);
 	
+	ptr->SetName(Convert(row[FI_CHARACTERISTIC_NAME]));
 	ptr->SetCode(Convert(row[FI_CHARACTERISTIC_CODE]));
 	ptr->SetIala(Convert(row[FI_CHARACTERISTIC_IALA]));
 	ptr->SetTime(Convert(row[FI_CHARACTERISTIC_TIME]));
@@ -1219,7 +1221,7 @@ void CDialogPanel::EditCharacteristic(int id)
 			
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET code='%s',iala='%s',time='%s' WHERE id = '%d'"),m_Table,ptr->GetCode(),ptr->GetIala(),ptr->GetTime(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s',code='%s',iala='%s',time='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetCode(),ptr->GetIala(),ptr->GetTime(),id);
 		my_query(m_DB,sql);
 		
 		//time
@@ -1455,7 +1457,7 @@ void CDialogPanel::_SetIdMaster(int id)
 
 void CDialogPanel::SetCharacteristicTime(CNew *ptr,int id)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic='%d'"),TABLE_CHARACTERISTIC_ON_OFF,id);
 	
 	if(!my_query(m_DB,sql))
 		return;
@@ -1464,16 +1466,16 @@ void CDialogPanel::SetCharacteristicTime(CNew *ptr,int id)
 	char **row;
 	
 	CTimePanel *TimePanel = ptr->GetTimePanel();
-
+	wxString str;
 	while(row = (char**)db_fetch_row(result))
 	{
 		CTime *Time = new CTime(TimePanel);
 		Time->SetOn(atof(row[FI_CHARACTERISTIC_ON_OFF_ON]));
 		Time->SetOff(atof(row[FI_CHARACTERISTIC_ON_OFF_OFF]));
+		
 		TimePanel->AppendPanel(Time);
 	}
-	
-	
+		
 	db_free_result(result);
 }
 

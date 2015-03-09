@@ -180,12 +180,8 @@ void CMyFrame::OnCloseButton(wxCommandEvent &event)
 
 void CMyFrame::OnCommandButton(wxCommandEvent &event)
 {	
-	wxMenu *Menu = new wxMenu();
-	int x = m_ButtonCommand->GetSize().GetX();
-	int y = m_ButtonCommand->GetSize().GetY() + m_ButtonCommand->GetSize().GetHeight();
-	PopupMenu(Menu,x,y);
+	
 }
-
 
 void CMyFrame::OnClose(wxCloseEvent &event)
 {

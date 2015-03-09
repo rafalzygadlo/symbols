@@ -211,6 +211,8 @@
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
 
+#define CHECK_COMMAND_TICK  50 // 10 sekund bo 100ms
+
 #define MODULE_AREA "area"
 #define MODULE_SEAWAY "seaway"
 #define MODULE_BATTERY "battery"
@@ -466,8 +468,9 @@
 #define FI_RIGHT_NAME				1
 #define FI_RIGHT_INFO				2
 
-#define TICK_COMMAND	0
-#define TICK_SYMBOL		1
+#define TICK_COMMAND		0
+#define TICK_SYMBOL_BLINK	1
+#define TICK_SYMBOL_COMMAND	2
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

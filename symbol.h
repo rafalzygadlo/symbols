@@ -10,7 +10,8 @@
 class CSymbol
 {
 	void *m_DB;
-	CTicker *m_Ticker;
+	CTicker *m_Ticker0;
+	CTicker *m_Ticker1;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	TTexture *m_TextureTGA_0;
@@ -18,10 +19,11 @@ class CSymbol
 	bool m_FirstTime;
 	int m_Step;
 	bool m_Begin;
-	int m_Tick;
+	int m_BlinkTick;
 	int m_Id;
 	int m_CharacteristicId;
 	bool m_On;
+	bool m_Busy;
 	double m_Lon;
 	double m_Lat;
 	double m_Scale;
@@ -32,16 +34,20 @@ class CSymbol
 	double m_TranslationX;
 	double m_TranslationY;
 	double m_VisibleMap[4];
+	int m_CommandTick;
 	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
+	void CheckCommand();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
+	void Blink();
+	void RenderPoint(float x, float y);
 	void RenderSymbol();
 	void RenderOn();
-	
-	
+	void RenderBusy();
+		
 public:
 
 	CSymbol(void *db,CNaviBroker *broker);
@@ -56,9 +62,10 @@ public:
 	double GetLon();
 	double GetLat();
 	void Start();
+	void OnBlink();
+	void OnCommand();
 	void Read();
 	void Render();
-
 
 };
 

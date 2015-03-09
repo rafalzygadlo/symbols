@@ -556,11 +556,19 @@ void CNew::EditCharacteristicPanel()
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);	
 	
+	
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
+	m_TextName->SetValue(m_Name);
+	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
+	m_TextName->SetValidator(m_TextValidator);
+
+
 	wxStaticText *LabelCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CODE));
 	FlexGridSizer->Add(LabelCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	
 	m_TextCode = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextCode->SetFocus();
 	m_TextCode->SetValue(m_Code);
 	FlexGridSizer->Add(m_TextCode,0,wxALL|wxEXPAND,5);
 	m_TextCode->SetValidator(m_TextValidator);
@@ -759,6 +767,12 @@ bool CNew::ValidateCharacteristic()
 	bool result = true;
 	wxString err;
 	
+	if(m_TextName->GetValue().empty())
+	{
+		result = false;
+		err << GetMsg(MSG_NAME_EMPTY) << "\n";
+	}
+
 	if(m_TextCode->GetValue().empty())
 	{
 		result = false;
@@ -860,7 +874,7 @@ void CNew::OnComboFilter(wxCommandEvent &event)
 void CNew::SetName(wxString v)
 {
 	m_Name = v;
-	
+		
 }
 
 void CNew::SetInfo(wxString v)

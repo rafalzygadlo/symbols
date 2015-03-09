@@ -11,7 +11,7 @@ class CTimePanel: public wxPanel
 	wxWindow *m_Top;
 	wxArrayPtrVoid m_List;
 	wxTextCtrl *m_CharacteristicText;
-	wxWrapSizer *m_Sizer;
+	wxBoxSizer *m_Sizer;
 
 	void OnNew(wxCommandEvent &event);
 	void RemovePanel(CTime *panel);

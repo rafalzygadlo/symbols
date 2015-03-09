@@ -139,9 +139,7 @@ void CLightPanel::RenderSectors()
 			glVertex2f(m_CenterX,m_CenterY);
 			glVertex2f(x,y);
 		glEnd();
-		
-		
-		
+				
 		//p2.x = m_CenterX + (m_Radius * cos(nvToRad(to)));
 		//p2.y = m_CenterY + (m_Radius * sin(nvToRad(to)));
 	}

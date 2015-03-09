@@ -72,7 +72,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	//Font->SetGlowColor(0.8f, 0.8f, 0.8f );
 	//Font->SetGlowCenter( 4.0f );
 		
-	AddExecuteFunction("manager_GetThisPtr",GetThisPtrFunc);
+	//AddExecuteFunction("manager_GetThisPtr",GetThisPtrFunc);
 	//AddExecuteFunction("manager_SetSelShip",SetSelectedShipFunc);
 		
 	m_Frame = NULL;
@@ -111,6 +111,7 @@ CMapPlugin::~CMapPlugin()
 		delete m_SymbolList.Get(i);	
 		
 	m_SymbolList.Clear();
+	FreeMutex();
 	db_close(m_DB);
 }
 
@@ -300,6 +301,7 @@ void CMapPlugin::Kill(void)
 {
 	NeedExit = true;
 	WriteConfig();
+
 }
 
 void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
@@ -666,8 +668,7 @@ void CMapPlugin::Render(void)
 	SetValues();
 		
 	RenderSymbols();
-	//RenderBusy();
-			
+				
 	if(SelectedPtr != NULL)
 	{
 		RenderSelected();
@@ -700,7 +701,6 @@ void NAVIMAPAPI *CreateNaviClassInstance(CNaviBroker *NaviBroker)
 {
 	CMapPlugin *MapPlugin = new CMapPlugin(NaviBroker);
 	return (void*) ( MapPlugin );
-
 }
 
 const NAVIMAPAPI wchar_t *NaviPluginIntroduce(int LangID) 
