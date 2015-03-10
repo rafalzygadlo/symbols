@@ -1125,7 +1125,6 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
-	ptr->SetCharacteristic(Convert(row[FI_SYMBOL_ID_CHARACTERISTIC]));
 	ptr->SetOnPosition(atoi(row[FI_SYMBOL_ON_POSITION]));
 	ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
 
@@ -1139,8 +1138,8 @@ void CDialogPanel::EditSymbol(int id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',id_base_station='%d', number='%s',lon='%3.14f', lat='%3.14f',characteristic='%s',on_position='%d',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetBaseStationId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetOnPosition(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',id_base_station='%d', number='%s',lon='%3.14f', lat='%3.14f',on_position='%d',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
+			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetBaseStationId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetOnPosition(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		
 		//light
@@ -1493,18 +1492,17 @@ void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 
 	while(row = (char**)db_fetch_row(result))
 	{
-		CLight *Light = new CLight(LightPanel);
+		CLight *Light = new CLight();
 		wxColor color;
 		color.SetRGB(atoi(row[FI_SYMBOL_LIGHT_COLOR]));
 		Light->SetColor(color);
-		Light->SetCoverage(row[FI_SYMBOL_LIGHT_COVERAGE]);
-		Light->SetSectorFrom(row[FI_SYMBOL_LIGHT_SECTOR_FROM]);
-		Light->SetSectorTo(row[FI_SYMBOL_LIGHT_SECTOR_TO]);
+		Light->SetCoverage(atof(row[FI_SYMBOL_LIGHT_COVERAGE]));
+		Light->SetSectorFrom(atof(row[FI_SYMBOL_LIGHT_SECTOR_FROM]));
+		Light->SetSectorTo(atof(row[FI_SYMBOL_LIGHT_SECTOR_TO]));
 		//Light->SetCharacteristic(row[FI_SYMBOL_LIGHT_CHARACTERISTIC]);
-		LightPanel->AppendPanel(Light);
+		LightPanel->Append(Light);
 	}
-	
-	
+		
 	db_free_result(result);
 }
 

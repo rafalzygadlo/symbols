@@ -191,25 +191,25 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
-	FlexSizer->AddGrowableCol(1);
-	wxStaticText *LabelCharacteristic = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CHARACTERISTIC));
-	FlexSizer->Add(LabelCharacteristic,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
-	m_CharacteristicText = new wxTextCtrl(Panel,wxID_ANY);
-	m_CharacteristicText->SetValue(m_Characteristic);
-	m_CharacteristicText->SetValidator(m_TextValidator);
-	FlexSizer->Add(m_CharacteristicText,0,wxALL|wxEXPAND,1);
-	Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
+	//wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	//FlexSizer->AddGrowableCol(1);
+	//wxStaticText *LabelCharacteristic = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_CHARACTERISTIC));
+	//FlexSizer->Add(LabelCharacteristic,0,wxALL|wxALIGN_CENTER_VERTICAL,1);
+	//m_CharacteristicText = new wxTextCtrl(Panel,wxID_ANY);
+	//m_CharacteristicText->SetValue(m_Characteristic);
+	//m_CharacteristicText->SetValidator(m_TextValidator);
+	//FlexSizer->Add(m_CharacteristicText,0,wxALL|wxEXPAND,1);
+	//Sizer->Add(FlexSizer,0,wxALL|wxEXPAND,2);
 	
-	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
-	wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
-	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
-	Scroll->SetFocusIgnoringChildren();
-	Scroll->SetSizer(ScrollSizer);
+	//wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	//wxScrolledWindow *Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(400,200));
+	//Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
+	//Scroll->SetFocusIgnoringChildren();
+	//Scroll->SetSizer(ScrollSizer);
 	
-	m_LightPanel = new CLightPanel(m_DB,Panel,Scroll);
-	ScrollSizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
-	Scroll->SetScrollbars(20, 20, 20, 20);
+	m_LightPanel = new CLightPanel(m_DB,Panel);
+	Sizer->Add(m_LightPanel,1,wxALL|wxEXPAND,5);
+	//Scroll->SetScrollbars(20, 20, 20, 20);
 	
 	return Panel;
 

@@ -22,7 +22,8 @@ class CSymbol
 	int m_BlinkTick;
 	int m_Id;
 	int m_CharacteristicId;
-	bool m_On;
+	bool m_LightOn;
+	bool m_BusyOn;
 	bool m_Busy;
 	double m_Lon;
 	double m_Lat;
@@ -43,9 +44,8 @@ class CSymbol
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
 	void Blink();
-	void RenderPoint(float x, float y);
 	void RenderSymbol();
-	void RenderOn();
+	void RenderLightOn();
 	void RenderBusy();
 		
 public:

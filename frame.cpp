@@ -260,10 +260,8 @@ void CMyFrame::ShowWindow(bool show)
 			return;
 		
 		row = (char**)db_fetch_row(result);
-		if(row == NULL)
-			return;
-		
-		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
+		if(row)
+			m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
 		
 		db_free_result(result);
 	}

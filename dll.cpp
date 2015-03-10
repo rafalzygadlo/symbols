@@ -4,7 +4,8 @@
 #include "tools.h"
 #include "db.h"
 #include "animpos.h"
-#include "NaviEncryption.h"
+#include "naviencryption.h"
+#include "navidrawer.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -223,16 +224,16 @@ void CMapPlugin::Read()
 		sscanf(row[FI_SYMBOL_ID],"%d",&id);
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
-		sscanf(row[FI_SYMBOL_ID_CHARACTERISTIC],"%d",&id_characteristic);
-		
+			
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 				
 		ptr->SetId(id);
 		ptr->SetLon(to_x);
 		ptr->SetLat(-to_y);
-		ptr->SetCharacteristicId(id_characteristic);
+		GetMutex()->Lock();
 		ptr->Read();
+		GetMutex()->Unlock();
 		ptr->Start();	
 		m_SymbolList.Append(ptr);
 	}
@@ -610,21 +611,30 @@ void CMapPlugin::RenderSelected()
 	double x,y;
 	x = SelectedPtr->GetLon(); 
 	y = SelectedPtr->GetLat();
-	
+		
+	glEnable(GL_BLEND);
 	glPushMatrix();
 	
 	glColor4f(1.0f,1.0f,1.0f,0.5f);	
 	glTranslatef(x, y ,0.0f);
-		
-		glBegin(GL_QUADS);
-			glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-			glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-		glEnd();
+	glTranslatef(0.0, -RectWidth/2 ,0.0f);
+	glLineWidth(2);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = RectWidth/1.5;
+	nvDrawCircleFilled(&c);
+
+	//	glBegin(GL_QUADS);
+			//glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
+			//glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
+			//glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
+			//glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
+		//\glEnd();
 		
 	glPopMatrix();
-		
+	
+	glDisable(GL_BLEND);
 }
 
 void CMapPlugin::RenderHighlighted()
@@ -634,21 +644,30 @@ void CMapPlugin::RenderHighlighted()
 	x = HighlightedPtr->GetLon(); 
 	y = HighlightedPtr->GetLat();
 	
+	glEnable(GL_BLEND);
 	glPushMatrix();
 	
 	glColor4f(1.0f,0.0f,0.0f,0.2f);	
 	glTranslatef(x, y ,0.0f);
-		glBegin(GL_QUADS);
-			glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);	
-			glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-		glEnd();
+	glTranslatef(0.0, -RectWidth/2 ,0.0f);
+	glLineWidth(2);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = RectWidth/1.5;
+	nvDrawCircleFilled(&c);
+		//glBegin(GL_QUADS);
+			//glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);	
+			//glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
+			//glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
+			//glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
+		//glEnd();
 	//glColor4f(0.0f,0.0f,0.0f,0.8f);
 	//glScalef(0.5/MapScale,0.5/MapScale,0.0);
 	//glTranslatef(RECT_WIDTH ,-RECT_HEIGHT ,0.0f);
 	//RenderText(0,0,HighlightedPtr->name);
 	glPopMatrix();
+	glDisable(GL_BLEND);
 	
 }
 
@@ -663,7 +682,7 @@ void CMapPlugin::RenderSymbols()
 void CMapPlugin::Render(void)
 {
 	//Font->Clear();
-	
+	glEnable(GL_POINT_SMOOTH);
 	MapScale = m_Broker->GetMapScale();
 	SetValues();
 		
@@ -678,10 +697,11 @@ void CMapPlugin::Render(void)
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
+	
 	//Font->ClearBuffers();
 	//Font->CreateBuffers();
 	//Font->Render();
-		
+	glDisable(GL_POINT_SMOOTH);
 }
 
 void CMapPlugin::SetMouseXY(int x, int y)

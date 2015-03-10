@@ -272,20 +272,18 @@
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
 #define FI_SYMBOL_ID_BASE_STATION	4
-#define FI_SYMBOL_ID_CHARACTERISTIC	5
-#define FI_SYMBOL_NUMBER			6
-#define FI_SYMBOL_LON				7
-#define FI_SYMBOL_LAT				8
-#define FI_SYMBOL_ON_POSITION		9
-#define FI_SYMBOL_IN_MONITORING		10
-#define FI_SYMBOL_NAME				11
-#define FI_SYMBOL_INFO				12
+#define FI_SYMBOL_NUMBER			5
+#define FI_SYMBOL_LON				6
+#define FI_SYMBOL_LAT				7
+#define FI_SYMBOL_ON_POSITION		8
+#define FI_SYMBOL_IN_MONITORING		9
+#define FI_SYMBOL_NAME				10
+#define FI_SYMBOL_INFO				11
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
 #define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
-#define FN_SYMBOL_ID_CHARACTERISTIC	"id_characteristic"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
@@ -333,16 +331,17 @@
 #define FN_SYMBOL_PICTURE_ID_PICTURE	"id_picture"
 
 // pola tabeli SYMBOL_LIGHT
-#define FI_SYMBOL_LIGHT_ID_SYMBOL		0
-#define FI_SYMBOL_LIGHT_COLOR			1
-#define FI_SYMBOL_LIGHT_COVERAGE		2
-#define FI_SYMBOL_LIGHT_SECTOR_FROM		3
-#define FI_SYMBOL_LIGHT_SECTOR_TO		4
-#define FN_SYMBOL_LIGHT_ID_SYMBOL		"id_symbol"
-#define FN_SYMBOL_LIGHT_COLOR			"color"
-#define FN_SYMBOL_LIGHT_COVERAGE		"coverage"
-#define FN_SYMBOL_LIGHT_SECTOR_FROM		"sector_from"
-#define FN_SYMBOL_LIGHT_SECTOR_TO		"sector_to"
+#define FI_SYMBOL_LIGHT_ID_SYMBOL			0
+#define FI_SYMBOL_LIGHT_ID_CHARACTERISTIC	1
+#define FI_SYMBOL_LIGHT_COLOR				2
+#define FI_SYMBOL_LIGHT_COVERAGE			3
+#define FI_SYMBOL_LIGHT_SECTOR_FROM			4
+#define FI_SYMBOL_LIGHT_SECTOR_TO			5
+#define FN_SYMBOL_LIGHT_ID_SYMBOL			"id_symbol"
+#define FN_SYMBOL_LIGHT_COLOR				"color"
+#define FN_SYMBOL_LIGHT_COVERAGE			"coverage"
+#define FN_SYMBOL_LIGHT_SECTOR_FROM			"sector_from"
+#define FN_SYMBOL_LIGHT_SECTOR_TO			"sector_to"
 
 //pola tabeli SYMBOL_GROUP
 #define FI_SYMBOL_GROUP_ID			0

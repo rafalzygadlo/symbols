@@ -12,7 +12,6 @@ class CLight;
 class CLightPanel: public wxGLCanvas
 {
 	void *m_DB;
-	wxWindow *m_Top;
 	wxArrayPtrVoid m_List;
 	wxTextCtrl *m_CharacteristicText;
 	wxWrapSizer *m_Sizer;
@@ -21,29 +20,31 @@ class CLightPanel: public wxGLCanvas
 	int m_MouseX, m_MouseY;
 	float m_Radius;
 	wxGLContext *GLContext;
-	
-	void DrawSectors(wxDC &dc);
+		
 	void OnNew(wxCommandEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnPaint(wxPaintEvent &event);
 	void OnMouse(wxMouseEvent &event);
-	void RemovePanel(CLight *panel);
+	//void RemovePanel(CLight *panel);
 	void SetValues();
 	void UpdateViewPort();
+	void ProcessHits (GLint hits, GLuint buffer[]);
+	void SelectSectors();
 	void RenderSectors();
 	void RenderLight();
+	void RenderMouse();
 	void Render();
 				
 public:
 
-	CLightPanel(void *db,wxWindow *top, wxWindow *parent);
+	CLightPanel(void *db, wxWindow *parent);
 	~CLightPanel();
 	void Read(wxString query);
 	wxArrayPtrVoid GetItems();
 	void OnDelete(CLight *panel);
 	void OnNewSector();
 	void OnDeleteSector();
-	void AppendPanel(CLight *panel);
+	void Append(CLight *panel);
 	
 	size_t GetCount();
 	CLight *GetLight(int id);
@@ -59,67 +60,40 @@ public:
 	
 };
 
-class CLight: public wxPanel
+class CLight
 {
-	CLightPanel *m_ItemPanel;
-	wxString m_Id;
-	wxTextCtrl *m_CoverageText;
-	wxTextCtrl *m_SectorTextFrom;
-	wxTextCtrl *m_SectorTextTo;
-	wxColourPickerCtrl *m_ColorPicker;
+	int m_Id;
+	float m_Coverage;
+	float m_SectorFrom;
+	float m_SectorTo;
+	float m_Radius;
+	wxColor m_Color;
 	
-	void OnNewSector(wxCommandEvent &event);
-	void OnDelete(wxCommandEvent &event);
-	wxPanel *GetSectorPanel(wxWindow *parent, bool _add = true);
+	//void OnNewSector(wxCommandEvent &event);
+	//void OnDelete(wxCommandEvent &event);
+	//wxPanel *GetSectorPanel(wxWindow *parent, bool _add = true);
 
 public:
 
-	CLight(CLightPanel *parent);
+	CLight();
 	~CLight();
 		
-	wxString _GetId();
 	wxColor GetColor();
-	wxString GetCoverage();
-	wxString GetSectorFrom();
-	wxString GetSectorTo();
-
-
-	void _SetId(wxString v);
+	float GetCoverage();
+	float GetSectorFrom();
+	float GetSectorTo();
+	int GetId();
+	
+	void SetId(int v);
 	void SetColor(wxColor color);
-	void SetCoverage(wxString v);
-	void SetSectorFrom(wxString v);
-	void SetSectorTo(wxString v);
+	void SetCoverage(float v);
+	void SetSectorFrom(float v);
+	void SetSectorTo(float v);
+	void SetRadius(float v);
 	
-
+	void Render();
 		
-	DECLARE_EVENT_TABLE();
-	
-	enum
-	{
-		ID_DELETE = 8124,
-		ID_NEW_SECTOR,
-		
-	};
 
 };
-
-class CLightDraw :public wxPanel
-{
-
-	int m_Width,m_Height;
-	void OnPaint(wxPaintEvent &event);
-	void OnSize(wxSizeEvent &event);
-
-public:
-	CLightDraw(CLightPanel *parent);
-	
-	DECLARE_EVENT_TABLE();
-
-	enum
-	{
-		ID_DELETE,
-	};
-};
-
 
 #endif
