@@ -2,60 +2,66 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
-#include <wx/mstream.h>
 #include <wx/colordlg.h>
-#include <wx/dataview.h>
-#include "images/del.img"
-#include "images/add.img"
-#include "geometrytools.h"
 #include <wx/valnum.h>
 #include "navidrawer.h"
-
-extern unsigned int	add_size;
-extern unsigned char add[]; 
-extern unsigned int	del_size;
-extern unsigned char del[]; 
+#include "sectordialog.h"
 
 BEGIN_EVENT_TABLE(CLightPanel, wxGLCanvas)
 	EVT_BUTTON(ID_NEW,OnNew)
 	EVT_SIZE(OnSize)
 	EVT_PAINT(OnPaint)
 	EVT_MOUSE_EVENTS(OnMouse)
+	EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_MENU(ID_NEW,OnNew)
+	EVT_MENU(ID_EDIT,OnEdit)
+	EVT_MENU(ID_DELETE,OnDelete)
 END_EVENT_TABLE()
 CLightPanel::CLightPanel(void *db, wxWindow *parent)
 	:wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
 {
 	GLContext = new wxGLContext(this);
 	m_DB = db;
-	//wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	//SetSizer(Sizer);
-	
-	//wxMemoryInputStream in_1((const unsigned char*)add,add_size);
-    //wxImage myImage_1(in_1, wxBITMAP_TYPE_PNG);
-	//wxButton *New = new wxBitmapButton(this,ID_NEW,wxBitmap(myImage_1));
-	//Sizer->Add(New,0,wxALL,1);
-
-	//m_Sizer = new wxWrapSizer(wxHORIZONTAL);
-	//Sizer->Add(m_Sizer,1,wxALL|wxEXPAND,0);
-		
+	m_Selected = NULL;
 }
 
 CLightPanel::~CLightPanel()
 {
 	for(size_t i = 0; i < m_List.size();i++)
 	{
-		CLight *Light = (CLight*)m_List.Item(i);
-		delete Light;
+		CSector *ptr = (CSector*)m_List.Item(i);
+		delete ptr;
 	}
 	
 	delete GLContext;
 }
 
+void CLightPanel::OnContextMenu(wxContextMenuEvent &event)
+{
+	wxMenu *Menu = new wxMenu();
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(m_Selected)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+	}
+
+	PopupMenu(Menu);
+	delete Menu;
+}
+
 void CLightPanel::OnMouse(wxMouseEvent &event)
 {
-	m_MouseX = event.GetX();
-	m_MouseY = -event.GetY();
+	m_MouseX = event.GetX() - m_CenterX;
+	m_MouseY = event.GetY() - m_CenterY;
+
+	if(event.LeftDown())
+		m_LeftDown = !m_LeftDown;
+	if(event.RightDown())
+		m_RightDown = !m_RightDown;
+	
 	Refresh();
+	event.Skip();
 }
 
 void CLightPanel::OnSize(wxSizeEvent &event)
@@ -67,16 +73,27 @@ void CLightPanel::OnSize(wxSizeEvent &event)
 void CLightPanel::OnPaint(wxPaintEvent &event)
 {
 	wxPaintDC dc(this);
-	
-	int X = m_MouseX - m_CenterX;
-	int Y = m_MouseY - m_CenterY;
-	double rad_angle = atan2((double)X, (double)Y);
-	double angle = (nvToDegree(rad_angle) - 180) * -1;
-	
 	SetCurrent(*GLContext);
 	Render();
 	event.Skip();
-			
+	
+}
+
+void CLightPanel::OnNew(wxCommandEvent &event)
+{
+	CSectorDialog *SectorDialog = new CSectorDialog();
+	SectorDialog->ShowModal();
+	delete SectorDialog;
+}
+
+void CLightPanel::OnEdit(wxCommandEvent &event)
+{
+
+}
+
+void CLightPanel::OnDelete(wxCommandEvent &event)
+{
+
 }
 
 void CLightPanel::UpdateViewPort()
@@ -85,8 +102,11 @@ void CLightPanel::UpdateViewPort()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 			
-	glOrtho(-m_Width/2,  m_Width/2, -m_Height/2 , m_Height/2, -1.0, 1.0f);
+	//glOrtho(-m_Width,  m_Width, -m_Height , m_Height, -1.0, 1.0f);
 	
+	glOrtho(0.0,  m_Width, m_Height, 0.0, -1.0, 1.0f);
+	glTranslatef(m_CenterX,m_CenterY,1.0);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
@@ -94,24 +114,28 @@ void CLightPanel::UpdateViewPort()
 
 void CLightPanel::SetValues()
 {
-	m_CenterX = 0;
-	m_CenterY = 0;
-	m_Radius = m_Width/1.5;
+	if(m_Width < m_Height)
+		m_Size = m_Width;
+	else
+		m_Size = m_Height;
+	
+	m_CenterX = m_Width/2;
+	m_CenterY = m_Height/2;
+	m_Radius = m_Size/3;
 	
 	for(size_t i = 0; i < m_List.size();i++)
 	{
-		CLight *Light = (CLight*)m_List.Item(i);
-		Light->SetRadius(m_Radius);
+		CSector *Sector = (CSector*)m_List.Item(i);
+		Sector->SetRadius(m_Radius);
 	}
 }
 
-void CLightPanel::SelectSectors()
+void CLightPanel::SelectSector()
 {
-
 	GLuint selectBuf[512];
 	GLint hits;
 
-	glSelectBuffer (512, selectBuf);
+	glSelectBuffer (16, selectBuf);
 	glRenderMode(GL_SELECT);
 
 	glInitNames();
@@ -120,41 +144,49 @@ void CLightPanel::SelectSectors()
 	glPushMatrix ();
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	glOrtho (0.0, 5.0, 0.0, 5.0, 0.0, 10.0);
+	glOrtho (m_MouseX - 1, m_MouseX + 1, m_MouseY - 1, m_MouseY + 1, 0.0, 10.0);
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
    
 	glPointSize(5);
 	for(size_t i = 0; i < m_List.size();i++)
 	{
-		CLight *Light = (CLight*)m_List.Item(i);
-		glLoadName(Light->GetId());
-		Light->Render();
+		CSector *Sector = (CSector*)m_List.Item(i);
+		glLoadName(i);
+		Sector->Render();
 	}
 	glPopMatrix ();
-	
+
 	hits = glRenderMode (GL_RENDER);
+	
+	if(m_LeftDown)
+	{	
+		SetSelected(hits,selectBuf);
+		m_LeftDown = false;
+		m_RightDown = false;
+	}
+	
+}
+
+void CLightPanel::SetSelected(GLint hits, GLuint *select)
+{	
 	unsigned int i, j;
 	GLuint names, *ptr;
 
-	printf ("hits = %d\n", hits);
-	ptr = (GLuint *) selectBuf;
+	ptr = (GLuint *) select;
 	for (i = 0; i < hits; i++) 
-	{ /*  for each hit  */
-      names = *ptr;
-      printf (" number of names for hit = %d\n", names); ptr++;
-      printf("  z1 is %g;", (float) *ptr/0x7fffffff); ptr++;
-      printf(" z2 is %g\n", (float) *ptr/0x7fffffff); ptr++;
-      printf ("   the name is ");
-      
+	{ 
+		names = *ptr;
+		ptr+=3;
 	  for (j = 0; j < names; j++) 
-	  {     /*  for each name */
-         printf ("%d ", *ptr); ptr++;
+	  {     
+		  m_Selected = (CSector*)m_List.Item(*ptr);
+		  return;
       }
-      printf ("\n");
-   }
+    }
+	
+	m_Selected = NULL;
 }
-
 
 
 void CLightPanel::RenderSectors()
@@ -162,14 +194,23 @@ void CLightPanel::RenderSectors()
 	glPointSize(5);
 	for(size_t i = 0; i < m_List.size();i++)
 	{
-		CLight *Light = (CLight*)m_List.Item(i);
-		Light->Render();
+		CSector *ptr = (CSector*)m_List.Item(i);
+		ptr->Render();
 	}
+}
+
+void CLightPanel::RenderSelected()
+{
+	if(m_Selected)
+		m_Selected->RenderSelected();
 }
 
 void CLightPanel::RenderMouse()
 {
+	glPointSize(5);
+	glEnable(GL_POINT_SMOOTH);
 	nvDrawPoint(m_MouseX,m_MouseY);
+	glDisable(GL_POINT_SMOOTH);
 }
 
 void CLightPanel::Render()
@@ -177,17 +218,20 @@ void CLightPanel::Render()
 
 	if( !this->IsShownOnScreen() )
 		return;
-	
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	SetValues();
-	
-	glClearColor(0.0, 0.0,0.0, 1.0f);
+	glClearColor(0.0, 0.0, 0.0, 1.0f);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-	SelectSectors();
+	
+	SelectSector();
 	
 	UpdateViewPort();
+
+	RenderSelected();
 	RenderSectors();
 	RenderMouse();
-    SwapBuffers();
+
+	SwapBuffers();
 }
 
 size_t CLightPanel::GetCount()
@@ -195,24 +239,17 @@ size_t CLightPanel::GetCount()
 	return m_List.size();
 }
 
-CLight *CLightPanel::GetLight(int id)
+CSector *CLightPanel::GetSector(int id)
 {
-	return (CLight*)m_List.Item(id);
+	return (CSector*)m_List.Item(id);
 }
 
-void CLightPanel::OnNew(wxCommandEvent &event)
-{
-	CLight *Light = new CLight();
-	Append(Light);
-	
-}
-
-void CLightPanel::OnDelete(CLight *panel)
-{
+//void CLightPanel::OnDelete()
+//{
 	//RemovePanel(panel);
-}
+//}
 
-void CLightPanel::Append(CLight *panel)
+void CLightPanel::Append(CSector *panel)
 {
 	m_List.Add(panel);
 }
@@ -244,90 +281,3 @@ void CLightPanel::Read(wxString query)
 	
 }
 
-
-CLight::CLight()
-{
-			
-}
-
-CLight::~CLight()
-{
-
-}
-
-void CLight::Render()
-{
-	nvCircle c;
-	c.Center.x = 0.0;
-	c.Center.y = 0.0;
-	c.Radius = m_Radius;
-
-
-
-
-
-
-	glEnable(GL_BLEND);
-	glEnable(GL_LINE_SMOOTH);
-	glColor4ub(m_Color.Red(),m_Color.Green(),m_Color.Blue(),220);
-	nvDrawCircleArcFilled(&c,m_SectorFrom,m_SectorTo);
-	glDisable(GL_LINE_SMOOTH);
-	glDisable(GL_BLEND);
-		
-}
-
-int CLight::GetId()
-{
-	return m_Id;
-}
-
-void CLight::SetId(int v)
-{
-	m_Id = v;
-}
-
-void CLight::SetColor(wxColor color)
-{
-	m_Color = color;
-}
-
-void CLight::SetCoverage(float v)
-{
-	m_Coverage = v;
-}
-
-void CLight::SetSectorFrom(float v)
-{
-	m_SectorFrom = v;
-}
-
-void CLight::SetSectorTo(float v)
-{
-	m_SectorTo = v;
-}
-
-void CLight::SetRadius(float v)
-{
-	m_Radius = v;
-}
-
-//GET
-wxColor CLight::GetColor()
-{
-	return m_Color;
-}
-
-float CLight::GetCoverage()
-{
-	return m_Coverage;
-}
-
-float CLight::GetSectorFrom()
-{
-	return m_SectorFrom;
-}
-
-float CLight::GetSectorTo()
-{
-	return m_SectorTo;
-}

@@ -858,9 +858,9 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 
 	for(size_t i = 0; i <LightPanel->GetCount(); i++)
 	{
-		CLight *Light = LightPanel->GetLight(i);
+		CSector *Sector = LightPanel->GetSector(i);
 		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,color='%d' ,coverage='%s' ,sector_from='%s' ,sector_to='%s'"),
-			TABLE_SYMBOL_LIGHT,id,Light->GetColor().GetRGB(),Light->GetCoverage(),Light->GetSectorFrom(),Light->GetSectorTo());
+			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 		my_query(m_DB,sql);
 	}
 	
@@ -1150,9 +1150,9 @@ void CDialogPanel::EditSymbol(int id)
 
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
-			CLight *Light = pan->GetLight(i);
+			CSector *Sector = pan->GetSector(i);
 			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d',coverage='%s',sector_from='%s',sector_to='%s'"),
-			TABLE_SYMBOL_LIGHT,id,Light->GetColor().GetRGB(),Light->GetCoverage(),Light->GetSectorFrom(),Light->GetSectorTo());
+			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 			my_query(m_DB,sql);
 		}
 		
@@ -1492,15 +1492,15 @@ void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 
 	while(row = (char**)db_fetch_row(result))
 	{
-		CLight *Light = new CLight();
+		CSector *Sector = new CSector();
 		wxColor color;
 		color.SetRGB(atoi(row[FI_SYMBOL_LIGHT_COLOR]));
-		Light->SetColor(color);
-		Light->SetCoverage(atof(row[FI_SYMBOL_LIGHT_COVERAGE]));
-		Light->SetSectorFrom(atof(row[FI_SYMBOL_LIGHT_SECTOR_FROM]));
-		Light->SetSectorTo(atof(row[FI_SYMBOL_LIGHT_SECTOR_TO]));
+		Sector->SetColor(color);
+		Sector->SetCoverage(atof(row[FI_SYMBOL_LIGHT_COVERAGE]));
+		Sector->SetSectorFrom(atof(row[FI_SYMBOL_LIGHT_SECTOR_FROM]));
+		Sector->SetSectorTo(atof(row[FI_SYMBOL_LIGHT_SECTOR_TO]));
 		//Light->SetCharacteristic(row[FI_SYMBOL_LIGHT_CHARACTERISTIC]);
-		LightPanel->Append(Light);
+		LightPanel->Append(Sector);
 	}
 		
 	db_free_result(result);

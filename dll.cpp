@@ -220,21 +220,20 @@ void CMapPlugin::Read()
 		double lon;
 		double lat;
 		int id;
-		int id_characteristic;
 		sscanf(row[FI_SYMBOL_ID],"%d",&id);
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
-			
+
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
-				
+
 		ptr->SetId(id);
 		ptr->SetLon(to_x);
 		ptr->SetLat(-to_y);
 		GetMutex()->Lock();
 		ptr->Read();
 		GetMutex()->Unlock();
-		ptr->Start();	
+		ptr->Start();
 		m_SymbolList.Append(ptr);
 	}
 	

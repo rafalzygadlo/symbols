@@ -2,6 +2,8 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "images/del.img"
+#include "images/add.img"
 #include <wx/mstream.h>
 #include <wx/valnum.h>
 
