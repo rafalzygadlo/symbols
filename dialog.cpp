@@ -859,7 +859,7 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 	for(size_t i = 0; i <LightPanel->GetCount(); i++)
 	{
 		CSector *Sector = LightPanel->GetSector(i);
-		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,color='%d' ,coverage='%s' ,sector_from='%s' ,sector_to='%s'"),
+		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,color='%d' ,coverage='%4.2f' ,sector_from='%4.2f' ,sector_to='%4.2f'"),
 			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 		my_query(m_DB,sql);
 	}
@@ -1151,7 +1151,7 @@ void CDialogPanel::EditSymbol(int id)
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
 			CSector *Sector = pan->GetSector(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d',coverage='%s',sector_from='%s',sector_to='%s'"),
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d',coverage='%4.2f',sector_from='%4.2f',sector_to='%4.2f'"),
 			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 			my_query(m_DB,sql);
 		}

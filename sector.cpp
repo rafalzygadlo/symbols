@@ -7,7 +7,10 @@
 
 CSector::CSector()
 {
-			
+	m_SectorFrom = SECTOR_FROM_DEFAULT_VALUE;
+	m_SectorTo = SECTOR_TO_DEFAULT_VALUE;
+	m_Coverage = COVERAGE_DEFAULT_VALUE;
+	m_Color = SECTOR_DEFAULT_COLOR;
 }
 
 CSector::~CSector()
@@ -23,7 +26,7 @@ void CSector::RenderSelected()
 	c.Radius = m_Radius*1.2;
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
-	glColor4ub(m_Color.Red(),m_Color.Green(),m_Color.Blue(),255);
+	glColor4ub(m_Color.Red(),m_Color.Green(),m_Color.Blue(),200);
 	nvDrawCircleArcFilled(&c,m_SectorFrom,m_SectorTo);
 	glDisable(GL_LINE_SMOOTH);
 	glDisable(GL_BLEND);

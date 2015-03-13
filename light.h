@@ -13,13 +13,13 @@ class CLightPanel: public wxGLCanvas
 {
 	void *m_DB;
 	wxArrayPtrVoid m_List;
+	wxArrayPtrVoid m_Select;
 	wxTextCtrl *m_CharacteristicText;
 	wxWrapSizer *m_Sizer;
 	int m_Width,m_Height, m_Size;
 	int m_CenterX,m_CenterY;
 	int m_MouseX, m_MouseY;
 	float m_Radius;
-	CSector *m_Selected;
 	bool m_LeftDown,m_RightDown;
 	wxGLContext *GLContext;
 		
@@ -50,8 +50,9 @@ public:
 	//void OnDelete(CLight *panel);
 	void OnNewSector();
 	void OnDeleteSector();
-	void Append(CSector *panel);
-	
+	void Append(CSector *v);
+	void Remove(CSector *v);
+
 	size_t GetCount();
 	CSector *GetSector(int id);
 

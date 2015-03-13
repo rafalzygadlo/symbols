@@ -22,7 +22,6 @@ CLightPanel::CLightPanel(void *db, wxWindow *parent)
 {
 	GLContext = new wxGLContext(this);
 	m_DB = db;
-	m_Selected = NULL;
 }
 
 CLightPanel::~CLightPanel()
@@ -40,12 +39,12 @@ void CLightPanel::OnContextMenu(wxContextMenuEvent &event)
 {
 	wxMenu *Menu = new wxMenu();
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(m_Selected)
+	if(m_Select.size() > 0)
 	{
 		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
 	}
-
+	Refresh();
 	PopupMenu(Menu);
 	delete Menu;
 }
@@ -53,14 +52,15 @@ void CLightPanel::OnContextMenu(wxContextMenuEvent &event)
 void CLightPanel::OnMouse(wxMouseEvent &event)
 {
 	m_MouseX = event.GetX() - m_CenterX;
-	m_MouseY = event.GetY() - m_CenterY;
+	m_MouseY = -event.GetY() + m_CenterY;
 
 	if(event.LeftDown())
 		m_LeftDown = !m_LeftDown;
 	if(event.RightDown())
 		m_RightDown = !m_RightDown;
 	
-	Refresh();
+	//if(m_LeftDown || m_RightDown)
+		Refresh();
 	event.Skip();
 }
 
@@ -81,19 +81,39 @@ void CLightPanel::OnPaint(wxPaintEvent &event)
 
 void CLightPanel::OnNew(wxCommandEvent &event)
 {
-	CSectorDialog *SectorDialog = new CSectorDialog();
-	SectorDialog->ShowModal();
+	CSector *Sector = new CSector();
+	Append(Sector);
+	Refresh();
+	
+	CSectorDialog *SectorDialog = new CSectorDialog(this);
+	SectorDialog->SetSector(Sector);
+	if(SectorDialog->ShowModal() == wxID_CANCEL)
+		Remove(Sector);
 	delete SectorDialog;
 }
 
 void CLightPanel::OnEdit(wxCommandEvent &event)
 {
 
+	for(size_t i = 0; i < m_Select.size();i++)
+	{
+		CSector *Sector = (CSector*)m_Select.Item(i);
+		CSectorDialog *SectorDialog = new CSectorDialog(this);
+		SectorDialog->SetSector(Sector);
+		SectorDialog->ShowModal();
+		delete SectorDialog;
+	}
 }
 
 void CLightPanel::OnDelete(wxCommandEvent &event)
 {
+	for(size_t i = 0; i < m_Select.size();i++)
+	{
+		Remove((CSector*)m_Select.Item(i));
+	}
 
+	m_Select.Clear();
+		
 }
 
 void CLightPanel::UpdateViewPort()
@@ -104,7 +124,7 @@ void CLightPanel::UpdateViewPort()
 			
 	//glOrtho(-m_Width,  m_Width, -m_Height , m_Height, -1.0, 1.0f);
 	
-	glOrtho(0.0,  m_Width, m_Height, 0.0, -1.0, 1.0f);
+	glOrtho(0.0,  m_Width, 0.0, m_Height,  -1.0, 1.0f);
 	glTranslatef(m_CenterX,m_CenterY,1.0);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -159,7 +179,7 @@ void CLightPanel::SelectSector()
 
 	hits = glRenderMode (GL_RENDER);
 	
-	if(m_LeftDown)
+	if(m_LeftDown || m_RightDown)
 	{	
 		SetSelected(hits,selectBuf);
 		m_LeftDown = false;
@@ -172,27 +192,27 @@ void CLightPanel::SetSelected(GLint hits, GLuint *select)
 {	
 	unsigned int i, j;
 	GLuint names, *ptr;
-
+	
+	m_Select.Clear();
 	ptr = (GLuint *) select;
-	for (i = 0; i < hits; i++) 
-	{ 
+	for (i = 0; i < hits; i++)
+	{
 		names = *ptr;
 		ptr+=3;
-	  for (j = 0; j < names; j++) 
-	  {     
-		  m_Selected = (CSector*)m_List.Item(*ptr);
-		  return;
-      }
+		for (j = 0; j < names; j++)
+		{
+			m_Select.Add(m_List.Item(*ptr));
+			ptr++;
+		}
     }
-	
-	m_Selected = NULL;
+		
 }
 
 
 void CLightPanel::RenderSectors()
 {
 	glPointSize(5);
-	for(size_t i = 0; i < m_List.size();i++)
+	for(size_t i = 0; i < m_List.size();i++) 
 	{
 		CSector *ptr = (CSector*)m_List.Item(i);
 		ptr->Render();
@@ -201,8 +221,12 @@ void CLightPanel::RenderSectors()
 
 void CLightPanel::RenderSelected()
 {
-	if(m_Selected)
-		m_Selected->RenderSelected();
+	for(size_t i = 0; i < m_Select.size();i++)
+	{
+		CSector *ptr = (CSector*)m_Select.Item(i);
+		ptr->RenderSelected();
+	}
+	
 }
 
 void CLightPanel::RenderMouse()
@@ -249,9 +273,9 @@ CSector *CLightPanel::GetSector(int id)
 	//RemovePanel(panel);
 //}
 
-void CLightPanel::Append(CSector *panel)
+void CLightPanel::Append(CSector *v)
 {
-	m_List.Add(panel);
+	m_List.Add(v);
 }
 
 wxArrayPtrVoid CLightPanel::GetItems()
@@ -259,25 +283,9 @@ wxArrayPtrVoid CLightPanel::GetItems()
 	return m_List;
 }
 
-void CLightPanel::Read(wxString query)
+void CLightPanel::Remove(CSector *v)
 {
-	if(!my_query(m_DB,query))
-		return;
-	
-	int rows = 0;
-	void *result = db_result(m_DB);
-	char **row;
-	
-	while(row = (char**)db_fetch_row(result))
-	{
-		wxString str(row[0],wxConvUTF8);
-		wxString name(row[1],wxConvUTF8);
-		//CItem *Item = new CItem(this,name);
-		//Item->_SetId(str);
-		//m_Items.Add(Item);
-	}
-
-	db_free_result(result);
-	
+	m_List.Remove(v);
+	delete v;
 }
 
