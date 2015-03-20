@@ -246,7 +246,7 @@ bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
 
 void CDisplayPlugin::SignalSelect()
 {
-	//Selected = MapPlugin->GetSelectedPtr();
+	Selected = MapPlugin->GetSelectedPtr();
 	
 	//if(Selected == NULL)
 		//ShowInfoPanel(false,Selected);

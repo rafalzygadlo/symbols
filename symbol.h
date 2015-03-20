@@ -36,6 +36,7 @@ class CSymbol
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	int m_CommandTick;
+	int m_IdSBMS;
 	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -57,6 +58,7 @@ public:
 	void SetId(int v);
 	void SetLon(double v);
 	void SetLat(double v);
+	void SetIdSBMS(int v);
 	void SetCharacteristicId(int v);
 	int GetId();
 	double GetLon();

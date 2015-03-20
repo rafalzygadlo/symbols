@@ -220,16 +220,18 @@ void CMapPlugin::Read()
 		double lon;
 		double lat;
 		int id;
+		int id_sbms;
 		sscanf(row[FI_SYMBOL_ID],"%d",&id);
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
-
+		sscanf(row[FI_SYMBOL_ID_SBMS],"%d",&id_sbms);
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
 		ptr->SetId(id);
 		ptr->SetLon(to_x);
 		ptr->SetLat(-to_y);
+		ptr->SetIdSBMS(id_sbms);
 		GetMutex()->Lock();
 		ptr->Read();
 		GetMutex()->Unlock();

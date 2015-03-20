@@ -26,6 +26,7 @@ CSymbol::CSymbol(void *db, CNaviBroker *broker)
 	m_CommandTick = CHECK_COMMAND_TICK;
 	m_BlinkTick = 0;
 	m_Busy = false;
+	m_IdSBMS = 0;
 	m_Ticker0 = NULL;
 	m_Ticker1 = NULL;
 	
@@ -51,26 +52,25 @@ void CSymbol::Start()
 
 void CSymbol::Read()
 {
-	return;
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,m_CharacteristicId);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
-		
+
     char **row = NULL;
 	if(result == NULL)
 		return;
-		
+
 	while(row = (char**)db_fetch_row(result))
 	{
 		SOnOff ptr;
-		float on,off;		
+		float on,off;
 		sscanf(row[FI_CHARACTERISTIC_ON_OFF_ON],"%f",&on);
 		sscanf(row[FI_CHARACTERISTIC_ON_OFF_OFF],"%f",&off);
 		ptr.on = on * 10;
 		ptr.off = off * 10;
 		m_OnList.Append(ptr);
 	}
-		
+
 	db_free_result(result);
 
 }
@@ -320,6 +320,11 @@ void CSymbol::SetLon(double v)
 void CSymbol::SetLat(double v)
 {
 	m_Lat = v;
+}
+
+void CSymbol::SetIdSBMS(int v)
+{
+	m_IdSBMS = v;
 }
 
 //GET

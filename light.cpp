@@ -164,7 +164,7 @@ void CLightPanel::SelectSector()
 	glPushMatrix ();
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity ();
-	glOrtho (m_MouseX - 1, m_MouseX + 1, m_MouseY - 1, m_MouseY + 1, 0.0, 10.0);
+	glOrtho (m_MouseX - 0.1, m_MouseX + 0.1, m_MouseY - 0.1, m_MouseY + 0.1, 0.0, 10.0);
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity ();
    
