@@ -24,6 +24,7 @@ extern CNaviBroker *BrokerPtr;
 CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize)
 {
+	m_SymbolPanel = NULL;
 	m_DB = db;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
@@ -57,50 +58,17 @@ CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
 
 CMyFrame::~CMyFrame(void)
 {
-
+	delete m_SymbolPanel;
 }
 
 wxPanel *CMyFrame::GetPage1(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	
-	m_PicturePanel = new CPicturePanel(m_DB,Panel);
-	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
-			
-	wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);	
-	Sizer->Add(GridSizer,1,wxALL|wxEXPAND,5);
-	
-	wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
-	GridSizer->Add(labelname,0,wxALL,5);
-	m_TextName = new wxTextCtrl(Panel,ID_NAME,wxEmptyString, wxDefaultPosition, wxSize(250,-1));
-	GridSizer->AddGrowableCol(1);
-	GridSizer->AddGrowableRow(1);
-	GridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
-	
-	// marker description
-	//wxStaticText *labeldescription = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DESCRIPTION),wxDefaultPosition,wxDefaultSize);
-	//GridSizer->Add(labeldescription,0,wxALL,5);
-	//m_TextInfo = new wxTextCtrl(Panel,ID_DESCRIPTION,wxEmptyString,wxDefaultPosition,wxSize(250,100),wxTE_MULTILINE);
-	//GridSizer->Add(m_TextInfo,0,wxALL|wxEXPAND,5);
-		
-	wxStaticText *labellat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
-	GridSizer->Add(labellat,0,wxALL,5);
-	
-	m_TextLat = new wxTextCtrl(Panel,ID_LAT,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-	GridSizer->Add(m_TextLat,0,wxALL,5);
-	
-	wxStaticText *labellon = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LONGITUDE) ,wxDefaultPosition,wxDefaultSize);
-	GridSizer->Add(labellon,0,wxALL,5);
-
-	m_TextLon = new wxTextCtrl(Panel,ID_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	GridSizer->Add(m_TextLon,0,wxALL,5);
-			
 	Panel->SetSizer(Sizer);
-
+	m_SymbolPanel = new CSymbolPanel();
+	Sizer->Add(m_SymbolPanel->GetPage1(Panel),0,wxALL|wxEXPAND,5);
 	return Panel;
-		
-
 }
 
 wxPanel *CMyFrame::GetPage2(wxWindow *parent)
@@ -200,19 +168,17 @@ void CMyFrame::ShowWindow(bool show)
 		ParentX = _ParentPtr->GetScreenPosition().x;
 		ParentY = _ParentPtr->GetScreenPosition().y;
 		
-		double to_x, to_y;
 		SelectedPtr = m_DLL->GetSelectedPtr();
 		if(SelectedPtr == NULL)
 			return;
-		
-		m_DLL->GetBroker()->Project(SelectedPtr->GetLon(),SelectedPtr->GetLat(),&to_x,&to_y);
+				
 		double vm[4];
 		m_DLL->GetBroker()->GetVisibleMap(vm);
 		
 		float scale = m_DLL->GetBroker()->GetMapScale();
 		wxPoint pt;
-		pt.x = (int)((-vm[0] + SelectedPtr->GetLon()) * scale) + ParentX;
-		pt.y = (int)((-vm[1] + SelectedPtr->GetLat()) * scale) + ParentY;
+		pt.x = (int)((-vm[0] + SelectedPtr->GetLonMap()) * scale) + ParentX;
+		pt.y = (int)((-vm[1] + SelectedPtr->GetLatMap()) * scale) + ParentY;
 		
 		wxPoint p2,p4;
 		wxSize size = this->GetSize();
@@ -233,37 +199,9 @@ void CMyFrame::ShowWindow(bool show)
 			pt.y = pt.y - size.GetHeight();
 		}
 		
+		m_SymbolPanel->SetPage1(m_DB,SelectedPtr);
 		this->SetPosition(pt);
 		
-		wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,SelectedPtr->GetId());
-		my_query(m_DB,sql);
-			
-		void *result = db_result(m_DB);
-		
-		char **row = NULL;
-		if(result == NULL)
-			return;
-		
-		row = (char**)db_fetch_row(result);
-		m_TextName->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-		//m_TextInfo->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_INFO]).wc_str()));
-		db_free_result(result);
-		
-		m_TextLon->SetLabel(FormatLongitude(to_x,DEFAULT_DEGREE_FORMAT));
-		m_TextLat->SetLabel(FormatLatitude(-to_y,DEFAULT_DEGREE_FORMAT));
-
-		sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,SelectedPtr->GetId());
-		my_query(m_DB,sql);
-			
-		result = db_result(m_DB);
-		if(result == NULL)
-			return;
-		
-		row = (char**)db_fetch_row(result);
-		if(row)
-			m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
-		
-		db_free_result(result);
 	}
 	
 	Show(show);

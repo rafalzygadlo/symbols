@@ -142,21 +142,8 @@ public:
 
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();
-	//void Delete();
-	//bool GetNeedExit(void);
-	//wxString GetFilePath();
-	//wxArrayString *GetDataArray();
-	//int GetErrorCode();
-	//size_t GetMarkerIconsCount();
-	//void AddField(wchar_t *name, wchar_t *value, SSymbol *Marker);
-	//void SetErrorCode(int er);
-	//void SetFilePath(wxString file);
-	//void SetMarkerTextureID(int id);
-	//void SetMarkerIconID(int id);
-	//void ShowPopupMenu(bool show);
+	void *GetDB();
 	void ShowFrameWindow(bool show);
-	//SSymbol *GetNewMarkerPtr();
-	//bool ShipIsSelected(SSymbol *ship);
 	int GetDisplaySignal();
 	void OnTickCommand();
 

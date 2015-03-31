@@ -4,51 +4,40 @@
 #if defined(_WIN32) || defined(_WIN64)
 #define DIR_SEPARATOR "\\"
 #endif
-
 #define nvPI 3.1415926535897932384626433832795
 #define THREAD
 #define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "workdir"
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
-
 #define PRODUCT_NAME "Symbol Manager"
 #define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"
 #define PRODUCT_VERSION "1.0"
-
 #define KEY_DB_USER	"db_user"
 #define	KEY_DB_HOST	"db_host"
 #define KEY_DB_PORT	"db_port"
 #define KEY_DB_NAME	"db_name"
 #define KEY_DB_PASSWORD	"db_password"
-
+#define DEFAULT_FONT "arial.ttf"
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
-
 #define INFO_WIDTH 128
 #define INFO_HEIGHT 32
 #define INFO_MARGIN 2
-
 #define DEFAULT_FACTOR 50.0
 #define FONT_SIZE 14
-
 #define PLUGIN_ID 4
-
 #define SYMBOL_NAME_SIZE 64
 #define SYMBOL_DESCRIPTION_SIZE 255
 //#define MARKER_DEFAULT_ICON_ID 0
-
 #define COLUM_0_WIDTH	120
 #define COLUM_1_WIDTH	40
 #define COLUM_2_WIDTH	40
-
 #define KEY_COLUMN_0_WIDTH "column_width_0"
 #define KEY_COLUMN_1_WIDTH "column_width_1"
 #define KEY_COLUMN_2_WIDTH "column_width_2"
-
 #define POWER_OF_LIGHT_MIN 1
 #define POWER_OF_LIGHT_MAX 100
-
 #define DRIVE_CURRENT_MIN 1
 #define DRIVE_CURRENT_MAX 1000
 

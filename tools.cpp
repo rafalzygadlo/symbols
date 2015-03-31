@@ -6,6 +6,7 @@
 #include "db.h"
 #include "NaviToolsLib.h"
 #include "stdio.h"
+#include <wx/msw/wrapshl.h>
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -712,4 +713,16 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, in
 	db_free_result(result);
 
 	return ptr;
+}
+
+wxString GetFontFolderPath()
+{
+	#ifdef __WXMSW__
+	return  wxStandardPaths::MSWGetShellDir(CSIDL_FONTS);
+	#endif // __WXMSW__
+}
+
+wxString GetFontPath()
+{
+	return wxString::Format(_("%s\\%s"),GetFontFolderPath().wc_str(),DEFAULT_FONT);
 }

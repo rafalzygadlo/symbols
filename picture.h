@@ -32,7 +32,8 @@ public:
 	void _SetId(int id);
 	void Read();
 	void Clear();
-
+	void SetDB(void *db);
+	
 	DECLARE_EVENT_TABLE();
 
 	enum

@@ -25,7 +25,7 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,2);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
-	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,5);
+	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,2);
 	
 	if(type == PICTURE_PANEL_NEW)
 	{
@@ -46,6 +46,12 @@ CPicturePanel::~CPicturePanel()
 {
 
 }
+
+void CPicturePanel::SetDB(void *db)
+{
+	m_DB = db;
+}
+
 wxImage CPicturePanel::GetPicture()
 {
 	return m_Picture;

@@ -6,6 +6,7 @@
 #include "animpos.h"
 #include "naviencryption.h"
 #include "navidrawer.h"
+#include "options.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -28,6 +29,8 @@ unsigned char PluginInfoBlock[] = {
 
 CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
+	SetBGColor(DEFAULT_BG_COLOR);
+	SetFGColor(DEFAULT_FG_COLOR);
 	SetUID(4);
 	m_DB = NULL;
 	m_Symbol = NULL;
@@ -185,6 +188,11 @@ CSymbol *CMapPlugin::GetSelectedPtr()
 	return SelectedPtr;
 }
 
+void *CMapPlugin::GetDB()
+{
+	return m_DB;
+}
+
 int CMapPlugin::GetDisplaySignal()
 {
 	return DisplaySignalType;
@@ -229,8 +237,10 @@ void CMapPlugin::Read()
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
 		ptr->SetId(id);
-		ptr->SetLon(to_x);
-		ptr->SetLat(-to_y);
+		ptr->SetLon(lon);
+		ptr->SetLat(lat);
+		ptr->SetLonMap(to_x);
+		ptr->SetLatMap(-to_y);
 		ptr->SetIdSBMS(id_sbms);
 		GetMutex()->Lock();
 		ptr->Read();
@@ -368,7 +378,7 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
 		CSymbol *ptr = m_SymbolList.Get(i);
-		if(IsPointInsideBox(MapX, MapY, ptr->GetLon() - (RectWidth/2) + TranslationX, ptr->GetLat() - (RectHeight/2) + TranslationY, ptr->GetLon() + (RectWidth/2) + TranslationX , ptr->GetLat() + (RectHeight/2) + TranslationY))
+		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/2) + TranslationX, ptr->GetLatMap() - (RectHeight/2) + TranslationY, ptr->GetLonMap() + (RectWidth/2) + TranslationX , ptr->GetLatMap() + (RectHeight/2) + TranslationY))
 			return ptr;
 	}
 	
@@ -610,8 +620,8 @@ void CMapPlugin::SetValues()
 void CMapPlugin::RenderSelected()
 {
 	double x,y;
-	x = SelectedPtr->GetLon(); 
-	y = SelectedPtr->GetLat();
+	x = SelectedPtr->GetLonMap(); 
+	y = SelectedPtr->GetLatMap();
 		
 	glEnable(GL_BLEND);
 	glPushMatrix();
@@ -642,8 +652,8 @@ void CMapPlugin::RenderHighlighted()
 {
 			
 	double x,y;
-	x = HighlightedPtr->GetLon(); 
-	y = HighlightedPtr->GetLat();
+	x = HighlightedPtr->GetLonMap(); 
+	y = HighlightedPtr->GetLatMap();
 	
 	glEnable(GL_BLEND);
 	glPushMatrix();

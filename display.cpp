@@ -6,34 +6,36 @@
 //#include "AISCoder.h"
 
 BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
-	EVT_HYPERLINK(ID_REPORT,CDisplayPlugin::OnReport)
-	EVT_HYPERLINK(ID_DATA,CDisplayPlugin::OnData)
-	EVT_HYPERLINK(ID_CONFIG,CDisplayPlugin::OnConfig)
-	EVT_BUTTON(ID_ON,CDisplayPlugin::OnPowerOn)
-	EVT_BUTTON(ID_OFF,CDisplayPlugin::OnPowerOff)
+//	EVT_HYPERLINK(ID_REPORT,CDisplayPlugin::OnReport)
+//	EVT_HYPERLINK(ID_DATA,CDisplayPlugin::OnData)
+//	EVT_HYPERLINK(ID_CONFIG,CDisplayPlugin::OnConfig)
+//	EVT_BUTTON(ID_ON,CDisplayPlugin::OnPowerOn)
+//	EVT_BUTTON(ID_OFF,CDisplayPlugin::OnPowerOff)
 END_EVENT_TABLE()
 
 
 CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name) 
 :CNaviDiaplayApi( parent, id, pos, size, style, name )
 {
-	Selected = NULL;
-	MapPlugin = NULL;
-	Broker = NULL;
+	m_DB = NULL;
 	SetDisplayID(NDS_SYMBOL);
-	ControlName = Parent->GetLabel();
+	m_Selected = NULL;
+	m_MapPlugin = NULL;
+	m_Broker = NULL;
+	m_ControlName = Parent->GetLabel();
 	ReadConfig();
 	ShowControls();
-};
+}
 
 CDisplayPlugin::~CDisplayPlugin()
 {
 	WriteConfig();
+	delete m_SymbolPanel;
 }
 
 CNaviBroker *CDisplayPlugin::GetBroker()
 {
-	return MapPlugin->GetBroker();
+	return m_MapPlugin->GetBroker();
 }
 
 void CDisplayPlugin::ReadConfig()
@@ -59,124 +61,35 @@ void CDisplayPlugin::WriteConfig()
 
 void CDisplayPlugin::ShowControls()
 {
-	wxListItem item;
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+			
+	m_SymbolPanel = new CSymbolPanel();
+	Main->Add(m_SymbolPanel->GetPage1(this),1,wxALL|wxEXPAND);
 		
-	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	Main->Add(Notebook,1,wxALL|wxEXPAND,0);
-	
-	// Page1
-	wxPanel *Page1 = new wxPanel(Notebook,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	Page1Sizer = new wxBoxSizer(wxVERTICAL);
-	Page1->SetSizer(Page1Sizer);
-	Notebook->AddPage(Page1,GetMsg(MSG_MANAGER));
-	
-	//ShipList = new CListCtrl(Page1,this, 0 , wxLC_REPORT | wxLC_SORT_ASCENDING | wxLC_HRULES | wxLC_VIRTUAL );
-	//item.SetWidth(Column1Width); //item.SetText(GetMsg(MSG_SHIP_ID)); 
-	//ShipList->InsertColumn(0,item);	
-	//item.SetWidth(Column2Width); //item.SetText(GetMsg(MSG_SHIP_NAME)); 
-	//ShipList->InsertColumn(1,item);	
-	//item.SetWidth(Column3Width); //item.SetText(GetMsg(MSG_SHIP_NAME)); 
-	//ShipList->InsertColumn(2,item);
-	//item.SetWidth(Column4Width); //item.SetText(GetMsg(MSG_SHIP_NAME)); 
-	//ShipList->InsertColumn(3,item);
-	//item.SetWidth(Column5Width); //item.SetText(GetMsg(MSG_SHIP_NAME)); 
-	//ShipList->InsertColumn(4,item);
-	
-	// HTML
-	//ShipList = new CHtmlCtrl(Page1,this);
-	
-	//Page1Sizer->Add(ShipList,1,wxALL|wxEXPAND,0);
-
-	//InfoPanel = new wxPanel(Page1,wxID_ANY);
-	//Page1Sizer->Add(InfoPanel,1,wxALL|wxEXPAND,5);
-
-	//wxBoxSizer *InfoPanelSizer = new wxBoxSizer(wxVERTICAL);
-	//InfoPanel->SetSizer(InfoPanelSizer);
-	//InfoPanel->Hide();
-	
-	wxFont font;
-	font.SetPointSize(14);
-	//ShipName = new wxStaticText(InfoPanel,wxID_ANY,wxEmptyString);
-	//ShipName->SetFont(font);
-	//InfoPanelSizer->Add(ShipName,0,wxALL,2);
-	
-	//ShipDesc = new wxTextCtrl(InfoPanel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_MULTILINE);
-	//InfoPanelSizer->Add(ShipDesc,0,wxALL|wxEXPAND,2);
-	
-	//Lat = new wxStaticText(InfoPanel,wxID_ANY,wxEmptyString);
-	//InfoPanelSizer->Add(Lat,0,wxALL,2);
-	
-	//Lon = new wxStaticText(InfoPanel,wxID_ANY,wxEmptyString);
-	//InfoPanelSizer->Add(Lon,0,wxALL,2);
-	
-	ControlPanel = new wxPanel(Page1,wxID_ANY);
-	Page1Sizer->Add(ControlPanel,0,wxALL|wxEXPAND,0);
-	wxBoxSizer *ControlPanelSizer = new wxBoxSizer(wxVERTICAL);
-	ControlPanel->SetSizer(ControlPanelSizer);
-	ControlPanel->Hide();
-	//ControlPanel->SetBackgroundColour(wxColor(200,200,200));
-
-	
-	//wxBitmapToggleButton *Button = new wxBitmapToggleButton();
-	
-	//wxHyperlinkCtrl *Data = new wxHyperlinkCtrl(InfoPanel,ID_DATA,GetMsg(MSG_SET_SHIP_DATA_DEFINITION),wxEmptyString);
-	//InfoPanelSizer->Add(Data,0,wxALL,2);
-
-	//wxHyperlinkCtrl *Config = new wxHyperlinkCtrl(InfoPanel,ID_CONFIG,GetMsg(MSG_SET_SHIP_CONFIG),wxEmptyString);
-	//InfoPanelSizer->Add(Config,0,wxALL,2);
-	
-	
-	this->SetSizer(Main);
-	this->Disable();
+	SetSizer(Main);
+	Disable();
 
 }
-
-void CDisplayPlugin::OnPowerOn(wxCommandEvent &event)
-{
-//	CAIDSDevice *a = new CAIDSDevice();
-//	if(a->SetDeviceSwitch(1))
-	//	wxMessageBox(_("OK"));
-	//else
-		//wxMessageBox(_("ERROR"));
-	
-	//delete a;
-}
-
-void CDisplayPlugin::OnPowerOff(wxCommandEvent &event)
-{
-	//CAIDSDevice *a = new CAIDSDevice();
-	//if(a->SetDeviceSwitch(0))
-		//wxMessageBox(_("OK"));
-	//else
-		//wxMessageBox(_("ERROR"));
-	
-	//delete a;
-}
-
 
 bool CDisplayPlugin::IsValidSignal(CDisplaySignal *SignalID) 
 {
 	
 	if(SignalID->GetSignalID() == NDS_BROKER_BROADCAST ) // && Broker == NULL
 	{
-		Broker = (CNaviBroker*)SignalID->GetData();
-		MapPlugin = (CMapPlugin*)Broker->ExecuteFunction(Broker->GetParentPtr(),"manager_GetThisPtr",NULL);
-		//fprintf(stdout,"A: %p\n",MapPlugin);
+		m_Broker = (CNaviBroker*)SignalID->GetData();
+		m_MapPlugin = (CMapPlugin*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"manager_GetThisPtr",NULL);
 		if(!EnableControls())
 			return false;
 				
 		return false;
 	}
-
-	
+		
 	if(SignalID->GetSignalID() == NDS_SYMBOL)
 	{
-		MapPlugin = (CMapPlugin*)SignalID->GetData();
-		//fprintf(stdout,"B: %p\n",MapPlugin);
+		m_MapPlugin = (CMapPlugin*)SignalID->GetData();
 		if(!EnableControls())
 			return false;
-		if(MapPlugin != NULL)
+		if(m_MapPlugin != NULL)
 			SwitchAction();	
 	}
 		
@@ -185,7 +98,7 @@ bool CDisplayPlugin::IsValidSignal(CDisplaySignal *SignalID)
 }
 bool CDisplayPlugin::EnableControls()
 {
-	if(MapPlugin == NULL)
+	if(m_MapPlugin == NULL)
 	{
 		this->Disable();
 		SignalClear();
@@ -203,24 +116,9 @@ bool CDisplayPlugin::EnableControls()
 	return true;
 }
 
-void CDisplayPlugin::OnReport(wxHyperlinkEvent &event)
-{
-	//ShipReport(Selected);
-}	
-
-void CDisplayPlugin::OnData(wxHyperlinkEvent &event)
-{
-	//ShipData(Selected);
-}
-
-void CDisplayPlugin::OnConfig(wxHyperlinkEvent &event)
-{
-	//ShipConfig(Selected);
-}
-
 void CDisplayPlugin::SwitchAction()
 {
-	switch (MapPlugin->GetDisplaySignal())
+	switch (m_MapPlugin->GetDisplaySignal())
 	{
 		case SIGNAL_INSERT:	SignalInsert();	break;
 		case SIGNAL_SELECT:	SignalSelect();	break;
@@ -230,9 +128,9 @@ void CDisplayPlugin::SwitchAction()
 
 void CDisplayPlugin::SignalInsert()
 {
-	if(MapPlugin == NULL)		
+	if(m_MapPlugin == NULL)
 		return;
-	
+
 //	ShipList->SetList(MapPlugin->GetShipList());
 //	ShipList->Refresh();
 }
@@ -246,13 +144,16 @@ bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
 
 void CDisplayPlugin::SignalSelect()
 {
-	Selected = MapPlugin->GetSelectedPtr();
-	
-	//if(Selected == NULL)
-		//ShowInfoPanel(false,Selected);
-	//else
+	m_Selected = m_MapPlugin->GetSelectedPtr();
+	m_DB = m_MapPlugin->GetDB();
+	if(m_Selected)
+	{	
+		this->Show();
+		m_SymbolPanel->SetPage1(m_DB,m_Selected);
+	}else{
+		//this->Hide();
 		//ShowInfoPanel(true,Selected);
-	
+	}
 	//ShipList->_SetSelection(Selected);
 }
 

@@ -3,6 +3,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "grid.h"
 #include "images/icon.h"
 #include "navidrawer.h"
 #include "geometrytools.h"
@@ -208,7 +209,7 @@ void CSymbol::RenderLightOn()
 		
 	glPushMatrix();
 	glColor4f(1.0f,1.0f,1.0f,0.9f);
-	glTranslatef(m_Lon,m_Lat,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 
 	glPointSize(10);
 
@@ -235,8 +236,8 @@ void CSymbol::RenderBusy()
 	float y = 0.0; //m_RectWidth/4 * sin(nvToRad(angle));
 
 	glPushMatrix();
-	glColor4f(1.0,0.0f,0.0f,0.8);
-	glTranslatef(m_Lon + m_RectWidth/2,m_Lat - m_RectWidth,0.0f);
+	glColor4f(1.0f,0.0f,0.0f,0.8f);
+	glTranslatef(m_LonMap + m_RectWidth/2,m_LatMap - m_RectWidth,0.0f);
 
 	glPointSize(10);
 	glLineWidth(2);
@@ -247,9 +248,9 @@ void CSymbol::RenderBusy()
 	nvDrawCircle(&c);
 	
 	if(m_BusyOn)
-		glColor4f(1.0,0.0f,0.0f,0.8);
+		glColor4f(1.0f,0.0f,0.0f,0.8f);
 	else
-		glColor4f(1.0,1.0f,1.0f,0.8);
+		glColor4f(1.0f,1.0f,1.0f,0.8f);
 	
 	nvDrawPoint(x,y);
 	glPopMatrix();
@@ -267,7 +268,7 @@ void CSymbol::RenderSymbol()
 	
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
 	glPushMatrix();
-	glTranslatef(m_Lon,m_Lat,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 		
 	glBegin(GL_QUADS);
 		glTexCoord2f(1.0f,1.0f); glVertex2f(  m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
@@ -322,6 +323,17 @@ void CSymbol::SetLat(double v)
 	m_Lat = v;
 }
 
+void CSymbol::SetLonMap(double v)
+{
+	m_LonMap = v;
+}
+
+void CSymbol::SetLatMap(double v)
+{
+	m_LatMap = v;
+}
+
+
 void CSymbol::SetIdSBMS(int v)
 {
 	m_IdSBMS = v;
@@ -341,4 +353,107 @@ double CSymbol::GetLon()
 double CSymbol::GetLat()
 {
 	return m_Lat;
+}
+
+double CSymbol::GetLonMap()
+{
+	return m_LonMap;
+}
+
+double CSymbol::GetLatMap()
+{
+	return m_LatMap;
+}
+
+CSymbolPanel::CSymbolPanel()
+{
+	
+}
+
+wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_PicturePanel = new CPicturePanel(NULL,Panel);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,2);
+		
+	m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
+	//m_Html->Hide();
+
+	//wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);
+	//Sizer->Add(GridSizer,0,wxALL|wxEXPAND,2);
+	
+	//wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
+	//GridSizer->Add(labelname,0,wxALL,2);
+	//m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxSize(250,-1));
+	//GridSizer->AddGrowableCol(1);
+	//GridSizer->Add(m_TextName,0,wxALL|wxEXPAND,2);
+			
+	//wxStaticText *labellat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
+	//GridSizer->Add(labellat,0,wxALL,2);
+	
+	//m_TextLat = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+	//GridSizer->Add(m_TextLat,0,wxALL,2);
+	
+	//wxStaticText *labellon = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LONGITUDE) ,wxDefaultPosition,wxDefaultSize);
+	//GridSizer->Add(labellon,0,wxALL,2);
+
+	//m_TextLon = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	//GridSizer->Add(m_TextLon,0,wxALL,2);
+	
+	m_Grid = new CGrid(Panel);
+	m_Grid->SetMinSize(wxSize(-1,200));
+	Sizer->Add(m_Grid,0,wxALL|wxEXPAND,2);
+
+	m_Grid = new CGrid(Panel);
+	m_Grid->SetMinSize(wxSize(-1,200));
+	Sizer->Add(m_Grid,0,wxALL|wxEXPAND,2);
+
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+
+}
+
+void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
+{
+	wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,ptr->GetId());
+	my_query(db,sql);
+			
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	//m_TextName->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+		
+	wxString str;
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
+	str.Append(wxString::Format(_("<tr><td colspan=3><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+	str.Append(wxString::Format(_("<tr><td><b>%s</b></td><td></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td><b>%s</b></td><td></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(_("</table>"));
+	m_Html->SetPage(str);
+		
+	db_free_result(result);
+		
+	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
+	my_query(db,sql);
+			
+	result = db_result(db);
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		m_PicturePanel->SetDB(db);
+		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
+	}
+		
+	db_free_result(result);
 }
