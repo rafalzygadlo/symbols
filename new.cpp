@@ -292,6 +292,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->AddGrowableRow(10);
 	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 		

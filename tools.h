@@ -40,6 +40,7 @@ void db_history(int uid, const char *module, const char *action );
 bool db_check_right(void *db,const char *module, const char *action, int uid);
 bool my_query(void *db,wxString sql);
 bool my_query(void *db,const char *sql, unsigned long length);
+void *DBConnect();
 
 #endif
 

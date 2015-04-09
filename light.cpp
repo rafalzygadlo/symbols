@@ -21,7 +21,7 @@ CLightPanel::CLightPanel(void *db, wxWindow *parent)
 	:wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
 {
 	GLContext = new wxGLContext(this);
-	m_DB = db;
+	//m_DB = db;
 }
 
 CLightPanel::~CLightPanel()

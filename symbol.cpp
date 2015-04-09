@@ -8,10 +8,9 @@
 #include "navidrawer.h"
 #include "geometrytools.h"
 
-CSymbol::CSymbol(void *db, CNaviBroker *broker)
+CSymbol::CSymbol(CNaviBroker *broker)
 {
 	m_Broker = broker;
-	m_DB = db;
 	m_Scale = 1;
 	m_Factor = DEFAULT_FACTOR;
 	m_SmoothScaleFactor = 1;
@@ -23,10 +22,11 @@ CSymbol::CSymbol(void *db, CNaviBroker *broker)
 	m_FirstTime = true;
 	m_Step = 0;
 	m_BlinkTick = 0;
-	m_CharacteristicId = 0;	
 	m_CommandTick = CHECK_COMMAND_TICK;
+	m_AlertTick = CHECK_ALERT_TICK;
 	m_BlinkTick = 0;
 	m_Busy = false;
+	m_Alert = false;
 	m_IdSBMS = 0;
 	m_Ticker0 = NULL;
 	m_Ticker1 = NULL;
@@ -36,9 +36,10 @@ CSymbol::CSymbol(void *db, CNaviBroker *broker)
 CSymbol::~CSymbol()
 {
 	m_Ticker0->Stop();
-	delete m_Ticker0;
+	//delete m_Ticker0;
 	m_Ticker1->Stop();
-	delete m_Ticker1;
+	//delete m_Ticker1;
+	m_Ticker2->Stop();
 }
 
 void CSymbol::Start()
@@ -47,12 +48,34 @@ void CSymbol::Start()
 	m_Ticker0->Start(100);
 
 	m_Ticker1 = new CTicker(this,TICK_SYMBOL_COMMAND);
-	m_Ticker1->Start(500);
+	m_Ticker1->Start(TICK_COMMAND_TIME);
 
+	m_Ticker2 = new CTicker(this,TICK_SYMBOL_ALERT);
+	m_Ticker2->Start(TICK_ALERT_TIME);
 }
 
 void CSymbol::Read()
 {
+	return;
+	/*
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_light = '%d'"),TABLE_SYMBOL_LIGHT,m_Id);
+
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+
+    char **row = NULL;
+	if(result == NULL)
+		return;
+
+	while(row = (char**)db_fetch_row(result))
+	{
+
+	}
+
+	db_free_result(result);
+	*/
+	
+	/*
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,m_CharacteristicId);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -73,7 +96,7 @@ void CSymbol::Read()
 	}
 
 	db_free_result(result);
-
+	*/
 }
 
 void CSymbol::OnBlink()
@@ -119,9 +142,7 @@ void CSymbol::Blink()
 
 void CSymbol::OnCommand()
 {
-	GetMutex()->Lock();
 	CheckCommand();
-	GetMutex()->Unlock();
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
@@ -131,10 +152,14 @@ void  CSymbol::CheckCommand()
 	m_BusyOn = !m_BusyOn;
 	if(m_CommandTick <= CHECK_COMMAND_TICK)
 		return;
-		
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol='%d'"),TABLE_COMMAND,m_Id);
-	my_query(m_DB,sql);
-	void *result = db_result(m_DB);
+	
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_COMMAND,m_IdSBMS);
+	my_query(db,sql);
+	void *result = db_result(db);
 	
     char **row = NULL;
 	if(result == NULL)
@@ -149,8 +174,46 @@ void  CSymbol::CheckCommand()
 	}
 	
 	db_free_result(result);
-		
+	db_close(db);	
 	m_CommandTick = 1;
+	
+}
+
+void CSymbol::OnAlert()
+{
+	CheckAlert();
+	m_Broker->Refresh(m_Broker->GetParentPtr());
+}
+
+void CSymbol::CheckAlert()
+{
+	m_AlertTick++;
+	if(m_AlertTick <= CHECK_ALERT_TICK)
+		return;
+	
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_ALERT,m_IdSBMS);
+	my_query(db,sql);
+	void *result = db_result(db);
+	
+    char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	m_Alert = false;
+	while(row = (char**)db_fetch_row(result))
+	{
+		int cmd;
+		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
+		m_Alert = true;
+	}
+	
+	db_free_result(result);
+	db_close(db);	
+	m_AlertTick = 1;
 	
 }
 
@@ -232,8 +295,8 @@ void CSymbol::RenderBusy()
 
 	float angle = (float)(360.0/CHECK_COMMAND_TICK) * m_CommandTick;
 
-	float x = 0.0; //m_RectWidth/4 * cos(nvToRad(angle));
-	float y = 0.0; //m_RectWidth/4 * sin(nvToRad(angle));
+	float x = 0.0;
+	float y = 0.0;
 
 	glPushMatrix();
 	glColor4f(1.0f,0.0f,0.0f,0.8f);
@@ -297,7 +360,6 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
-	//RenderLightOn();
 	RenderSymbol();
 	RenderBusy();
 		
@@ -339,10 +401,20 @@ void CSymbol::SetIdSBMS(int v)
 	m_IdSBMS = v;
 }
 
+void CSymbol::SetNumber(wxString v)
+{
+	m_Number = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
 	return m_Id;
+}
+
+int CSymbol::GetIdSBMS()
+{
+	return m_IdSBMS;
 }
 
 double CSymbol::GetLon()
@@ -380,36 +452,6 @@ wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 		
 	m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
-	//m_Html->Hide();
-
-	//wxFlexGridSizer *GridSizer = new wxFlexGridSizer(2,0,0);
-	//Sizer->Add(GridSizer,0,wxALL|wxEXPAND,2);
-	
-	//wxStaticText *labelname = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME),wxDefaultPosition,wxDefaultSize);
-	//GridSizer->Add(labelname,0,wxALL,2);
-	//m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxSize(250,-1));
-	//GridSizer->AddGrowableCol(1);
-	//GridSizer->Add(m_TextName,0,wxALL|wxEXPAND,2);
-			
-	//wxStaticText *labellat = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LATITUDE),wxDefaultPosition,wxDefaultSize);
-	//GridSizer->Add(labellat,0,wxALL,2);
-	
-	//m_TextLat = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize);
-	//GridSizer->Add(m_TextLat,0,wxALL,2);
-	
-	//wxStaticText *labellon = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LONGITUDE) ,wxDefaultPosition,wxDefaultSize);
-	//GridSizer->Add(labellon,0,wxALL,2);
-
-	//m_TextLon = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	//GridSizer->Add(m_TextLon,0,wxALL,2);
-	
-	m_Grid = new CGrid(Panel);
-	m_Grid->SetMinSize(wxSize(-1,200));
-	Sizer->Add(m_Grid,0,wxALL|wxEXPAND,2);
-
-	m_Grid = new CGrid(Panel);
-	m_Grid->SetMinSize(wxSize(-1,200));
-	Sizer->Add(m_Grid,0,wxALL|wxEXPAND,2);
 
 	Panel->SetSizer(Sizer);
 
@@ -429,13 +471,22 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 		return;
 		
 	row = (char**)db_fetch_row(result);
-	//m_TextName->SetValue(wxString::Format(_("%s"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-		
+			
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
-	str.Append(wxString::Format(_("<tr><td colspan=3><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-	str.Append(wxString::Format(_("<tr><td><b>%s</b></td><td></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
-	str.Append(wxString::Format(_("<tr><td><b>%s</b></td><td></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td colspan=2><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+	str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td><td></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td><td></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td><td></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+	str.Append("<tr><td colspan=2><hr></td></tr>");
+	if(atoi(row[FI_SYMBOL_IN_MONITORING]))
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></td></tr>"),GetMsg(MSG_IN_MONITORING)));
+	
+	if(atoi(row[FI_SYMBOL_ON_POSITION]))
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetMsg(MSG_ON_POSITION)));
+	str.Append("<tr><td colspan=2><hr></td></tr>");
+
+	str.Append(wxString::Format(_("<tr><td colspan=2>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
 	str.Append(_("</table>"));
 	m_Html->SetPage(str);
 		
@@ -456,4 +507,9 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 	}
 		
 	db_free_result(result);
+}
+
+void CSymbolPanel::SetSBMS()
+{
+
 }

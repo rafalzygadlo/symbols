@@ -4,9 +4,10 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
-#include "NaviToolsLib.h"
 #include "stdio.h"
 #include <wx/msw/wrapshl.h>
+#include "NaviToolsLib.h"
+#include "options.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -476,6 +477,8 @@ bool my_query(void *db,wxString sql)
 	wxMessageBox (sql);
 #endif
 	
+	bool result = true;
+	
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32
@@ -484,16 +487,17 @@ bool my_query(void *db,wxString sql)
 #ifdef linux
 		syslog(LOG_LOCAL0,db_error());
 #endif
-		return false;
+		return result;
 	}
-	
-	return true;
+		
+	return result;
 }
 
 // taki ma³y wraper ¿eby nie pisaæ ci¹gle tego samego
 bool my_query(void *db,const char *sql, unsigned long length)
 {
-
+	bool result = true;
+	
 #ifdef DEBUG_SQL
 	wxMessageBox (sql);
 #endif
@@ -503,10 +507,10 @@ bool my_query(void *db,const char *sql, unsigned long length)
 #ifdef WIN32
 		wxLogError(db_error(db));
 #endif
-		return false;
+		result = false;
 	}
 
-	return true;
+	return result;
 }
 
 
@@ -725,4 +729,15 @@ wxString GetFontFolderPath()
 wxString GetFontPath()
 {
 	return wxString::Format(_("%s\\%s"),GetFontFolderPath().wc_str(),DEFAULT_FONT);
+}
+
+void *DBConnect()
+{
+	void *db = NULL;
+	db = db_init(db);
+
+	if(db_connect(db,GetDBHost(),GetDBUser(),GetDBPassword(),GetDBName(),GetDBPort()))
+		return db;
+
+	return NULL;
 }

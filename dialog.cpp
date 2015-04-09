@@ -847,8 +847,8 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',id_characteristic='%d',on_position='%d',in_monitoring='%d',name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetCharacteristic(),ptr->GetOnPosition(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',on_position='%d',in_monitoring='%d',name='%s', info='%s'"),
+		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetOnPosition(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
 	int id = db_last_insert_id(m_DB);

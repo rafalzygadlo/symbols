@@ -19,10 +19,9 @@ END_EVENT_TABLE()
 
 
 //int args[] = {WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE};
-CGraph::CGraph(wxWindow *parent, CStation *station)
+CGraph::CGraph(wxWindow *parent)
 :wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
 {
-	m_Station = station;
 	GLContext = new wxGLContext(this);
 	
 #ifdef DC
@@ -42,7 +41,7 @@ CGraph::CGraph(wxWindow *parent, CStation *station)
 	m_ScaleFactor = 1;
 	m_Arrow = 0.0;
 	m_Rescale = false;
-	m_Seconds = m_Station->GetDataBefore();
+	m_Title = L"";
 }
 
 CGraph::~CGraph()
@@ -190,10 +189,10 @@ void CGraph::SetScaleDown()
 	
 }
 
-void CGraph::SetPointsBuffer(CBuffer *ptr)
-{
-	m_Buffer = ptr;
-}
+//void CGraph::SetPointsBuffer(CBuffer *ptr)
+//{
+	//m_Buffer = ptr;
+//}
 
 void CGraph::SetTitle(const wchar_t *v)
 {
@@ -242,19 +241,19 @@ void CGraph::RenderGrid()
 	
 	glColor3f(0.3f,0.3f,0.3f);
 	glBegin(GL_LINES);
-	for(int i = 0 ; i < m_Station->GetPointsCount(); i+=900)
-	{	
-		glVertex2f(i,m_GridTop); 
-		glVertex2f(i,m_GridBottom);
-	}
+//	for(int i = 0 ; i < m_Station->GetPointsCount(); i+=900)
+//	{	
+		//glVertex2f(i,m_GridTop); 
+		//glVertex2f(i,m_GridBottom);
+	//}
 
 	glColor4f(0.6f,0.6f,0.6f,1.0);
 	glBegin(GL_LINES);
-	for(int i = 3600 ; i <= m_Station->GetPointsCount(); i+=3600)
-	{	
-		glVertex2f(m_Station->GetPointsCount()-i,m_GraphTop); 
-		glVertex2f(m_Station->GetPointsCount()-i,m_GraphBottom);
-	}
+	//for(int i = 3600 ; i <= m_Station->GetPointsCount(); i+=3600)
+	//{	
+		//glVertex2f(m_Station->GetPointsCount()-i,m_GraphTop); 
+		//glVertex2f(m_Station->GetPointsCount()-i,m_GraphBottom);
+	//}
 	
 	glColor3f(0.3f,0.3f,0.3f);
 	glVertex2f(m_GraphLeft,m_GridTop);
@@ -268,17 +267,17 @@ void CGraph::RenderGrid()
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 	
 	int count = 1;
-	for(int i  = 3600; i < m_Station->GetPointsCount(); i+=3600)
-	{	
-		sprintf(txt,"-%dh",count);
-		RenderText(m_Station->GetPointsCount() - i,m_GridTop,txt);
-		count++;
-	}
+	//for(int i  = 3600; i < m_Station->GetPointsCount(); i+=3600)
+	//{	
+		//sprintf(txt,"-%dh",count);
+		//RenderText(m_Station->GetPointsCount() - i,m_GridTop,txt);
+		//count++;
+	//}
 
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	RenderText(m_GridLeft,m_GridTop,txt);
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	RenderText(m_GridLeft,m_GridBottom,txt);
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	//RenderText(m_GridLeft,m_GridTop,txt);
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	//RenderText(m_GridLeft,m_GridBottom,txt);
 		
 }
 
@@ -286,11 +285,11 @@ void CGraph::RenderData()
 {
 	glEnable(GL_BLEND);
 	glPointSize(2);
-	if(m_Buffer->GetLength() > 0)
-	{
-		RenderGeometry(GL_POINTS,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
-		RenderGeometry(GL_LINE_STRIP,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
-	}
+	//if(m_Buffer->GetLength() > 0)
+	//{
+		//RenderGeometry(GL_POINTS,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
+		//RenderGeometry(GL_LINE_STRIP,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
+	//}
 	glPointSize(1);
 	glDisable(GL_BLEND);
 }	
@@ -316,7 +315,7 @@ void CGraph::RenderCube()
 {
 	glColor3f(1,1,1);
 	float x,y,z; 
-	x = y = z = m_Station->GetAccuracyMax();
+	//x = y = z = m_Station->GetAccuracyMax();
 	glBegin(GL_LINE_LOOP);
         glVertex3f( x, y, z);        glVertex3f(-x, y, z);        glVertex3f(-x,-y, z);        glVertex3f( x,-y, z);
     glEnd();
@@ -396,19 +395,19 @@ void CGraph::Render()
 
 void CGraph::SetValues()
 {
-	float offsetX = (m_Buffer->GetMax() - m_Buffer->GetMin()) * 0.15;
+	//float offsetX = (m_Buffer->GetMax() - m_Buffer->GetMin()) * 0.15;
 	float offsetY = m_ScreenWidth * 0.15;
 
-	m_GraphTop = m_Buffer->GetMax() + offsetX;
-	m_GraphBottom = m_Buffer->GetMin() - offsetX;
+	//m_GraphTop = m_Buffer->GetMax() + offsetX;
+	//m_GraphBottom = m_Buffer->GetMin() - offsetX;
 
-	m_GraphLeft = -offsetY;
-	m_GraphRight = m_Buffer->GetLength() + offsetY;
+	//m_GraphLeft = -offsetY;
+	//m_GraphRight = m_Buffer->GetLength() + offsetY;
 	
-	m_GridTop = m_Buffer->GetMax();
-	m_GridBottom = m_Buffer->GetMin();
+	//m_GridTop = m_Buffer->GetMax();
+	//m_GridBottom = m_Buffer->GetMin();
 	m_GridLeft = 0;
-	m_GridRight = m_Buffer->GetLength();
+	//m_GridRight = m_Buffer->GetLength();
 			
 	m_XScale = m_GraphRight / m_ScreenWidth;
 	m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;

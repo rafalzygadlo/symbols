@@ -20,6 +20,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_DB = NULL;
 	SetDisplayID(NDS_SYMBOL);
 	m_Selected = NULL;
+	m_OldSelected = NULL;
 	m_MapPlugin = NULL;
 	m_Broker = NULL;
 	m_ControlName = Parent->GetLabel();
@@ -63,9 +64,10 @@ void CDisplayPlugin::ShowControls()
 {
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 			
+	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_SymbolPanel = new CSymbolPanel();
-	Main->Add(m_SymbolPanel->GetPage1(this),1,wxALL|wxEXPAND);
-		
+	Notebook->AddPage(m_SymbolPanel->GetPage1(Notebook),GetMsg(MSG_INFO));
+	Main->Add(Notebook,1,wxALL|wxEXPAND,0);		
 	SetSizer(Main);
 	Disable();
 
@@ -145,6 +147,12 @@ bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
 void CDisplayPlugin::SignalSelect()
 {
 	m_Selected = m_MapPlugin->GetSelectedPtr();
+
+	if(m_OldSelected == m_Selected)
+		return;
+
+	m_OldSelected = m_Selected;
+	
 	m_DB = m_MapPlugin->GetDB();
 	if(m_Selected)
 	{	

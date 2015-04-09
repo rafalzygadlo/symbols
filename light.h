@@ -11,7 +11,7 @@
 
 class CLightPanel: public wxGLCanvas
 {
-	void *m_DB;
+	//void *m_DB;
 	wxArrayPtrVoid m_List;
 	wxArrayPtrVoid m_Select;
 	wxTextCtrl *m_CharacteristicText;

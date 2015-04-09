@@ -4,7 +4,7 @@
 
 CTicker::CTicker(void *parent, int id)
 #ifdef THREAD
-	:wxThread(wxTHREAD_JOINABLE)
+	//:wxThread(wxTHREAD_JOINABLE) // (slow)
 #endif
 #ifdef TICKER
 	:wxTimer()
@@ -38,8 +38,11 @@ void CTicker::Start(int sleep)
 void CTicker::Stop()
 {
 	_Stop = true;
-	if(IsRunning())
-		Wait();
+	if(!IsDetached())
+	{
+		if(IsRunning())
+			Wait();
+	}
 }
 void *CTicker::Entry()
 {
@@ -69,7 +72,8 @@ void CTicker::SendSignal()
 	{
 		case TICK_COMMAND:			((CMapPlugin*)Parent)->OnTickCommand();	break;
 		case TICK_SYMBOL_BLINK:		((CSymbol*)Parent)->OnBlink();			break;
-		case TICK_SYMBOL_COMMAND:	((CSymbol*)Parent)->OnCommand();			break;
+		case TICK_SYMBOL_COMMAND:	((CSymbol*)Parent)->OnCommand();		break;
+		case TICK_SYMBOL_ALERT:		((CSymbol*)Parent)->OnAlert();			break;
 	}
 
 }

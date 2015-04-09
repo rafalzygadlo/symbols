@@ -81,8 +81,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 		
 	m_Frame = NULL;
 	FromLMB = false;
-	m_Ticker = new CTicker(this,TICK_COMMAND);
-	m_Ticker->Start(1000);
+	
 
 	m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 	
@@ -91,7 +90,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 CMapPlugin::~CMapPlugin()
 {
 	m_Ticker->Stop();
-	delete m_Ticker;
+	//delete m_Ticker;
 	delete m_Symbol;
 	delete m_Items;
 	delete m_Area;
@@ -113,7 +112,7 @@ CMapPlugin::~CMapPlugin()
 
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 		delete m_SymbolList.Get(i);	
-		
+	
 	m_SymbolList.Clear();
 	FreeMutex();
 	db_close(m_DB);
@@ -123,9 +122,9 @@ void CMapPlugin::ReadDBConfig()
 {
     wxString val;
 	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
-	FileConfig->Read(KEY_DB_USER,&m_DBUser);	
-    FileConfig->Read(KEY_DB_HOST,&m_DBHost);	
-	FileConfig->Read(KEY_DB_PORT,&m_DBPort);	
+	FileConfig->Read(KEY_DB_USER,&m_DBUser);	SetDBUser(m_DBUser);
+    FileConfig->Read(KEY_DB_HOST,&m_DBHost);	SetDBHost(m_DBHost);
+	FileConfig->Read(KEY_DB_PORT,&m_DBPort);	SetDBPort(m_DBPort);
     long port;
     val.ToLong(&port);
     if(val.empty())
@@ -133,7 +132,8 @@ void CMapPlugin::ReadDBConfig()
     else
     	m_DBPort = port;
 
-    FileConfig->Read(KEY_DB_NAME,&m_DBName);	
+    FileConfig->Read(KEY_DB_NAME,&m_DBName);
+	SetDBName(m_DBName);
     
 	FileConfig->Read(KEY_DB_PASSWORD,&val);	
 	
@@ -154,6 +154,7 @@ void CMapPlugin::ReadDBConfig()
 	}
 		
     m_DBPassword = val;
+	SetDBPassword(m_DBPassword);
      
 	delete FileConfig;
 	
@@ -213,9 +214,13 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 
 void CMapPlugin::Read()
 {
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
 	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
-	my_query(m_DB,sql);
-	void *result = db_result(m_DB);
+	my_query(db,sql);
+	void *result = db_result(db);
 		
     char **row = NULL;
 	if(result == NULL)
@@ -223,13 +228,21 @@ void CMapPlugin::Read()
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		CSymbol *ptr = new CSymbol(m_DB,m_Broker);
-		
 		double lon;
 		double lat;
 		int id;
 		int id_sbms;
 		sscanf(row[FI_SYMBOL_ID],"%d",&id);
+		CSymbol *ptr = NULL;
+		ptr = Exists(id);
+		bool add = false;
+		
+		if(ptr == NULL)
+		{
+			add = true;
+			ptr = new CSymbol(m_Broker);
+		}
+
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
 		sscanf(row[FI_SYMBOL_ID_SBMS],"%d",&id_sbms);
@@ -242,15 +255,30 @@ void CMapPlugin::Read()
 		ptr->SetLonMap(to_x);
 		ptr->SetLatMap(-to_y);
 		ptr->SetIdSBMS(id_sbms);
-		GetMutex()->Lock();
-		ptr->Read();
-		GetMutex()->Unlock();
-		ptr->Start();
-		m_SymbolList.Append(ptr);
+		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
+				
+		if(add)
+		{
+			m_SymbolList.Append(ptr);
+			ptr->Start();
+		}
 	}
 	
 	db_free_result(result);
+	db_close(db);
 
+}
+
+CSymbol *CMapPlugin::Exists(int id)
+{
+	for(int i = 0; i < m_SymbolList.Length(); i++)
+	{
+		CSymbol *ptr = m_SymbolList.Get(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
 }
 
 /*
@@ -295,9 +323,15 @@ CNaviBroker *CMapPlugin::GetBroker()
 
 void CMapPlugin::Run(void *Params)
 {
+	//| _CRTDBG_CHECK_ALWAYS_DF   // memory check (slow)
+	 _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF        // debug allocation on
+                 | _CRTDBG_LEAK_CHECK_DF     // leak checks on exit
+                 
+                 );
+
 	ReadDBConfig();
-	m_DB = db_init(m_DB);
-	if(!db_connect(m_DB,m_DBHost,m_DBUser,m_DBPassword,m_DBName,m_DBPort))
+	m_DB = DBConnect();
+	if(m_DB == NULL)
 	{
 		wxString str(db_error(m_DB));
 		wxMessageBox(str);
@@ -305,6 +339,10 @@ void CMapPlugin::Run(void *Params)
 	
 	Read();
 	CreateApiMenu(); // jezyki
+
+	m_Ticker = new CTicker(this,TICK_COMMAND);
+	m_Ticker->Start(1000);
+
 	// refresh dla wywolania renderu zeby skreowac ikony
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 }
@@ -723,6 +761,7 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTickCommand()
 {
+	Read();
 	//m_Broker->Refresh(m_Broker->GetParentPtr());
 	//m_On = !m_On;
 }

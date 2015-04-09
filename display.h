@@ -31,6 +31,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbolPanel *m_SymbolPanel;
 	wxPanel *m_ControlPanel;
 	CSymbol *m_Selected;
+	CSymbol *m_OldSelected;
 	wxString m_ControlName;
 	void WriteConfig();
 	void ReadConfig();

@@ -83,6 +83,10 @@ void CSector::SetRadius(float v)
 	m_Radius = v;
 }
 
+void CSector::SetCharacteristicId(int v)
+{
+
+}
 //GET
 wxColor CSector::GetColor()
 {

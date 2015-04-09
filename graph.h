@@ -2,15 +2,14 @@
 #define __GRAPH_H
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
-#include "data.h"
-#include "buffer.h"
 #include "ticker.h"
-#include "station.h"
 #include "FTGL/ftgl.h"
+
+#define MIN_SCALE 1
+#define MAX_SCALE 1000
 
 class CGraph : public wxGLCanvas
 {
-	CStation *m_Station;
 	int m_Id;
 	int m_Col,m_Row;
 	bool m_Selected;
@@ -24,7 +23,6 @@ class CGraph : public wxGLCanvas
     float m_OldX,m_OldY;
 	float m_Scale;
 	int m_ScaleFactor;
-	CBuffer *m_Buffer;
 	wxGLContext *GLContext;
 	float m_Arrow;
 	bool m_Rescale;
@@ -72,9 +70,9 @@ class CGraph : public wxGLCanvas
 
 public:
 	
-	CGraph(wxWindow *parent, CStation *station);
+	CGraph(wxWindow *parent);
 	~CGraph();		
-	void SetPointsBuffer(CBuffer *ptr);
+	//void SetPointsBuffer(CBuffer *ptr);
 	void SetTitle(const wchar_t *v);	
 	
 	enum

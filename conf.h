@@ -24,7 +24,7 @@
 #define INFO_WIDTH 128
 #define INFO_HEIGHT 32
 #define INFO_MARGIN 2
-#define DEFAULT_FACTOR 50.0
+#define DEFAULT_FACTOR 500.0
 #define FONT_SIZE 14
 #define PLUGIN_ID 4
 #define SYMBOL_NAME_SIZE 64
@@ -201,7 +201,11 @@
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
 
-#define CHECK_COMMAND_TICK  50 // 10 sekund bo 100ms
+#define TICK_ALERT_TIME		1000
+#define TICK_COMMAND_TIME	1000
+
+#define CHECK_COMMAND_TICK  (5 *(1000/TICK_COMMAND_TIME)) //co sekund
+#define CHECK_ALERT_TICK	(5 *(1000/TICK_ALERT_TIME)) //co sekund
 
 #define MODULE_AREA "area"
 #define MODULE_SEAWAY "seaway"
@@ -253,6 +257,7 @@
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
 #define TABLE_CHARACTERISTIC	"characteristic"
+#define TABLE_ALERT				"alert"
 
 
 // pola tabeli SYMBOL
@@ -462,6 +467,7 @@
 #define TICK_COMMAND		0
 #define TICK_SYMBOL_BLINK	1
 #define TICK_SYMBOL_COMMAND	2
+#define TICK_SYMBOL_ALERT	3
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

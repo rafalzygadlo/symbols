@@ -7,8 +7,18 @@
 
 wxColor GetBGColor();
 wxColor GetFGColor();
+wxString GetDBHost();
+wxString GetDBUser();
+wxString GetDBPassword();
+wxString GetDBName();
+int GetDBPort();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
+void SetDBHost(wxString v);
+void SetDBUser(wxString v);
+void SetDBPassword(wxString v);
+void SetDBName(wxString v);
+void SetDBPort(int v);
 
 #endif

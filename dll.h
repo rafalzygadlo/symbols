@@ -106,6 +106,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SetSmoothScaleFactor(double _Scale);
 	void ShowProperties();
 	void ShowInfo(int x, int y);
+	CSymbol *Exists(int id);
 		
 	int Count();
 	CSymbol *Get(int id);

@@ -22,10 +22,10 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 	SetSizer(Sizer);
 
 	m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
-	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,2);
+	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,1);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
-	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,2);
+	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,1);
 	
 	if(type == PICTURE_PANEL_NEW)
 	{
