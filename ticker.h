@@ -20,6 +20,7 @@ class CTicker
 	int Id;
 	int _Sleep;
 	bool _Stop;
+	bool _Working;
 	
 #if defined (_WIN32) || defined(_WIN64)
 	DWORD ThreadID;
@@ -37,6 +38,7 @@ class CTicker
 	void OnTickerTick();
 #ifdef THREAD
 	void *Entry();
+	virtual void OnExit();
 #endif
 
 public:

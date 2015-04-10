@@ -90,7 +90,9 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 CMapPlugin::~CMapPlugin()
 {
 	m_Ticker->Stop();
-	//delete m_Ticker;
+#ifdef THREAD_JOINABLE
+	delete m_Ticker;
+#endif
 	delete m_Symbol;
 	delete m_Items;
 	delete m_Area;
@@ -340,8 +342,8 @@ void CMapPlugin::Run(void *Params)
 	Read();
 	CreateApiMenu(); // jezyki
 
-	m_Ticker = new CTicker(this,TICK_COMMAND);
-	m_Ticker->Start(1000);
+	m_Ticker = new CTicker(this,TICK_DLL);
+	m_Ticker->Start(TICK_DLL_TIME);
 
 	// refresh dla wywolania renderu zeby skreowac ikony
 	m_Broker->Refresh(m_Broker->GetParentPtr());
@@ -350,6 +352,8 @@ void CMapPlugin::Run(void *Params)
 void CMapPlugin::Kill(void)
 {
 	NeedExit = true;
+	while(m_Reading)
+		wxMilliSleep(100);
 	WriteConfig();
 
 }
@@ -673,14 +677,6 @@ void CMapPlugin::RenderSelected()
 	c.Center.y = 0.0;
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
-
-	//	glBegin(GL_QUADS);
-			//glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-			//glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			//glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			//glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-		//\glEnd();
-		
 	glPopMatrix();
 	
 	glDisable(GL_BLEND);
@@ -705,20 +701,68 @@ void CMapPlugin::RenderHighlighted()
 	c.Center.y = 0.0;
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
-		//glBegin(GL_QUADS);
-			//glVertex2f(  RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);	
-			//glVertex2f(  RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			//glVertex2f( -RectWidth/2 + TranslationX,  RectHeight/2 + TranslationY);
-			//glVertex2f( -RectWidth/2 + TranslationX, -RectHeight/2 + TranslationY);
-		//glEnd();
-	//glColor4f(0.0f,0.0f,0.0f,0.8f);
-	//glScalef(0.5/MapScale,0.5/MapScale,0.0);
-	//glTranslatef(RECT_WIDTH ,-RECT_HEIGHT ,0.0f);
-	//RenderText(0,0,HighlightedPtr->name);
 	glPopMatrix();
 	glDisable(GL_BLEND);
 	
 }
+
+void CMapPlugin::RenderDistance()
+{
+	glLineWidth(2);
+	size_t counter = 1;				
+	
+	if(SelectedPtr)	
+	{
+		glBegin(GL_LINES);
+			glColor4f(1.0f,0.0f,0.0f,0.8f);
+			glVertex2f(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap());
+			glVertex2f(MapX,MapY);
+		glEnd();
+		
+	}
+	/*	
+	wchar_t val[32];
+	double _x1,_x2,_y1,_y2;
+	double x1,x2,y1,y2;
+		
+	if(HighlightedPtr == NULL)	
+	{
+		x1 = vDistance[0]->x;
+		x2 = MapX;
+		y1 = vDistance[0]->y;
+		y2 = MapY;
+		
+	}else{
+	
+		x1 = vDistance[0]->x;
+		x2 = HighlightedPtr->x;
+		y1 = vDistance[0]->y;
+		y2 = HighlightedPtr->y;
+	}
+	*/
+	//Broker->Project(x1,y1,&_x1,&_y1);
+	//Broker->Project(x2,y2,&_x2,&_y2);
+	//swprintf(val,L"%4.4f %s",nvDistance(_x1,_y1,_x2,_y2,DistanceUnit),GetDistanceUnit(DistanceUnit));
+	//fprintf(stdout,"Project: %4.4f %s\n",nvDistance(_x1,_y1,_x2,_y2,DistanceUnit),GetDistanceUnit(DistanceUnit));	
+	//fprintf(stdout,"UNproject: %4.4f %s\n",nvDistance(x1,y1,x2,y2,DistanceUnit),GetDistanceUnit(DistanceUnit));	
+	//double v1,v2;
+	//nvMidPoint(x1,y1,x2,y2,&v1,&v2);
+		
+		//glPushMatrix();
+		
+	//float scale = (1 / MapScale) / 8;
+	//Font->Clear();
+	//Font->Print(v1,v2,scale,0.0,val);
+		//glTranslatef(v1 ,v2 ,0.0f);
+		//glScalef(0.6/MapScale,0.6/MapScale,0.0);
+		//glPopMatrix();
+			
+				
+	glLineWidth(1);
+
+}
+
+
 
 void CMapPlugin::RenderSymbols()
 {
@@ -759,9 +803,11 @@ void CMapPlugin::SetMouseXY(int x, int y)
 	MouseY = y;
 }
 
-void CMapPlugin::OnTickCommand()
+void CMapPlugin::OnTick()
 {
+	m_Reading = true;
 	Read();
+	m_Reading = false;
 	//m_Broker->Refresh(m_Broker->GetParentPtr());
 	//m_On = !m_On;
 }

@@ -7,6 +7,7 @@
 #include "images/icon.h"
 #include "navidrawer.h"
 #include "geometrytools.h"
+#include "ais.h"
 
 CSymbol::CSymbol(CNaviBroker *broker)
 {
@@ -29,29 +30,23 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Alert = false;
 	m_IdSBMS = 0;
 	m_Ticker0 = NULL;
-	m_Ticker1 = NULL;
+	m_RenderRestricted = false;
 	
 }
 
 CSymbol::~CSymbol()
 {
 	m_Ticker0->Stop();
-	//delete m_Ticker0;
-	m_Ticker1->Stop();
-	//delete m_Ticker1;
-	m_Ticker2->Stop();
+	
+#ifdef THREAD_JOINABLE
+	delete m_Ticker0;
+#endif
 }
 
 void CSymbol::Start()
 {
-	m_Ticker0 = new CTicker(this,TICK_SYMBOL_BLINK);
-	m_Ticker0->Start(100);
-
-	m_Ticker1 = new CTicker(this,TICK_SYMBOL_COMMAND);
-	m_Ticker1->Start(TICK_COMMAND_TIME);
-
-	m_Ticker2 = new CTicker(this,TICK_SYMBOL_ALERT);
-	m_Ticker2->Start(TICK_ALERT_TIME);
+	m_Ticker0 = new CTicker(this,TICK_SYMBOL);
+	m_Ticker0->Start(TICK_SYMBOL_TIME);
 }
 
 void CSymbol::Read()
@@ -99,11 +94,6 @@ void CSymbol::Read()
 	*/
 }
 
-void CSymbol::OnBlink()
-{
-	Blink();
-}
-
 void CSymbol::Blink()
 {
 	if(m_OnList.Length() == 0)
@@ -140,22 +130,74 @@ void CSymbol::Blink()
 
 }
 
-void CSymbol::OnCommand()
+void CSymbol::OnTick()
 {
-	CheckCommand();
-	m_Broker->Refresh(m_Broker->GetParentPtr());
+	bool result = false;
+	if(CheckCommand())
+		result = true;
+	if(CheckAlert())
+		result = true;
+	
+	CheckCollision();
+
+	if(result)
+		m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
-void  CSymbol::CheckCommand()
+bool CSymbol::CheckCollision()
+{
+	m_CollisionTick++;
+	
+	if(m_CommandTick <= CHECK_COLLISION_TICK)
+		return false;
+	
+	//GetMutex()->Lock();
+	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexLock",NULL);
+
+	void *v = m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisCount",NULL);
+	
+	m_RenderRestricted = false;
+	if(v)
+	{
+		int count = *(int*)v;
+		//fprintf(stderr,"%d\n",count);
+		for(size_t i = 0; i < count; i++)
+		{
+			SAisData *ptr = (SAisData*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisItem",&i);
+			
+			nvCircle c1,c2;
+			c1.Center.x = m_Lon;
+			c1.Center.y = m_Lat;
+			c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+			c2.Center.x = ptr->lon;
+			c2.Center.y = ptr->lat;
+			c2.Radius = (double)ptr->length/1852/GetMilesPerDegree(m_Lon,m_Lat);
+			
+			if(nvIsCircleColision(&c1, &c2))
+				m_RenderRestricted = true;
+			
+			//fprintf(stderr,"%d\n",ptr->mmsi);
+		}
+	}
+
+	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexUnlock",NULL);
+	//GetMutex()->Unlock();
+	
+	m_CollisionTick = 1;
+	return true;
+}
+
+bool  CSymbol::CheckCommand()
 {
 	m_CommandTick++;
-	m_BusyOn = !m_BusyOn;
-	if(m_CommandTick <= CHECK_COMMAND_TICK)
-		return;
 	
+	if(m_CommandTick <= CHECK_COMMAND_TICK)
+		return false;
+	
+	m_BusyOn = !m_BusyOn;
 	void *db = DBConnect();
 	if(db == NULL)
-		return;
+		return false;
 	
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_COMMAND,m_IdSBMS);
 	my_query(db,sql);
@@ -163,7 +205,7 @@ void  CSymbol::CheckCommand()
 	
     char **row = NULL;
 	if(result == NULL)
-		return;
+		return false;
 	
 	m_Busy = false;
 	while(row = (char**)db_fetch_row(result))
@@ -177,23 +219,18 @@ void  CSymbol::CheckCommand()
 	db_close(db);	
 	m_CommandTick = 1;
 	
+	return true;
 }
 
-void CSymbol::OnAlert()
-{
-	CheckAlert();
-	m_Broker->Refresh(m_Broker->GetParentPtr());
-}
-
-void CSymbol::CheckAlert()
+bool CSymbol::CheckAlert()
 {
 	m_AlertTick++;
 	if(m_AlertTick <= CHECK_ALERT_TICK)
-		return;
+		return false;
 	
 	void *db = DBConnect();
 	if(db == NULL)
-		return;
+		return false;
 	
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_ALERT,m_IdSBMS);
 	my_query(db,sql);
@@ -201,7 +238,7 @@ void CSymbol::CheckAlert()
 	
     char **row = NULL;
 	if(result == NULL)
-		return;
+		return false;
 	
 	m_Alert = false;
 	while(row = (char**)db_fetch_row(result))
@@ -215,6 +252,7 @@ void CSymbol::CheckAlert()
 	db_close(db);	
 	m_AlertTick = 1;
 	
+	return true;
 }
 
 void CSymbol::CreateSymbol(void *MemoryBlock,long MemoryBlockSize)
@@ -325,9 +363,9 @@ void CSymbol::RenderSymbol()
 	glEnable(GL_TEXTURE_2D);
 	
 	if(m_LightOn)
-		glColor4f(1.0f,1.0f,1.0f,0.8f);
+		glColor4f(1.0f,1.0f,1.0f,0.5f);
 	else
-		glColor4f(0.0f,0.0f,0.0f,0.8f);
+		glColor4f(0.0f,0.0f,0.0f,0.5f);
 	
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
 	glPushMatrix();
@@ -346,6 +384,32 @@ void CSymbol::RenderSymbol()
 
 }
 
+void CSymbol::RenderRestricted()
+{
+	if(!m_RenderRestricted)
+		return;
+	
+	nvCircle c;
+	c.Center.x = m_LonMap;
+	c.Center.y = m_LatMap;
+	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_LonMap,m_LatMap);
+	glColor4f(1.0f,0.0f,0.0f,0.6f);
+	nvDrawCircle(&c);
+	glColor4f(1.0f,0.0f,0.0f,0.1f);
+	nvDrawCircleFilled(&c);
+}
+
+void CSymbol::RenderGPS()
+{
+	glPushMatrix();
+	glColor4f(1.0f,1.0f,1.0f,0.9f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+
+	glPointSize(10);
+	nvDrawPoint(0.0,0.0);
+	glPopMatrix();
+
+}
 
 void CSymbol::Render()
 {
@@ -360,8 +424,10 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
+	RenderGPS();
 	RenderSymbol();
 	RenderBusy();
+	RenderRestricted();
 		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -473,25 +539,37 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 	row = (char**)db_fetch_row(result);
 			
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
-	str.Append(wxString::Format(_("<tr><td colspan=2><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-	str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td><td></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td><td></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td><td></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
-	str.Append("<tr><td colspan=2><hr></td></tr>");
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%%>"));
+	str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+	str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+	
+	str.Append("<tr><td><hr></td></tr>");
+	
 	if(atoi(row[FI_SYMBOL_IN_MONITORING]))
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></td></tr>"),GetMsg(MSG_IN_MONITORING)));
 	
 	if(atoi(row[FI_SYMBOL_ON_POSITION]))
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetMsg(MSG_ON_POSITION)));
-	str.Append("<tr><td colspan=2><hr></td></tr>");
+	
+	if(atoi(row[FI_SYMBOL_ID_SBMS]) == 0)
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=4><b>%s</b></font></td></tr>"),GetMsg(MSG_NO_SBMS)));
 
-	str.Append(wxString::Format(_("<tr><td colspan=2>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
+	str.Append("<tr><td><hr></td></tr>");
+	
+	str.Append(wxString::Format(_("<tr><td>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
 	str.Append(_("</table>"));
 	m_Html->SetPage(str);
-		
+	
+	
+	
+	
+	
 	db_free_result(result);
 		
+	
+	//PICTURE
 	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
 	my_query(db,sql);
 			

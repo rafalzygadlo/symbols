@@ -14,7 +14,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[71][2] = 
+const wchar_t *nvLanguage[72][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -88,6 +88,7 @@ const wchar_t *nvLanguage[71][2] =
 	{L"Empty IALA",L"IALA nie mo¿e byæ puste"},
 	{L"Empty Time",L"Czas nie mo¿e byæ pusty"},
 	{L"Refresh",L"Odœwie¿"},
+	{L"No SBMS Driver",L"Brak Sterownika SBMS"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -740,4 +741,28 @@ void *DBConnect()
 		return db;
 
 	return NULL;
+}
+
+double ToRad( double angle ) 
+{
+	return angle * nvPI / 180.0f;
+}
+
+double _nvDistance(double lon1, double lat1, double lon2, double lat2) 
+{
+
+	double dLat = ToRad( lat2 - lat1 );
+	double dLon = ToRad( lon2 - lon1 );
+	double R = 6371.0;
+
+	double a = ( sin(dLat/2) * sin(dLat/2) )  +  ( cos( ToRad(lat1) ) * cos( ToRad(lat2) ) * sin(dLon/2) * sin(dLon/2) );
+	double c = 2 * atan2( sqrt(a), sqrt( 1 - a ) );
+
+	return (R *c) / 1.852;
+	
+}
+
+double GetMilesPerDegree(double x, double y)
+{
+	return _nvDistance( x, y, x + 1.0, y );	// iloœæ mil na stopieñ w aktualnej pozycji y
 }

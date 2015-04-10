@@ -4,9 +4,11 @@
 
 CTicker::CTicker(void *parent, int id)
 #ifdef THREAD
-	//:wxThread(wxTHREAD_JOINABLE) // (slow)
+#ifdef THREAD_JOINABLE
+	:wxThread(wxTHREAD_JOINABLE) // (slow)
 #endif
-#ifdef TICKER
+#endif
+#ifdef TIMER
 	:wxTimer()
 #endif
 {
@@ -26,7 +28,7 @@ void CTicker::Start(int sleep)
 	
 	_Sleep = sleep;
 	_Stop = false;
-
+	_Working = true;
 	if (this->Create() == wxTHREAD_NO_ERROR )
     {
 		this->SetPriority(WXTHREAD_DEFAULT_PRIORITY);
@@ -44,6 +46,7 @@ void CTicker::Stop()
 			Wait();
 	}
 }
+
 void *CTicker::Entry()
 {
 	while(1)
@@ -56,6 +59,13 @@ void *CTicker::Entry()
 
 	return 0;
 }
+
+void CTicker::OnExit()
+{
+	_Working = false;
+	fprintf(stderr,"Thread End\n");
+}
+
 #endif
 
 #ifdef TIMER
@@ -70,10 +80,9 @@ void CTicker::SendSignal()
 	
 	switch(Id)
 	{
-		case TICK_COMMAND:			((CMapPlugin*)Parent)->OnTickCommand();	break;
-		case TICK_SYMBOL_BLINK:		((CSymbol*)Parent)->OnBlink();			break;
-		case TICK_SYMBOL_COMMAND:	((CSymbol*)Parent)->OnCommand();		break;
-		case TICK_SYMBOL_ALERT:		((CSymbol*)Parent)->OnAlert();			break;
+		case TICK_DLL:			((CMapPlugin*)Parent)->OnTick();	break;
+		case TICK_SYMBOL:		((CSymbol*)Parent)->OnTick();			break;
+		
 	}
 
 }

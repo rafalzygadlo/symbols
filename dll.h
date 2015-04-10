@@ -34,6 +34,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Characteristic;
 
 	bool m_On;
+	bool m_Reading;
 	CTicker *m_Ticker;
 	void *m_DB;
 	wxString m_DBHost;
@@ -96,6 +97,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderHighlighted();
 	void RenderMouseSelection();
 	void RenderAnimation();
+	void RenderDistance();
 
 	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
 	void RenderText(double x, double y, wchar_t *text);
@@ -146,7 +148,7 @@ public:
 	void *GetDB();
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
-	void OnTickCommand();
+	void OnTick();
 
 	virtual void Run(void *Params); 
 	virtual void Kill(void);

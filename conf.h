@@ -6,6 +6,9 @@
 #endif
 #define nvPI 3.1415926535897932384626433832795
 #define THREAD
+#if 1
+#define THREAD_JOINABLE
+#endif
 #define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "workdir"
 #define CONFIG_FILE "symbol.conf"
@@ -113,6 +116,7 @@
 #define MSG_IALA_EMPTY				68
 #define MSG_TIME_EMPTY				69
 #define MSG_REFRESH					70
+#define MSG_NO_SBMS					71
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -201,11 +205,16 @@
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
 
-#define TICK_ALERT_TIME		1000
-#define TICK_COMMAND_TIME	1000
 
-#define CHECK_COMMAND_TICK  (5 *(1000/TICK_COMMAND_TIME)) //co sekund
-#define CHECK_ALERT_TICK	(5 *(1000/TICK_ALERT_TIME)) //co sekund
+//TICK
+#define TICK_DLL	0
+#define TICK_SYMBOL	1
+#define TICK_SYMBOL_TIME	100
+#define TICK_DLL_TIME		1000
+#define CHECK_COMMAND_TICK   (5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_ALERT_TICK	 (5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COLLISION_TICK (1 *(1000/TICK_SYMBOL_TIME)) //co sekund
+//
 
 #define MODULE_AREA "area"
 #define MODULE_SEAWAY "seaway"
@@ -464,10 +473,6 @@
 #define FI_RIGHT_NAME				1
 #define FI_RIGHT_INFO				2
 
-#define TICK_COMMAND		0
-#define TICK_SYMBOL_BLINK	1
-#define TICK_SYMBOL_COMMAND	2
-#define TICK_SYMBOL_ALERT	3
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
@@ -487,6 +492,8 @@
 #define COMMUNICATION_RADIO 1
 #define COMMUNICATION_AIS	2
 #define COMMUNICATION_GPRS	3
+
+#define RESTRICTED_AREA_RADIUS 100 //m ?
 
 /*
 typedef struct Symbol

@@ -15,8 +15,6 @@
 class CSymbol
 {
 	CTicker *m_Ticker0;
-	CTicker *m_Ticker1;
-	CTicker *m_Ticker2;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	CGrid *m_Grid;
@@ -44,22 +42,27 @@ class CSymbol
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	int m_CommandTick;
+	int m_CollisionTick;
 	int m_AlertTick;
 	int m_IdSBMS;
 	wxString m_Number;
+	bool m_RenderRestricted;
 	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
-	void CheckCommand();
-	void CheckAlert();
+	bool CheckCommand();
+	bool CheckAlert();
+	bool CheckCollision();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
 	void Blink();
 	void RenderSymbol();
 	void RenderLightOn();
 	void RenderBusy();
-		
+	void RenderRestricted();
+	void RenderGPS();		//real position
+			
 public:
 
 	CSymbol(CNaviBroker *broker);
@@ -84,9 +87,6 @@ public:
 	double GetLatMap();
 	
 	void Start();
-	void OnBlink();
-	void OnCommand();
-	void OnAlert();
 	void Read();
 	void Render();
 

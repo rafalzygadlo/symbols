@@ -41,6 +41,6 @@ bool db_check_right(void *db,const char *module, const char *action, int uid);
 bool my_query(void *db,wxString sql);
 bool my_query(void *db,const char *sql, unsigned long length);
 void *DBConnect();
-
+double GetMilesPerDegree(double x, double y);
 #endif
 
