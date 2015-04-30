@@ -26,6 +26,7 @@ class CMapPlugin;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
+	wxNotebook *m_Notebook;
 	CNaviBroker *m_Broker;
 	CMapPlugin *m_MapPlugin;
 	CSymbolPanel *m_SymbolPanel;
@@ -41,6 +42,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void SignalClear();
 	bool EnableControls();
 	void SwitchAction();
+	wxPanel *GetPage1(wxWindow *parent);
+	void ShowInfoPanel(bool show);
 
 public:
 	

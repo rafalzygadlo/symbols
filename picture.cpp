@@ -18,11 +18,12 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 {
 	m_ID = -1;
 	m_DB = db;
-	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
+	//wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 
-	m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
-	Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,1);
+	//m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
+	//Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,1);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
 	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,1);
@@ -126,7 +127,7 @@ void CPicturePanel::New()
 				}else{
 									
 					Clear();
-					m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),image.GetWidth(),image.GetHeight()));	
+					//m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),image.GetWidth(),image.GetHeight()));	
 					wxBitmap bmp_0(image);
 					m_StaticPicture->SetBitmap(bmp_0);
 					m_Picture = image;
@@ -143,7 +144,7 @@ void CPicturePanel::New()
 
 void CPicturePanel::Clear()
 {
-	m_Info->SetLabel(wxEmptyString);
+	//m_Info->SetLabel(wxEmptyString);
 	m_StaticPicture->SetSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT);
 	m_StaticPicture->SetBitmap(wxNullBitmap);
 	m_StaticPicture->Refresh();
@@ -185,7 +186,7 @@ void CPicturePanel::Read()
 		
 			if(img.IsOk())
 			{
-				m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),img.GetWidth(),img.GetHeight()));	
+				//m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),img.GetWidth(),img.GetHeight()));	
 				wxBitmap bmp(img);
 				m_StaticPicture->SetBitmap(bmp);
 			}

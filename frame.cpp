@@ -22,9 +22,10 @@ extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
-	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize)
+	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER)
 {
 	m_SymbolPanel = NULL;
+	m_CommandPanel = NULL;
 	m_DB = db;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
@@ -161,7 +162,8 @@ void CMyFrame::OnLeftClick(wxCommandEvent &event)
 }
 void CMyFrame::ShowWindow(bool show)
 {
-	m_CommandPanel->ButtonDisable();
+	if(m_CommandPanel)
+		m_CommandPanel->ButtonDisable();
 
 	if(show)
 	{

@@ -60,16 +60,28 @@ void CDisplayPlugin::WriteConfig()
 	delete FileConfig;
 }
 
+wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
 void CDisplayPlugin::ShowControls()
 {
-	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *Main = new wxBoxSizer(wxHORIZONTAL);
 			
-	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
+	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_SymbolPanel = new CSymbolPanel();
-	Notebook->AddPage(m_SymbolPanel->GetPage1(Notebook),GetMsg(MSG_INFO));
-	Main->Add(Notebook,1,wxALL|wxEXPAND,0);		
+	m_Notebook->AddPage(m_SymbolPanel->GetPage1(m_Notebook),GetMsg(MSG_INFO));
+	m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
+	m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
+	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_OPTIONS));
+	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 	SetSizer(Main);
-	Disable();
 
 }
 
@@ -102,7 +114,7 @@ bool CDisplayPlugin::EnableControls()
 {
 	if(m_MapPlugin == NULL)
 	{
-		this->Disable();
+		//this->Disable();
 		SignalClear();
 		return false;
 	
@@ -110,7 +122,7 @@ bool CDisplayPlugin::EnableControls()
 		
 		if(!this->IsEnabled())
 		{	
-			this->Enable();
+			//this->Enable();
 			SignalInsert();
 		}
 	}
@@ -156,13 +168,19 @@ void CDisplayPlugin::SignalSelect()
 	m_DB = m_MapPlugin->GetDB();
 	if(m_Selected)
 	{	
-		this->Show();
+		m_Notebook->Show();
+		//m_Notebook->Enable();
 		m_SymbolPanel->SetPage1(m_DB,m_Selected);
 	}else{
-		//this->Hide();
-		//ShowInfoPanel(true,Selected);
+		m_Notebook->Hide();
 	}
-	//ShipList->_SetSelection(Selected);
+
+}
+
+void CDisplayPlugin::ShowInfoPanel(bool show)
+{
+	
+	//Page1Sizer->Layout();
 }
 
 void CDisplayPlugin::SignalClear()

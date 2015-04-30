@@ -48,6 +48,7 @@ class CSymbol
 	wxString m_Number;
 	bool m_RenderRestricted;
 	
+	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
@@ -99,12 +100,21 @@ class CSymbolPanel
 	CGraph *m_Graph;
 	CLightPanel *m_LightPanel;
 	wxHtmlWindow *m_Html;
+	int m_IdSBMS;
+	int m_IdBaseStation;
+	void SymbolInfo(void *db,CSymbol *ptr);
+	void SBMSInfo(void *db,int id_sbms);
+	void PictureInfo(void *db,CSymbol *ptr);
+	void BaseStationInfo(void *db, int id_base_station);
 
 public:
 
 	CSymbolPanel();
-	wxPanel *GetPage1(wxWindow *parent);
+	wxPanel *GetPage1(wxWindow *parent);	
+	wxPanel *GetPage2(wxWindow *parent);	//Report
+	wxPanel *GetPage3(wxWindow *parent);	//Alerts
 	void SetPage1(void *db,CSymbol *ptr);
+	void SetPageEmpty();
 	void SetSBMS();
 
 };

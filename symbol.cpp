@@ -25,6 +25,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_BlinkTick = 0;
 	m_CommandTick = CHECK_COMMAND_TICK;
 	m_AlertTick = CHECK_ALERT_TICK;
+	m_CollisionTick = CHECK_COLLISION_TICK;
 	m_BlinkTick = 0;
 	m_Busy = false;
 	m_Alert = false;
@@ -148,42 +149,42 @@ bool CSymbol::CheckCollision()
 {
 	m_CollisionTick++;
 	
-	if(m_CommandTick <= CHECK_COLLISION_TICK)
+	if(m_CollisionTick <= CHECK_COLLISION_TICK)
 		return false;
 	
-	//GetMutex()->Lock();
 	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexLock",NULL);
-
-	void *v = m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisCount",NULL);
+	int count = 0;
+	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisCount",&count);
 	
 	m_RenderRestricted = false;
-	if(v)
+		
+	for(size_t i = 0; i < count; i++)
 	{
-		int count = *(int*)v;
-		//fprintf(stderr,"%d\n",count);
-		for(size_t i = 0; i < count; i++)
+		SAisData *ptr = (SAisData*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisItem",&i);
+			
+		nvCircle c1,c2;
+		c1.Center.x = m_Lon;
+		c1.Center.y = m_Lat;
+		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+		c2.Center.x = ptr->lon;
+		c2.Center.y = ptr->lat;
+		c2.Radius = (double)ptr->length/1852/GetMilesPerDegree(ptr->lon,ptr->lat);
+			
+		if(nvIsCircleColision(&c1, &c2))
 		{
-			SAisData *ptr = (SAisData*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisItem",&i);
+			m_RenderRestricted = true;
+			fprintf(stderr,"COLLISION\n");
+		}else{
 			
-			nvCircle c1,c2;
-			c1.Center.x = m_Lon;
-			c1.Center.y = m_Lat;
-			c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
-			c2.Center.x = ptr->lon;
-			c2.Center.y = ptr->lat;
-			c2.Radius = (double)ptr->length/1852/GetMilesPerDegree(m_Lon,m_Lat);
-			
-			if(nvIsCircleColision(&c1, &c2))
-				m_RenderRestricted = true;
+			fprintf(stderr,"NO Collision\n");
+		}
 			
 			//fprintf(stderr,"%d\n",ptr->mmsi);
-		}
 	}
 
 	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexUnlock",NULL);
-	//GetMutex()->Unlock();
-	
 	m_CollisionTick = 1;
+	
 	return true;
 }
 
@@ -516,7 +517,7 @@ wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 	m_PicturePanel = new CPicturePanel(NULL,Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,2);
 		
-	m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 
 	Panel->SetSizer(Sizer);
@@ -525,9 +526,87 @@ wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 
 }
 
+wxPanel *CSymbolPanel::GetPage2(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+wxPanel *CSymbolPanel::GetPage3(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+void CSymbolPanel::SetPageEmpty()
+{
+}
+
 void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 {
+	m_IdSBMS = 0;
+	m_IdBaseStation = 0;
+	m_Html->SetPage(wxEmptyString);
+	PictureInfo(db,ptr);
+	SymbolInfo(db,ptr);
+	SBMSInfo(db,m_IdSBMS);
+	BaseStationInfo(db,m_IdBaseStation);
+}
+
+void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
+{
 	wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,ptr->GetId());
+	my_query(db,sql);
+	
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		wxString str;
+		str.Append(_("<hr>"));
+		str.Append(_("<font size=2>symbol info</font>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+	
+		if(atoi(row[FI_SYMBOL_IN_MONITORING]))
+			str.Append(wxString::Format(_("<tr><td><font size=3>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
+	
+		if(atoi(row[FI_SYMBOL_ON_POSITION]))
+			str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetMsg(MSG_ON_POSITION)));
+	
+		m_IdSBMS = atoi(row[FI_SYMBOL_ID_SBMS]);
+		if(m_IdSBMS == 0)
+			str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
+
+		str.Append(wxString::Format(_("<tr><td>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
+		str.Append(_("</table>"));
+		str.Append(_("<hr>"));
+		m_Html->AppendToPage(str);
+	}
+	
+	db_free_result(result);
+
+}
+
+void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,id_sbms);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -537,47 +616,66 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 		return;
 		
 	row = (char**)db_fetch_row(result);
-			
-	wxString str;
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%%>"));
-	str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-	str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
-	
-	str.Append("<tr><td><hr></td></tr>");
-	
-	if(atoi(row[FI_SYMBOL_IN_MONITORING]))
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	
-	if(atoi(row[FI_SYMBOL_ON_POSITION]))
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetMsg(MSG_ON_POSITION)));
-	
-	if(atoi(row[FI_SYMBOL_ID_SBMS]) == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=4><b>%s</b></font></td></tr>"),GetMsg(MSG_NO_SBMS)));
-
-	str.Append("<tr><td><hr></td></tr>");
-	
-	str.Append(wxString::Format(_("<tr><td>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
-	str.Append(_("</table>"));
-	m_Html->SetPage(str);
-	
-	
-	
-	
-	
-	db_free_result(result);
+	if(row)
+	{
+		wxString str;
+		str.Append(_("<font size=2>sbms info</font>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
+		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
+		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
+		str.Append(_("</table>"));
+		str.Append(_("<hr>"));
 		
-	
-	//PICTURE
-	sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
+		m_Html->AppendToPage(str);
+	}
+
+	db_free_result(result);
+
+}
+
+void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_BASE_STATION,id_base_station);
 	my_query(db,sql);
 			
-	result = db_result(db);
+	void *result = db_result(db);
+		
+	char **row = NULL;
 	if(result == NULL)
 		return;
 		
 	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		wxString str;
+		str.Append(_("<font size=2>base station info</font>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
+		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
+		str.Append(_("</table>"));
+		str.Append(_("<hr>"));
+		
+		m_Html->AppendToPage(str);
+	}
+
+	db_free_result(result);
+
+}
+
+void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
+{
+
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
+	my_query(db,sql);
+	char **row = NULL;
+
+	void *result = db_result(db);
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	
 	if(row)
 	{
 		m_PicturePanel->SetDB(db);
@@ -585,7 +683,9 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 	}
 		
 	db_free_result(result);
+
 }
+
 
 void CSymbolPanel::SetSBMS()
 {

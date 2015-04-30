@@ -14,7 +14,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[72][2] = 
+const wchar_t *nvLanguage[75][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -89,6 +89,9 @@ const wchar_t *nvLanguage[72][2] =
 	{L"Empty Time",L"Czas nie mo¿e byæ pusty"},
 	{L"Refresh",L"Odœwie¿"},
 	{L"No SBMS Driver",L"Brak Sterownika SBMS"},
+	{L"Report",L"Raport"},
+	{L"Options",L"Opcje"},
+	{L"Alert",L"Alarm"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
