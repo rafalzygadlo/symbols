@@ -25,10 +25,14 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_BlinkTick = 0;
 	m_CommandTick = CHECK_COMMAND_TICK;
 	m_AlertTick = CHECK_ALERT_TICK;
+	m_AlertTickOn = CHECK_ALERT_TICK_ON;
 	m_CollisionTick = CHECK_COLLISION_TICK;
+	m_CommandTickOn = CHECK_COMMAND_TICK_ON;
 	m_BlinkTick = 0;
 	m_Busy = false;
+	m_BusyOn = false;
 	m_Alert = false;
+	m_AlertOn = false;
 	m_IdSBMS = 0;
 	m_Ticker0 = NULL;
 	m_RenderRestricted = false;
@@ -141,7 +145,7 @@ void CSymbol::OnTick()
 	
 	CheckCollision();
 
-	if(result)
+	//if(result)
 		m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
@@ -191,11 +195,17 @@ bool CSymbol::CheckCollision()
 bool  CSymbol::CheckCommand()
 {
 	m_CommandTick++;
+	m_CommandTickOn++;
 	
+	if(m_CommandTickOn >= CHECK_COMMAND_TICK_ON)
+	{
+		m_BusyOn = !m_BusyOn;
+		m_CommandTickOn = 0;
+	}
+
 	if(m_CommandTick <= CHECK_COMMAND_TICK)
 		return false;
-	
-	m_BusyOn = !m_BusyOn;
+		
 	void *db = DBConnect();
 	if(db == NULL)
 		return false;
@@ -226,6 +236,15 @@ bool  CSymbol::CheckCommand()
 bool CSymbol::CheckAlert()
 {
 	m_AlertTick++;
+	m_AlertTickOn++;
+
+	if(m_AlertTickOn >= CHECK_ALERT_TICK_ON)
+	{
+		m_AlertOn = !m_AlertOn;
+		m_AlertTickOn = 0;
+	}
+
+
 	if(m_AlertTick <= CHECK_ALERT_TICK)
 		return false;
 	
@@ -327,6 +346,26 @@ void CSymbol::RenderLightOn()
 		
 }
 
+void CSymbol::RenderAlert()
+{
+	if(!m_Alert)
+		return;
+		
+	glPushMatrix();
+	glColor4f(1.0f,0.0f,0.0f,0.9f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(0.0,-m_RectWidth/2,0.0f);
+
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth;
+	nvDrawCircle(&c);
+		
+	glPopMatrix();
+		
+}
+
 void CSymbol::RenderBusy()
 {
 	if(!m_Busy)
@@ -362,12 +401,20 @@ void CSymbol::RenderBusy()
 void CSymbol::RenderSymbol()
 {
 	glEnable(GL_TEXTURE_2D);
-	
+#if 0	
 	if(m_LightOn)
 		glColor4f(1.0f,1.0f,1.0f,0.5f);
 	else
 		glColor4f(0.0f,0.0f,0.0f,0.5f);
-	
+#endif	
+	if(m_Alert)
+	{
+		if(m_AlertOn)
+			glColor4f(1.0f,0.0f,0.0f,0.8f);
+		else
+			glColor4f(1.0f,1.0f,1.0f,0.8f);
+	}
+
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
 	glPushMatrix();
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
@@ -425,10 +472,13 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
+	RenderRestricted();
+	RenderBusy();
+#if 0
+	RenderAlert();
+#endif
 	RenderGPS();
 	RenderSymbol();
-	RenderBusy();
-	RenderRestricted();
 		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);

@@ -208,15 +208,16 @@
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
 
-
 //TICK
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	100
 #define TICK_DLL_TIME		1000
-#define CHECK_COMMAND_TICK   (5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_ALERT_TICK	 (5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_COLLISION_TICK (5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
+#define CHECK_ALERT_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_ALERT_TICK_ON		(1 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COLLISION_TICK	(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //
 
 #define MODULE_AREA "area"

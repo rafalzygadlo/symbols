@@ -29,6 +29,7 @@ class CSymbol
 	bool m_BusyOn;
 	bool m_Busy;
 	bool m_Alert;
+	bool m_AlertOn;
 	double m_Lon;
 	double m_Lat;
 	double m_LonMap;
@@ -41,9 +42,9 @@ class CSymbol
 	double m_TranslationX;
 	double m_TranslationY;
 	double m_VisibleMap[4];
-	int m_CommandTick;
+	int m_CommandTick,m_CommandTickOn;
 	int m_CollisionTick;
-	int m_AlertTick;
+	int m_AlertTick,m_AlertTickOn;
 	int m_IdSBMS;
 	wxString m_Number;
 	bool m_RenderRestricted;
@@ -62,6 +63,7 @@ class CSymbol
 	void RenderLightOn();
 	void RenderBusy();
 	void RenderRestricted();
+	void RenderAlert();
 	void RenderGPS();		//real position
 			
 public:
