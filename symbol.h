@@ -88,7 +88,8 @@ public:
 	double GetLat();
 	double GetLonMap();
 	double GetLatMap();
-	
+	bool GetBusy();					//zajêty komendami
+
 	void Start();
 	void Read();
 	void Render();
@@ -115,9 +116,11 @@ public:
 	wxPanel *GetPage1(wxWindow *parent);	
 	wxPanel *GetPage2(wxWindow *parent);	//Report
 	wxPanel *GetPage3(wxWindow *parent);	//Alerts
-	void SetPage1(void *db,CSymbol *ptr);
+	void SetPage1(CSymbol *ptr);
 	void SetPageEmpty();
 	void SetSBMS();
+
+	
 
 };
 

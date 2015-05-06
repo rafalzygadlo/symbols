@@ -145,7 +145,6 @@ public:
 
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();
-	void *GetDB();
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();

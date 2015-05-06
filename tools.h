@@ -37,10 +37,15 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel,in
 wxString GetFontPath();
 const wchar_t *GetDegreeFormat(int id, int dir);
 void db_history(int uid, const char *module, const char *action );
-bool db_check_right(void *db,const char *module, const char *action, int uid);
+bool db_check_right(const char *module, const char *action, int uid);
 bool my_query(void *db,wxString sql);
 bool my_query(void *db,const char *sql, unsigned long length);
 void *DBConnect();
+void DBClose(void *db);
 double GetMilesPerDegree(double x, double y);
+void SetDBCommand(wxString cmd);
+const char *GetCommand(int id);
+//COMMANDS
+void SetCommandForcedOff(int id_sbms, bool off);
 #endif
 

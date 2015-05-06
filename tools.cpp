@@ -118,6 +118,25 @@ const wxChar *nvDistanceN[2][3] =
 
 };
 
+const char *nvCommand[10] =
+{
+ 	{"FlashCode(%d)\r\n"},
+	{"DriveCurrent(%d)\r\n"},
+	{"PowerOfLight(%d)\r\n"},
+	{"ForcedOff(%d,%d)\r\n"},
+	{"SeasonControl(%d)\r\n"},
+	{"PhotoCellResistance(%d)\r\n"},
+	{"RipleDelay(%d)\r\n"},
+	{"PowerOff(%d)\r\n"},
+    {"GetTime()\r\n"},
+		
+};
+
+const char *GetCommand(int id)
+{
+    return nvCommand[id];
+}
+
 wxMutex *GetMutex()
 {
 	if(mutex == NULL)
@@ -518,9 +537,12 @@ bool my_query(void *db,const char *sql, unsigned long length)
 }
 
 
-void db_history(void *db,int uid, const char *module, const char *action )
+void db_history(int uid, const char *module, const char *action )
 {
-
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE name='%s_%s'"),TABLE_RIGHT,module,action);
 	my_query(db,sql);
 
@@ -531,12 +553,16 @@ void db_history(void *db,int uid, const char *module, const char *action )
 	my_query(db,sql);
 
 	db_free_result(result);
-
+	DBClose(db);
 }
 
 //uprawnienia
-bool db_check_right(void *db,const char *module, const char *action, int uid)
+bool db_check_right(const char *module, const char *action, int uid)
 {
+	void *db = DBConnect();
+	if(db == NULL)
+		return false;
+	
 	// czy wbudowany user
 	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE built_in = '1' AND id = '%d'"),TABLE_USER,uid);
 	if(!my_query(db,query))
@@ -574,6 +600,7 @@ bool db_check_right(void *db,const char *module, const char *action, int uid)
 	result = db_result(db);
 	count = db_num_rows(result);
 	db_free_result(result);
+	DBClose(db);
 	
 	bool res = false;
 	if(count > 0)
@@ -746,6 +773,11 @@ void *DBConnect()
 	return NULL;
 }
 
+void DBClose(void *db)
+{
+	db_close(db);
+}
+
 double ToRad( double angle ) 
 {
 	return angle * nvPI / 180.0f;
@@ -768,4 +800,20 @@ double _nvDistance(double lon1, double lat1, double lon2, double lat2)
 double GetMilesPerDegree(double x, double y)
 {
 	return _nvDistance( x, y, x + 1.0, y );	// iloœæ mil na stopieñ w aktualnej pozycji y
+}
+
+//COMMANDS
+void SetDBCommand(int id_sbms,wxString cmd)
+{
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',command='%s'"),TABLE_COMMAND,id_sbms,cmd.wc_str());
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
+void SetCommandForcedOff(int id_sbms, bool off)
+{
+	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
+	wxString _cmd = wxString::Format(_(cmd),id_sbms,off);
+	SetDBCommand(id_sbms,_cmd);	
 }

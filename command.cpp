@@ -15,10 +15,9 @@ BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_BUTTON(ID_BUTTON_OK,OnButtonOk)
 END_EVENT_TABLE()
 
-CCommandPanel::CCommandPanel(void *db,wxWindow *parent)
+CCommandPanel::CCommandPanel(wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
-	m_DB = db;
 	m_Changed = (bool*)malloc(sizeof(bool) * COMMAND_COUNT);
 	memset(m_Changed,0,sizeof(bool) * COMMAND_COUNT);
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
@@ -29,6 +28,7 @@ CCommandPanel::CCommandPanel(void *db,wxWindow *parent)
 	m_PowerOfLightValue = 1;
 	m_ForcedOffValue = false;
 	m_SeasonControlValue = false;
+	m_IdSBMS = 0;
 	
 	SetSizer(m_Sizer);
 	SetGui();
@@ -61,6 +61,7 @@ void CCommandPanel::OnPowerOfLight(wxCommandEvent &event)
 
 void CCommandPanel::OnForcedOff(wxCommandEvent &event)
 {
+
 	if(m_ForcedOffValue != m_ForcedOff->GetValue())
 		m_Changed[COMMAND_FORCED_OFF] = true;
 	else
@@ -105,9 +106,21 @@ void CCommandPanel::OnButtonOk(wxCommandEvent &event)
 	Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
 	{
-	
+		SetCommand(i);
 	}
 }
+
+void CCommandPanel::SetCommand(int id)
+{
+	wxString sql;
+	switch(id)
+	{
+		case COMMAND_FORCED_OFF: SetCommandForcedOff(m_IdSBMS,m_ForcedOffValue); break;
+
+	}
+	
+}
+
 
 wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
 {
@@ -154,6 +167,11 @@ wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 		
 	return Panel;
 
+}
+
+void CCommandPanel::SetIdSBMS(int id)
+{
+	m_IdSBMS = id;
 }
 
 void CCommandPanel::SetGui()

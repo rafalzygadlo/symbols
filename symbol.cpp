@@ -99,6 +99,11 @@ void CSymbol::Read()
 	*/
 }
 
+bool CSymbol::GetBusy()
+{
+	return m_Busy;
+}
+
 void CSymbol::Blink()
 {
 	if(m_OnList.Length() == 0)
@@ -227,7 +232,7 @@ bool  CSymbol::CheckCommand()
 	}
 	
 	db_free_result(result);
-	db_close(db);	
+	DBClose(db);	
 	m_CommandTick = 1;
 	
 	return true;
@@ -269,7 +274,7 @@ bool CSymbol::CheckAlert()
 	}
 	
 	db_free_result(result);
-	db_close(db);	
+	DBClose(db);	
 	m_AlertTick = 1;
 	
 	return true;
@@ -387,7 +392,7 @@ void CSymbol::RenderBusy()
 	c.Center.y = 0.0;
 	c.Radius = m_RectWidth/4;
 	nvDrawCircle(&c);
-	
+		
 	if(m_BusyOn)
 		glColor4f(1.0f,0.0f,0.0f,0.8f);
 	else
@@ -406,13 +411,19 @@ void CSymbol::RenderSymbol()
 		glColor4f(1.0f,1.0f,1.0f,0.5f);
 	else
 		glColor4f(0.0f,0.0f,0.0f,0.5f);
-#endif	
-	if(m_Alert)
+#endif
+	if(m_IdSBMS > 0)
 	{
-		if(m_AlertOn)
-			glColor4f(1.0f,0.0f,0.0f,0.8f);
-		else
-			glColor4f(1.0f,1.0f,1.0f,0.8f);
+		if(m_Alert)
+		{
+			if(m_AlertOn)
+				glColor4f(1.0f,0.0f,0.0f,0.8f);
+			else
+				glColor4f(1.0f,1.0f,1.0f,0.8f);
+		}
+	}else{
+		
+		glColor4f(0.0f,0.0f,0.0f,0.8f);
 	}
 
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
@@ -562,12 +573,13 @@ CSymbolPanel::CSymbolPanel()
 wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY);
 	
 	m_PicturePanel = new CPicturePanel(NULL,Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,2);
 		
-	m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxSize(200,150));
+	m_Html = new wxHtmlWindow(Panel,wxID_ANY);
+	m_Html->SetMinSize(wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 
 	Panel->SetSizer(Sizer);
@@ -600,8 +612,12 @@ void CSymbolPanel::SetPageEmpty()
 {
 }
 
-void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
+void CSymbolPanel::SetPage1(CSymbol *ptr)
 {
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
 	m_IdSBMS = 0;
 	m_IdBaseStation = 0;
 	m_Html->SetPage(wxEmptyString);
@@ -609,6 +625,8 @@ void CSymbolPanel::SetPage1(void *db,CSymbol *ptr)
 	SymbolInfo(db,ptr);
 	SBMSInfo(db,m_IdSBMS);
 	BaseStationInfo(db,m_IdBaseStation);
+	
+	DBClose(db);
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)

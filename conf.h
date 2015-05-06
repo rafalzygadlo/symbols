@@ -44,6 +44,10 @@
 #define DRIVE_CURRENT_MIN 1
 #define DRIVE_CURRENT_MAX 1000
 
+#define ID_MENU_BEGIN 1000
+#define ID_MENU_END 1100
+#define DEFAULT_CONTROL_TYPE 1000
+
 // Languages
 #define MSG_MANAGER					0
 #define MSG_NEW_OBJECT				1
@@ -140,6 +144,7 @@
 #define CONTROL_SYMBOL_GROUP	10
 #define CONTROL_BASE_STATION	11
 #define CONTROL_CHARACTERISTIC	12
+#define CONTROL_SYMBOL_LIST		13
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -487,16 +492,16 @@
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
-#define COMMAND_FLASH_CODE				1 //charakterystyka świecenia
-#define COMMAND_DRIVE_CURRENT			2 //prąd podkładu
-#define COMMAND_POWER_OF_LIGHT			3 //moc
-#define COMMAND_FORCED_OFF				4 //serwisowe wyłączenie
-#define COMMAND_SEASON_CONTROL			5 //praca sezonowa ON/OFF
-#define COMMAND_PHOTO_CELL_RESISTANCE	6 //fotorezystor czułość
-#define COMMAND_RIPLE_DELAY				7 //opóźnienie impulsu
-#define COMMAND_POWER_OFF				8 //ręczne wyłączenie
+#define COMMAND_FLASH_CODE				0 //charakterystyka świecenia
+#define COMMAND_DRIVE_CURRENT			1 //prąd podkładu
+#define COMMAND_POWER_OF_LIGHT			2 //moc
+#define COMMAND_FORCED_OFF				3 //serwisowe wyłączenie
+#define COMMAND_SEASON_CONTROL			4 //praca sezonowa ON/OFF
+#define COMMAND_PHOTO_CELL_RESISTANCE	5 //fotorezystor czułość
+#define COMMAND_RIPLE_DELAY				6 //opóźnienie impulsu
+#define COMMAND_POWER_OFF				7 //ręczne wyłączenie
 
-#define COMMAND_COUNT 9 //ilosc komend
+#define COMMAND_COUNT 8 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
 //typy komunikacji
@@ -505,6 +510,8 @@
 #define COMMUNICATION_GPRS	3
 
 #define RESTRICTED_AREA_RADIUS 100 //m ?
+
+#define PAGE_MANAGEMENT 1	// index strony notebook management panel
 
 /*
 typedef struct Symbol

@@ -11,6 +11,8 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 //	EVT_HYPERLINK(ID_CONFIG,CDisplayPlugin::OnConfig)
 //	EVT_BUTTON(ID_ON,CDisplayPlugin::OnPowerOn)
 //	EVT_BUTTON(ID_OFF,CDisplayPlugin::OnPowerOff)
+	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
+	EVT_CONTEXT_MENU(OnMenu)
 END_EVENT_TABLE()
 
 
@@ -24,12 +26,20 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_MapPlugin = NULL;
 	m_Broker = NULL;
 	m_ControlName = Parent->GetLabel();
+	m_ControlType = DEFAULT_CONTROL_TYPE;
+
+	m_Menu = new wxMenu();
+	m_Menu->AppendRadioItem(0 + ID_MENU_BEGIN ,GetMsg(MSG_SYMBOL));
+	m_Menu->AppendRadioItem(1 + ID_MENU_BEGIN ,_("Ais Targets"));
+	m_Menu->AppendRadioItem(2 + ID_MENU_BEGIN ,_("Ais Monitor"));
+
 	ReadConfig();
 	ShowControls();
 }
 
 CDisplayPlugin::~CDisplayPlugin()
 {
+	delete m_Menu;
 	WriteConfig();
 	delete m_SymbolPanel;
 }
@@ -84,6 +94,51 @@ void CDisplayPlugin::ShowControls()
 	SetSizer(Main);
 
 }
+
+void CDisplayPlugin::OnMenu(wxContextMenuEvent &event)
+{
+		
+	if(m_ControlType != -1)
+		m_Menu->Check(m_ControlType, true);
+	
+	PopupMenu(m_Menu);
+	//delete Menu;
+	
+}
+
+
+void CDisplayPlugin::OnMenuRange(wxCommandEvent &event)
+{
+	if(m_ControlType == event.GetId())
+	{
+		wxMessageBox(_("The same type of control ?"));
+		return;
+	}
+		
+	//m_GUI = false;
+	RemoveControl(m_ControlType);
+		
+	switch(event.GetId())
+	{
+//		case CONTROL_SYMBOL_LIST:	GetSymbolList();	break;
+//		case CONTROL_SYMBOL:		GetAisList();		break;
+		
+	}
+	
+	m_ControlType = event.GetId(); // ustawiamy po zbudowaniu gui
+	
+}
+
+void CDisplayPlugin::RemoveControl(int type)
+{
+	switch(type)
+	{
+		//case CONTROL_SYMBOL_LIST:	FreeDevicesList();	break;
+		//case CONTROL_AIS_LIST:		FreeAisList();		break;
+		//case CONTROL_AIS_MONITOR:	FreeAisMonitor();	break;
+	}
+}
+
 
 bool CDisplayPlugin::IsValidSignal(CDisplaySignal *SignalID) 
 {
@@ -164,13 +219,12 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;
-	
-	m_DB = m_MapPlugin->GetDB();
+		
 	if(m_Selected)
 	{	
 		m_Notebook->Show();
 		//m_Notebook->Enable();
-		m_SymbolPanel->SetPage1(m_DB,m_Selected);
+		m_SymbolPanel->SetPage1(m_Selected);
 	}else{
 		m_Notebook->Hide();
 	}

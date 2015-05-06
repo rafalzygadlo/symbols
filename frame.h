@@ -13,7 +13,6 @@
 class CMyIcon;
 class CMyFrame: public wxDialog
 {
-	void *m_DB;
 	CMapPlugin *m_DLL;	
 	CSymbol *SelectedPtr;
 	wxPanel *m_Panel;
@@ -21,6 +20,7 @@ class CMyFrame: public wxDialog
 	wxButton *m_ButtonCommand;
 	CCommandPanel *m_CommandPanel;
 	CSymbolPanel *m_SymbolPanel;
+	wxNotebook *m_Notebook;
 		
 	wxButton *ButtonClose;
 	//wxPanel *PanelIcon;
@@ -45,7 +45,7 @@ class CMyFrame: public wxDialog
 public:
 		
 	void ShowWindow(bool show);		
-	CMyFrame(void *db,void *Parent, wxWindow *ParentPtr);
+	CMyFrame(void *Parent, wxWindow *ParentPtr);
 	~CMyFrame();
 		
 	DECLARE_EVENT_TABLE();

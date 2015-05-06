@@ -7,7 +7,6 @@
 
 class CCommandPanel: public wxPanel
 {
-	void *m_DB;
 	bool *m_Changed;
 	wxBoxSizer *m_Sizer;
 	wxSlider *m_FlashCode;
@@ -17,7 +16,8 @@ class CCommandPanel: public wxPanel
 	wxCheckBox *m_SeasonControl;
 	wxPanel *m_SeasonControlPanel;
 	wxButton *m_ButtonOk;
-	
+	int m_IdSBMS;
+		
 	//values
 	int m_DriveCurrentValue;
 	int m_PowerOfLightValue;
@@ -33,14 +33,16 @@ class CCommandPanel: public wxPanel
 	void SetButtonState();
 	wxPanel *CharacteristicPanel(wxPanel *parent);
 	wxPanel *SeasonControlPanel(wxPanel *parent);
+	void SetCommand(int id);
 	void SetGui();
 
 public:
 
-	CCommandPanel(void *db, wxWindow *parent);
+	CCommandPanel(wxWindow *parent);
 	~CCommandPanel();
 	void ButtonDisable();
-		
+	void SetIdSBMS(int id);
+			
 
 	DECLARE_EVENT_TABLE();
 	

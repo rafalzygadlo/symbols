@@ -21,24 +21,23 @@ extern CNaviMapIOApi *ThisPtr;
 extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
-CMyFrame::CMyFrame(void *db,void *Parent, wxWindow *ParentPtr)
+CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER)
 {
 	m_SymbolPanel = NULL;
 	m_CommandPanel = NULL;
-	m_DB = db;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
 	
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 
-	wxNotebook *Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
-	Notebook->AddPage(GetPage1(Notebook),GetMsg(MSG_INFO));
-	if(db_check_right(db,MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-		Notebook->AddPage(GetPage2(Notebook),GetMsg(MSG_MANAGEMENT));	
+	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
+	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_INFO));
+	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+		m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
 
 	//Other
-	MainSizer->Add(Notebook,1,wxALL|wxEXPAND,0);
+	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
 	
 	wxPanel *ButtonPanel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	MainSizer->Add(ButtonPanel,0,wxALL|wxEXPAND,5);
@@ -68,7 +67,7 @@ wxPanel *CMyFrame::GetPage1(wxWindow *parent)
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
 	m_SymbolPanel = new CSymbolPanel();
-	Sizer->Add(m_SymbolPanel->GetPage1(Panel),0,wxALL|wxEXPAND,5);
+	Sizer->Add(m_SymbolPanel->GetPage1(Panel),1,wxALL|wxEXPAND,5);
 	return Panel;
 }
 
@@ -77,8 +76,8 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
-	m_CommandPanel = new CCommandPanel(m_DB,Panel);
-	Sizer->Add(m_CommandPanel,0,wxALL|wxEXPAND,5);
+	m_CommandPanel = new CCommandPanel(Panel);
+	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,5);
 	return Panel;
 }
 
@@ -173,7 +172,16 @@ void CMyFrame::ShowWindow(bool show)
 		SelectedPtr = m_DLL->GetSelectedPtr();
 		if(SelectedPtr == NULL)
 			return;
-				
+		
+		if(m_CommandPanel)
+		{
+			m_CommandPanel->SetIdSBMS(SelectedPtr->GetIdSBMS());
+			if(SelectedPtr->GetBusy())
+				m_CommandPanel->Disable();
+			else
+				m_CommandPanel->Enable();
+		}
+
 		double vm[4];
 		m_DLL->GetBroker()->GetVisibleMap(vm);
 		
@@ -201,7 +209,7 @@ void CMyFrame::ShowWindow(bool show)
 			pt.y = pt.y - size.GetHeight();
 		}
 		
-		m_SymbolPanel->SetPage1(m_DB,SelectedPtr);
+		m_SymbolPanel->SetPage1(SelectedPtr);
 		this->SetPosition(pt);
 		
 	}

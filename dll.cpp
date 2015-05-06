@@ -117,7 +117,7 @@ CMapPlugin::~CMapPlugin()
 	
 	m_SymbolList.Clear();
 	FreeMutex();
-	db_close(m_DB);
+	DBClose(m_DB);
 }
 
 void CMapPlugin::ReadDBConfig()
@@ -191,11 +191,6 @@ CSymbol *CMapPlugin::GetSelectedPtr()
 	return SelectedPtr;
 }
 
-void *CMapPlugin::GetDB()
-{
-	return m_DB;
-}
-
 int CMapPlugin::GetDisplaySignal()
 {
 	return DisplaySignalType;
@@ -267,7 +262,7 @@ void CMapPlugin::Read()
 	}
 	
 	db_free_result(result);
-	db_close(db);
+	DBClose(db);
 
 }
 
@@ -325,11 +320,6 @@ CNaviBroker *CMapPlugin::GetBroker()
 
 void CMapPlugin::Run(void *Params)
 {
-	//| _CRTDBG_CHECK_ALWAYS_DF   // memory check (slow)
-	 _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF        // debug allocation on
-                 | _CRTDBG_LEAK_CHECK_DF     // leak checks on exit
-                 
-                 );
 
 	ReadDBConfig();
 	m_DB = DBConnect();
@@ -337,6 +327,7 @@ void CMapPlugin::Run(void *Params)
 	{
 		wxString str(db_error(m_DB));
 		wxMessageBox(str);
+		return;
 	}	
 	
 	Read();
@@ -430,7 +421,7 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 void CMapPlugin::ShowFrameWindow(bool show)
 {
 	if(m_Frame == NULL)
-		m_Frame = new CMyFrame(m_DB,this,(wxWindow*)m_Broker->GetParentPtr());
+		m_Frame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
 	m_Frame->ShowWindow(show);
 }
 
