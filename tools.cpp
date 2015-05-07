@@ -14,7 +14,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[75][2] = 
+const wchar_t *nvLanguage[100][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -92,6 +92,22 @@ const wchar_t *nvLanguage[75][2] =
 	{L"Report",L"Raport"},
 	{L"Options",L"Opcje"},
 	{L"Alert",L"Alarm"},
+	{L"Calibrated",L"Skalibrowany"},
+	{L"Last Report",L"Ostatni Raport"},
+	{L"Photocell Night Time",L"Photocell Night Time"},
+	{L"Reserved",L"Zarezerwowane"},
+	{L"Fault output",L"Fault output"},
+	{L"Solar Charger",L"Solar Charger"},
+	{L"Sync Master",L"Sync Master"},
+	{L"Monitored Channels",L"Monitored Channels"},
+	{L"Overload Channels",L"Overload Channels"},
+	{L"TRUE",L"TRUE"},
+	{L"FALSE",L"FALSE"},
+	{L"Down Channels",L"Down Channels"},
+	{L"Analog Pin",L"Analog Pin"},
+	{L"Digital Value",L"Digital Value"},
+	{L"Input Volt",L"Input Volt"},
+	{L"Analog Value",L"Analog Value"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -802,7 +818,19 @@ double GetMilesPerDegree(double x, double y)
 	return _nvDistance( x, y, x + 1.0, y );	// iloœæ mil na stopieñ w aktualnej pozycji y
 }
 
-//COMMANDS
+wxString GetOnOff(int v)
+{
+	if(v > 0)
+	{
+		return GetMsg(MSG_TRUE);
+	}else{
+	
+		return GetMsg(MSG_FALSE);
+	}
+
+}
+
+//COMMANDS . . . . . . . . . . . . . . . .
 void SetDBCommand(int id_sbms,wxString cmd)
 {
 	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',command='%s'"),TABLE_COMMAND,id_sbms,cmd.wc_str());
@@ -817,3 +845,13 @@ void SetCommandForcedOff(int id_sbms, bool off)
 	wxString _cmd = wxString::Format(_(cmd),id_sbms,off);
 	SetDBCommand(id_sbms,_cmd);	
 }
+
+#if 0
+void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)
+{
+	
+
+}
+
+#endif
+

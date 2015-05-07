@@ -16,7 +16,7 @@ class CCommandPanel: public wxPanel
 	wxCheckBox *m_SeasonControl;
 	wxPanel *m_SeasonControlPanel;
 	wxButton *m_ButtonOk;
-	int m_IdSBMS;
+	int m_SBMSID;
 		
 	//values
 	int m_DriveCurrentValue;
@@ -41,7 +41,7 @@ public:
 	CCommandPanel(wxWindow *parent);
 	~CCommandPanel();
 	void ButtonDisable();
-	void SetIdSBMS(int id);
+	void SetSBMSID(int id);
 			
 
 	DECLARE_EVENT_TABLE();

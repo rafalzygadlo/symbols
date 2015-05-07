@@ -175,7 +175,7 @@ void CMyFrame::ShowWindow(bool show)
 		
 		if(m_CommandPanel)
 		{
-			m_CommandPanel->SetIdSBMS(SelectedPtr->GetIdSBMS());
+			m_CommandPanel->SetSBMSID(SelectedPtr->GetSBMSID());
 			if(SelectedPtr->GetBusy())
 				m_CommandPanel->Disable();
 			else

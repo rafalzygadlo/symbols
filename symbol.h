@@ -43,12 +43,15 @@ class CSymbol
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	int m_CommandTick,m_CommandTickOn;
+	int m_ReadTick;
 	int m_CollisionTick;
 	int m_AlertTick,m_AlertTickOn;
 	int m_IdSBMS;
+	int m_SBMSID;
+	int m_IdBaseStation;
 	wxString m_Number;
 	bool m_RenderRestricted;
-	
+		
 	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -78,12 +81,14 @@ public:
 	void SetLonMap(double v);
 	void SetLatMap(double v);
 	void SetIdSBMS(int v);
+	void SetSBMSID(int v);
 	void SetNumber(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 		
 	int GetId();
 	int GetIdSBMS();
+	int GetSBMSID();
 	double GetLon();
 	double GetLat();
 	double GetLonMap();
@@ -105,10 +110,14 @@ class CSymbolPanel
 	wxHtmlWindow *m_Html;
 	int m_IdSBMS;
 	int m_IdBaseStation;
+	int m_SBMSID;
+	
+	void SetHeader();
 	void SymbolInfo(void *db,CSymbol *ptr);
 	void SBMSInfo(void *db,int id_sbms);
 	void PictureInfo(void *db,CSymbol *ptr);
 	void BaseStationInfo(void *db, int id_base_station);
+	void SBMSLastRaport(void *db, int id_sbms, int id_base_station);
 
 public:
 

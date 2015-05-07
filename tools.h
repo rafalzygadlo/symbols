@@ -45,6 +45,7 @@ void DBClose(void *db);
 double GetMilesPerDegree(double x, double y);
 void SetDBCommand(wxString cmd);
 const char *GetCommand(int id);
+wxString GetOnOff(int v);
 //COMMANDS
 void SetCommandForcedOff(int id_sbms, bool off);
 #endif

@@ -28,7 +28,7 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 	m_PowerOfLightValue = 1;
 	m_ForcedOffValue = false;
 	m_SeasonControlValue = false;
-	m_IdSBMS = 0;
+	m_SBMSID = 0;
 	
 	SetSizer(m_Sizer);
 	SetGui();
@@ -106,7 +106,8 @@ void CCommandPanel::OnButtonOk(wxCommandEvent &event)
 	Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
 	{
-		SetCommand(i);
+		if(m_Changed[i])
+			SetCommand(i);
 	}
 }
 
@@ -115,7 +116,10 @@ void CCommandPanel::SetCommand(int id)
 	wxString sql;
 	switch(id)
 	{
-		case COMMAND_FORCED_OFF: SetCommandForcedOff(m_IdSBMS,m_ForcedOffValue); break;
+		//case COMMAND_DRIVE_CURRENT:	SetDriveCurrent(m_SBMSID,m_DriveCurrentValue);
+		case COMMAND_FORCED_OFF:	SetCommandForcedOff(m_SBMSID,m_ForcedOffValue); break;
+		//case COMMAND_FLASH_CODE:	SetFlashCode(m_IdSBMS,m_FlashCode
+	
 
 	}
 	
@@ -169,9 +173,9 @@ wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 
 }
 
-void CCommandPanel::SetIdSBMS(int id)
+void CCommandPanel::SetSBMSID(int id)
 {
-	m_IdSBMS = id;
+	m_SBMSID = id;
 }
 
 void CCommandPanel::SetGui()
