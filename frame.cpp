@@ -52,13 +52,32 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 		
 	if(GetSizer())
 		GetSizer()->SetSizeHints(this);
-		
+	
+	ReadConfig();
+
+
 	Center();
 }
 
 CMyFrame::~CMyFrame(void)
 {
 	delete m_SymbolPanel;
+}
+
+void CMyFrame::WriteConfig()
+{
+	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
+	FileConfig->Write(_(KEY_FRAME_WIDTH),this->GetSize().GetWidth());
+	FileConfig->Write(_(KEY_FRAME_HEIGHT),this->GetSize().GetHeight());
+	delete FileConfig;
+}
+
+void CMyFrame::ReadConfig()
+{
+	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
+	FileConfig->Read(_(KEY_FRAME_WIDTH),m_FrameWidth);
+	FileConfig->Read(_(KEY_FRAME_HEIGHT),m_FrameHeight);
+	delete FileConfig;
 }
 
 wxPanel *CMyFrame::GetPage1(wxWindow *parent)
@@ -175,11 +194,8 @@ void CMyFrame::ShowWindow(bool show)
 		
 		if(m_CommandPanel)
 		{
-			m_CommandPanel->SetSBMSID(SelectedPtr->GetSBMSID());
-			if(SelectedPtr->GetBusy())
-				m_CommandPanel->Disable();
-			else
-				m_CommandPanel->Enable();
+			m_CommandPanel->SetSelectedPtr(SelectedPtr);
+			m_CommandPanel->Set();
 		}
 
 		double vm[4];

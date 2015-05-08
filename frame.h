@@ -13,6 +13,8 @@
 class CMyIcon;
 class CMyFrame: public wxDialog
 {
+	int m_FrameWidth;
+	int	m_FrameHeight;
 	CMapPlugin *m_DLL;	
 	CSymbol *SelectedPtr;
 	wxPanel *m_Panel;
@@ -21,7 +23,8 @@ class CMyFrame: public wxDialog
 	CCommandPanel *m_CommandPanel;
 	CSymbolPanel *m_SymbolPanel;
 	wxNotebook *m_Notebook;
-		
+	
+
 	wxButton *ButtonClose;
 	//wxPanel *PanelIcon;
 	//CMyIcon *MarkerIcon;
@@ -29,6 +32,8 @@ class CMyFrame: public wxDialog
 	int ParentX, ParentY;
 	wxWindow *_ParentPtr;
 
+	void WriteConfig();
+	void ReadConfig();
 	wxPanel *GetPage1(wxWindow *parent);
 	wxPanel *GetPage2(wxWindow *parent);
 	void OnCloseButton(wxCommandEvent &event);

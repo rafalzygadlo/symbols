@@ -28,8 +28,7 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 	m_PowerOfLightValue = 1;
 	m_ForcedOffValue = false;
 	m_SeasonControlValue = false;
-	m_SBMSID = 0;
-	
+		
 	SetSizer(m_Sizer);
 	SetGui();
 }
@@ -114,10 +113,12 @@ void CCommandPanel::OnButtonOk(wxCommandEvent &event)
 void CCommandPanel::SetCommand(int id)
 {
 	wxString sql;
+	int SBMSID = m_SelectedPtr->GetSBMSID();
+	int id_base_station = m_SelectedPtr->GetBaseStationId();
 	switch(id)
 	{
 		//case COMMAND_DRIVE_CURRENT:	SetDriveCurrent(m_SBMSID,m_DriveCurrentValue);
-		case COMMAND_FORCED_OFF:	SetCommandForcedOff(m_SBMSID,m_ForcedOffValue); break;
+		case COMMAND_FORCED_OFF:	SetCommandForcedOff(SBMSID,id_base_station,m_ForcedOffValue); break;
 		//case COMMAND_FLASH_CODE:	SetFlashCode(m_IdSBMS,m_FlashCode
 	
 
@@ -173,14 +174,60 @@ wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 
 }
 
-void CCommandPanel::SetSBMSID(int id)
+void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
 {
-	m_SBMSID = id;
+	m_SelectedPtr = ptr;
+}
+
+void CCommandPanel::Set()
+{
+	if(m_SelectedPtr->GetSBMSID() == 0)
+	{
+		Disable();
+		SetNoSBMS(true);
+		return;
+	}
+
+	SetNoSBMS(false);
+	
+	if(m_SelectedPtr->GetBusy())
+	{
+		Disable();
+		SetBusy(true);
+
+	}else{
+
+		Enable();
+		SetBusy(false);
+	}
+}
+
+void CCommandPanel::SetNoSBMS(bool v)
+{
+	if(v)
+		m_InfoText->SetLabel(GetMsg(MSG_NO_SBMS));
+	else
+		m_InfoText->SetLabel(wxEmptyString);
+	
+	Refresh(false);
+}
+
+
+void CCommandPanel::SetBusy(bool v)
+{
+	if(v)
+		m_InfoText->SetLabel(GetMsg(MSG_BUSY));
+	else
+		m_InfoText->SetLabel(wxEmptyString);
+	
+	Refresh(false);
 }
 
 void CCommandPanel::SetGui()
 {
-	
+	m_InfoText = new wxStaticText(this,wxID_ANY,wxEmptyString);
+	m_Sizer->Add(m_InfoText,0,wxALL,2);
+
 	//serwisowe wy³¹czenie
 	m_ForcedOff = new wxCheckBox(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF));
 	m_Sizer->Add(m_ForcedOff,0,wxALL,2);
@@ -216,8 +263,7 @@ void CCommandPanel::SetGui()
 	FlexSizer->Add(m_PowerOfLight,0,wxALL|wxEXPAND,2);
 	m_PowerOfLight->SetMin(POWER_OF_LIGHT_MIN);
 	m_PowerOfLight->SetMax(POWER_OF_LIGHT_MAX);
-
-	
+		
 
 	//czu³oœæ fotorezystora
 	

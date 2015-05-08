@@ -108,6 +108,7 @@ const wchar_t *nvLanguage[100][2] =
 	{L"Digital Value",L"Digital Value"},
 	{L"Input Volt",L"Input Volt"},
 	{L"Analog Value",L"Analog Value"},
+	{L"Busy",L"Zajêty"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -582,17 +583,26 @@ bool db_check_right(const char *module, const char *action, int uid)
 	// czy wbudowany user
 	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE built_in = '1' AND id = '%d'"),TABLE_USER,uid);
 	if(!my_query(db,query))
+	{
+		DBClose(db);	
 		return false;
+	}
 
 	void *result = db_result(db);
 	int count = db_num_rows(result);
 	db_free_result(result);
 	if(count == 1)
+	{
+		DBClose(db);
 		return true;
+	}
 
 	query = wxString::Format(_("SELECT * FROM `%s` WHERE name = '%s_%s'"),TABLE_RIGHT,module,action);
 	if(!my_query(db,query))
+	{
+		DBClose(db);
 		return false;
+	}
 
 	result = db_result(db);
 	count = db_num_rows(result);
@@ -602,6 +612,7 @@ bool db_check_right(const char *module, const char *action, int uid)
 		db_free_result(result);
 		wxString query = wxString::Format(_("INSERT INTO `%s` SET name = '%s_%s'"),TABLE_RIGHT,module,action);
 		my_query(db,query);
+		DBClose(db);
 		return false;
 		// nie ma rekordu z uprawnieniem
 	}
@@ -611,7 +622,10 @@ bool db_check_right(const char *module, const char *action, int uid)
 	db_free_result(result);
 	
 	if(!my_query(db,query))
+	{
+		DBClose(db);
 		return false;
+	}
 
 	result = db_result(db);
 	count = db_num_rows(result);
@@ -831,20 +845,36 @@ wxString GetOnOff(int v)
 }
 
 //COMMANDS . . . . . . . . . . . . . . . .
-void SetDBCommand(int id_sbms,wxString cmd)
+void SetDBCommand(int SBMSID,int id_base_station, wxString cmd)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',command='%s'"),TABLE_COMMAND,id_sbms,cmd.wc_str());
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',command='%s'"),TABLE_COMMAND,SBMSID,id_base_station,cmd.wc_str());
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);
 }
 
-void SetCommandForcedOff(int id_sbms, bool off)
+void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
 {
 	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
-	wxString _cmd = wxString::Format(_(cmd),id_sbms,off);
-	SetDBCommand(id_sbms,_cmd);	
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
+	SetDBCommand(SBMSID,id_base_station,_cmd);	
 }
+
+wxString GetNvDateTime(nvtime_t v)
+{
+	return wxString::Format(_("%d-%02d-%02d %02d:%02d:%02d"),v.Y,v.M,v.D,v.h,v.m,v.s);
+}
+
+wxString GetNvDate(nvtime_t v)
+{
+	return wxString::Format(_("%d-%02d-%02d"),v.Y,v.M,v.D);
+}
+
+wxString GetNvTime(nvtime_t v)
+{
+	return wxString::Format(_("%02d:%02d:%02d"),v.h,v.m,v.s);
+}
+
 
 #if 0
 void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)

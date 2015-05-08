@@ -2,6 +2,7 @@
 #define __TOOLS_H
 
 #include <wx/wx.h>
+#include "nvtime.h"
 
 wxMutex *GetMutex();
 void FreeMutex();
@@ -46,7 +47,10 @@ double GetMilesPerDegree(double x, double y);
 void SetDBCommand(wxString cmd);
 const char *GetCommand(int id);
 wxString GetOnOff(int v);
+wxString GetNvDateTime(nvtime_t v);
+wxString GetNvDate(nvtime_t v);
+wxString GetNvTime(nvtime_t v);
 //COMMANDS
-void SetCommandForcedOff(int id_sbms, bool off);
+void SetCommandForcedOff(int SBMSID, int id_base_station, bool off);
 #endif
 

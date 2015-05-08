@@ -221,7 +221,10 @@ void CMapPlugin::Read()
 		
     char **row = NULL;
 	if(result == NULL)
+	{
+		DBClose(db);
 		return;
+	}
 		
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -325,7 +328,7 @@ void CMapPlugin::Run(void *Params)
 	m_DB = DBConnect();
 	if(m_DB == NULL)
 	{
-		wxString str(db_error(m_DB));
+		wxString str(db_error(m_DB),wxConvUTF8);
 		wxMessageBox(str);
 		return;
 	}	

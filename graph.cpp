@@ -310,7 +310,7 @@ void CGraph::RenderTitle()
 	glPopMatrix();
 	
 }
-
+#if 0
 void CGraph::RenderCube()
 {
 	glColor3f(1,1,1);
@@ -357,7 +357,7 @@ void CGraph::RenderCube()
 
     //CheckGLError();
 }
-
+#endif
 //{
 
 	//glColor3f(0.0f,1.0f,0.0f);

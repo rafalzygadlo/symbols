@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include <wx/hyperlink.h>
 #include "conf.h"
+#include "symbol.h"
 
 class CCommandPanel: public wxPanel
 {
@@ -15,9 +16,10 @@ class CCommandPanel: public wxPanel
 	wxCheckBox *m_ForcedOff;
 	wxCheckBox *m_SeasonControl;
 	wxPanel *m_SeasonControlPanel;
+	wxStaticText *m_InfoText;
 	wxButton *m_ButtonOk;
-	int m_SBMSID;
-		
+
+	CSymbol *m_SelectedPtr;
 	//values
 	int m_DriveCurrentValue;
 	int m_PowerOfLightValue;
@@ -27,7 +29,7 @@ class CCommandPanel: public wxPanel
 	void OnDriveCurrent(wxCommandEvent &event);
 	void OnPowerOfLight(wxCommandEvent &event);
 	void OnForcedOff(wxCommandEvent &event);
-	void  OnSeasonControl(wxCommandEvent &event);
+	void OnSeasonControl(wxCommandEvent &event);
 	
 	void OnButtonOk(wxCommandEvent &event);
 	void SetButtonState();
@@ -35,13 +37,16 @@ class CCommandPanel: public wxPanel
 	wxPanel *SeasonControlPanel(wxPanel *parent);
 	void SetCommand(int id);
 	void SetGui();
+	void SetBusy(bool v);
 
 public:
 
 	CCommandPanel(wxWindow *parent);
 	~CCommandPanel();
 	void ButtonDisable();
-	void SetSBMSID(int id);
+	void SetSelectedPtr(CSymbol *ptr);
+	void SetNoSBMS(bool v);
+	void Set();
 			
 
 	DECLARE_EVENT_TABLE();

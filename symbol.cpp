@@ -8,6 +8,7 @@
 #include "navidrawer.h"
 #include "geometrytools.h"
 #include "ais.h"
+#include "nvtime.h"
 
 CSymbol::CSymbol(CNaviBroker *broker)
 {
@@ -74,7 +75,10 @@ void CSymbol::Read()
 
     char **row = NULL;
 	if(result == NULL)
+	{
+		DBClose(db);
 		return;
+	}
 
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -231,13 +235,16 @@ bool  CSymbol::CheckCommand()
 	if(db == NULL)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_COMMAND,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
 	void *result = db_result(db);
 	
     char **row = NULL;
 	if(result == NULL)
+	{
+		DBClose(db);	
 		return false;
+	}
 	
 	m_Busy = false;
 	while(row = (char**)db_fetch_row(result))
@@ -279,7 +286,10 @@ bool CSymbol::CheckAlert()
 	
     char **row = NULL;
 	if(result == NULL)
+	{
+		DBClose(db);
 		return false;
+	}
 	
 	m_Alert = false;
 	while(row = (char**)db_fetch_row(result))
@@ -566,6 +576,11 @@ int CSymbol::GetSBMSID()
 	return m_SBMSID;
 }
 
+int CSymbol::GetBaseStationId()
+{
+	return m_IdBaseStation;
+}
+
 double CSymbol::GetLon()
 {
 	return m_Lon;
@@ -798,6 +813,12 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_STANDARD_REPORT_DIGITAL_VALUE]));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_STANDARD_REPORT_INPUT_VOLT]));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_STANDARD_REPORT_ANALOG_VALUE]));
+
+		nvtime_t dt;
+		nvdatetime(atoi(row[FI_STANDARD_REPORT_DATE_TIME_STAMP]),&dt);
+		
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_VALUE),GetNvDateTime(dt)));
+		
 
 		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
 		str.Append(_("</table>"));

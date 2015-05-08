@@ -21,6 +21,12 @@
 #define KEY_DB_PORT	"db_port"
 #define KEY_DB_NAME	"db_name"
 #define KEY_DB_PASSWORD	"db_password"
+#define KEY_COLUMN_0_WIDTH "column_width_0"
+#define KEY_COLUMN_1_WIDTH "column_width_1"
+#define KEY_COLUMN_2_WIDTH "column_width_2"
+#define KEY_FRAME_WIDTH "frame_width"
+#define KEY_FRAME_HEIGHT "frame_height"
+
 #define DEFAULT_FONT "arial.ttf"
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
@@ -36,9 +42,6 @@
 #define COLUM_0_WIDTH	120
 #define COLUM_1_WIDTH	40
 #define COLUM_2_WIDTH	40
-#define KEY_COLUMN_0_WIDTH "column_width_0"
-#define KEY_COLUMN_1_WIDTH "column_width_1"
-#define KEY_COLUMN_2_WIDTH "column_width_2"
 #define POWER_OF_LIGHT_MIN 1
 #define POWER_OF_LIGHT_MAX 100
 #define DRIVE_CURRENT_MIN 1
@@ -140,6 +143,7 @@
 #define MSG_DIGITAL_VALUE			88
 #define MSG_INPUT_VOLT				89
 #define MSG_ANALOG_VALUE			90
+#define MSG_BUSY					91
 
 
 #define HTML_ANCHOR_LAST_REPORT	0

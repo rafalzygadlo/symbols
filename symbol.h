@@ -82,6 +82,7 @@ public:
 	void SetLatMap(double v);
 	void SetIdSBMS(int v);
 	void SetSBMSID(int v);
+	//void SetBaseStationId();
 	void SetNumber(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
@@ -89,6 +90,7 @@ public:
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
+	int GetBaseStationId();
 	double GetLon();
 	double GetLat();
 	double GetLonMap();
