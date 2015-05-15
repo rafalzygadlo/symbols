@@ -29,6 +29,7 @@ class CListCtrl: public wxListCtrl
 	wxMenu *Menu(int id, const char *module);
 	wxMenu *MenuSymbol(int id, const char *module);
 	wxMenu *MenuSymbolItem(int id, const char *module);
+	wxMenu *MenuBaseStation(int id, const char *module);
 
 	void Sort();
 	void NewUser();

@@ -28,6 +28,9 @@
 #define KEY_FRAME_HEIGHT "frame_height"
 
 #define DEFAULT_FONT "arial.ttf"
+
+#define DEFAULT_FRAME_HEIGHT 400
+#define DEFAULT_FRAME_WIDTH	 280
 #define RECT_WIDTH 32
 #define RECT_HEIGHT 32
 #define INFO_WIDTH 128
@@ -144,6 +147,9 @@
 #define MSG_INPUT_VOLT				89
 #define MSG_ANALOG_VALUE			90
 #define MSG_BUSY					91
+#define MSG_HID						92
+#define MSG_IP						93
+#define MSG_GRAPH					94
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -311,20 +317,18 @@
 #define FI_SYMBOL_ID_AREA			1
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
-#define FI_SYMBOL_ID_BASE_STATION	4
-#define FI_SYMBOL_ID_SBMS			5
-#define FI_SYMBOL_NUMBER			6
-#define FI_SYMBOL_LON				7
-#define FI_SYMBOL_LAT				8
-#define FI_SYMBOL_ON_POSITION		9
-#define FI_SYMBOL_IN_MONITORING		10
-#define FI_SYMBOL_NAME				11
-#define FI_SYMBOL_INFO				12
+#define FI_SYMBOL_ID_SBMS			4
+#define FI_SYMBOL_NUMBER			5
+#define FI_SYMBOL_LON				6
+#define FI_SYMBOL_LAT				7
+#define FI_SYMBOL_ON_POSITION		8
+#define FI_SYMBOL_IN_MONITORING		9
+#define FI_SYMBOL_NAME				10
+#define FI_SYMBOL_INFO				11
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
-#define FN_SYMBOL_ID_BASE_STATION	"id_base_station"
 #define FN_SYMBOL_ID_SBMS			"id_sbms"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
@@ -451,16 +455,15 @@
 
 // pola tabeli BASE_STATAION
 #define FI_BASE_STATION_ID					0
-#define FI_BASE_STATION_ID_COMMUNICATION	1
+#define FI_BASE_STATION_HID					1
 #define FI_BASE_STATION_NAME				2
-#define FI_BASE_STATION_HOST				3
-#define FI_BASE_STATION_PORT				4
-#define FI_BASE_STATION_INFO				5
+#define FI_BASE_STATION_IP					3
+#define FI_BASE_STATION_INFO				4
+
 #define FN_BASE_STATION_ID					"id"
-#define FN_BASE_STATION_ID_COMMUNICATION	"id_communication"
+#define FN_BASE_STATION_HID					"hid"
 #define FN_BASE_STATION_NAME				"name"
-#define FN_BASE_STATION_HOST				"host"
-#define FN_BASE_STATION_PORT				"port"
+#define FN_BASE_STATION_IP					"ip"
 #define FN_BASE_STATION_INFO				"info"
 
 //pola tabeli COMMAND
@@ -555,13 +558,13 @@
 // . . . . . . . . . . . . . . . . . . . .
 
 //typy komunikacji
-#define COMMUNICATION_RADIO 1
-#define COMMUNICATION_AIS	2
-#define COMMUNICATION_GPRS	3
+//#define COMMUNICATION_RADIO 1
+//#define COMMUNICATION_AIS	2
+//#define COMMUNICATION_GPRS	3
 
 #define RESTRICTED_AREA_RADIUS 100 //m ?
 
-#define PAGE_MANAGEMENT 1	// index strony notebook management panel
+//#define PAGE_MANAGEMENT 1	// index strony notebook management panel
 
 /*
 typedef struct Symbol

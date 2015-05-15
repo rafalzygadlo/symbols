@@ -40,8 +40,8 @@ SHeader Header[] =
 	{CONTROL_SYMBOL_GROUP,100, {FI_SYMBOL_GROUP_INFO  , FN_SYMBOL_GROUP_INFO, MSG_INFO} },
 	
 	{CONTROL_BASE_STATION,250, {FI_BASE_STATION_NAME  , FN_BASE_STATION_NAME, MSG_NAME} },
-	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_HOST  , FN_BASE_STATION_HOST, MSG_HOST} },
-	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_PORT  , FN_BASE_STATION_PORT, MSG_PORT} },
+	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_HID  , FN_BASE_STATION_HID, MSG_HID} },
+	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_IP  , FN_BASE_STATION_IP, MSG_IP} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_INFO  , FN_BASE_STATION_INFO, MSG_INFO } },
 
 	{CONTROL_CHARACTERISTIC,250, {FI_CHARACTERISTIC_NAME  , FN_CHARACTERISTIC_NAME, MSG_NAME} },
@@ -424,7 +424,7 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	Panel->SetSizer(Sizer);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
 			
-	Sizer->Add(GetSymbolFilterPanel(Panel),0,wxALL|wxEXPAND,0);
+	//Sizer->Add(GetSymbolFilterPanel(Panel),0,wxALL|wxEXPAND,0);
 	
 	m_PicturePanel = new CPicturePanel(m_DB, Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
@@ -809,10 +809,6 @@ void CDialogPanel::New()
 			case CONTROL_SYMBOL:
 				NewSymbol(ptr);
 			break;
-			case CONTROL_BASE_STATION:
-				sql = wxString::Format(_("INSERT INTO %s SET name='%s',host='%s',port='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetHost(),ptr->GetPort(),ptr->GetInfo());
-				query = true;
-			break;
 			case CONTROL_ITEM_TYPE:
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
 				query = true;
@@ -1119,7 +1115,6 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetSeaway(Convert(row[FI_SYMBOL_ID_SEAWAY]));
 	ptr->SetArea(Convert(row[FI_SYMBOL_ID_AREA]));
 	ptr->SetSymbolType(Convert(row[FI_SYMBOL_ID_SYMBOL_TYPE]));
-	ptr->SetBaseStation(Convert(row[FI_SYMBOL_ID_BASE_STATION]));
 	ptr->SetLon(strtod(row[FI_SYMBOL_LON],NULL));
 	ptr->SetLat(strtod(row[FI_SYMBOL_LAT],NULL));
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
@@ -1138,8 +1133,8 @@ void CDialogPanel::EditSymbol(int id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',id_base_station='%d', number='%s',lon='%3.14f', lat='%3.14f',on_position='%d',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(),ptr->GetBaseStationId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetOnPosition(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',on_position='%d',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
+			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetOnPosition(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		
 		//light
@@ -1288,17 +1283,15 @@ void CDialogPanel::EditBaseStation(int id)
 	void *result = db_result(m_DB);
 	char **row = (char**)db_fetch_row(result);
 	
-	ptr->SetName(Convert(row[FI_NAME]));
+	ptr->SetName(Convert(row[FI_BASE_STATION_NAME]));
 	ptr->SetInfo(Convert(row[FI_BASE_STATION_INFO]));
-	ptr->SetHost(Convert(row[FI_BASE_STATION_HOST]));
-	ptr->SetPort(Convert(row[FI_BASE_STATION_PORT]));
 	db_free_result(result);	
 	
 	ptr->Create();	
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', host='%s', port='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetHost(),ptr->GetPort(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		Clear();
 		Read();

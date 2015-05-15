@@ -3,21 +3,23 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 #include "ticker.h"
-#include "FTGL/ftgl.h"
+#include "ftgl/ftgl.h"
+#include "naviarray.h"
+#include "geometryconfig.h"
 
 #define MIN_SCALE 1
 #define MAX_SCALE 1000
 
 class CGraph : public wxGLCanvas
 {
+	FTPixmapFont *m_Font;
+	CNaviArray <nvPoint3f> m_Buffer;
+	CNaviArray <nvRGBA> m_Color;
+
 	int m_Id;
-	int m_Col,m_Row;
-	bool m_Selected;
 	int m_ScreenWidth;
 	int m_ScreenHeight;
-	int m_GridX,m_GridY;
 	float m_MouseX, m_MouseY;
-	int m_MouseZoomX, m_MouseZoomY;
 	float m_MoveX,m_MoveY;
 	float m_OldMoveX,m_OldMoveY;
     float m_OldX,m_OldY;
@@ -27,8 +29,6 @@ class CGraph : public wxGLCanvas
 	float m_Arrow;
 	bool m_Rescale;
 	const wchar_t *m_Title;
-	FTPixmapFont *m_Font;
-	int m_Seconds;
 	float m_XScale,m_YScale;
 
 	float m_GraphTop;
@@ -40,7 +40,12 @@ class CGraph : public wxGLCanvas
 	float m_GridBottom;
 	float m_GridLeft;
 	float m_GridRight;
-				
+	
+	int m_Type;
+	float m_Min;
+	float m_Max;
+	
+	void Clear();
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnMouse(wxMouseEvent &event);
@@ -72,9 +77,9 @@ public:
 	
 	CGraph(wxWindow *parent);
 	~CGraph();		
-	//void SetPointsBuffer(CBuffer *ptr);
 	void SetTitle(const wchar_t *v);	
-	
+	void AddPoint(nvPoint3f v);
+
 	enum
 	{
 		ID_TIMER = 2345,

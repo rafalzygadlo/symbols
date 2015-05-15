@@ -22,7 +22,7 @@ extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
-	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER)
+	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER|wxDEFAULT_DIALOG_STYLE)
 {
 	m_SymbolPanel = NULL;
 	m_CommandPanel = NULL;
@@ -35,6 +35,8 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_INFO));
 	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
 		m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
+	
+
 
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
@@ -55,12 +57,14 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	
 	ReadConfig();
 
+	SetSize(m_FrameWidth,m_FrameHeight);
 
 	Center();
 }
 
 CMyFrame::~CMyFrame(void)
 {
+	WriteConfig();
 	delete m_SymbolPanel;
 }
 
@@ -75,8 +79,8 @@ void CMyFrame::WriteConfig()
 void CMyFrame::ReadConfig()
 {
 	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
-	FileConfig->Read(_(KEY_FRAME_WIDTH),m_FrameWidth);
-	FileConfig->Read(_(KEY_FRAME_HEIGHT),m_FrameHeight);
+	FileConfig->Read(_(KEY_FRAME_WIDTH),&m_FrameWidth,DEFAULT_FRAME_WIDTH);
+	FileConfig->Read(_(KEY_FRAME_HEIGHT),&m_FrameHeight,DEFAULT_FRAME_HEIGHT);
 	delete FileConfig;
 }
 
@@ -87,6 +91,7 @@ wxPanel *CMyFrame::GetPage1(wxWindow *parent)
 	Panel->SetSizer(Sizer);
 	m_SymbolPanel = new CSymbolPanel();
 	Sizer->Add(m_SymbolPanel->GetPage1(Panel),1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_SymbolPanel->GetPage2(Panel),0,wxALL|wxEXPAND,5);
 	return Panel;
 }
 
@@ -99,6 +104,7 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,5);
 	return Panel;
 }
+
 
 void CMyFrame::OnLon(wxCommandEvent &event)
 {

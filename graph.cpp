@@ -30,7 +30,7 @@ CGraph::CGraph(wxWindow *parent)
 	m_Font = new FTPixmapFont(GetFontPath().mb_str(wxConvUTF8).data());
 	m_Font->FaceSize(14);
 		
-	m_Selected = false;
+	//m_Selected = false;
 	m_MoveX = 0;
 	m_MoveY = 0;
 	m_Scale = 1;
@@ -41,7 +41,7 @@ CGraph::CGraph(wxWindow *parent)
 	m_ScaleFactor = 1;
 	m_Arrow = 0.0;
 	m_Rescale = false;
-	m_Title = L"";
+	m_Title = wxEmptyString;
 }
 
 CGraph::~CGraph()
@@ -189,10 +189,17 @@ void CGraph::SetScaleDown()
 	
 }
 
-//void CGraph::SetPointsBuffer(CBuffer *ptr)
-//{
-	//m_Buffer = ptr;
-//}
+void CGraph::Clear()
+{	
+	m_Buffer.Clear();
+	m_Color.Clear();
+}
+
+
+void CGraph::AddPoint(nvPoint3f v)
+{
+	m_Buffer.Append(v);
+}
 
 void CGraph::SetTitle(const wchar_t *v)
 {
@@ -285,11 +292,11 @@ void CGraph::RenderData()
 {
 	glEnable(GL_BLEND);
 	glPointSize(2);
-	//if(m_Buffer->GetLength() > 0)
-	//{
-		//RenderGeometry(GL_POINTS,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
-		//RenderGeometry(GL_LINE_STRIP,m_Buffer->GetRawVertex(),m_Buffer->GetRawColor(),m_Buffer->GetLength());
-	//}
+	if(m_Buffer.Length() > 0)
+	{
+		RenderGeometry(GL_POINTS,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());
+		RenderGeometry(GL_LINE_STRIP,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());
+	}
 	glPointSize(1);
 	glDisable(GL_BLEND);
 }	
@@ -310,62 +317,6 @@ void CGraph::RenderTitle()
 	glPopMatrix();
 	
 }
-#if 0
-void CGraph::RenderCube()
-{
-	glColor3f(1,1,1);
-	float x,y,z; 
-	//x = y = z = m_Station->GetAccuracyMax();
-	glBegin(GL_LINE_LOOP);
-        glVertex3f( x, y, z);        glVertex3f(-x, y, z);        glVertex3f(-x,-y, z);        glVertex3f( x,-y, z);
-    glEnd();
-
-	glColor3f(0,1,0);
-    glBegin(GL_LINE_LOOP);
-        glVertex3f(-x,-y,-z);        glVertex3f(-x, y,-z);        glVertex3f( x, y,-z);        glVertex3f( x,-y,-z);
-    glEnd();
-
-	glColor3f(0,0,1);
-    glBegin(GL_LINE_LOOP);
-        glVertex3f( x, y, z);        glVertex3f( x, y,-z);        glVertex3f(-x, y,-z);        glVertex3f(-x, y, z);
-    glEnd();
-
-    glBegin(GL_LINE_LOOP);
-        glVertex3f(-x,-y,-z);
-        glVertex3f( x,-y,-z);
-        glVertex3f( x,-y, z);
-        glVertex3f(-x,-y, z);
-    glEnd();
-
-	glBegin(GL_LINE_LOOP);
-        //glNormal3f( 1.0f, 0.0f, 0.0f);
-        glVertex3f( x, y, z);
-        glVertex3f( x,-y, z);
-        glVertex3f( x,-y,-z);
-        glVertex3f( x, y,-z);
-    glEnd();
-
-    glBegin(GL_LINE_LOOP);
-        glVertex3f(-x,-y,-z);
-        glVertex3f(-x,-y, z);
-        glVertex3f(-x, y, z);
-        glVertex3f(-x, y,-z);
-    glEnd();
-
-
-   // glFlush();
-
-    //CheckGLError();
-}
-#endif
-//{
-
-	//glColor3f(0.0f,1.0f,0.0f);
-	//glVertex2i(m_GridLeft,GetAccuracyMax());
-	//glVertex2i(m_GridRight,GetAccuracyMax());
-
-//}
-
 
 void CGraph::Render()
 {
@@ -379,13 +330,13 @@ void CGraph::Render()
     
 	glEnable(GL_POINT_SMOOTH);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	GetMutex()->Lock();
+	//GetMutex()->Lock();
 	
 	RenderGrid();
 	RenderData();
 	RenderTitle();
 
-	GetMutex()->Unlock();
+	//GetMutex()->Unlock();
 
     SwapBuffers();
 	
@@ -395,7 +346,7 @@ void CGraph::Render()
 
 void CGraph::SetValues()
 {
-	//float offsetX = (m_Buffer->GetMax() - m_Buffer->GetMin()) * 0.15;
+	//float offsetX = (m_Max - m_Min) * 0.15;
 	float offsetY = m_ScreenWidth * 0.15;
 
 	//m_GraphTop = m_Buffer->GetMax() + offsetX;

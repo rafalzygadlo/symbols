@@ -14,7 +14,7 @@ wxMutex *mutex = NULL;
 int GlobalLanguageID;
 int GlobalUID;
 
-const wchar_t *nvLanguage[100][2] = 
+const wchar_t *nvLanguage[][2] = 
 { 
 	//en
 	{L"Manager",L"Manager"},
@@ -109,6 +109,9 @@ const wchar_t *nvLanguage[100][2] =
 	{L"Input Volt",L"Input Volt"},
 	{L"Analog Value",L"Analog Value"},
 	{L"Busy",L"Zajêty"},
+	{L"HID",L"HID"},
+	{L"IP Address",L"Addres IP"},
+	{L"Graph",L"Wykres"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -137,15 +140,15 @@ const wxChar *nvDistanceN[2][3] =
 
 const char *nvCommand[10] =
 {
- 	{"FlashCode(%d)\r\n"},
-	{"DriveCurrent(%d)\r\n"},
-	{"PowerOfLight(%d)\r\n"},
-	{"ForcedOff(%d,%d)\r\n"},
-	{"SeasonControl(%d)\r\n"},
-	{"PhotoCellResistance(%d)\r\n"},
-	{"RipleDelay(%d)\r\n"},
-	{"PowerOff(%d)\r\n"},
-    {"GetTime()\r\n"},
+ 	{"FlashCode(%d)"},
+	{"DriveCurrent(%d)"},
+	{"PowerOfLight(%d)"},
+	{"AM6ForceOff(%d,%d)"},
+	{"SeasonControl(%d)"},
+	{"PhotoCellResistance(%d)"},
+	{"RipleDelay(%d)"},
+	{"PowerOff(%d)"},
+    {"GetTime()"},
 		
 };
 

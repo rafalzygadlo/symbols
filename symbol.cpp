@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/notebook.h>
 #include "symbol.h"
 #include "conf.h"
 #include "tools.h"
@@ -79,16 +80,15 @@ void CSymbol::Read()
 		DBClose(db);
 		return;
 	}
-
+		
 	while(row = (char**)db_fetch_row(result))
 	{
 		m_SBMSID = atoi(row[FI_SBMS_SMBSID]);
 		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
-		//fprintf(stderr,"%d %d\n",m_SBMSID,m_IdBaseStation);
-
 	}
 
 	db_free_result(result);
+		
 	DBClose(db);
 	m_ReadTick = 0;
 	
@@ -170,7 +170,7 @@ void CSymbol::OnTick()
 	
 	CheckCollision();
 
-	//if(result)
+	if(result)
 		m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
@@ -611,9 +611,30 @@ wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY);
 	
-	m_PicturePanel = new CPicturePanel(NULL,Panel);
-	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,2);
-		
+	wxNotebook *m_Notebook = new wxNotebook(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME|wxNB_BOTTOM);
+	Sizer->Add(m_Notebook,0,wxALL|wxEXPAND,0);
+	m_PicturePanel = new CPicturePanel(NULL,m_Notebook);
+	m_Notebook->AddPage(m_PicturePanel,GetMsg(MSG_PICTURE));
+	
+	m_Graph = new CGraph(m_Notebook);
+	Sizer->Add(m_Graph,0,wxALL|wxEXPAND,5);
+	m_Notebook->AddPage(m_Graph,GetMsg(MSG_GRAPH));
+
+	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	//Sizer->Add(hSizer);
+
+	
+	//hSizer->Add(m_PicturePanel,0,wxALL,0);
+	
+	//wxBoxSizer *vSizer = new wxBoxSizer(wxVERTICAL);
+	//hSizer->Add(vSizer);
+
+	//wxButton *b = new wxButton(Panel,wxID_ANY,GetMsg(MSG_OK));
+	//vSizer->Add(b,0,wxALL|wxALIGN_RIGHT,3);
+
+	//wxButton *b1 = new wxButton(Panel,wxID_ANY,GetMsg(MSG_OK));
+	//vSizer->Add(b1,0,wxALL,3);
+
 	m_Html = new wxHtmlWindow(Panel,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
@@ -628,6 +649,7 @@ wxPanel *CSymbolPanel::GetPage2(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
 	
 	Panel->SetSizer(Sizer);
 
@@ -831,7 +853,7 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 
 void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 {
-
+	m_PicturePanel->Clear();
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
 	my_query(db,sql);
 	char **row = NULL;

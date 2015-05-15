@@ -477,7 +477,7 @@ void CGrid::Render()
 	
 	glEnable(GL_POINT_SMOOTH);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	GetMutex()->Lock();
+	//GetMutex()->Lock();
 	RenderGrid();
 	RenderGridText();
 	RenderAccuracyCircle();
@@ -487,7 +487,7 @@ void CGrid::Render()
 	RenderReferencePoint();
 	RenderData();
 	RenderLastPoint();
-	GetMutex()->Unlock();
+	//GetMutex()->Unlock();
 	
     SwapBuffers();
 	glDisable(GL_BLEND);

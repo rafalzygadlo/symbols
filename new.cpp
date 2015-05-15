@@ -233,11 +233,11 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 		
-	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
-	FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID,FI_BASE_STATION_ID,FI_BASE_STATION_NAME);
+	//wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
+	//FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	//m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID,FI_BASE_STATION_ID,FI_BASE_STATION_NAME);
 	//m_BaseStationCombo->SetSelection(0);
-	FlexGridSizer->Add(m_BaseStationCombo,0,wxALL|wxEXPAND,5);
+	//FlexGridSizer->Add(m_BaseStationCombo,0,wxALL|wxEXPAND,5);
 
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -503,23 +503,6 @@ void CNew::EditBaseStationPanel()
 	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
 	m_TextName->SetValidator(m_TextValidator);
 	
-	wxStaticText *LabelHost = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_HOST));
-	FlexGridSizer->Add(LabelHost,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	
-	m_TextHost = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextHost->SetValue(m_Host);
-	FlexGridSizer->Add(m_TextHost,0,wxALL|wxEXPAND,5);
-	m_TextHost->SetValidator(m_TextValidator);
-
-	wxStaticText *LabelPort = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_PORT));
-	FlexGridSizer->Add(LabelPort,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	
-	m_TextPort = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
-	m_TextPort->SetValue(m_Port);
-	FlexGridSizer->Add(m_TextPort,0,wxALL,5);
-	m_TextHost->SetValidator(m_TextValidator);
-	
-	
 	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
 	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
@@ -527,7 +510,6 @@ void CNew::EditBaseStationPanel()
 	m_TextInfo->SetValidator(m_TextValidator);
 	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	
-
 	wxPanel *Panel1 = new wxPanel(this);
 	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -985,11 +967,6 @@ void CNew::SetPort(wxString v)
 	m_Port = v;
 }
 
-void CNew::SetBaseStation(wxString id)
-{
-	m_BaseStationID = id;
-}
-
 void CNew::SetTime(wxString v)
 {
 	m_Time = v;
@@ -1099,21 +1076,6 @@ bool CNew::GetOnPosition()
 bool CNew::GetInMonitoring()
 {
 	return m_CheckInMonitoring->GetValue();
-}
-
-wxString CNew::GetHost()
-{
-	return m_TextHost->GetValue();
-}
-
-wxString CNew::GetPort()
-{
-	return m_TextPort->GetValue();
-}
-
-int CNew::GetBaseStationId()
-{
-	return (int)m_BaseStationCombo->GetClientData(m_BaseStationCombo->GetSelection());
 }
 
 wxString CNew::GetCode()

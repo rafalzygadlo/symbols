@@ -9,6 +9,7 @@
 #include "dll.h"
 #include "command.h"
 #include <vector>
+#include "graph.h"
 
 class CMyIcon;
 class CMyFrame: public wxDialog
@@ -22,6 +23,7 @@ class CMyFrame: public wxDialog
 	wxButton *m_ButtonCommand;
 	CCommandPanel *m_CommandPanel;
 	CSymbolPanel *m_SymbolPanel;
+	CGraph *m_Graph;
 	wxNotebook *m_Notebook;
 	
 

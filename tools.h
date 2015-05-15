@@ -4,7 +4,7 @@
 #include <wx/wx.h>
 #include "nvtime.h"
 
-wxMutex *GetMutex();
+//wxMutex *GetMutex();
 void FreeMutex();
 const wchar_t *GetMsg(int id);
 void SetLangId(int id);

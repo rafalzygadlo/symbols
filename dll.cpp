@@ -516,7 +516,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_ITEMS),this,MenuItems);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHARACTERISTIC),this, MenuCharacteristic );
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	
 }	

@@ -3,7 +3,6 @@
 #include "display.h"
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
-//#include "AISCoder.h"
 
 BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 //	EVT_HYPERLINK(ID_REPORT,CDisplayPlugin::OnReport)
@@ -87,8 +86,8 @@ void CDisplayPlugin::ShowControls()
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_SymbolPanel = new CSymbolPanel();
 	m_Notebook->AddPage(m_SymbolPanel->GetPage1(m_Notebook),GetMsg(MSG_INFO));
-	m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
-	m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
+	//m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
+	//m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_OPTIONS));
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 	SetSizer(Main);

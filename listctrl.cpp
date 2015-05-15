@@ -179,16 +179,16 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 	switch(m_ControlType)
 	{	
-		case CONTROL_SYMBOL:		_Menu = MenuSymbol(m_SelectedItem,MODULE_SYMBOL);		break;
-		//case CONTROL_SYMBOL_ITEM:	_Menu = MenuSymbolItem(m_SelectedItem,MODULE_SYMBOL);	break;
-		case CONTROL_ITEM:			_Menu = Menu(m_SelectedItem,MODULE_ITEM);				break;
-		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);				break;
-		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);				break;
-		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);		break;
-		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);			break;
-		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);		break;
-		case CONTROL_BASE_STATION:	_Menu = Menu(m_SelectedItem,MODULE_BASE_STATION);		break;
-		case CONTROL_CHARACTERISTIC:_Menu = Menu(m_SelectedItem,MODULE_CHARACTERISTIC);		break;
+		case CONTROL_SYMBOL:		_Menu = MenuSymbol(m_SelectedItem,MODULE_SYMBOL);				break;
+		//case CONTROL_SYMBOL_ITEM:	_Menu = MenuSymbolItem(m_SelectedItem,MODULE_SYMBOL);			break;
+		case CONTROL_ITEM:			_Menu = Menu(m_SelectedItem,MODULE_ITEM);						break;
+		case CONTROL_AREA:			_Menu = Menu(m_SelectedItem,MODULE_AREA);						break;
+		case CONTROL_SEAWAY:		_Menu = Menu(m_SelectedItem,MODULE_SEAWAY);						break;
+		case CONTROL_SYMBOL_TYPE:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_TYPE);				break;
+		case CONTROL_PICTURE:		_Menu = Menu(m_SelectedItem,MODULE_PICTURE);					break;
+		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);				break;
+		case CONTROL_BASE_STATION:	_Menu = MenuBaseStation(m_SelectedItem,MODULE_BASE_STATION);	break;
+		case CONTROL_CHARACTERISTIC:_Menu = Menu(m_SelectedItem,MODULE_CHARACTERISTIC);				break;
 	}
 	
 	if(_Menu)
@@ -223,6 +223,26 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 	
 }
 
+wxMenu *CListCtrl::MenuBaseStation(int id, const char *module)
+{
+	wxMenu *Menu = new wxMenu();
+				
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+	}
+		
+	return Menu;
+	
+}
+
 wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 {
 	wxMenu *Menu = new wxMenu();
@@ -240,11 +260,12 @@ wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
 		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
-		
+#if 0		
 		Menu->AppendSeparator();
 		Menu->Append(ID_PROPERTIES,GetMsg(MSG_PROPERTIES));
 		if(!db_check_right(module,ACTION_PROPERTIES,_GetUID()))
 			Menu->FindItem(ID_PROPERTIES)->Enable(false);
+#endif
 	}
 		
 	return Menu;
@@ -511,5 +532,5 @@ int CListCtrl::OnGetItemColumnImage(long item, long column) const
 
 int CListCtrl::OnGetItemImage(long item) const
 {
-	return 4;
+	return -1;
 }

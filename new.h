@@ -30,7 +30,7 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextTime;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
-	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo,*m_BaseStationCombo;
+	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
 	wxCheckBox *m_CheckOnPosition;
 	wxCheckBox *m_CheckInMonitoring;
 
@@ -44,7 +44,7 @@ class CNew: public wxDialog
 	wxString m_Number;
 	double m_Lon,m_Lat;
 	wxString m_Name,m_Info,m_Type,m_Host,m_Port;
-	wxString m_SeawayID,m_AreaID,m_SymbolTypeID,m_BaseStationID;
+	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
 	int m_PictureId;
 	bool m_OnPosition,m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
@@ -101,14 +101,12 @@ public:
 	wxString GetName();
 	wxString GetInfo();
 	wxString GetType();
-	wxString GetHost();
-	wxString GetPort();
 	int GetItemType();
 	wxImage GetPicture();
 	int GetSeawayId();
 	int GetAreaId();
 	int GetSymbolTypeId();
-	int GetBaseStationId();
+	//int GetBaseStationId();
 	double GetLon();
 	double GetLat();
 	wxString GetNumber();
@@ -144,7 +142,6 @@ public:
 	void SetCharacteristic(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
-	void SetBaseStation(wxString id);
 	void SetCode(wxString v);
 	void SetIala(wxString v);
 	void SetTime(wxString v);

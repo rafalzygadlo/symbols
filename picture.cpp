@@ -18,15 +18,15 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 {
 	m_ID = -1;
 	m_DB = db;
-	//wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer *Sizer = new wxStaticBoxSizer(wxVERTICAL,this,GetMsg(MSG_PICTURE));
+	//wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 
 	//m_Info = new wxStaticText(this,wxID_ANY,wxEmptyString);
 	//Sizer->Add(m_Info,0,wxALL|wxALIGN_CENTER,1);
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
-	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,1);
+	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,0);
 	
 	if(type == PICTURE_PANEL_NEW)
 	{
@@ -169,7 +169,7 @@ void CPicturePanel::Read()
 	char **row = (char**)db_fetch_row(result);
 	
 	unsigned long *len = db_fetch_lengths(result);
-	//m_StaticPicture->ClearBackground();
+	m_StaticPicture->ClearBackground();
 	m_StaticPicture->SetBitmap(wxNullBitmap);
 
 	if(row && len)
@@ -194,7 +194,7 @@ void CPicturePanel::Read()
 				
 	}else{
 		
-		m_Info->SetLabel(GetMsg(MSG_NO_PICTURE));	
+		//m_Info->SetLabel(GetMsg(MSG_NO_PICTURE));	
 	
 	}
 	
