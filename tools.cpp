@@ -112,6 +112,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"HID",L"HID"},
 	{L"IP Address",L"Addres IP"},
 	{L"Graph",L"Wykres"},
+	{L"Min",L"Min"},
+	{L"Max",L"Max"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

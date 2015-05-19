@@ -45,7 +45,6 @@ class CGraph : public wxGLCanvas
 	float m_Min;
 	float m_Max;
 	
-	void Clear();
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnMouse(wxMouseEvent &event);
@@ -79,6 +78,11 @@ public:
 	~CGraph();		
 	void SetTitle(const wchar_t *v);	
 	void AddPoint(nvPoint3f v);
+	void AddColor(nvRGBA v);
+	void SetMin(float v);
+	void SetMax(float v);
+	void Clear();
+
 
 	enum
 	{

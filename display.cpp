@@ -221,11 +221,11 @@ void CDisplayPlugin::SignalSelect()
 		
 	if(m_Selected)
 	{	
-		m_Notebook->Show();
+		//m_Notebook->Show();
 		//m_Notebook->Enable();
 		m_SymbolPanel->SetPage1(m_Selected);
 	}else{
-		m_Notebook->Hide();
+		//m_Notebook->Hide();
 	}
 
 }

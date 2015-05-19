@@ -20,13 +20,9 @@ class CMyFrame: public wxDialog
 	CSymbol *SelectedPtr;
 	wxPanel *m_Panel;
 		
-	wxButton *m_ButtonCommand;
-	CCommandPanel *m_CommandPanel;
 	CSymbolPanel *m_SymbolPanel;
-	CGraph *m_Graph;
 	wxNotebook *m_Notebook;
 	
-
 	wxButton *ButtonClose;
 	//wxPanel *PanelIcon;
 	//CMyIcon *MarkerIcon;

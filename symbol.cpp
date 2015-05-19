@@ -611,38 +611,31 @@ wxPanel *CSymbolPanel::GetPage1(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY);
 	
-	wxNotebook *m_Notebook = new wxNotebook(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME|wxNB_BOTTOM);
-	Sizer->Add(m_Notebook,0,wxALL|wxEXPAND,0);
-	m_PicturePanel = new CPicturePanel(NULL,m_Notebook);
-	m_Notebook->AddPage(m_PicturePanel,GetMsg(MSG_PICTURE));
+	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(hSizer);
 	
-	m_Graph = new CGraph(m_Notebook);
-	Sizer->Add(m_Graph,0,wxALL|wxEXPAND,5);
-	m_Notebook->AddPage(m_Graph,GetMsg(MSG_GRAPH));
-
-	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	//Sizer->Add(hSizer);
-
+	m_PicturePanel = new CPicturePanel(NULL,Panel);
+	hSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,2);
 	
-	//hSizer->Add(m_PicturePanel,0,wxALL,0);
+	wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
+	hSizer->Add(vSizer,0,wxALL|wxEXPAND,2);
+
+		
+	m_ButtonManagement = new wxButton(Panel,wxID_ANY,GetMsg(MSG_MANAGEMENT));
+	vSizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
+	//}
 	
-	//wxBoxSizer *vSizer = new wxBoxSizer(wxVERTICAL);
-	//hSizer->Add(vSizer);
+	wxButton *b = new wxButton(Panel,wxID_ANY,GetMsg(MSG_GRAPH));
+	vSizer->Add(b,0,wxALL|wxEXPAND,2);
 
-	//wxButton *b = new wxButton(Panel,wxID_ANY,GetMsg(MSG_OK));
-	//vSizer->Add(b,0,wxALL|wxALIGN_RIGHT,3);
-
-	//wxButton *b1 = new wxButton(Panel,wxID_ANY,GetMsg(MSG_OK));
-	//vSizer->Add(b1,0,wxALL,3);
 
 	m_Html = new wxHtmlWindow(Panel,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
-	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
+	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
 
 	Panel->SetSizer(Sizer);
 
 	return Panel;
-
 }
 
 wxPanel *CSymbolPanel::GetPage2(wxWindow *parent)
@@ -676,17 +669,22 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	if(db == NULL)
 		return;
 	
-	m_IdSBMS = 0;
-	m_IdBaseStation = 0;
-	m_SBMSID = 0;
+	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+		m_ButtonManagement->Enable();
+	else
+		m_ButtonManagement->Disable();
+
+	m_IdSBMS = ptr->GetIdSBMS();
+	m_IdBaseStation = ptr->GetBaseStationId();
+	m_SBMSID = ptr->GetSBMSID();
 	m_Html->SetPage(wxEmptyString);
 
-	//SetHeader();
 	PictureInfo(db,ptr);
 	SymbolInfo(db,ptr);
 	SBMSInfo(db,m_IdSBMS);
 	BaseStationInfo(db,m_IdBaseStation);
 	SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
+	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	
 	DBClose(db);
 }
@@ -728,8 +726,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	
 		if(atoi(row[FI_SYMBOL_ON_POSITION]))
 			str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetMsg(MSG_ON_POSITION)));
-	
-		m_IdSBMS = atoi(row[FI_SYMBOL_ID_SBMS]);
+			
 		if(m_IdSBMS == 0)
 			str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
 
@@ -757,15 +754,10 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	if(row)
 	{
 		wxString str;
-		//str.Append(_("<font size=2>sbms info</font>"));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
-		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
-		m_SBMSID = atoi(row[FI_SBMS_SMBSID]);
-		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
 		str.Append(_("</table>"));
-		//str.Append(_("<hr>"));
-		
+			
 		m_Html->AppendToPage(str);
 	}
 
@@ -788,13 +780,9 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 	if(row)
 	{
 		wxString str;
-		//str.Append(_("<font size=2>base station info</font>"));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
-		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
 		str.Append(_("</table>"));
-		//str.Append(_("<hr>"));
-		
 		m_Html->AppendToPage(str);
 	}
 
@@ -804,7 +792,7 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 
 void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 {
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE SBMSID ='%d' ORDER BY local_utc_time DESC LIMIT 0,1"),TABLE_STANDARD_REPORT,id_sbms,id_base_station);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC LIMIT 0,1"),TABLE_STANDARD_REPORT,id_sbms,id_base_station);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -874,6 +862,39 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 
 }
 
+void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
+{
+	wxString sql = wxString::Format(_("SELECT input_volt FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,id_sbms,id_base_station);
+	my_query(db,sql);
+			
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	m_Graph->Clear();
+	int count = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		nvPoint3f pt;
+		
+		pt.x = count++;
+		pt.y = atof(row[0]);
+		m_Graph->AddPoint(pt);
+		nvRGBA c;
+		c.A = 255; c.R = 0; c.G = 255; c.B = 0;
+		m_Graph->AddColor(c);
+	}
+
+
+	m_Graph->SetMin(11);
+	m_Graph->SetMax(14);
+	m_Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
+	m_Graph->Refresh();
+	db_free_result(result);
+
+}
 
 void CSymbolPanel::SetSBMS()
 {

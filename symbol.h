@@ -51,6 +51,7 @@ class CSymbol
 	int m_IdBaseStation;
 	wxString m_Number;
 	bool m_RenderRestricted;
+	
 		
 	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -61,7 +62,7 @@ class CSymbol
 	bool CheckCollision();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
-	void Blink();
+	void Blink(); 
 	void RenderSymbol();
 	void RenderLightOn();
 	void RenderBusy();
@@ -113,13 +114,15 @@ class CSymbolPanel
 	int m_IdSBMS;
 	int m_IdBaseStation;
 	int m_SBMSID;
-	
+	wxButton *m_ButtonManagement;
+
 	void SetHeader();
 	void SymbolInfo(void *db,CSymbol *ptr);
 	void SBMSInfo(void *db,int id_sbms);
 	void PictureInfo(void *db,CSymbol *ptr);
 	void BaseStationInfo(void *db, int id_base_station);
 	void SBMSLastRaport(void *db, int id_sbms, int id_base_station);
+	void SetGraph(void *db, int id_sbms, int id_base_station);
 
 public:
 
@@ -130,9 +133,7 @@ public:
 	void SetPage1(CSymbol *ptr);
 	void SetPageEmpty();
 	void SetSBMS();
-
 	
-
 };
 
 #endif

@@ -150,7 +150,8 @@
 #define MSG_HID						92
 #define MSG_IP						93
 #define MSG_GRAPH					94
-
+#define MSG_MIN						95
+#define MSG_MAX						96
 
 #define HTML_ANCHOR_LAST_REPORT	0
 

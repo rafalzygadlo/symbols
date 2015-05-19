@@ -25,7 +25,6 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER|wxDEFAULT_DIALOG_STYLE)
 {
 	m_SymbolPanel = NULL;
-	m_CommandPanel = NULL;
 	m_DLL = (CMapPlugin*)Parent;
 	_ParentPtr = ParentPtr;
 	
@@ -33,11 +32,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_INFO));
-	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-		m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
 	
-
-
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
 	
@@ -100,8 +95,6 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
-	m_CommandPanel = new CCommandPanel(Panel);
-	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,5);
 	return Panel;
 }
 
@@ -186,9 +179,7 @@ void CMyFrame::OnLeftClick(wxCommandEvent &event)
 }
 void CMyFrame::ShowWindow(bool show)
 {
-	if(m_CommandPanel)
-		m_CommandPanel->ButtonDisable();
-
+	
 	if(show)
 	{
 		ParentX = _ParentPtr->GetScreenPosition().x;
@@ -197,12 +188,7 @@ void CMyFrame::ShowWindow(bool show)
 		SelectedPtr = m_DLL->GetSelectedPtr();
 		if(SelectedPtr == NULL)
 			return;
-		
-		if(m_CommandPanel)
-		{
-			m_CommandPanel->SetSelectedPtr(SelectedPtr);
-			m_CommandPanel->Set();
-		}
+
 
 		double vm[4];
 		m_DLL->GetBroker()->GetVisibleMap(vm);

@@ -16,8 +16,6 @@ BEGIN_EVENT_TABLE(CGraph,wxGLCanvas)
 	EVT_KEY_DOWN(OnKeyUp)
 END_EVENT_TABLE()
 
-
-
 //int args[] = {WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE};
 CGraph::CGraph(wxWindow *parent)
 :wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
@@ -28,7 +26,7 @@ CGraph::CGraph(wxWindow *parent)
 	SetDoubleBuffered(true);
 #endif
 	m_Font = new FTPixmapFont(GetFontPath().mb_str(wxConvUTF8).data());
-	m_Font->FaceSize(14);
+	m_Font->FaceSize(10);
 		
 	//m_Selected = false;
 	m_MoveX = 0;
@@ -201,9 +199,24 @@ void CGraph::AddPoint(nvPoint3f v)
 	m_Buffer.Append(v);
 }
 
+void CGraph::AddColor(nvRGBA v)
+{
+	m_Color.Append(v);
+}
+
 void CGraph::SetTitle(const wchar_t *v)
 {
 	m_Title = v;
+}
+
+void CGraph::SetMin(float v)
+{
+	m_Min = v;
+}
+
+void CGraph::SetMax(float v)
+{
+	m_Max = v;
 }
 
 void CGraph::UpdateViewPort()
@@ -248,11 +261,11 @@ void CGraph::RenderGrid()
 	
 	glColor3f(0.3f,0.3f,0.3f);
 	glBegin(GL_LINES);
-//	for(int i = 0 ; i < m_Station->GetPointsCount(); i+=900)
-//	{	
-		//glVertex2f(i,m_GridTop); 
-		//glVertex2f(i,m_GridBottom);
-	//}
+	for(int i = m_GraphLeft ; i < m_GraphRight; i+=50)
+	{	
+		glVertex2f(i,m_GridTop); 
+		glVertex2f(i,m_GridBottom);
+	}
 
 	glColor4f(0.6f,0.6f,0.6f,1.0);
 	glBegin(GL_LINES);
@@ -281,10 +294,10 @@ void CGraph::RenderGrid()
 		//count++;
 	//}
 
-	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	//RenderText(m_GridLeft,m_GridTop,txt);
-	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	//RenderText(m_GridLeft,m_GridBottom,txt);
+	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	RenderText((-m_GraphLeft-m_MoveX)*m_XScale,m_GridTop,txt);
+	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	RenderText(m_GridLeft,m_GridBottom,txt);
 		
 }
 
@@ -314,6 +327,14 @@ void CGraph::RenderTitle()
 	float CenterX = m_ScreenWidth/2 - m_Font->Advance(m_Title)/2;
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 	RenderText(CenterX,15,m_Title);
+
+	//char txt[64];
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	//RenderText(0,15,txt);
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	//RenderText(0,m_ScreenHeight,txt);
+
+
 	glPopMatrix();
 	
 }
@@ -346,18 +367,18 @@ void CGraph::Render()
 
 void CGraph::SetValues()
 {
-	//float offsetX = (m_Max - m_Min) * 0.15;
+	float offsetX = (m_Max - m_Min) * 0.15;
 	float offsetY = m_ScreenWidth * 0.15;
 
-	//m_GraphTop = m_Buffer->GetMax() + offsetX;
-	//m_GraphBottom = m_Buffer->GetMin() - offsetX;
+	m_GraphTop = m_Max + offsetX;
+	m_GraphBottom = m_Min - offsetX;
 
-	//m_GraphLeft = -offsetY;
-	//m_GraphRight = m_Buffer->GetLength() + offsetY;
+	m_GraphLeft = -offsetY;
+	m_GraphRight = m_Buffer.Length() + offsetY;
 	
-	//m_GridTop = m_Buffer->GetMax();
-	//m_GridBottom = m_Buffer->GetMin();
-	m_GridLeft = 0;
+	m_GridTop = m_Max;
+	m_GridBottom = m_Min;
+	m_GridLeft = -offsetY;
 	//m_GridRight = m_Buffer->GetLength();
 			
 	m_XScale = m_GraphRight / m_ScreenWidth;

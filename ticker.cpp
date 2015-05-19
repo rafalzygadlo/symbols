@@ -63,7 +63,6 @@ void *CTicker::Entry()
 void CTicker::OnExit()
 {
 	_Working = false;
-	fprintf(stderr,"Thread End\n");
 }
 
 #endif
