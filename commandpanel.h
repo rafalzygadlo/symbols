@@ -1,5 +1,5 @@
-#ifndef __COMMAND_H
-#define __COMMAND_H
+#ifndef __COMMAND_PANEL_H
+#define __COMMAND_PANEL_H
 
 #include <wx/wx.h>
 #include <wx/hyperlink.h>
@@ -53,7 +53,7 @@ public:
 	
 	enum
 	{
-		ID_DRIVE_CURRENT = 4122,
+		ID_DRIVE_CURRENT = 4000,
 		ID_POWER_OF_LIGHT,
 		ID_SEASON_CONTROL,
 		ID_FORCED_OFF,

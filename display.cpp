@@ -84,8 +84,8 @@ void CDisplayPlugin::ShowControls()
 	wxBoxSizer *Main = new wxBoxSizer(wxHORIZONTAL);
 			
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
-	m_SymbolPanel = new CSymbolPanel();
-	m_Notebook->AddPage(m_SymbolPanel->GetPage1(m_Notebook),GetMsg(MSG_INFO));
+	m_SymbolPanel = new CSymbolPanel(m_Notebook);
+	m_Notebook->AddPage(m_SymbolPanel,GetMsg(MSG_INFO));
 	//m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
 	//m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_OPTIONS));
@@ -117,12 +117,12 @@ void CDisplayPlugin::OnMenuRange(wxCommandEvent &event)
 	//m_GUI = false;
 	RemoveControl(m_ControlType);
 		
-	switch(event.GetId())
-	{
+//	switch(event.GetId())
+//	{
 //		case CONTROL_SYMBOL_LIST:	GetSymbolList();	break;
 //		case CONTROL_SYMBOL:		GetAisList();		break;
 		
-	}
+//	}
 	
 	m_ControlType = event.GetId(); // ustawiamy po zbudowaniu gui
 	
@@ -130,12 +130,12 @@ void CDisplayPlugin::OnMenuRange(wxCommandEvent &event)
 
 void CDisplayPlugin::RemoveControl(int type)
 {
-	switch(type)
-	{
+//	switch(type)
+	//{
 		//case CONTROL_SYMBOL_LIST:	FreeDevicesList();	break;
 		//case CONTROL_AIS_LIST:		FreeAisList();		break;
 		//case CONTROL_AIS_MONITOR:	FreeAisMonitor();	break;
-	}
+	//}
 }
 
 

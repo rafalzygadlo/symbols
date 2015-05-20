@@ -368,7 +368,7 @@ void CGraph::Render()
 void CGraph::SetValues()
 {
 	float offsetX = (m_Max - m_Min) * 0.15;
-	float offsetY = m_ScreenWidth * 0.15;
+	float offsetY = m_ScreenWidth * 0.05;
 
 	m_GraphTop = m_Max + offsetX;
 	m_GraphBottom = m_Min - offsetX;
@@ -378,7 +378,7 @@ void CGraph::SetValues()
 	
 	m_GridTop = m_Max;
 	m_GridBottom = m_Min;
-	m_GridLeft = -offsetY;
+	m_GridLeft = 0;
 	//m_GridRight = m_Buffer->GetLength();
 			
 	m_XScale = m_GraphRight / m_ScreenWidth;

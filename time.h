@@ -34,7 +34,7 @@ public:
 	DECLARE_EVENT_TABLE();
 	enum
 	{
-		ID_DELETE = 8124,
+		ID_DELETE = 8000,
 		ID_NEW,
 		ID_EDIT,
 	};
@@ -71,7 +71,7 @@ public:
 	
 	enum
 	{
-		ID_DELETE = 8124,
+		ID_DELETE = 8000,
 		ID_NEW,
 		
 	};

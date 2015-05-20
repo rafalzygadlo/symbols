@@ -271,7 +271,7 @@ void CMapPlugin::Read()
 
 CSymbol *CMapPlugin::Exists(int id)
 {
-	for(int i = 0; i < m_SymbolList.Length(); i++)
+	for(size_t i = 0; i < m_SymbolList.Length(); i++)
 	{
 		CSymbol *ptr = m_SymbolList.Get(i);
 		if(id == ptr->GetId())

@@ -1,7 +1,7 @@
 #include <wx/dateevt.h>
 #include <wx/timectrl.h>
 #include <wx/datectrl.h>
-#include "command.h"
+#include "commandpanel.h"
 #include "conf.h"
 #include "tools.h"
 #include "db.h"

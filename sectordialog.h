@@ -47,7 +47,7 @@ public:
 
 	enum
 	{
-		ID_SECTOR_FROM = 5103,
+		ID_SECTOR_FROM = 5000,
 		ID_SECTOR_TO,
 		ID_SECTOR_COLOR,
 	};

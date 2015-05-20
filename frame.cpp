@@ -84,9 +84,8 @@ wxPanel *CMyFrame::GetPage1(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
-	m_SymbolPanel = new CSymbolPanel();
-	Sizer->Add(m_SymbolPanel->GetPage1(Panel),1,wxALL|wxEXPAND,5);
-	Sizer->Add(m_SymbolPanel->GetPage2(Panel),0,wxALL|wxEXPAND,5);
+	m_SymbolPanel = new CSymbolPanel(Panel);
+	Sizer->Add(m_SymbolPanel,1,wxALL|wxEXPAND,5);
 	return Panel;
 }
 

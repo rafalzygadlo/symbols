@@ -86,7 +86,7 @@ public:
 
 	enum
 	{
-		ID_TIMER = 2345,
+		ID_TIMER = 2000,
 	};
 		
 	DECLARE_EVENT_TABLE();

@@ -8,16 +8,12 @@
 #include "naviarray.h"
 #include "tgamem.h"
 #include "picture.h"
-#include "grid.h"
-#include "graph.h"
-#include "light.h"
 
 class CSymbol
 {
 	CTicker *m_Ticker0;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
-	CGrid *m_Grid;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
 	bool m_FirstTime;
@@ -102,38 +98,6 @@ public:
 	void Read();
 	void Render();
 
-};
-
-class CSymbolPanel
-{
-	CPicturePanel *m_PicturePanel;
-	CGrid *m_Grid;
-	CGraph *m_Graph;
-	CLightPanel *m_LightPanel;
-	wxHtmlWindow *m_Html;
-	int m_IdSBMS;
-	int m_IdBaseStation;
-	int m_SBMSID;
-	wxButton *m_ButtonManagement;
-
-	void SetHeader();
-	void SymbolInfo(void *db,CSymbol *ptr);
-	void SBMSInfo(void *db,int id_sbms);
-	void PictureInfo(void *db,CSymbol *ptr);
-	void BaseStationInfo(void *db, int id_base_station);
-	void SBMSLastRaport(void *db, int id_sbms, int id_base_station);
-	void SetGraph(void *db, int id_sbms, int id_base_station);
-
-public:
-
-	CSymbolPanel();
-	wxPanel *GetPage1(wxWindow *parent);	
-	wxPanel *GetPage2(wxWindow *parent);	//Report
-	wxPanel *GetPage3(wxWindow *parent);	//Alerts
-	void SetPage1(CSymbol *ptr);
-	void SetPageEmpty();
-	void SetSBMS();
-	
 };
 
 #endif

@@ -7,11 +7,9 @@
 #include <wx/mstream.h>
 #include "conf.h"
 #include "dll.h"
-#include "command.h"
 #include <vector>
-#include "graph.h"
+#include "symbolpanel.h"
 
-class CMyIcon;
 class CMyFrame: public wxDialog
 {
 	int m_FrameWidth;
@@ -24,9 +22,7 @@ class CMyFrame: public wxDialog
 	wxNotebook *m_Notebook;
 	
 	wxButton *ButtonClose;
-	//wxPanel *PanelIcon;
-	//CMyIcon *MarkerIcon;
-	
+
 	int ParentX, ParentY;
 	wxWindow *_ParentPtr;
 
@@ -55,7 +51,7 @@ public:
 
 	enum
 	{
-		ID_CLOSE = 5312,
+		ID_CLOSE = 5000,
 		ID_NAME,
 		ID_DESCRIPTION,
 		ID_DELETE,

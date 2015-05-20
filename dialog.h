@@ -142,7 +142,7 @@ public:
 
 	enum
 	{
-		ID_FILTER = 6214,
+		ID_FILTER = 6000,
 		ID_SEARCH,
 		ID_TICK_SEARCH,
 		ID_REFRESH,

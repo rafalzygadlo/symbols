@@ -11,6 +11,7 @@
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
 #include <wx/hyperlink.h>
+#include "symbolpanel.h"
 
 #ifdef _WIN32
 	#include <windows.h>
