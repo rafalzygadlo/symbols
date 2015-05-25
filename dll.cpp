@@ -329,7 +329,7 @@ void CMapPlugin::Run(void *Params)
 	if(m_DB == NULL)
 	{
 		wxString str(db_error(m_DB),wxConvUTF8);
-		wxMessageBox(str);
+		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR));
 		return;
 	}	
 	

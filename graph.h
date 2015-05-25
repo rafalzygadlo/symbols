@@ -15,7 +15,8 @@ class CGraph : public wxGLCanvas
 	FTPixmapFont *m_Font;
 	CNaviArray <nvPoint3f> m_Buffer;
 	CNaviArray <nvRGBA> m_Color;
-
+	int m_Speed;
+	int m_OldKey;
 	int m_Id;
 	int m_ScreenWidth;
 	int m_ScreenHeight;
@@ -44,7 +45,8 @@ class CGraph : public wxGLCanvas
 	int m_Type;
 	float m_Min;
 	float m_Max;
-	
+	int m_TimeTo;
+
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent &event);
 	void OnMouse(wxMouseEvent &event);
@@ -81,6 +83,7 @@ public:
 	void AddColor(nvRGBA v);
 	void SetMin(float v);
 	void SetMax(float v);
+	void SetTimeTo(int v);
 	void Clear();
 
 

@@ -114,6 +114,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Graph",L"Wykres"},
 	{L"Min",L"Min"},
 	{L"Max",L"Max"},
+	{L"Database Connect Error",L"B³¹d po³aczenia z baz¹ danych"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -145,7 +146,7 @@ const char *nvCommand[10] =
  	{"FlashCode(%d)"},
 	{"DriveCurrent(%d)"},
 	{"PowerOfLight(%d)"},
-	{"AM6ForceOff(%d,%d)"},
+	{"AM6ForceOff(%d,%d,%d)"},
 	{"SeasonControl(%d)"},
 	{"PhotoCellResistance(%d)"},
 	{"RipleDelay(%d)"},
@@ -849,21 +850,6 @@ wxString GetOnOff(int v)
 
 }
 
-//COMMANDS . . . . . . . . . . . . . . . .
-void SetDBCommand(int SBMSID,int id_base_station, wxString cmd)
-{
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',command='%s'"),TABLE_COMMAND,SBMSID,id_base_station,cmd.wc_str());
-	void *db = DBConnect();
-	my_query(db,sql);
-	DBClose(db);
-}
-
-void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
-{
-	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
-	SetDBCommand(SBMSID,id_base_station,_cmd);	
-}
 
 wxString GetNvDateTime(nvtime_t v)
 {
@@ -878,6 +864,23 @@ wxString GetNvDate(nvtime_t v)
 wxString GetNvTime(nvtime_t v)
 {
 	return wxString::Format(_("%02d:%02d:%02d"),v.h,v.m,v.s);
+}
+
+
+//COMMANDS . . . . . . . . . . . . . . . .
+void SetDBCommand(int SBMSID,int id_base_station, wxString cmd)
+{
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',command='%s'"),TABLE_COMMAND,SBMSID,id_base_station,cmd.wc_str());
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
+void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
+{
+	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
+	SetDBCommand(SBMSID,id_base_station,_cmd);	
 }
 
 

@@ -12,6 +12,8 @@ wxString GetDBUser();
 wxString GetDBPassword();
 wxString GetDBName();
 int GetDBPort();
+float GetUpperTreshold();
+float GetLowerTreshold();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
@@ -20,5 +22,7 @@ void SetDBUser(wxString v);
 void SetDBPassword(wxString v);
 void SetDBName(wxString v);
 void SetDBPort(int v);
+void SetUpperTreshold(float v);
+void SetLowerTreshold(float v);
 
 #endif

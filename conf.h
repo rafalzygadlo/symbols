@@ -54,6 +54,9 @@
 #define ID_MENU_END 1100
 #define DEFAULT_CONTROL_TYPE 1000
 
+#define DEFAULT_LOWER_TRESHOLD	12.00
+#define DEFAULT_UPPER_TRESHOLD	12.10
+
 // Languages
 #define MSG_MANAGER					0
 #define MSG_NEW_OBJECT				1
@@ -152,6 +155,7 @@
 #define MSG_GRAPH					94
 #define MSG_MIN						95
 #define MSG_MAX						96
+#define MSG_DB_CONNECT_ERROR		97
 
 #define HTML_ANCHOR_LAST_REPORT	0
 

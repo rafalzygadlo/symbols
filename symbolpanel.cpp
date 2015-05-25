@@ -10,6 +10,7 @@
 #include "nvtime.h"
 #include "commanddialog.h"
 #include "graphdialog.h"
+#include "options.h"
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
@@ -35,13 +36,15 @@ void CSymbolPanel::GetPage1()
 	hSizer->Add(m_PicturePanel,0,wxALL,0);
 	
 	wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
-	hSizer->Add(vSizer,0,wxALL|wxEXPAND,2);
+	hSizer->Add(vSizer,0,wxALL|wxEXPAND,4);
 
 	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	vSizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
-		
+	m_ButtonManagement->Disable();
+
 	m_ButtonGraph = new wxButton(this,ID_GRAPH,GetMsg(MSG_GRAPH));
 	vSizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
+	m_ButtonGraph->Disable();
 	
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
@@ -66,6 +69,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	else
 		m_ButtonManagement->Disable();
 
+	m_ButtonGraph->Enable();
 	m_IdSBMS = ptr->GetIdSBMS();
 	m_IdBaseStation = ptr->GetBaseStationId();
 	m_SBMSID = ptr->GetSBMSID();
@@ -309,7 +313,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	CGraphDialog *GraphDialog = new CGraphDialog(this,m_Symbol);
 	CGraph *Graph = GraphDialog->GetGraph();
 
-	wxString sql = wxString::Format(_("SELECT input_volt FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
+	wxString sql = wxString::Format(_("SELECT input_volt,unix_timestamp(local_utc_time) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -320,20 +324,46 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	
 	Graph->Clear();
 	int count = 0;
+	float value = 0;
+	int time = 0;
+	int _time = 0;
+	int seconds = 0;
+	float min,max;
+	min = max = 0;
+	bool set = true;
 	while(row = (char**)db_fetch_row(result))
 	{
 		nvPoint3f pt;
 		
-		pt.x = count++;
-		pt.y = atof(row[0]);
-		Graph->AddPoint(pt);
+		value = atof(row[0]);
+		time = atof(row[1]);
+		
 		nvRGBA c;
-		c.A = 255; c.R = 0; c.G = 255; c.B = 0;
+
+		if(set)			{ min = value;	max = value; _time = time; set = false;}
+		if(max < value)	{ max = value;}
+		if(min > value)	{ min = value;}
+		time = abs(time - _time);
+		
+		pt.x = time;
+		pt.y = value;
+		pt.z = 0;
+		
+		seconds=time;
+		if(value <= GetLowerTreshold() || value  >= GetUpperTreshold())
+		{
+			c.A = 255; c.R = 255; c.G = 0; c.B = 0;
+		}else{
+			c.A = 255; c.R = 0; c.G = 255; c.B = 0;
+		}
+		
+		Graph->AddPoint(pt);
 		Graph->AddColor(c);
 	}
 	
-	Graph->SetMin(12);
-	Graph->SetMax(13);
+	Graph->SetTimeTo(seconds);
+	Graph->SetMin(min);
+	Graph->SetMax(max);
 	Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
 	Graph->Refresh();
 	db_free_result(result);
