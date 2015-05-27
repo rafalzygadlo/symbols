@@ -11,12 +11,14 @@
 #include "graph.h"
 #include "light.h"
 #include "symbol.h"
+#include "graphdialog.h"
 
 class CSymbolPanel : public wxPanel
 {
 	CPicturePanel *m_PicturePanel;
 	CSymbol *m_Symbol;	
 	CLightPanel *m_LightPanel;
+	CGraphDialog *m_GraphDialog;
 	wxHtmlWindow *m_Html;
 	int m_IdSBMS;
 	int m_IdBaseStation;
@@ -37,6 +39,7 @@ class CSymbolPanel : public wxPanel
 public:
 
 	CSymbolPanel(wxWindow *parent);
+	~CSymbolPanel();
 	void GetPage1();	
 	void SetPage1(CSymbol *ptr);
 	void SetPageEmpty();

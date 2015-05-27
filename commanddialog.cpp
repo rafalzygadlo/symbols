@@ -16,6 +16,7 @@ CCommandDialog::CCommandDialog(wxWindow *parent, CSymbol *ptr)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	CCommandPanel *CommandPanel = new CCommandPanel(this);
 	CommandPanel->SetSelectedPtr(ptr);
+	CommandPanel->Set();
 	Sizer->Add(CommandPanel,1,wxALL|wxEXPAND,5);
 	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);

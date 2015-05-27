@@ -81,18 +81,22 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 		
 	m_Frame = NULL;
 	FromLMB = false;
+	m_Reading = false;
+	m_Ticker = NULL;
 	
-
 	m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 	
 }
 
 CMapPlugin::~CMapPlugin()
 {
+	if(m_Ticker)
+	{
 	m_Ticker->Stop();
 #ifdef THREAD_JOINABLE
 	delete m_Ticker;
 #endif
+	}
 	delete m_Symbol;
 	delete m_Items;
 	delete m_Area;

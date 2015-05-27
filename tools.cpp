@@ -866,21 +866,32 @@ wxString GetNvTime(nvtime_t v)
 	return wxString::Format(_("%02d:%02d:%02d"),v.h,v.m,v.s);
 }
 
-
 //COMMANDS . . . . . . . . . . . . . . . .
-void SetDBCommand(int SBMSID,int id_base_station, wxString cmd)
+int SetDBCommand(int SBMSID,int id_base_station)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',command='%s'"),TABLE_COMMAND,SBMSID,id_base_station,cmd.wc_str());
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,SBMSID,id_base_station,_GetUID());
 	void *db = DBConnect();
 	my_query(db,sql);
+	int last_id = db_last_insert_id(db);
+	DBClose(db);
+	return last_id;
+}
+
+void UpdateDBCommand(int id,wxString cmd)
+{
+	wxString sql = wxString::Format(_("UPDATE `%s` SET command='%s' WHERE id='%d'"),TABLE_COMMAND,cmd.wc_str(),id);
+	void *db = DBConnect();
+	my_query(db,sql);
+	int last_id = db_last_insert_id(db);
 	DBClose(db);
 }
 
 void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
 {
+	int id = SetDBCommand(SBMSID,id_base_station);
 	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
-	SetDBCommand(SBMSID,id_base_station,_cmd);	
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,off,id);
+	UpdateDBCommand(id,_cmd);
 }
 
 
@@ -890,6 +901,5 @@ void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)
 	
 
 }
-
 #endif
 

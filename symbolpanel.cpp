@@ -22,7 +22,12 @@ CSymbolPanel::CSymbolPanel(wxWindow *parent)
 :wxPanel(parent,wxID_ANY)
 {
 	m_Symbol = NULL;
+	m_GraphDialog = NULL;
 	GetPage1();
+}
+CSymbolPanel::~CSymbolPanel()
+{
+	delete m_GraphDialog;
 }
 
 void CSymbolPanel::GetPage1()
@@ -68,6 +73,11 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonManagement->Enable();
 	else
 		m_ButtonManagement->Disable();
+
+	if(ptr->GetBusy())
+		m_ButtonManagement->Disable();
+	else
+		m_ButtonManagement->Enable();
 
 	m_ButtonGraph->Enable();
 	m_IdSBMS = ptr->GetIdSBMS();
@@ -310,8 +320,9 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	if(db == NULL)
 		return;
 	
-	CGraphDialog *GraphDialog = new CGraphDialog(this,m_Symbol);
-	CGraph *Graph = GraphDialog->GetGraph();
+	if(m_GraphDialog == NULL)
+		m_GraphDialog = new CGraphDialog(this,m_Symbol);
+	CGraph *Graph = m_GraphDialog->GetGraph();
 
 	wxString sql = wxString::Format(_("SELECT input_volt,unix_timestamp(local_utc_time) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
@@ -327,7 +338,8 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	float value = 0;
 	int time = 0;
 	int _time = 0;
-	int seconds = 0;
+	int seconds_to = 0;
+	int seconds_from = 0;
 	float min,max;
 	min = max = 0;
 	bool set = true;
@@ -340,7 +352,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		
 		nvRGBA c;
 
-		if(set)			{ min = value;	max = value; _time = time; set = false;}
+		if(set)			{ min = value;	max = value; _time = time; seconds_from = time; set = false;}
 		if(max < value)	{ max = value;}
 		if(min > value)	{ min = value;}
 		time = abs(time - _time);
@@ -349,7 +361,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		pt.y = value;
 		pt.z = 0;
 		
-		seconds=time;
+		seconds_to = time;
 		if(value <= GetLowerTreshold() || value  >= GetUpperTreshold())
 		{
 			c.A = 255; c.R = 255; c.G = 0; c.B = 0;
@@ -361,7 +373,8 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		Graph->AddColor(c);
 	}
 	
-	Graph->SetTimeTo(seconds);
+	Graph->SetTimeFrom(seconds_from);
+	Graph->SetTimeTo(seconds_to);
 	Graph->SetMin(min);
 	Graph->SetMax(max);
 	Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
@@ -370,6 +383,6 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	
 	DBClose(db);
 
-	GraphDialog->ShowModal();
-	delete GraphDialog;
+	m_GraphDialog->ShowModal();
+	
 }

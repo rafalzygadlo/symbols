@@ -31,7 +31,8 @@ class CGraph : public wxGLCanvas
 	bool m_Rescale;
 	const wchar_t *m_Title;
 	float m_XScale,m_YScale;
-
+	int m_Seconds,m_Minutes,m_Hours;
+	
 	float m_GraphTop;
 	float m_GraphBottom;
 	float m_GraphLeft;
@@ -46,6 +47,7 @@ class CGraph : public wxGLCanvas
 	float m_Min;
 	float m_Max;
 	int m_TimeTo;
+	int m_TimeFrom;
 
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent &event);
@@ -84,6 +86,7 @@ public:
 	void SetMin(float v);
 	void SetMax(float v);
 	void SetTimeTo(int v);
+	void SetTimeFrom(int v);
 	void Clear();
 
 

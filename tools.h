@@ -44,7 +44,7 @@ bool my_query(void *db,const char *sql, unsigned long length);
 void *DBConnect();
 void DBClose(void *db);
 double GetMilesPerDegree(double x, double y);
-void SetDBCommand(wxString cmd);
+//int SetDBCommand(wxString cmd);
 const char *GetCommand(int id);
 wxString GetOnOff(int v);
 wxString GetNvDateTime(nvtime_t v);
