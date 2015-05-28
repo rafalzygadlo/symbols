@@ -148,13 +148,13 @@ void CGraph::OnMouse(wxMouseEvent &event)
     }
     else if (event.GetWheelRotation() > 0) {
 
-		//SetScaleUp();
+		SetScaleUp();
 		refresh = true;
 		        
     }
     else if (event.GetWheelRotation() < 0) {
 				
-		//SetScaleDown();
+		SetScaleDown();
 		refresh = true;
 		        
     };
@@ -444,18 +444,18 @@ void CGraph::SetValues()
 
 	m_GraphLeft =  0;//-offsetY;
 	m_GraphRight = m_ScreenWidth;
-	//m_GraphRight = (m_TimeTo - m_TimeFrom) + offsetY;
+	m_GraphRight = (m_TimeTo - m_TimeFrom) + offsetY;
 	
 	m_GridTop = m_Max;
 	m_GridBottom = m_Min;
 	m_GridLeft = 0;
 	m_GridRight = m_ScreenWidth;
 			
-	//m_XScale = m_GraphRight / m_ScreenWidth;
-	//m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;
-	
-	m_XScale = m_ScreenWidth / m_ScreenWidth;
+	m_XScale = m_GraphRight / m_ScreenWidth;
 	m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;
+	
+	//m_XScale = m_ScreenWidth / m_ScreenWidth;
+	//m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;
 	
 	//m_Days = m_TimeTo / SECONDS_IN_DAY;
 	m_Hours = m_TimeTo / SECONDS_IN_HOUR;
