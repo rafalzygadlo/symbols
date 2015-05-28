@@ -30,7 +30,7 @@ CTimePanel::CTimePanel(void *db,wxWindow *top, wxWindow *parent)
 
 	m_Sizer = new wxBoxSizer(wxVERTICAL);
 	Sizer->Add(m_Sizer,1,wxALL|wxEXPAND,0);
-		
+			
 }
 
 CTimePanel::~CTimePanel()

@@ -806,6 +806,7 @@ void *DBConnect()
 	if(db_connect(db,GetDBHost(),GetDBUser(),GetDBPassword(),GetDBName(),GetDBPort()))
 		return db;
 
+	db_close(db);
 	return NULL;
 }
 

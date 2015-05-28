@@ -361,12 +361,12 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		pt.y = value;
 		pt.z = 0;
 		
-		seconds_to = time;
+		seconds_to = time + _time;
 		if(value <= GetLowerTreshold() || value  >= GetUpperTreshold())
 		{
-			c.A = 255; c.R = 255; c.G = 0; c.B = 0;
+			c.A = 200; c.R = 255; c.G = 0; c.B = 0;
 		}else{
-			c.A = 255; c.R = 0; c.G = 255; c.B = 0;
+			c.A = 200; c.R = 0; c.G = 255; c.B = 0;
 		}
 		
 		Graph->AddPoint(pt);

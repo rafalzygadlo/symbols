@@ -27,7 +27,7 @@ CGraph::CGraph(wxWindow *parent)
 	SetDoubleBuffered(true);
 #endif
 	m_Font = new FTPixmapFont(GetFontPath().mb_str(wxConvUTF8).data());
-	m_Font->FaceSize(12);
+	m_Font->FaceSize(14);
 		
 	//m_Selected = false;
 	m_MoveX = 0;
@@ -148,13 +148,13 @@ void CGraph::OnMouse(wxMouseEvent &event)
     }
     else if (event.GetWheelRotation() > 0) {
 
-		SetScaleUp();
+		//SetScaleUp();
 		refresh = true;
 		        
     }
     else if (event.GetWheelRotation() < 0) {
 				
-		SetScaleDown();
+		//SetScaleDown();
 		refresh = true;
 		        
     };
@@ -256,8 +256,8 @@ void CGraph::UpdateViewPort()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 		
-	glTranslatef(m_MoveX*m_XScale ,m_MoveY*m_YScale,0.0);
-	glScalef(m_Scale,1.0,1.0);
+	//glTranslatef(m_MoveX*m_XScale ,m_MoveY*m_YScale,0.0);
+	//glScalef(m_Scale,1.0,1.0);
 	
 	//glTranslatef(-m_Buffer->GetLength(),-GetLastAccuracy(),0.0);
 	//glTranslatef(m_ScreenWidth-10,m_ScreenHeight/2,0.0);
@@ -277,22 +277,41 @@ void CGraph::RenderText( float x, float y, const wchar_t *text )
 
 void CGraph::RenderGrid()
 {
-		
-	int width = m_GraphRight;
-	int height = m_GraphTop;
-	char txt[64];
-			
+	
+	glPushMatrix();
+	//glMatrixMode(GL_PROJECTION);
+    //glLoadIdentity();
+	//glOrtho(0,m_ScreenWidth,m_ScreenHeight,0,0,1);	
+	
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+
+
 	glColor4f(0.6f,0.6f,0.6f,1.0);
 
-	glBegin(GL_LINES);
+	
 	//seconds
 
-	float a = m_TimeTo/m_ScreenWidth/m_Scale;
-
- 	for(int i = m_GraphLeft ; i < m_TimeTo;  i+=100*a)
+	float a = m_GraphRight/m_Scale;
+	int width = m_ScreenWidth;
+	//int b = m_MoveX/m_Scale;
+	//glScalef(1.0,1.0,1.0);
+	//glTranslatef(0.0,0.0,0.0);
+	
+	glBegin(GL_LINES);
+	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
+ 	
 	{
-		glVertex2f(i,m_GridTop);	glVertex2f(i,m_GridBottom);	
+		glVertex2f(i ,m_GraphBottom);	
+		glVertex2f(i ,m_GraphTop);	
 	}
+
+	for(float i = m_GraphBottom; i < m_GraphTop;  i+=(m_GraphTop - m_GraphBottom)/5)
+ 	{
+		glVertex2f(m_GraphLeft,i);	
+		glVertex2f(m_GraphRight,i);	
+	}
+
 	//for(int i = m_GraphLeft ; i < m_TimeTo; i+=SECONDS_IN_MINUTE)
 	//{
 		//glVertex2f(i,m_GridTop);	glVertex2f(i,m_GridBottom);	
@@ -300,32 +319,58 @@ void CGraph::RenderGrid()
 	//for(int i = m_GraphLeft ; i < m_Seconds; i+=60)					{	glVertex2f(i,m_GridTop);	glVertex2f(i,m_GridBottom);	}
 		
 	glColor4f(0.9f,0.9f,0.9f,0.8f);
-	glVertex2f(m_GraphLeft,m_GridTop);
-	glVertex2f(m_GraphRight,m_GridTop);
+	//glVertex2f(m_GraphLeft,m_GridTop);
+	//glVertex2f(m_GraphRight,m_GridTop);
 
-	glVertex2f(m_GraphLeft,m_GridBottom);
-	glVertex2f(m_GraphRight,m_GridBottom);
+	//glVertex2f(m_GraphLeft,m_GridBottom);
+	//glVertex2f(m_GraphRight,m_GridBottom);
 			
 	glEnd();
 	
-	for(int i = m_GraphLeft ; i < m_TimeTo;  i+=100*a)
+	char txt1[64];
+	char txt2[64];
+	
+	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
+ 	{
+	
+		time_t t = m_TimeFrom + i - (m_MoveX/m_Scale);
+		tm *_t = gmtime(&t);
+
+		sprintf(txt1,"%02d:%02d:%02d",_t->tm_hour,_t->tm_min,_t->tm_sec);
+		//sprintf(txt2,"%02d:%02d:%02d",_t->tm_mon,_t->tm_mday);
+
+		RenderText(i,m_GridTop,txt1);
+		//RenderText(i,m_GridBottom+10,txt2);
+	}
+	
+
+	for(int i = 0 ; i < 20;  i++)
 	{
-		sprintf(txt,"%d",i);
-		RenderText(i,m_GridBottom,txt);
+		nvPoint3f p = m_Buffer.Get(i);
+		sprintf(txt1,"%4.2f",p.y);
+		//float s = (float)m_ScreenWidth/(m_TimeTo-m_TimeFrom);
+		RenderText(p.x ,p.y,txt1);
 	}
 
 
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	RenderText((-m_GraphLeft-m_MoveX)*m_XScale,m_GridTop,txt);
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	RenderText(m_GridLeft,m_GridBottom,txt);
-		
+	/*
+	sprintf(txt1,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	RenderText(m_GraphLeft-(m_MoveX),m_GridTop,txt1);
+	sprintf(txt1,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	RenderText(m_GridLeft,m_GridBottom + (10/m_YScale),txt1);
+	*/
+	glPopMatrix();
+
 }
 
 void CGraph::RenderData()
 {
+	glPushMatrix();
+	glTranslatef(m_MoveX*m_XScale ,m_MoveY*m_YScale,0.0);
+	glScalef(m_Scale,1.0,1.0);
+
 	glEnable(GL_BLEND);
 	glPointSize(5);
 	if(m_Buffer.Length() > 0)
@@ -335,6 +380,7 @@ void CGraph::RenderData()
 	}
 	glPointSize(1);
 	glDisable(GL_BLEND);
+	glPopMatrix();
 }	
 
 void CGraph::RenderTitle()
@@ -376,8 +422,8 @@ void CGraph::Render()
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//GetMutex()->Lock();
 	
-	RenderGrid();
 	RenderData();
+	RenderGrid();
 	RenderTitle();
 
 	//GetMutex()->Unlock();
@@ -397,14 +443,18 @@ void CGraph::SetValues()
 	m_GraphBottom = m_Min - offsetX;
 
 	m_GraphLeft =  0;//-offsetY;
-	m_GraphRight = m_TimeTo + offsetY;
+	m_GraphRight = m_ScreenWidth;
+	//m_GraphRight = (m_TimeTo - m_TimeFrom) + offsetY;
 	
 	m_GridTop = m_Max;
 	m_GridBottom = m_Min;
 	m_GridLeft = 0;
-	//m_GridRight = m_Buffer->GetLength();
+	m_GridRight = m_ScreenWidth;
 			
-	m_XScale = m_GraphRight / m_ScreenWidth;
+	//m_XScale = m_GraphRight / m_ScreenWidth;
+	//m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;
+	
+	m_XScale = m_ScreenWidth / m_ScreenWidth;
 	m_YScale = (m_GraphBottom + m_GraphTop) / m_ScreenWidth;
 	
 	//m_Days = m_TimeTo / SECONDS_IN_DAY;
