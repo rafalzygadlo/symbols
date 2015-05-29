@@ -279,29 +279,11 @@ void CGraph::RenderGrid()
 {
 	
 	glPushMatrix();
-	//glMatrixMode(GL_PROJECTION);
-    //glLoadIdentity();
-	//glOrtho(0,m_ScreenWidth,m_ScreenHeight,0,0,1);	
-	
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-
-
 	glColor4f(0.6f,0.6f,0.6f,1.0);
-
-	
-	//seconds
-
-	float a = m_GraphRight/m_Scale;
-	int width = m_ScreenWidth;
-	//int b = m_MoveX/m_Scale;
-	//glScalef(1.0,1.0,1.0);
-	//glTranslatef(0.0,0.0,0.0);
-	
+		
 	glBegin(GL_LINES);
 	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
- 	
-	{
+ 	{
 		glVertex2f(i ,m_GraphBottom);	
 		glVertex2f(i ,m_GraphTop);	
 	}
@@ -311,14 +293,9 @@ void CGraph::RenderGrid()
 		glVertex2f(m_GraphLeft,i);	
 		glVertex2f(m_GraphRight,i);	
 	}
-
-	//for(int i = m_GraphLeft ; i < m_TimeTo; i+=SECONDS_IN_MINUTE)
-	//{
-		//glVertex2f(i,m_GridTop);	glVertex2f(i,m_GridBottom);	
-	//}
-	//for(int i = m_GraphLeft ; i < m_Seconds; i+=60)					{	glVertex2f(i,m_GridTop);	glVertex2f(i,m_GridBottom);	}
 		
-	glColor4f(0.9f,0.9f,0.9f,0.8f);
+		
+	//glColor4f(0.9f,0.9f,0.9f,0.8f);
 	//glVertex2f(m_GraphLeft,m_GridTop);
 	//glVertex2f(m_GraphRight,m_GridTop);
 
@@ -336,17 +313,13 @@ void CGraph::RenderGrid()
 		time_t t = m_TimeFrom + ((i - m_MoveX*m_XScale)/m_Scale); //* (m_MoveX/m_XScale);	//(m_MoveX/m_Scale);
 		tm *_t = gmtime(&t);
 
-		sprintf(txt1,"%d-%d %02d:%02d:%02d",_t->tm_mon + 1,_t->tm_mday,_t->tm_hour,_t->tm_min,_t->tm_sec);
+		sprintf(txt1,"%02d-%02d %02d:%02d:%02d",_t->tm_mon + 1,_t->tm_mday,_t->tm_hour,_t->tm_min,_t->tm_sec);
 		//sprintf(txt2,"%02d:%02d:%02d",_t->tm_mon,_t->tm_mday);
 
 		RenderText(i,m_GridTop,txt1);
 		//RenderText(i,m_GridBottom+10,txt2);
 	}
 	
-
-	
-
-
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 
 	/*
