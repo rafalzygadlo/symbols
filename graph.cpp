@@ -27,7 +27,7 @@ CGraph::CGraph(wxWindow *parent)
 	SetDoubleBuffered(true);
 #endif
 	m_Font = new FTPixmapFont(GetFontPath().mb_str(wxConvUTF8).data());
-	m_Font->FaceSize(14);
+	m_Font->FaceSize(12);
 		
 	//m_Selected = false;
 	m_MoveX = 0;
@@ -333,10 +333,10 @@ void CGraph::RenderGrid()
 	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
  	{
 	
-		time_t t = m_TimeFrom + i - (m_MoveX/m_Scale);
+		time_t t = m_TimeFrom + ((i - m_MoveX*m_XScale)/m_Scale); //* (m_MoveX/m_XScale);	//(m_MoveX/m_Scale);
 		tm *_t = gmtime(&t);
 
-		sprintf(txt1,"%02d:%02d:%02d",_t->tm_hour,_t->tm_min,_t->tm_sec);
+		sprintf(txt1,"%d-%d %02d:%02d:%02d",_t->tm_mon + 1,_t->tm_mday,_t->tm_hour,_t->tm_min,_t->tm_sec);
 		//sprintf(txt2,"%02d:%02d:%02d",_t->tm_mon,_t->tm_mday);
 
 		RenderText(i,m_GridTop,txt1);
@@ -344,13 +344,7 @@ void CGraph::RenderGrid()
 	}
 	
 
-	for(int i = 0 ; i < 20;  i++)
-	{
-		nvPoint3f p = m_Buffer.Get(i);
-		sprintf(txt1,"%4.2f",p.y);
-		//float s = (float)m_ScreenWidth/(m_TimeTo-m_TimeFrom);
-		RenderText(p.x ,p.y,txt1);
-	}
+	
 
 
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());

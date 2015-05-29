@@ -324,7 +324,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		m_GraphDialog = new CGraphDialog(this,m_Symbol);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 
-	wxString sql = wxString::Format(_("SELECT input_volt,unix_timestamp(local_utc_time) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
+	wxString sql = wxString::Format(_("SELECT input_volt,unix_timestamp(local_utc_time) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC LIMIT 200"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
