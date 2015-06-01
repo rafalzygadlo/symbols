@@ -14,11 +14,9 @@ CGraphDialog::CGraphDialog(wxWindow *parent, CSymbol *ptr)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	m_Graph = new CGraph(this);
-	m_Graph->SetMinSize(wxSize(200,100));
+	m_Graph->SetMinSize(wxSize(800,250));
 	Sizer->Add(m_Graph,1,wxALL|wxEXPAND,5);
-	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
-	
 	SetSizer(Sizer);
 	Fit();	
 }

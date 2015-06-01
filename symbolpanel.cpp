@@ -324,7 +324,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		m_GraphDialog = new CGraphDialog(this,m_Symbol);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 
-	wxString sql = wxString::Format(_("SELECT input_volt,unix_timestamp(local_utc_time) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
+	wxString sql = wxString::Format(_("SELECT input_volt,utc_timestamp(CONVERT_TZ(local_utc_time, '+00:00', @@global.time_zone)) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -361,7 +361,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		pt.y = value;
 		pt.z = 0;
 		
-		seconds_to = time + _time;
+		seconds_to = time  + _time;
 		if(value <= GetLowerTreshold() || value  >= GetUpperTreshold())
 		{
 			c.A = 200; c.R = 255; c.G = 0; c.B = 0;
@@ -382,7 +382,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	db_free_result(result);
 	
 	DBClose(db);
-
+	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
 	m_GraphDialog->ShowModal();
 	
 }

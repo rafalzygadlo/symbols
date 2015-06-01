@@ -10,6 +10,7 @@ wxString m_DBName;
 int m_DBPort = DEFAULT_MYSQL_PORT;
 float m_UpperTreshold = DEFAULT_UPPER_TRESHOLD;
 float m_LowerTreshold = DEFAULT_LOWER_TRESHOLD;
+bool m_Exit = false;
 
 //SET
 void SetFGColor(wxColor v)			{	m_FGColor = v;		}
@@ -21,6 +22,7 @@ void SetDBName(wxString v)			{	m_DBName = v;		}
 void SetDBPort(int v)				{	m_DBPort = v;		}
 void SetUpperTreshold(float v)		{	m_UpperTreshold = v;}
 void SetLowerTreshold(float v)		{	m_LowerTreshold = v;}
+void SetExit(bool v)				{	m_Exit = v;			}
 
 //GET
 wxColor GetBGColor()			{	return m_BGColor;		}
@@ -32,5 +34,4 @@ wxString GetDBName()			{	return m_DBName;		}
 int GetDBPort()					{	return m_DBPort;		}
 float GetUpperTreshold()		{	return m_UpperTreshold;	}
 float GetLowerTreshold()		{	return m_LowerTreshold;	}
-
-
+bool GetExit()					{	return m_Exit;			}

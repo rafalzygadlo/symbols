@@ -117,8 +117,11 @@ CMapPlugin::~CMapPlugin()
 	//delete Font;
 
 	for(size_t i = 0; i < m_SymbolList.Length(); i++)
-		delete m_SymbolList.Get(i);	
-	
+	{
+		CSymbol *ptr = m_SymbolList.Get(i);
+		ptr->Stop();
+		delete ptr; 
+	}
 	m_SymbolList.Clear();
 	FreeMutex();
 	DBClose(m_DB);
@@ -350,6 +353,7 @@ void CMapPlugin::Run(void *Params)
 void CMapPlugin::Kill(void)
 {
 	NeedExit = true;
+	SetExit(true);
 	while(m_Reading)
 		wxMilliSleep(100);
 	WriteConfig();

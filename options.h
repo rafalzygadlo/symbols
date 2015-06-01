@@ -14,6 +14,7 @@ wxString GetDBName();
 int GetDBPort();
 float GetUpperTreshold();
 float GetLowerTreshold();
+bool GetExit();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
@@ -24,5 +25,6 @@ void SetDBName(wxString v);
 void SetDBPort(int v);
 void SetUpperTreshold(float v);
 void SetLowerTreshold(float v);
+void SetExit(bool v);
 
 #endif

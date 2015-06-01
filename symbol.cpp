@@ -8,6 +8,7 @@
 #include "navidrawer.h"
 #include "geometrytools.h"
 #include "ais.h"
+#include "options.h"
 //#include "nvtime.h"
 
 CSymbol::CSymbol(CNaviBroker *broker)
@@ -44,7 +45,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 
 CSymbol::~CSymbol()
 {
-	m_Ticker0->Stop();
+	//m_Ticker0->Stop();
 	
 #ifdef THREAD_JOINABLE
 	delete m_Ticker0;
@@ -55,6 +56,11 @@ void CSymbol::Start()
 {
 	m_Ticker0 = new CTicker(this,TICK_SYMBOL);
 	m_Ticker0->Start(TICK_SYMBOL_TIME);
+}
+
+void CSymbol::Stop()
+{
+	m_Ticker0->Stop();
 }
 
 void CSymbol::Read()
@@ -158,6 +164,7 @@ void CSymbol::Blink()
 
 void CSymbol::OnTick()
 {
+	
 	bool result = false;
 
 	Read();

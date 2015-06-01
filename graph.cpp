@@ -16,7 +16,6 @@ BEGIN_EVENT_TABLE(CGraph,wxGLCanvas)
 	EVT_KEY_DOWN(OnKeyUp)
 END_EVENT_TABLE()
 
-int TimeOffset[] = {60,3600,86400,0};
 //int args[] = {WX_GL_RGBA, WX_GL_DOUBLEBUFFER, WX_GL_DEPTH_SIZE};
 CGraph::CGraph(wxWindow *parent)
 :wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
@@ -26,6 +25,7 @@ CGraph::CGraph(wxWindow *parent)
 #ifdef DC
 	SetDoubleBuffered(true);
 #endif
+	
 	m_Font = new FTPixmapFont(GetFontPath().mb_str(wxConvUTF8).data());
 	m_Font->FaceSize(12);
 		
@@ -54,8 +54,11 @@ CGraph::~CGraph()
 void CGraph::OnPaint(wxPaintEvent &event)
 {
 	wxPaintDC dc(this);
+	
 	SetCurrent(*GLContext);
 	Render();
+	RenderDC(dc);
+	
 	event.Skip();
 }
 
@@ -279,55 +282,57 @@ void CGraph::RenderGrid()
 {
 	
 	glPushMatrix();
-	glColor4f(0.6f,0.6f,0.6f,1.0);
+	glColor4f(0.6f,0.6f,0.6f,0.2);
 		
 	glBegin(GL_LINES);
 	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
  	{
-		glVertex2f(i ,m_GraphBottom);	
-		glVertex2f(i ,m_GraphTop);	
+		glVertex2f(i ,m_GridBottom);	
+		glVertex2f(i ,m_GridTop);	
 	}
 
-	for(float i = m_GraphBottom; i < m_GraphTop;  i+=(m_GraphTop - m_GraphBottom)/5)
+	for(float i = m_GraphBottom; i < m_GraphTop;  i+=(m_GraphTop - m_GraphBottom)/3)
  	{
 		glVertex2f(m_GraphLeft,i);	
 		glVertex2f(m_GraphRight,i);	
 	}
 		
-		
-	//glColor4f(0.9f,0.9f,0.9f,0.8f);
-	//glVertex2f(m_GraphLeft,m_GridTop);
-	//glVertex2f(m_GraphRight,m_GridTop);
+	glVertex2f(m_GraphLeft,m_GridTop);
+	glVertex2f(m_GraphRight,m_GridTop);
 
-	//glVertex2f(m_GraphLeft,m_GridBottom);
-	//glVertex2f(m_GraphRight,m_GridBottom);
+	glVertex2f(m_GraphLeft,m_GridBottom);
+	glVertex2f(m_GraphRight,m_GridBottom);
 			
 	glEnd();
 	
-	char txt1[64];
-	char txt2[64];
-	
-	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
+	char txt[64];
+		
+	glColor4f(1.0f,1.0f,1.0f,1.0f);
+	float step = (m_GraphRight - m_GraphLeft)/10;
+	for(float i = m_GraphLeft+step; i < m_GraphRight;  i+=step)
  	{
-	
-		time_t t = m_TimeFrom + ((i - m_MoveX*m_XScale)/m_Scale); //* (m_MoveX/m_XScale);	//(m_MoveX/m_Scale);
+		time_t t = m_TimeFrom + ((i - m_MoveX*m_XScale)/m_Scale);
+		//t = t - _timezone - _dstbias;
 		tm *_t = gmtime(&t);
-
-		sprintf(txt1,"%02d-%02d %02d:%02d:%02d",_t->tm_mon + 1,_t->tm_mday,_t->tm_hour,_t->tm_min,_t->tm_sec);
-		//sprintf(txt2,"%02d:%02d:%02d",_t->tm_mon,_t->tm_mday);
-
-		RenderText(i,m_GridTop,txt1);
-		//RenderText(i,m_GridBottom+10,txt2);
+		
+		fprintf(stderr,"stamp:%d\n",t);
+		fprintf(stderr,"TimeZone %d\n",_timezone);
+		fprintf(stderr,"Dst %d\n",_dstbias);
+		sprintf(txt,"%02d-%02d",_t->tm_mon + 1,_t->tm_mday);
+		RenderText(i,m_GridTop,txt);
+		sprintf(txt,"%02d:%02d",_t->tm_hour,_t->tm_min,_t->tm_sec);
+		RenderText(i,m_GridBottom,txt);
+		
 	}
 	
-	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
+	
+	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	RenderText(1,m_GridTop,txt);
+	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	RenderText(1,m_GridBottom,txt);
 
-	/*
-	sprintf(txt1,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	RenderText(m_GraphLeft-(m_MoveX),m_GridTop,txt1);
-	sprintf(txt1,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	RenderText(m_GridLeft,m_GridBottom + (10/m_YScale),txt1);
-	*/
+	//glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
+		
 	glPopMatrix();
 
 }
@@ -339,7 +344,7 @@ void CGraph::RenderData()
 	glScalef(m_Scale,1.0,1.0);
 
 	glEnable(GL_BLEND);
-	glPointSize(5);
+	glPointSize(2);
 	if(m_Buffer.Length() > 0)
 	{
 		RenderGeometry(GL_POINTS,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());
@@ -353,9 +358,10 @@ void CGraph::RenderData()
 void CGraph::RenderTitle()
 {
 	glPushMatrix();
+	
 	glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-	glOrtho(0,m_ScreenWidth,m_ScreenHeight,0,0,1);	
+	glOrtho(0,m_ScreenWidth,m_ScreenHeight,0,0,1);
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -363,14 +369,7 @@ void CGraph::RenderTitle()
 	float CenterX = m_ScreenWidth/2 - m_Font->Advance(m_Title)/2;
 	glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 	RenderText(CenterX,15,m_Title);
-
-	//char txt[64];
-	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	//RenderText(0,15,txt);
-	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	//RenderText(0,m_ScreenHeight,txt);
-
-
+	
 	glPopMatrix();
 	
 }
@@ -391,7 +390,7 @@ void CGraph::Render()
 	
 	RenderData();
 	RenderGrid();
-	RenderTitle();
+	//RenderTitle();
 
 	//GetMutex()->Unlock();
 
@@ -401,16 +400,22 @@ void CGraph::Render()
 	glDisable(GL_POINT_SMOOTH);
 }
 
+void CGraph::RenderDC(wxPaintDC &dc)
+{
+	//dc.SetTextForeground(*wxWHITE);
+	//dc.DrawText(GetMsg(MSG_INPUT_VOLT), 10,10);
+}
+
 void CGraph::SetValues()
 {
-	float offsetX = (m_Max - m_Min) * 0.15;
-	float offsetY = m_ScreenWidth * 0.05;
+	float offsetX = (m_Max - m_Min) * 0.08;
+	float offsetY = (m_TimeTo - m_TimeFrom) * 0.02;
 
 	m_GraphTop = m_Max + offsetX;
 	m_GraphBottom = m_Min - offsetX;
 
-	m_GraphLeft =  0;//-offsetY;
-	m_GraphRight = m_ScreenWidth;
+	m_GraphLeft =  -offsetY;
+	//m_GraphRight = m_ScreenWidth;
 	m_GraphRight = (m_TimeTo - m_TimeFrom) + offsetY;
 	
 	m_GridTop = m_Max;
@@ -428,12 +433,5 @@ void CGraph::SetValues()
 	m_Hours = m_TimeTo / SECONDS_IN_HOUR;
 	m_Minutes = m_TimeTo / SECONDS_IN_MINUTE;
 	m_Seconds = m_TimeTo;
-	
-	//int *ptr = TimeOffset;
-	//int a = 0;
-	//while(*ptr)
-	//{
-		//a = *ptr;
-		//ptr++;
-	//}
+		
 }

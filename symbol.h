@@ -95,6 +95,7 @@ public:
 	bool GetBusy();					//zajêty komendami
 
 	void Start();
+	void Stop();
 	void Read();
 	void Render();
 

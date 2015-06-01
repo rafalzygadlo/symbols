@@ -74,6 +74,7 @@ class CGraph : public wxGLCanvas
 	void RenderCube();
 	void RenderTitle();
 	void Render();
+	void RenderDC(wxPaintDC &dc);
 	void SetValues();
 
 public:
