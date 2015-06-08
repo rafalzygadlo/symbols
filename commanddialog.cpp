@@ -1,34 +1,40 @@
 #include <wx/dateevt.h>
 #include <wx/timectrl.h>
 #include <wx/datectrl.h>
+#include <wx/statline.h>
 #include "commanddialog.h"
 #include "commandpanel.h"
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
 
-//BEGIN_EVENT_TABLE(CCommandDialog, wxDialog)
-//END_EVENT_TABLE()
-
 CCommandDialog::CCommandDialog(wxWindow *parent, CSymbol *ptr)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	CCommandPanel *CommandPanel = new CCommandPanel(this);
-	CommandPanel->SetSelectedPtr(ptr);
-	CommandPanel->Set();
-	Sizer->Add(CommandPanel,1,wxALL|wxEXPAND,5);
+	m_CommandPanel = new CCommandPanel(this);
+	m_CommandPanel->SetSelectedPtr(ptr);
+	m_CommandPanel->Set();
+	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,5);
 	
-	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
-		
+	wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
+	Sizer->Add(line,0,wxALL|wxEXPAND,0);
 
+	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
+	
 	SetSizer(Sizer);
-	Fit();	
+	Fit();
+	Center();
 }
 
 CCommandDialog::~CCommandDialog()
 {
 	
+}
+
+CCommandPanel *CCommandDialog::GetCommandPanel()
+{
+	return m_CommandPanel;
 }
 
 wxPanel *CCommandDialog::GetButtonPanel(wxWindow *parent)

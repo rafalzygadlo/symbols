@@ -31,6 +31,7 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 		
 	SetSizer(m_Sizer);
 	SetGui();
+	
 }
 
 CCommandPanel::~CCommandPanel()
@@ -120,58 +121,9 @@ void CCommandPanel::SetCommand(int id)
 		//case COMMAND_DRIVE_CURRENT:	SetDriveCurrent(m_SBMSID,m_DriveCurrentValue);
 		case COMMAND_FORCED_OFF:	SetCommandForcedOff(SBMSID,id_base_station,m_ForcedOffValue); break;
 		//case COMMAND_FLASH_CODE:	SetFlashCode(m_IdSBMS,m_FlashCode
-	
 
 	}
 	
-}
-
-
-wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
-{
-		
-    wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	Panel->SetSizer(Sizer);
-
-	wxBoxSizer *Sizer1 = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(Sizer1);
-
-	wxDatePickerCtrl *m_FromDate = new wxDatePickerCtrl(Panel,wxID_ANY);
-	Sizer1->Add(m_FromDate,0,wxALL,5);
-	wxTimePickerCtrl *m_FromTime = new wxTimePickerCtrl(Panel,ID_FROM_TIME);
-	Sizer1->Add(m_FromTime,0,wxALL,5);
-	
-	wxBoxSizer *Sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(Sizer2);
-
-	wxDatePickerCtrl *m_ToDate = new wxDatePickerCtrl(Panel,wxID_ANY);
-	Sizer2->Add(m_ToDate,0,wxALL,5);
-	wxTimePickerCtrl *m_ToTime = new wxTimePickerCtrl(Panel,ID_FROM_TIME);
-	Sizer2->Add(m_ToTime,0,wxALL,5);
-
-	Panel->Disable();	
-	return Panel;
-
-}
-
-
-wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
-{
-		
-    wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(Sizer);
-	
-			
-	wxBoxSizer *ButtonSizer = new wxBoxSizer(wxVERTICAL);
-	Sizer->Add(ButtonSizer,0,wxALL|wxEXPAND,5);
-		
-	
-	//m_ButtonDelete->Disable();
-		
-	return Panel;
-
 }
 
 void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
@@ -218,57 +170,116 @@ void CCommandPanel::SetBusy(bool v)
 	if(v)
 		m_InfoText->SetLabel(GetMsg(MSG_BUSY));
 	else
-		m_InfoText->SetLabel(wxEmptyString);
+		m_InfoText->SetLabel(GetMsg(MSG_READY));
 	
 	Refresh(false);
 }
 
+
+wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
+{
+		
+    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	Panel->SetBackgroundColour(*wxRED);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+
+	wxBoxSizer *Sizer1 = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(Sizer1);
+
+	wxDatePickerCtrl *m_FromDate = new wxDatePickerCtrl(Panel,wxID_ANY);
+	Sizer1->Add(m_FromDate,0,wxALL,5);
+	wxTimePickerCtrl *m_FromTime = new wxTimePickerCtrl(Panel,ID_FROM_TIME);
+	Sizer1->Add(m_FromTime,0,wxALL,5);
+	
+	wxBoxSizer *Sizer2 = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(Sizer2);
+
+	wxDatePickerCtrl *m_ToDate = new wxDatePickerCtrl(Panel,wxID_ANY);
+	Sizer2->Add(m_ToDate,0,wxALL,5);
+	wxTimePickerCtrl *m_ToTime = new wxTimePickerCtrl(Panel,ID_FROM_TIME);
+	Sizer2->Add(m_ToTime,0,wxALL,5);
+
+	Panel->Disable();	
+	return Panel;
+
+}
+
+
+wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
+{
+		
+    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	Panel->SetBackgroundColour(*wxRED);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(Sizer);
+	
+	wxTextCtrl *aa = new wxTextCtrl(Panel,wxID_ANY);	
+	Sizer->Add(aa,0,wxALL|wxEXPAND,5);	
+	
+	//m_ButtonDelete->Disable();
+		
+	return Panel;
+
+}
+
 void CCommandPanel::SetGui()
 {
-	m_InfoText = new wxStaticText(this,wxID_ANY,wxEmptyString);
-	m_Sizer->Add(m_InfoText,0,wxALL,2);
+	wxPanel *Panel = new wxPanel(this);
+	m_Sizer->Add(Panel,0,wxALL|wxEXPAND,20);
+
+	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(PanelSizer);
+
+	m_InfoText = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
+	PanelSizer->Add(m_InfoText,0,wxALL,5);
 
 	//serwisowe wy³¹czenie
-	m_ForcedOff = new wxCheckBox(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF));
-	m_Sizer->Add(m_ForcedOff,0,wxALL,2);
+	m_ForcedOff = new wxCheckBox(Panel,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF));
+	PanelSizer->Add(m_ForcedOff,0,wxALL,5);
 		
 	//sezonowa praca
-	m_SeasonControl = new wxCheckBox(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL));
-	m_Sizer->Add(m_SeasonControl,0,wxALL,2);
-	m_SeasonControlPanel = SeasonControlPanel(this);
-	m_Sizer->Add(m_SeasonControlPanel,0,wxALL,0);
+	m_SeasonControl = new wxCheckBox(Panel,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL));
+	PanelSizer->Add(m_SeasonControl,0,wxALL,5);
+	m_SeasonControlPanel = SeasonControlPanel(Panel);
+	PanelSizer->Add(m_SeasonControlPanel,0,wxALL,0);
 		
-	
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	FlexSizer->AddGrowableCol(1,1);
-	m_Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
+	PanelSizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 		
 	//charakterystyka
-	wxStaticText *LabelFlashCode = new wxStaticText(this,wxID_ANY,GetMsg(MSG_FLASH_CODE));
-	FlexSizer->Add(LabelFlashCode,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
-	FlexSizer->Add(CharacteristicPanel(this),0,wxALL,5);
+	wxStaticText *LabelFlashCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FLASH_CODE));
+	FlexSizer->Add(LabelFlashCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	FlexSizer->Add(CharacteristicPanel(Panel),0,wxALL|wxEXPAND,5);
 		
 	// pr¹d podk³adu
-	wxStaticText *LabelDriveCurrent = new wxStaticText(this,wxID_ANY,GetMsg(MSG_DRIVE_CURRENT));
-	FlexSizer->Add(LabelDriveCurrent,0,wxALL|wxALIGN_BOTTOM,2);
-	m_DriveCurrent = new wxSlider(this,ID_DRIVE_CURRENT,0,0,1,wxDefaultPosition,wxDefaultSize,wxSL_VALUE_LABEL);
-	FlexSizer->Add(m_DriveCurrent,0,wxALL|wxEXPAND,2);
+	wxStaticText *LabelDriveCurrent = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVE_CURRENT));
+	FlexSizer->Add(LabelDriveCurrent,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_DriveCurrent = new wxSlider(Panel,ID_DRIVE_CURRENT,0,0,1,wxDefaultPosition,wxDefaultSize,wxSL_VALUE_LABEL);
+	FlexSizer->Add(m_DriveCurrent,0,wxALL|wxEXPAND,5);
 	m_DriveCurrent->SetMin(DRIVE_CURRENT_MIN);
 	m_DriveCurrent->SetMax(DRIVE_CURRENT_MAX);
 
 	//moc œwiat³a
-	wxStaticText *LabelPowerOfLight = new wxStaticText(this,wxID_ANY,GetMsg(MSG_POWER_OF_LIGHT));
-	FlexSizer->Add(LabelPowerOfLight,0,wxALL|wxALIGN_BOTTOM,2);
-	m_PowerOfLight = new wxSlider(this,ID_POWER_OF_LIGHT,0,0,1,wxDefaultPosition,wxSize(150,-1),wxSL_VALUE_LABEL);
-	FlexSizer->Add(m_PowerOfLight,0,wxALL|wxEXPAND,2);
+	wxStaticText *LabelPowerOfLight = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_POWER_OF_LIGHT));
+	FlexSizer->Add(LabelPowerOfLight,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_PowerOfLight = new wxSlider(Panel,ID_POWER_OF_LIGHT,0,0,1,wxDefaultPosition,wxSize(150,-1),wxSL_VALUE_LABEL);
+	FlexSizer->Add(m_PowerOfLight,0,wxALL|wxEXPAND,5);
 	m_PowerOfLight->SetMin(POWER_OF_LIGHT_MIN);
 	m_PowerOfLight->SetMax(POWER_OF_LIGHT_MAX);
-		
 
 	//czu³oœæ fotorezystora
-	
-	m_ButtonOk = new wxButton(this,ID_BUTTON_OK,GetMsg(MSG_OK));
-	m_Sizer->Add(m_ButtonOk,0,wxALL|wxALIGN_RIGHT,5);
+	m_ButtonOk = new wxButton(Panel,ID_BUTTON_OK,GetMsg(MSG_OK));
+	PanelSizer->Add(m_ButtonOk,0,wxALL|wxALIGN_RIGHT,5);
 	m_ButtonOk->Disable();
-			
+	
+}
+
+//VALUES. . . . . . . . . . .  . . . . . .
+void CCommandPanel::SetForcedOff(bool v)
+{
+	m_ForcedOff->SetValue(v);
+	m_ForcedOffValue = v;
+
 }

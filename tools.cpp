@@ -115,6 +115,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Min",L"Min"},
 	{L"Max",L"Max"},
 	{L"Database Connect Error",L"B³¹d po³aczenia z baz¹ danych"},
+	{L"Ready",L"Gotowy"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -143,15 +144,15 @@ const wxChar *nvDistanceN[2][3] =
 
 const char *nvCommand[10] =
 {
- 	{"FlashCode(%d)"},
-	{"DriveCurrent(%d)"},
-	{"PowerOfLight(%d)"},
-	{"AM6ForceOff(%d,%d,%d)"},
-	{"SeasonControl(%d)"},
-	{"PhotoCellResistance(%d)"},
-	{"RipleDelay(%d)"},
-	{"PowerOff(%d)"},
-    {"GetTime()"},
+ 	{"FlashCode(%d)\r\n"},
+	{"DriveCurrent(%d)\r\n"},
+	{"PowerOfLight(%d)\r\n"},
+	{"AM6Off(%d,%d,%d)\r\n"},
+	{"SeasonControl(%d)\r\n"},
+	{"PhotoCellResistance(%d)\r\n"},
+	{"RipleDelay(%d)\r\n"},
+	{"PowerOff(%d)\r\n"},
+    {"GetTime()\r\n"},
 		
 };
 
@@ -891,7 +892,7 @@ void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
 {
 	int id = SetDBCommand(SBMSID,id_base_station);
 	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,off,id);
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,id,off);
 	UpdateDBCommand(id,_cmd);
 }
 

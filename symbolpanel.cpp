@@ -309,9 +309,34 @@ void CSymbolPanel::SetSBMS()
 
 void CSymbolPanel::OnManagement(wxCommandEvent &event)
 {
-	CCommandDialog *CommandDialog = new CCommandDialog(this,m_Symbol);
-	CommandDialog->ShowModal();
-	delete CommandDialog;
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms ='%d'"),TABLE_SBMS_VALUES,m_IdSBMS);
+	my_query(db,sql);
+
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result)
+	{
+	
+		if(row = (char**)db_fetch_row(result))
+		{
+
+			CCommandDialog *CommandDialog = new CCommandDialog(this,m_Symbol);
+			CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+
+			ptr->SetForcedOff(atoi(row[FI_SBMS_VALUES_MODE_FORCED_OFF]));
+			
+			CommandDialog->ShowModal();
+			delete CommandDialog;
+	
+		}
+	}
+	
+	DBClose(db);
 }
 
 void CSymbolPanel::OnGraph(wxCommandEvent &event)
@@ -323,8 +348,8 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	if(m_GraphDialog == NULL)
 		m_GraphDialog = new CGraphDialog(this,m_Symbol);
 	CGraph *Graph = m_GraphDialog->GetGraph();
-
-	wxString sql = wxString::Format(_("SELECT input_volt,utc_timestamp(CONVERT_TZ(local_utc_time, '+00:00', @@global.time_zone)) FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
+	
+	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -348,7 +373,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		nvPoint3f pt;
 		
 		value = atof(row[0]);
-		time = atof(row[1]);
+		time = atoi(row[1]);
 		
 		nvRGBA c;
 
@@ -384,5 +409,5 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	DBClose(db);
 	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
 	m_GraphDialog->ShowModal();
-	
+
 }

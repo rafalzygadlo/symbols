@@ -282,7 +282,7 @@ void CGraph::RenderGrid()
 {
 	
 	glPushMatrix();
-	glColor4f(0.6f,0.6f,0.6f,0.2);
+	glColor4f(0.6f,0.6f,0.6f,0.2f);
 		
 	glBegin(GL_LINES);
 	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
@@ -315,9 +315,6 @@ void CGraph::RenderGrid()
 		//t = t - _timezone - _dstbias;
 		tm *_t = gmtime(&t);
 		
-		fprintf(stderr,"stamp:%d\n",t);
-		fprintf(stderr,"TimeZone %d\n",_timezone);
-		fprintf(stderr,"Dst %d\n",_dstbias);
 		sprintf(txt,"%02d-%02d",_t->tm_mon + 1,_t->tm_mday);
 		RenderText(i,m_GridTop,txt);
 		sprintf(txt,"%02d:%02d",_t->tm_hour,_t->tm_min,_t->tm_sec);

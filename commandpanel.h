@@ -47,6 +47,8 @@ public:
 	void SetSelectedPtr(CSymbol *ptr);
 	void SetNoSBMS(bool v);
 	void Set();
+
+	void SetForcedOff(bool v);
 			
 
 	DECLARE_EVENT_TABLE();

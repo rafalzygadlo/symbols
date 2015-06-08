@@ -5,17 +5,18 @@
 #include <wx/hyperlink.h>
 #include "conf.h"
 #include "symbol.h"
-//#include "commandpanel.h"
+#include "commandpanel.h"
 
 class CCommandDialog: public wxDialog
 {
-	
+	CCommandPanel *m_CommandPanel;
 	wxPanel *GetButtonPanel(wxWindow *parent);
 
 public:
 
 	CCommandDialog(wxWindow *parent,CSymbol *ptr);
 	~CCommandDialog();
+	CCommandPanel *GetCommandPanel();
 	
 };
 
