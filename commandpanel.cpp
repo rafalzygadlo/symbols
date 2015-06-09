@@ -46,6 +46,7 @@ void CCommandPanel::OnDriveCurrent(wxCommandEvent &event)
 	else
 		m_Changed[COMMAND_DRIVE_CURRENT] = false;
 	
+	m_DriveCurrentValue = m_DriveCurrent->GetValue();
 	SetButtonState();
 }
 
@@ -55,7 +56,8 @@ void CCommandPanel::OnPowerOfLight(wxCommandEvent &event)
 		m_Changed[COMMAND_POWER_OF_LIGHT] = true;
 	else
 		m_Changed[COMMAND_POWER_OF_LIGHT] = false;
-		
+	
+	m_PowerOfLightValue = m_PowerOfLight->GetValue();
 	SetButtonState();
 }
 
@@ -67,6 +69,7 @@ void CCommandPanel::OnForcedOff(wxCommandEvent &event)
 	else
 		m_Changed[COMMAND_FORCED_OFF] = false;
 	
+	m_ForcedOffValue = m_ForcedOff->GetValue();
 	SetButtonState();
 }
 
@@ -81,6 +84,7 @@ void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 		m_SeasonControlPanel->Disable();
 	}
 
+	m_SeasonControlValue = m_SeasonControl->GetValue();
 	SetButtonState();
 	
 }
