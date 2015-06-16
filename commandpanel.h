@@ -38,6 +38,7 @@ class CCommandPanel: public wxPanel
 	void SetCommand(int id);
 	void SetGui();
 	void SetBusy(bool v);
+	void SetValues();
 
 public:
 

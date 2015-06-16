@@ -1,6 +1,7 @@
 ﻿#ifndef __CONF
 #define __CONF
 
+#define IS_BIT_SET(k, n)  ((k) & (1 << (n)))
 #if defined(_WIN32) || defined(_WIN64)
 #define DIR_SEPARATOR "\\"
 #endif
@@ -28,6 +29,10 @@
 #define KEY_FRAME_HEIGHT "frame_height"
 
 #define DEFAULT_FONT "arial.ttf"
+
+#define MONITORED_CHANNELS	4
+#define OVERLOAD_CHANNELS	4
+#define DOWN_CHANNELS		4
 
 #define DEFAULT_FRAME_HEIGHT 400
 #define DEFAULT_FRAME_WIDTH	 280
@@ -61,6 +66,9 @@
 #define DEFAULT_OFFSET_SECONS	60
 #define DEFAULT_OFFSET_MINUTES	(60*60)
 #define DEFAULT_OFFSET_HOURS	(24*60*60)
+
+#define COMMAND_STATUS_NEW  0
+#define COMMAND_STATUS_OK   1
 
 // Languages
 #define MSG_MANAGER					0
@@ -162,6 +170,8 @@
 #define MSG_MAX						96
 #define MSG_DB_CONNECT_ERROR		97
 #define MSG_READY					98
+#define MSG_DATE_TIME_UTC			99
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 

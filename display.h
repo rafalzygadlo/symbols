@@ -27,7 +27,6 @@ class CMapPlugin;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
-	wxMenu *m_Menu;
 	wxNotebook *m_Notebook;
 	CNaviBroker *m_Broker;
 	CMapPlugin *m_MapPlugin;

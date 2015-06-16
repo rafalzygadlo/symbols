@@ -241,14 +241,14 @@ bool  CSymbol::CheckCommand()
 	if(db == NULL)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
 	my_query(db,sql);
 	void *result = db_result(db);
 	
     char **row = NULL;
 	if(result == NULL)
 	{
-		DBClose(db);	
+		DBClose(db);
 		return false;
 	}
 	
@@ -261,7 +261,7 @@ bool  CSymbol::CheckCommand()
 	}
 	
 	db_free_result(result);
-	DBClose(db);	
+	DBClose(db);
 	m_CommandTick = 1;
 	
 	return true;

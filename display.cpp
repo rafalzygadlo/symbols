@@ -26,11 +26,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_Broker = NULL;
 	m_ControlName = Parent->GetLabel();
 	m_ControlType = DEFAULT_CONTROL_TYPE;
-
-	m_Menu = new wxMenu();
-	m_Menu->AppendRadioItem(0 + ID_MENU_BEGIN ,GetMsg(MSG_SYMBOL));
-	m_Menu->AppendRadioItem(1 + ID_MENU_BEGIN ,_("Ais Targets"));
-	m_Menu->AppendRadioItem(2 + ID_MENU_BEGIN ,_("Ais Monitor"));
+	
 
 	ReadConfig();
 	ShowControls();
@@ -38,7 +34,6 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 
 CDisplayPlugin::~CDisplayPlugin()
 {
-	delete m_Menu;
 	WriteConfig();
 	delete m_SymbolPanel;
 }
@@ -96,13 +91,13 @@ void CDisplayPlugin::ShowControls()
 
 void CDisplayPlugin::OnMenu(wxContextMenuEvent &event)
 {
-		
+#if 0	
 	if(m_ControlType != -1)
 		m_Menu->Check(m_ControlType, true);
 	
 	PopupMenu(m_Menu);
 	//delete Menu;
-	
+#endif	
 }
 
 

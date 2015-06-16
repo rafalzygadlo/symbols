@@ -116,6 +116,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Max",L"Max"},
 	{L"Database Connect Error",L"B³¹d po³aczenia z baz¹ danych"},
 	{L"Ready",L"Gotowy"},
+	{L"Date UTC",L"Czas UTC"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -850,6 +851,42 @@ wxString GetOnOff(int v)
 		return GetMsg(MSG_FALSE);
 	}
 
+}
+
+wxString GetMonitoredChannels(int v)
+{
+	wxString str;
+	for(int i = 0; i < MONITORED_CHANNELS;i++)
+	{
+		if(IS_BIT_SET(v,i))
+			str.Append(wxString::Format(_("[ %d ]"),i+1));
+	}
+
+	return str;
+}
+
+wxString GetOverloadChannels(int v)
+{
+	wxString str;
+	for(int i = 0; i < OVERLOAD_CHANNELS;i++)
+	{
+		if(IS_BIT_SET(v,i))
+			str.Append(wxString::Format(_("[ %d ]"),i+1));
+	}
+
+	return str;
+}
+
+wxString GetDownChannels(int v)
+{
+	wxString str;
+	for(int i = 0; i < DOWN_CHANNELS;i++)
+	{
+		if(IS_BIT_SET(v,i))
+			str.Append(wxString::Format(_("[ %d ]"),i+1));
+	}
+
+	return str;
 }
 
 

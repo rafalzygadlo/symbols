@@ -50,6 +50,10 @@ wxString GetOnOff(int v);
 wxString GetNvDateTime(nvtime_t v);
 wxString GetNvDate(nvtime_t v);
 wxString GetNvTime(nvtime_t v);
+wxString GetMonitoredChannels(int v);
+wxString GetOverloadChannels(int v);
+wxString GetDownChannels(int v);
+
 //COMMANDS
 void SetCommandForcedOff(int SBMSID, int id_base_station, bool off);
 #endif
