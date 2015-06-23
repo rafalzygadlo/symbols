@@ -149,6 +149,7 @@ public:
 
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();
+	wxArrayPtrVoid *GetSymbolListPtr();
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();

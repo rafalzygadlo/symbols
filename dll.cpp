@@ -199,6 +199,11 @@ CSymbol *CMapPlugin::GetSelectedPtr()
 	return SelectedPtr;
 }
 
+wxArrayPtrVoid *CMapPlugin::GetSymbolListPtr()
+{
+	return &m_SymbolList;
+}
+
 int CMapPlugin::GetDisplaySignal()
 {
 	return DisplaySignalType;
@@ -264,6 +269,7 @@ void CMapPlugin::Read()
 		ptr->SetLatMap(-to_y);
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
+		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 				
 		if(add)
 		{

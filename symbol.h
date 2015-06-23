@@ -50,6 +50,7 @@ class CSymbol
 	bool m_RenderRestricted;
 	bool m_Selected;
 	int m_AlertCount;
+	wxString m_Name;
 		
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -85,6 +86,7 @@ public:
 	void SetNumber(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
+	void SetName(wxString v);
 			
 	int GetId();
 	int GetIdSBMS();
@@ -96,7 +98,7 @@ public:
 	double GetLatMap();
 	bool GetBusy();					//zajêty komendami
 	int GetAlertCount();
-
+	wxString GetName();
 	void Start();
 	void Stop();
 	void Read();

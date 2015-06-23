@@ -212,7 +212,8 @@ bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
 void CDisplayPlugin::SignalSelect()
 {
 	m_Selected = m_MapPlugin->GetSelectedPtr();
-
+		
+	m_HtmlCtrl->SetList(m_MapPlugin->GetSymbolListPtr());
 	if(m_OldSelected == m_Selected)
 		return;
 

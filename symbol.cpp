@@ -593,6 +593,11 @@ void CSymbol::SetNumber(wxString v)
 	m_Number = v;
 }
 
+void CSymbol::SetName(wxString v)
+{
+	m_Name = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -639,3 +644,7 @@ int CSymbol::GetAlertCount()
 	return m_AlertCount;
 }
 
+wxString CSymbol::GetName()
+{
+	return m_Name;
+}

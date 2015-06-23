@@ -59,26 +59,19 @@ wxString CHtmlCtrl::OnGetItem(size_t item) const
 	if(List->size() <= item)
 		return wxEmptyString;
 
-	//SMarker *Ship = (SMarker*)ShipList->Item(item);
+	CSymbol *ptr = (CSymbol*)List->Item(item);
 	wxString str;
-	/*
-	double to_x, to_y;
-	Plugin->GetBroker()->Project(Ship->x,Ship->y,&to_x,&to_y);
 	
+	double to_x, to_y;
+		
 	//if(Plugin->ShipIsSelected(Ship))
-		str = wxString::Format(_("\
-		<table celpadding=4 border=0 cellspacing=0>\
-		<td><font size='4'><b>%s</b></font><font size='2'></td><td>%s</td>\
-		<tr><td>Lat</td><td> %s</td></tr>\
-		<tr><td>Lon</td><td> %s</td></tr>\
-		<tr><td>name</td><td>value</td></tr>\
-		<tr><td>name</td><td>value</td></tr></font>\
-		</table>"),Ship->name,Ship->description,FormatLatitude(-to_y),FormatLongitude(to_x));
+		str = wxString::Format(_("\<table celpadding=4 border=0 cellspacing=0><td><font size='4'><b>%s</b></font><font size='2'></td><td>%d</td><tr><td>Lat</td><td> %s</td></tr><tr><td>Lon</td><td> %s</td></tr></table>"),
+								ptr->GetName(),ptr->GetSBMSID(),FormatLatitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT),FormatLongitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT));
 
 	//else
 	
 	//	str = wxString::Format(_("<table celpadding=4><td><font size='4'>%s</font></td></table>"),Ship->name,Ship->description);
-	*/
+	
 	
 	return str;
 
