@@ -5,12 +5,13 @@
 #include "ticker.h"
 #include <gl/gl.h>
 #include "navibroker.h"
-#include "naviarray.h"
 #include "tgamem.h"
 #include "picture.h"
+#include "geometrytools.h"
 
 class CSymbol
 {
+	nvCircle m_Circle;
 	CTicker *m_Ticker0;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
@@ -47,9 +48,9 @@ class CSymbol
 	int m_IdBaseStation;
 	wxString m_Number;
 	bool m_RenderRestricted;
-	
+	bool m_Selected;
+	int m_AlertCount;
 		
-	
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
@@ -65,6 +66,7 @@ class CSymbol
 	void RenderRestricted();
 	void RenderAlert();
 	void RenderGPS();		//real position
+	void RenderSelected();
 			
 public:
 
@@ -83,7 +85,7 @@ public:
 	void SetNumber(wxString v);
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
-		
+			
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
@@ -93,6 +95,7 @@ public:
 	double GetLonMap();
 	double GetLatMap();
 	bool GetBusy();					//zajêty komendami
+	int GetAlertCount();
 
 	void Start();
 	void Stop();

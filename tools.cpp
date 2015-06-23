@@ -117,6 +117,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Database Connect Error",L"B³¹d po³aczenia z baz¹ danych"},
 	{L"Ready",L"Gotowy"},
 	{L"Date UTC",L"Czas UTC"},
+	{L"Number Of Tries",L"Iloœæ prób"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -238,9 +239,9 @@ wxString ConvertDegree(double degree,int type)
 		case DEGREE_FORMAT_DDMMSS:
 			return wxString::Format(_("%02d %02d %02.4f"),decimal, (int)minutes, second);
 		case DEGREE_FORMAT_DDMMMM:
-			return wxString::Format(_("%02d %02.4f"),decimal, minutes);
+			return wxString::Format(_("%02d %02.4f"),decimal, (float)minutes);
 		default:
-			return wxString::Format(_("%02d %02.4f"),decimal, minutes);
+			return wxString::Format(_("%02d %02.4f"),decimal, (float)minutes);
 	}  
 }
 

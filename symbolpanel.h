@@ -4,7 +4,6 @@
 #include <wx/html/htmlwin.h>
 #include "symbolpanel.h"
 #include "navibroker.h"
-#include "naviarray.h"
 #include "tgamem.h"
 #include "picture.h"
 #include "grid.h"
@@ -25,6 +24,7 @@ class CSymbolPanel : public wxPanel
 	int m_SBMSID;
 	wxButton *m_ButtonManagement;
 	wxButton *m_ButtonGraph;
+	wxButton *m_ButtonAlert;
 
 	void SetHeader();
 	void SymbolInfo(void *db,CSymbol *ptr);
@@ -49,6 +49,7 @@ public:
 	{
 		ID_MANAGEMENT = 7000,
 		ID_GRAPH,
+		ID_ALERT,
 	};
 
 	DECLARE_EVENT_TABLE();

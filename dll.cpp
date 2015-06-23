@@ -42,6 +42,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolGroup = NULL;
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
+	m_OptionsDialog = NULL;
 
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;	
@@ -106,7 +107,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolGroup;
 	delete m_BaseStation;
 	delete m_Characteristic;
-
+	delete m_OptionsDialog;
 	delete m_FileConfig;
 	delete m_Frame;
 	delete DisplaySignal;
@@ -116,9 +117,9 @@ CMapPlugin::~CMapPlugin()
 
 	//delete Font;
 
-	for(size_t i = 0; i < m_SymbolList.Length(); i++)
+	for(size_t i = 0; i < m_SymbolList.size(); i++)
 	{
-		CSymbol *ptr = m_SymbolList.Get(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
 		ptr->Stop();
 		delete ptr; 
 	}
@@ -266,11 +267,12 @@ void CMapPlugin::Read()
 				
 		if(add)
 		{
-			m_SymbolList.Append(ptr);
+			m_SymbolList.Add(ptr);
 			ptr->Start();
 		}
 	}
 	
+	SendSelectSignal();
 	db_free_result(result);
 	DBClose(db);
 
@@ -278,9 +280,9 @@ void CMapPlugin::Read()
 
 CSymbol *CMapPlugin::Exists(int id)
 {
-	for(size_t i = 0; i < m_SymbolList.Length(); i++)
+	for(size_t i = 0; i < m_SymbolList.size(); i++)
 	{
-		CSymbol *ptr = m_SymbolList.Get(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
 		if(id == ptr->GetId())
 			return ptr;
 	}
@@ -419,11 +421,13 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 
 CSymbol *CMapPlugin::SetSelection(double x, double y)
 {
-	for(size_t i = 0; i < m_SymbolList.Length(); i++)
+	
+	for(size_t i = 0; i < m_SymbolList.size(); i++)
 	{
-		CSymbol *ptr = m_SymbolList.Get(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
 		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/2) + TranslationX, ptr->GetLatMap() - (RectHeight/2) + TranslationY, ptr->GetLonMap() + (RectWidth/2) + TranslationX , ptr->GetLatMap() + (RectHeight/2) + TranslationY))
 			return ptr;
+		
 	}
 	
 	return NULL;
@@ -512,6 +516,13 @@ void CMapPlugin::SymbolGroup()
 	m_SymbolGroup->Show();
 }
 
+void CMapPlugin::Options()
+{
+	if(m_OptionsDialog == NULL)
+		m_OptionsDialog = new COptionsDialog();
+	m_OptionsDialog->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -526,7 +537,8 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHARACTERISTIC),this, MenuCharacteristic );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
-	
+	NaviApiMenu->AddItem(L"-",this, NULL );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 
@@ -558,6 +570,14 @@ void *CMapPlugin::MenuSymbol(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
 	ThisPtr->Menu(CONTROL_SYMBOL);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuOptions(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_OPTIONS);
 	
 	return NULL;	
 }
@@ -623,6 +643,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_SYMBOL_GROUP:		SymbolGroup();		break;
 		case CONTROL_BASE_STATION:		BaseStation();		break;
 		case CONTROL_CHARACTERISTIC:	Characteristic();	break;
+		case CONTROL_OPTIONS:			Options();			break;
 	}
 
 }
@@ -664,6 +685,8 @@ void CMapPlugin::SetValues()
 void CMapPlugin::RenderSelected()
 {
 	double x,y;
+	//SelectedPtr->RenderSelected();
+#if 1
 	x = SelectedPtr->GetLonMap(); 
 	y = SelectedPtr->GetLatMap();
 		
@@ -682,6 +705,8 @@ void CMapPlugin::RenderSelected()
 	glPopMatrix();
 	
 	glDisable(GL_BLEND);
+#endif
+
 }
 
 void CMapPlugin::RenderHighlighted()
@@ -768,9 +793,10 @@ void CMapPlugin::RenderDistance()
 
 void CMapPlugin::RenderSymbols()
 {
-	for(size_t i = 0; i < m_SymbolList.Length(); i++)
+	for(size_t i = 0; i < m_SymbolList.size(); i++)
 	{
-		m_SymbolList.Get(i)->Render();
+		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
+		ptr->Render();
 	}
 }
 

@@ -6,7 +6,6 @@
 #include "db.h"
 #include "images/icon.h"
 #include "navidrawer.h"
-#include "geometrytools.h"
 #include "ais.h"
 #include "options.h"
 //#include "nvtime.h"
@@ -40,7 +39,9 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_SBMSID = 0;
 	m_IdBaseStation = 0;
 	m_RenderRestricted = false;
+	m_Selected = false;
 	m_Ticker0 = NULL;
+	m_AlertCount = 0;
 }
 
 CSymbol::~CSymbol()
@@ -274,7 +275,7 @@ bool CSymbol::CheckAlert()
 
 	if(m_AlertTickOn >= CHECK_ALERT_TICK_ON)
 	{
-		m_AlertOn = !m_AlertOn;
+		//m_AlertOn = !m_AlertOn;
 		m_AlertTickOn = 0;
 	}
 
@@ -286,7 +287,7 @@ bool CSymbol::CheckAlert()
 	if(db == NULL)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d'"),TABLE_ALERT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND confirmed ='%d'"),TABLE_ALERT,m_IdSBMS,ALERT_NOT_CONFIRMED);
 	my_query(db,sql);
 	void *result = db_result(db);
 	
@@ -298,11 +299,15 @@ bool CSymbol::CheckAlert()
 	}
 	
 	m_Alert = false;
-	while(row = (char**)db_fetch_row(result))
+	row = (char**)db_fetch_row(result);
+	sscanf(row[0],"%d",&m_AlertCount);
+	
+	if(m_AlertCount > 0)
 	{
-		int cmd;
-		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
 		m_Alert = true;
+		m_AlertOn = true;
+	}else{
+		m_Alert = false;
 	}
 	
 	db_free_result(result);
@@ -354,11 +359,30 @@ void CSymbol::SetValues()
 	m_RectHeight = RECT_HEIGHT / m_SmoothScaleFactor;
 	m_TranslationX = 0.0; //(RECT_WIDTH /2)/SmoothScaleFactor; 
 	m_TranslationY = -(RECT_HEIGHT /2)/m_SmoothScaleFactor; 
-	
 	m_Broker->GetVisibleMap(m_VisibleMap);
 	
 }
+#if 0
+void CSymbol::RenderSelected()
+{
+	if(!m_Selected)
+		return;
 
+	glPushMatrix();
+	
+	glColor4f(1.0f,1.0f,1.0f,0.5f);	
+	glTranslatef(m_LonMap, m_LatMap ,0.0f);
+	glTranslatef(0.0, -m_RectWidth/2 ,0.0f);
+	glLineWidth(2);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth/1.5;
+	nvDrawCircleFilled(&c);
+	glPopMatrix();
+
+}
+#endif
 
 void CSymbol::RenderLightOn()
 {
@@ -515,6 +539,9 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
+#if 0
+	RenderSelected();
+#endif
 	RenderRestricted();
 	RenderBusy();
 #if 0
@@ -607,4 +634,8 @@ double CSymbol::GetLatMap()
 	return m_LatMap;
 }
 
+int CSymbol::GetAlertCount()
+{
+	return m_AlertCount;
+}
 

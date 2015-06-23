@@ -51,6 +51,10 @@ void CSymbolPanel::GetPage1()
 	vSizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
 	m_ButtonGraph->Disable();
 	
+	m_ButtonAlert = new wxButton(this,ID_ALERT,GetMsg(MSG_ALERT));
+	vSizer->Add(m_ButtonAlert,0,wxALL|wxEXPAND,2);
+	m_ButtonAlert->Disable();
+
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
@@ -78,6 +82,18 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonManagement->Disable();
 	else
 		m_ButtonManagement->Enable();
+
+	int count = ptr->GetAlertCount();
+	if(count > 0)
+	{
+		m_ButtonAlert->Enable();
+		m_ButtonAlert->SetLabel(wxString::Format(_("%s (%d)"),GetMsg(MSG_ALERT),count));
+
+	}else{
+
+		m_ButtonAlert->Disable();
+		m_ButtonAlert->SetLabel(GetMsg(MSG_ALERT));
+	}
 
 	m_ButtonGraph->Enable();
 	m_IdSBMS = ptr->GetIdSBMS();
@@ -161,7 +177,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>[%d]%s</b></font></td></tr>"),atoi(row[FI_SBMS_SMBSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
 		str.Append(_("</table>"));
 			
 		m_Html->AppendToPage(str);

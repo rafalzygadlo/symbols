@@ -79,8 +79,12 @@ void CDisplayPlugin::ShowControls()
 	wxBoxSizer *Main = new wxBoxSizer(wxHORIZONTAL);
 			
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
+	m_HtmlCtrl = new CHtmlCtrl(m_Notebook);
+	m_Notebook->AddPage(m_HtmlCtrl,GetMsg(MSG_ALL));
+	
 	m_SymbolPanel = new CSymbolPanel(m_Notebook);
 	m_Notebook->AddPage(m_SymbolPanel,GetMsg(MSG_INFO));
+
 	//m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
 	//m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_OPTIONS));

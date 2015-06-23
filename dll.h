@@ -13,6 +13,7 @@
 #include "dialog.h"
 #include "ticker.h"
 #include "symbol.h"
+#include "optionsdialog.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -32,6 +33,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolGroup;
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
+	COptionsDialog *m_OptionsDialog;
 
 	bool m_On;
 	bool m_Reading;
@@ -74,7 +76,7 @@ class CMapPlugin :public CNaviMapIOApi
 	nvFastFont *Font;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
-	CNaviArray <CSymbol*> m_SymbolList;
+	wxArrayPtrVoid m_SymbolList;
 	float m_AnimMarkerSize;
 
 	void ReadDBConfig();
@@ -125,6 +127,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SymbolGroup();
 	void BaseStation();
 	void Characteristic();
+	void Options();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -136,6 +139,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuSymbolType(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuItems(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuPicture(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuOptions(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	
