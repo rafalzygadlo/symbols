@@ -37,7 +37,7 @@ void CHtmlCtrl::SetList(wxArrayPtrVoid *ptr)
 		return;
 
 	List = ptr;
-	SetItemCount(ptr->size());
+	SetItemCount(10);
 
 }
 

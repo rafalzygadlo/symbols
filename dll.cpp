@@ -64,7 +64,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	DisplaySignal = new CDisplaySignal(NDS_SYMBOL);
 	SelectedPtr = HighlightedPtr = NULL;
 	DBLClick = false;
-	
+	m_SymbolList = new wxArrayPtrVoid();
 	//Font = new nvFastFont();
 	//Font->Assign( (nvFastFont*)NaviBroker->GetFont( 1 ) );		// 1 = nvAriali 
 	//Font->SetEffect( nvEFFECT_SMOOTH );
@@ -117,13 +117,15 @@ CMapPlugin::~CMapPlugin()
 
 	//delete Font;
 
-	for(size_t i = 0; i < m_SymbolList.size(); i++)
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Stop();
 		delete ptr; 
 	}
-	m_SymbolList.Clear();
+	m_SymbolList->Clear();
+	delete m_SymbolList;
+	
 	FreeMutex();
 	DBClose(m_DB);
 }
@@ -201,7 +203,7 @@ CSymbol *CMapPlugin::GetSelectedPtr()
 
 wxArrayPtrVoid *CMapPlugin::GetSymbolListPtr()
 {
-	return &m_SymbolList;
+	return m_SymbolList;
 }
 
 int CMapPlugin::GetDisplaySignal()
@@ -273,12 +275,12 @@ void CMapPlugin::Read()
 				
 		if(add)
 		{
-			m_SymbolList.Add(ptr);
+			m_SymbolList->Add(ptr);
 			ptr->Start();
 		}
 	}
 	
-	SendSelectSignal();
+	SendInsertSignal();
 	db_free_result(result);
 	DBClose(db);
 
@@ -286,9 +288,9 @@ void CMapPlugin::Read()
 
 CSymbol *CMapPlugin::Exists(int id)
 {
-	for(size_t i = 0; i < m_SymbolList.size(); i++)
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		if(id == ptr->GetId())
 			return ptr;
 	}
@@ -428,9 +430,9 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 CSymbol *CMapPlugin::SetSelection(double x, double y)
 {
 	
-	for(size_t i = 0; i < m_SymbolList.size(); i++)
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/2) + TranslationX, ptr->GetLatMap() - (RectHeight/2) + TranslationY, ptr->GetLonMap() + (RectWidth/2) + TranslationX , ptr->GetLatMap() + (RectHeight/2) + TranslationY))
 			return ptr;
 		
@@ -799,9 +801,9 @@ void CMapPlugin::RenderDistance()
 
 void CMapPlugin::RenderSymbols()
 {
-	for(size_t i = 0; i < m_SymbolList.size(); i++)
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList.Item(i);
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 	}
 }
@@ -840,7 +842,7 @@ void CMapPlugin::SetMouseXY(int x, int y)
 void CMapPlugin::OnTick()
 {
 	m_Reading = true;
-	Read();
+	//Read();
 	m_Reading = false;
 	//m_Broker->Refresh(m_Broker->GetParentPtr());
 	//m_On = !m_On;

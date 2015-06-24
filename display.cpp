@@ -198,6 +198,9 @@ void CDisplayPlugin::SignalInsert()
 	if(m_MapPlugin == NULL)
 		return;
 
+	fprintf(stderr,"Update\n");
+	//m_HtmlCtrl->ClearList();	
+	m_HtmlCtrl->SetList(m_MapPlugin->GetSymbolListPtr());
 //	ShipList->SetList(MapPlugin->GetShipList());
 //	ShipList->Refresh();
 }
@@ -213,7 +216,6 @@ void CDisplayPlugin::SignalSelect()
 {
 	m_Selected = m_MapPlugin->GetSelectedPtr();
 		
-	m_HtmlCtrl->SetList(m_MapPlugin->GetSymbolListPtr());
 	if(m_OldSelected == m_Selected)
 		return;
 

@@ -76,7 +76,7 @@ class CMapPlugin :public CNaviMapIOApi
 	nvFastFont *Font;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
-	wxArrayPtrVoid m_SymbolList;
+	wxArrayPtrVoid *m_SymbolList;
 	float m_AnimMarkerSize;
 
 	void ReadDBConfig();
