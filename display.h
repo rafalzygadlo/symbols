@@ -37,6 +37,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
 	CHtmlCtrl *m_HtmlCtrl;
+	wxSearchCtrl *m_SearchText;
+	int m_OldCount;
 
 	wxString m_ControlName;
 	int m_ControlType;
@@ -50,6 +52,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void SwitchAction();
 	void RemoveControl(int type);
 	wxPanel *GetPage1(wxWindow *parent);
+	wxPanel *GetPage2(wxWindow *parent);
+	wxPanel *GetPage3(wxWindow *parent);
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);
 	void OnMenu(wxContextMenuEvent &event);
@@ -66,7 +70,12 @@ public:
 	virtual void BeforeWork(CDisplaySignal *Signal);
 	virtual void AfterWork(CDisplaySignal *Signal);
 	virtual void OnRender(wxGCDC &dc);
-		
+
+	enum 
+	{
+		ID_SEARCH,
+	};
+
 	DECLARE_EVENT_TABLE();
 };
 

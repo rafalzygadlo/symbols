@@ -46,11 +46,11 @@ class CSymbol
 	int m_IdSBMS;
 	int m_SBMSID;
 	int m_IdBaseStation;
-	wxString m_Number;
 	bool m_RenderRestricted;
 	bool m_Selected;
 	int m_AlertCount;
 	wxString m_Name;
+	wxString m_Number;
 		
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -87,7 +87,7 @@ public:
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
-			
+	
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
@@ -99,6 +99,8 @@ public:
 	bool GetBusy();					//zajêty komendami
 	int GetAlertCount();
 	wxString GetName();
+	wxString GetNumber();
+
 	void Start();
 	void Stop();
 	void Read();

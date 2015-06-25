@@ -61,8 +61,8 @@ wxString CHtmlCtrl::OnGetItem(size_t item) const
 	if(GetMutex()->TryLock() == wxMUTEX_BUSY)
 		return wxEmptyString;
 	
-	if(ShipList->size() <= item)
-		return wxEmptyString;
+	//if(ShipList->size() <= item)
+//		return wxEmptyString;
 
 	SMarker *Ship = (SMarker*)ShipList->Item(item);
 	wxString str;

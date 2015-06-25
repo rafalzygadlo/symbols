@@ -842,7 +842,7 @@ void CMapPlugin::SetMouseXY(int x, int y)
 void CMapPlugin::OnTick()
 {
 	m_Reading = true;
-	//Read();
+	Read();
 	m_Reading = false;
 	//m_Broker->Refresh(m_Broker->GetParentPtr());
 	//m_On = !m_On;

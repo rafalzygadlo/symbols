@@ -648,3 +648,8 @@ wxString CSymbol::GetName()
 {
 	return m_Name;
 }
+
+wxString CSymbol::GetNumber()
+{
+	return m_Number;
+}

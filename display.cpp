@@ -26,8 +26,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_Broker = NULL;
 	m_ControlName = Parent->GetLabel();
 	m_ControlType = DEFAULT_CONTROL_TYPE;
-	
-
+	m_OldCount = 0;
 	ReadConfig();
 	ShowControls();
 }
@@ -64,7 +63,58 @@ void CDisplayPlugin::WriteConfig()
 	delete FileConfig;
 }
 
+
 wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
+{
+
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	
+	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	//Sizer->Add(hSizer,0,wxALL|wxEXPAND,0);
+
+	m_SearchText = new wxSearchCtrl(Panel,ID_SEARCH,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
+	Sizer->Add(m_SearchText,0,wxALL|wxEXPAND,0);
+	//wxString str(GetSearchText(),wxConvUTF8);
+	//m_SearchText->SetValue(str);
+	
+
+	//wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER),wxDefaultPosition,wxSize(20,-1));
+	//hSizer->Add(BFilter,0,wxALL,0);
+
+	//m_SearchText->SetValue(m_SearchText);
+	
+	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL |wxLC_VRULES );
+	wxListItem item;
+	item.SetWidth(80);	item.SetText(GetMsg(MSG_NUMBER));	m_HtmlCtrl->InsertColumn(0,item);
+	item.SetWidth(200);	item.SetText(GetMsg(MSG_NAME));		m_HtmlCtrl->InsertColumn(1,item);
+	
+	Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
+	
+	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());
+
+	//m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	//m_Page1Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
+	//m_Html->Hide();
+	
+	return Panel;
+}
+
+wxPanel *CDisplayPlugin::GetPage2(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_SymbolPanel = new CSymbolPanel(Panel);
+	Sizer->Add(m_SymbolPanel,1,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+
+wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
@@ -79,19 +129,17 @@ void CDisplayPlugin::ShowControls()
 	wxBoxSizer *Main = new wxBoxSizer(wxHORIZONTAL);
 			
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
-	m_HtmlCtrl = new CHtmlCtrl(m_Notebook);
-	m_Notebook->AddPage(m_HtmlCtrl,GetMsg(MSG_ALL));
 	
-	m_SymbolPanel = new CSymbolPanel(m_Notebook);
-	m_Notebook->AddPage(m_SymbolPanel,GetMsg(MSG_INFO));
-
-	//m_Notebook->AddPage(m_SymbolPanel->GetPage2(m_Notebook),GetMsg(MSG_REPORT));
-	//m_Notebook->AddPage(m_SymbolPanel->GetPage3(m_Notebook),GetMsg(MSG_ALERT));
-	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_OPTIONS));
+	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
+	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_INFO));
+	m_Notebook->AddPage(GetPage3(m_Notebook),GetMsg(MSG_OPTIONS));
+	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 	SetSizer(Main);
 
 }
+
+
 
 void CDisplayPlugin::OnMenu(wxContextMenuEvent &event)
 {
@@ -198,9 +246,19 @@ void CDisplayPlugin::SignalInsert()
 	if(m_MapPlugin == NULL)
 		return;
 
-	fprintf(stderr,"Update\n");
-	//m_HtmlCtrl->ClearList();	
-	m_HtmlCtrl->SetList(m_MapPlugin->GetSymbolListPtr());
+	//fprintf(stderr,"Update\n");
+	//m_HtmlCtrl->ClearList();
+
+	wxArrayPtrVoid *ptr = m_MapPlugin->GetSymbolListPtr();
+
+	m_HtmlCtrl->SetList(ptr);
+	int count = ptr->size();
+
+	if(m_OldCount != count)
+			m_Notebook->SetPageText(PAGE_0,wxString::Format(GetMsg(MSG_SYMBOLS),count));
+		m_OldCount = count;
+
+
 //	ShipList->SetList(MapPlugin->GetShipList());
 //	ShipList->Refresh();
 }
@@ -220,6 +278,8 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;
+
+	m_HtmlCtrl->SetSelection(m_Selected);
 		
 	if(m_Selected)
 	{	

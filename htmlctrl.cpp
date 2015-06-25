@@ -8,17 +8,19 @@
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
-BEGIN_EVENT_TABLE(CHtmlCtrl,wxHtmlListBox)
+BEGIN_EVENT_TABLE(CHtmlCtrl,wxListCtrl)
+	//EVT_ERASE_BACKGROUND(OnEraseBackground)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
-	EVT_LISTBOX(ID_HTML, CHtmlCtrl::OnSelect)
+	//EVT_LISTBOX(ID_HTML, CHtmlCtrl::OnSelect)
 END_EVENT_TABLE()
 
  
-CHtmlCtrl::CHtmlCtrl( wxWindow *Parent )
-:wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
+CHtmlCtrl::CHtmlCtrl(wxWindow *Parent, int style )
+:wxListCtrl( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize, style)
 {
-	SetDoubleBuffered(true);
-	SetSelectionBackground(wxColor(200,200,200));
+	//SetDoubleBuffered(true);
+	SetItemCount(0);
+	m_List = NULL;
 }
 
 CHtmlCtrl::~CHtmlCtrl()
@@ -33,45 +35,97 @@ void CHtmlCtrl::ClearList()
 
 void CHtmlCtrl::SetList(wxArrayPtrVoid *ptr)
 {
-	if(ptr == NULL)
-		return;
 
-	List = ptr;
-	SetItemCount(10);
+	m_List = ptr;
+	int count = m_List->size();
+
+	SetItemCount(m_List->size());
+	
+	//GetMutex()->Unlock();
 
 }
 
 void CHtmlCtrl::OnSelect(wxCommandEvent &event)
 {
-	if(GetSelection() < 0)
-		return;
+	//if(GetSelection() < 0)
+		//return;
 		
-	int a = GetSelection();
+	//int a = GetSelection();
 	//SMarker *Ship = (SMarker*)ShipList->Item(GetSelection());
 	//Plugin->SetSelectedShip(Ship);
 	//GetMutex()->Unlock();
 	
 }
 
-wxString CHtmlCtrl::OnGetItem(size_t item) const
+void CHtmlCtrl::OnEraseBackground(wxEraseEvent &event)
 {
-	
-	if(List->size() <= item)
-		return wxEmptyString;
+	// to prevent flickering, erase only content *outside* of the 
+   // actual list items stuff
 
-	CSymbol *ptr = (CSymbol*)List->Item(item);
-	wxString str;
-	
-	double to_x, to_y;
+   if(GetItemCount() > 0) {
+       wxDC * dc = event.GetDC();
+       assert(dc);
+
+       // get some info
+       wxCoord width = 0, height = 0;
+       GetClientSize(&width, &height);
+
+       wxCoord x, y, w, h;
+       dc->SetClippingRegion(0, 0, width, height);
+       dc->GetClippingBox(&x, &y, &w, &h); 
+
+       long top_item = GetTopItem();
+       long bottom_item = top_item + GetCountPerPage();
+       if(bottom_item >= GetItemCount()) {
+           bottom_item = GetItemCount() - 1;
+       }                
+
+       // trick: we want to exclude a couple pixels
+       // on the left side thus use wxLIST_RECT_LABEL
+       // for the top rect and wxLIST_RECT_BOUNDS for bottom
+       // rect
+       wxRect top_rect, bottom_rect;
+       GetItemRect(top_item, top_rect, wxLIST_RECT_LABEL);
+       GetItemRect(bottom_item, bottom_rect, wxLIST_RECT_BOUNDS);
+
+       // set the new clipping region and do erasing
+       wxRect items_rect(top_rect.GetLeftTop(), bottom_rect.GetBottomRight());
+       wxRegion reg(wxRegion(x, y, w, h)); 
+       reg.Subtract(items_rect);
+       dc->DestroyClippingRegion();
+       dc->SetClippingRegion(reg);
+
+       // do erasing
+       dc->SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
+       dc->Clear();
+
+       // restore old clipping region
+       dc->DestroyClippingRegion();
+       dc->SetClippingRegion(wxRegion(x, y, w, h));
+   } else {
+       event.Skip();
+  
+  }
+  
+}
+
+
+
+
+wxString CHtmlCtrl::OnGetItemText(long item, long column) const
+{
 		
-	//if(Plugin->ShipIsSelected(Ship))
-		str = wxString::Format(_("\<table celpadding=4 border=0 cellspacing=0><td><font size='4'><b>%s</b></font><font size='2'></td><td>%d</td><tr><td>Lat</td><td> %s</td></tr><tr><td>Lon</td><td> %s</td></tr></table>"),
-								ptr->GetName(),ptr->GetSBMSID(),FormatLatitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT),FormatLongitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT));
-
-	//else
-	
-	//	str = wxString::Format(_("<table celpadding=4><td><font size='4'>%s</font></td></table>"),Ship->name,Ship->description);
-	
+	if(m_List->size() <= item)
+		return wxEmptyString;
+		
+	CSymbol *ptr = (CSymbol*)m_List->Item(item);
+	wxString str;
+		
+	switch(column)
+	{
+		case COLUMN_NUMBER:			str = ptr->GetNumber();		break;
+		case COLUMN_NAME:			str = ptr->GetName();		break;
+	}
 	
 	return str;
 
@@ -82,35 +136,36 @@ wxColour CHtmlCtrl::GetSelectedTextColour(const wxColour& colFg) const
 {
     return wxColor(0,0,0);
 }
-/*
-void CHtmlCtrl::_SetSelection(SMarker *ship)
+
+void CHtmlCtrl::SetSelection(CSymbol *ptr)
 {
-	if(ship == NULL)
+	if(ptr == NULL)
 	{
-		this->SetSelection(-1);
+		//this->SetS (-1);
 		return;
 	}
 	
-	if(this->GetItemCount() != ShipList->size())
+	if(this->GetItemCount() != m_List->size())
 		return;
-
-	//SetItemCount(ShipList->size());
-	for(size_t i = 0; i < ShipList->size();i++)
+	
+	for(size_t i = 0; i < m_List->size();i++)
 	{ 
-		SMarker *Ship = (SMarker*)ShipList->Item(i);
-		if(Ship != NULL)
+		CSymbol *Symbol = (CSymbol*)m_List->Item(i);
+		if(Symbol != NULL)
 		{
 		
-			if(Ship == ship)
+			if(Symbol == ptr)
 			{
-				this->SetSelection(i);
-				//this->
-				Refresh();
-				return;
+				EnsureVisible(i);
+				SetItemState(i,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				//Refresh();
+				
+			}else{
+				SetItemState(i,0, wxLIST_STATE_SELECTED| wxLIST_STATE_SELECTED);
+
 			}
 		}
 	}
 		
 	Refresh();
 }
-*/

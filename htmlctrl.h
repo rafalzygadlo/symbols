@@ -2,25 +2,30 @@
 #define __HTMLCTRL
 
 #include <wx/wx.h>
-#include <wx/htmllbox.h>
+#include <wx/listctrl.h>
 #include "NaviBroker.h"
 #include "display.h"
 #include "frame.h"
 
 
-class CHtmlCtrl: public wxHtmlListBox
+class CHtmlCtrl: public wxListCtrl
 {	
 
-	wxArrayPtrVoid *List;
+	wxArrayPtrVoid *m_List;
 		
+	void OnEraseBackground(wxEraseEvent &event);
 	void OnSelect(wxCommandEvent &event);
-	virtual wxString OnGetItem(size_t item) const;
+	//virtual wxString OnGetItem(size_t item) const;
 	virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
 	//virtual wxColour GetSelectedTextBgColour(const wxColour& colBg) const;
 
+	wxString OnGetItemText(long item, long column) const;
+	//wxListItemAttr *OnGetItemAttr(long item) const;
+
+
 public:
 	
-	CHtmlCtrl(wxWindow *Parent);
+	CHtmlCtrl(wxWindow *Parent, int style );
 	~CHtmlCtrl();
 		
 	void SetList(wxArrayPtrVoid *ptr);
@@ -28,7 +33,7 @@ public:
 	wxString GetItemValue(long item, long column);
 	const char *GetSelectedColumn();
 	bool GetSortOrder();
-	//void _SetSelection(SMarker *ship);
+	void SetSelection(CSymbol *ptr);
 
 	DECLARE_EVENT_TABLE();
 

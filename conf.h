@@ -28,6 +28,11 @@
 #define KEY_FRAME_WIDTH "frame_width"
 #define KEY_FRAME_HEIGHT "frame_height"
 
+#define PAGE_0 0
+
+#define COLUMN_NUMBER	0
+#define COLUMN_NAME		1
+
 #define DEFAULT_FONT "arial.ttf"
 
 #define MONITORED_CHANNELS	4
@@ -175,7 +180,8 @@
 #define MSG_READY					98
 #define MSG_DATE_TIME_UTC			99
 #define MSG_NUMBER_OF_TRIES			100
-
+#define MSG_NUMBER					101
+#define MSG_SYMBOLS					102
 
 #define HTML_ANCHOR_LAST_REPORT	0
 
@@ -274,7 +280,7 @@
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	100
-#define TICK_DLL_TIME		1000
+#define TICK_DLL_TIME		1
 #define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
 #define CHECK_ALERT_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
