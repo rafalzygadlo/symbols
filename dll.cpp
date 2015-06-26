@@ -79,6 +79,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 		
 	//AddExecuteFunction("manager_GetThisPtr",GetThisPtrFunc);
 	//AddExecuteFunction("manager_SetSelShip",SetSelectedShipFunc);
+	AddExecuteFunction("symbol_OnSynchro",OnSynchro);
 		
 	m_Frame = NULL;
 	FromLMB = false;
@@ -172,6 +173,22 @@ void CMapPlugin::ReadDBConfig()
 	
 }
 
+void *CMapPlugin::OnSynchro(void *NaviMapIOApiPtr, void *Params)
+{
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+		
+	ThisPtr->Synchro();
+	
+	return NULL;
+}
+
+void CMapPlugin::Synchro()
+{ 
+	SendSynchroSignal();
+	m_Broker->Refresh(m_Broker->GetParentPtr());
+}
+
+
 void CMapPlugin::SetUID(int uid)
 {
 	_SetUID(uid);
@@ -231,6 +248,10 @@ void CMapPlugin::Read()
 		return;
 	
 	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
+
+	if(GetSearchText() != wxEmptyString)
+		sql << wxString::Format(_(" WHERE %s LIKE '%%%s%%' OR %s LIKE '%%%s%%'"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
+		
 	my_query(db,sql);
 	void *result = db_result(db);
 		
@@ -240,7 +261,17 @@ void CMapPlugin::Read()
 		DBClose(db);
 		return;
 	}
-		
+	
+	/*
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->Stop();
+		delete ptr; 
+	}
+	m_SymbolList->Clear();
+	*/
+
 	while(row = (char**)db_fetch_row(result))
 	{
 		double lon;
@@ -324,6 +355,13 @@ void CMapPlugin::SendInsertSignal()
 void CMapPlugin::SendSelectSignal()
 {
 	SetDisplaySignal(SIGNAL_SELECT);
+	DisplaySignal->SetData((void*)this,sizeof(this));
+	GetBroker()->SendDisplaySignal((void*)DisplaySignal);
+}
+
+void CMapPlugin::SendSynchroSignal()
+{
+	SetDisplaySignal(SIGNAL_SYNCHRO);
 	DisplaySignal->SetData((void*)this,sizeof(this));
 	GetBroker()->SendDisplaySignal((void*)DisplaySignal);
 }

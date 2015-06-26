@@ -92,6 +92,7 @@ class CMapPlugin :public CNaviMapIOApi
 	
 	void SendInsertSignal();
 	void SendSelectSignal();
+	void SendSynchroSignal();
 	void SetDisplaySignal(int type);
 		
 	void RenderSymbols();
@@ -128,6 +129,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void BaseStation();
 	void Characteristic();
 	void Options();
+	void Synchro();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -164,7 +166,8 @@ public:
 	virtual void SetLanguage(int LanguageID);					
 	
 	static void *GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params);
-	
+	static void *OnSynchro(void *NaviMapIOApiPtr, void *Params);
+
 };
 
 

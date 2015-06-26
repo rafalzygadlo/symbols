@@ -192,6 +192,7 @@
 #define SIGNAL_NONE		0
 #define SIGNAL_INSERT	1
 #define SIGNAL_SELECT	2
+#define SIGNAL_SYNCHRO	3
 
 #define CONTROL_ITEM			1
 #define CONTROL_ITEM_TYPE		2
@@ -207,7 +208,6 @@
 #define CONTROL_CHARACTERISTIC	12
 #define CONTROL_SYMBOL_LIST		13
 #define CONTROL_OPTIONS			14
-
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -280,7 +280,7 @@
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	100
-#define TICK_DLL_TIME		1
+#define TICK_DLL_TIME		2000
 #define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
 #define CHECK_ALERT_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund

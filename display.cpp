@@ -1,6 +1,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "display.h"
+#include "options.h"
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 
@@ -10,6 +11,8 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 //	EVT_HYPERLINK(ID_CONFIG,CDisplayPlugin::OnConfig)
 //	EVT_BUTTON(ID_ON,CDisplayPlugin::OnPowerOn)
 //	EVT_BUTTON(ID_OFF,CDisplayPlugin::OnPowerOff)
+	EVT_TEXT(ID_SEARCH,OnSearchText)
+	EVT_TEXT_ENTER(ID_SEARCH,OnSearchEnter)
 	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
 	EVT_CONTEXT_MENU(OnMenu)
 END_EVENT_TABLE()
@@ -64,28 +67,46 @@ void CDisplayPlugin::WriteConfig()
 }
 
 
+void CDisplayPlugin::OnSearchEnter(wxCommandEvent &event)
+{
+	SetSearchText(m_SearchText->GetValue().char_str());
+	SetSearchTextChanged(true);
+}
+
+void CDisplayPlugin::OnSearchText(wxCommandEvent &event)
+{
+	if(m_SearchText->GetValue().CmpNoCase(GetSearchText()) != 0)
+	{
+		SetSearchText(m_SearchText->GetValue().char_str());
+		Signal();
+	}
+	
+	SetSearchTextChanged(true);
+}
+
+void CDisplayPlugin::Signal()
+{
+	if(m_Broker != NULL)
+		m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"symbol_OnSynchro",NULL);
+}
+
 wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 {
 
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
-	
-	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	//Sizer->Add(hSizer,0,wxALL|wxEXPAND,0);
-
+		
 	m_SearchText = new wxSearchCtrl(Panel,ID_SEARCH,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	Sizer->Add(m_SearchText,0,wxALL|wxEXPAND,0);
-	//wxString str(GetSearchText(),wxConvUTF8);
-	//m_SearchText->SetValue(str);
+	m_SearchText->SetValue(GetSearchText());
 	
-
 	//wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER),wxDefaultPosition,wxSize(20,-1));
 	//hSizer->Add(BFilter,0,wxALL,0);
 
 	//m_SearchText->SetValue(m_SearchText);
 	
-	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL |wxLC_VRULES );
+	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL |wxLC_VRULES | wxLC_HRULES );
 	wxListItem item;
 	item.SetWidth(80);	item.SetText(GetMsg(MSG_NUMBER));	m_HtmlCtrl->InsertColumn(0,item);
 	item.SetWidth(200);	item.SetText(GetMsg(MSG_NAME));		m_HtmlCtrl->InsertColumn(1,item);
@@ -235,8 +256,9 @@ void CDisplayPlugin::SwitchAction()
 {
 	switch (m_MapPlugin->GetDisplaySignal())
 	{
-		case SIGNAL_INSERT:	SignalInsert();	break;
-		case SIGNAL_SELECT:	SignalSelect();	break;
+		case SIGNAL_INSERT:		SignalInsert();		break;
+		case SIGNAL_SELECT:		SignalSelect();		break;
+		case SIGNAL_SYNCHRO:	SignalSynchro();	break;
 	}
 
 }
@@ -263,12 +285,10 @@ void CDisplayPlugin::SignalInsert()
 //	ShipList->Refresh();
 }
 
-/*
-bool CDisplayPlugin::ShipIsSelected(SSymbol *ship)
+void CDisplayPlugin::SignalSynchro()
 {
-//	return MapPlugin->ShipIsSelected(ship);
+	m_SearchText->SetValue(GetSearchText());
 }
-*/
 
 void CDisplayPlugin::SignalSelect()
 {

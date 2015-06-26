@@ -23,7 +23,6 @@
 extern "C" {
 #endif
 
-
 class CMapPlugin;
 class CHtmlCtrl;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
@@ -57,6 +56,10 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);
 	void OnMenu(wxContextMenuEvent &event);
+	void OnSearchEnter(wxCommandEvent &event);
+	void OnSearchText(wxCommandEvent &event);
+	void Signal();
+	void SignalSynchro();
 
 public:
 	
@@ -71,7 +74,7 @@ public:
 	virtual void AfterWork(CDisplaySignal *Signal);
 	virtual void OnRender(wxGCDC &dc);
 
-	enum 
+	enum
 	{
 		ID_SEARCH,
 	};

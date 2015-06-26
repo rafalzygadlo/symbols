@@ -62,6 +62,7 @@ void CSymbol::Start()
 void CSymbol::Stop()
 {
 	m_Ticker0->Stop();
+	fprintf(stderr,"stop\n");
 }
 
 void CSymbol::Read()
