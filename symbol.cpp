@@ -42,12 +42,13 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Selected = false;
 	m_Ticker0 = NULL;
 	m_AlertCount = 0;
+	m_TickExit = false;
 }
 
 CSymbol::~CSymbol()
 {
 	//m_Ticker0->Stop();
-	
+	m_Broker = NULL;	
 #ifdef THREAD_JOINABLE
 	delete m_Ticker0;
 #endif
@@ -62,7 +63,13 @@ void CSymbol::Start()
 void CSymbol::Stop()
 {
 	m_Ticker0->Stop();
-	fprintf(stderr,"stop\n");
+}
+
+void CSymbol::Wait()
+{
+	m_Ticker0->_Wait();
+	fprintf(stderr,"STOP\n");
+	
 }
 
 void CSymbol::Read()
@@ -160,12 +167,14 @@ void CSymbol::Blink()
 		m_Step = 0;
 	}
 
-	m_Broker->Refresh(m_Broker->GetParentPtr());
+	if(m_Broker)
+		m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }
-
 void CSymbol::OnTick()
 {
+	if(m_Broker == NULL)
+		return;
 	
 	bool result = false;
 
@@ -177,13 +186,22 @@ void CSymbol::OnTick()
 		result = true;
 	
 	CheckCollision();
-
+	fprintf(stderr,"OnTick\n");
 	if(result)
 		m_Broker->Refresh(m_Broker->GetParentPtr());
 }
 
+void CSymbol::OnTickExit()
+{
+	m_TickExit = true;
+}
+
+
 bool CSymbol::CheckCollision()
 {
+	if(m_Broker == NULL)
+		return false;
+	
 	m_CollisionTick++;
 	
 	if(m_CollisionTick <= CHECK_COLLISION_TICK)

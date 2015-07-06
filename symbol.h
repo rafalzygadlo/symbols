@@ -39,6 +39,7 @@ class CSymbol
 	double m_TranslationX;
 	double m_TranslationY;
 	double m_VisibleMap[4];
+	bool m_TickExit;
 	int m_CommandTick,m_CommandTickOn;
 	int m_ReadTick;
 	int m_CollisionTick;
@@ -75,6 +76,7 @@ public:
 	~CSymbol();
 
 	void OnTick();
+	void OnTickExit();
 	void SetId(int v);
 	void SetLon(double v);
 	void SetLat(double v);
@@ -103,6 +105,7 @@ public:
 
 	void Start();
 	void Stop();
+	void Wait();
 	void Read();
 	void Render();
 

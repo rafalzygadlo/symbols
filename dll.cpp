@@ -94,7 +94,8 @@ CMapPlugin::~CMapPlugin()
 {
 	if(m_Ticker)
 	{
-	m_Ticker->Stop();
+		m_Ticker->Stop();
+		m_Ticker->_Wait();
 #ifdef THREAD_JOINABLE
 	delete m_Ticker;
 #endif
@@ -122,8 +123,21 @@ CMapPlugin::~CMapPlugin()
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Stop();
-		delete ptr; 
 	}
+	
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->Wait();
+	}	
+
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		delete ptr;
+	}	
+		
+
 	m_SymbolList->Clear();
 	delete m_SymbolList;
 	
@@ -243,6 +257,7 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 
 void CMapPlugin::Read()
 {
+	
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
@@ -261,17 +276,7 @@ void CMapPlugin::Read()
 		DBClose(db);
 		return;
 	}
-	
-	/*
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->Stop();
-		delete ptr; 
-	}
-	m_SymbolList->Clear();
-	*/
-
+		
 	while(row = (char**)db_fetch_row(result))
 	{
 		double lon;
@@ -314,6 +319,7 @@ void CMapPlugin::Read()
 	SendInsertSignal();
 	db_free_result(result);
 	DBClose(db);
+	
 
 }
 
@@ -869,6 +875,7 @@ void CMapPlugin::Render(void)
 	//Font->CreateBuffers();
 	//Font->Render();
 	glDisable(GL_POINT_SMOOTH);
+		
 }
 
 void CMapPlugin::SetMouseXY(int x, int y)
@@ -884,6 +891,11 @@ void CMapPlugin::OnTick()
 	m_Reading = false;
 	//m_Broker->Refresh(m_Broker->GetParentPtr());
 	//m_On = !m_On;
+}
+
+void CMapPlugin::OnTickExit()
+{
+
 }
 
 ////////////////////////////////////////////////////////////////////////////

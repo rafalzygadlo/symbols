@@ -139,7 +139,7 @@ wxColour CHtmlCtrl::GetSelectedTextColour(const wxColour& colFg) const
 
 void CHtmlCtrl::SetSelection(CSymbol *ptr)
 {
-	if(ptr == NULL)
+	if(ptr == NULL || m_List == NULL)
 	{
 		//this->SetS (-1);
 		return;

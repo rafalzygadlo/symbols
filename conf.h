@@ -7,7 +7,7 @@
 #endif
 #define nvPI 3.1415926535897932384626433832795
 #define THREAD
-#if 0
+#if 1
 #define THREAD_JOINABLE
 #endif
 #define DEFAULT_MYSQL_PORT 3306
@@ -75,8 +75,9 @@
 #define DEFAULT_OFFSET_MINUTES	(60*60)
 #define DEFAULT_OFFSET_HOURS	(24*60*60)
 
-#define COMMAND_STATUS_NEW  0
-#define COMMAND_STATUS_OK   1
+#define COMMAND_STATUS_NEW		0
+#define COMMAND_STATUS_SEND		1
+#define COMMAND_STATUS_OK		2
 
 // Languages
 #define MSG_MANAGER					0
@@ -279,7 +280,7 @@
 //TICK
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
-#define TICK_SYMBOL_TIME	100
+#define TICK_SYMBOL_TIME	1000
 #define TICK_DLL_TIME		2000
 #define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
@@ -550,6 +551,8 @@
 #define FI_SBMS_SMBSID				1
 #define FI_SBMS_ID_BASE_STATION		2
 #define FI_SBMS_NAME				3
+#define Fi_SBMS_PHONE				4
+#define FI_SBMS_MMSI				5
 
 //pola tabeli SBMS_VALUES
 #define FI_SBMS_VALUES_ID							0

@@ -155,6 +155,7 @@ public:
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();
+	void OnTickExit();
 
 	virtual void Run(void *Params); 
 	virtual void Kill(void);
