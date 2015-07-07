@@ -84,7 +84,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void CreateApiMenu(void);
 	void Menu(int type);
 	void WritecConfig();
-	void Read();
+	void ReadSymbol(void *db);
+	void ReadSymbolValues(void *db);
 	void Clear();
 	void Remove();
 	void WriteConfig();

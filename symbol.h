@@ -11,6 +11,7 @@
 
 class CSymbol
 {
+	void *m_DB;
 	nvCircle m_Circle;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
@@ -19,7 +20,6 @@ class CSymbol
 	bool m_FirstTime;
 	int m_Step;
 	bool m_Begin;
-	int m_BlinkTick;
 	int m_Id;
 	bool m_LightOn;
 	bool m_BusyOn;
@@ -61,7 +61,6 @@ class CSymbol
 	bool CheckCollision();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
-	void Blink(); 
 	void Read();
 	void RenderSymbol();
 	void RenderLightOn();
@@ -76,7 +75,7 @@ public:
 	CSymbol(CNaviBroker *broker);
 	~CSymbol();
 
-	void OnTick();
+	void OnTick(void *db);
 	void OnTickExit();
 	void SetId(int v);
 	void SetLon(double v);
@@ -91,6 +90,7 @@ public:
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
 	void SetRemove(bool v);
+	void SetDB(void *db);
 
 	int GetId();
 	int GetIdSBMS();

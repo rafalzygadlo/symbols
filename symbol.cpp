@@ -23,14 +23,12 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_LightOn = true;
 	m_FirstTime = true;
 	m_Step = 0;
-	m_BlinkTick = 0;
 	m_CommandTick = CHECK_COMMAND_TICK;
 	m_AlertTick = CHECK_ALERT_TICK;
 	m_AlertTickOn = CHECK_ALERT_TICK_ON;
 	m_CollisionTick = CHECK_COLLISION_TICK;
 	m_CommandTickOn = CHECK_COMMAND_TICK_ON;
 	m_ReadTick = CHECK_READ_TICK;
-	m_BlinkTick = 0;
 	m_Busy = false;
 	m_BusyOn = false;
 	m_Alert = false;
@@ -49,6 +47,10 @@ CSymbol::~CSymbol()
 
 }
 
+void CSymbol::SetDB(void *db)
+{
+	m_DB = db;
+}
 
 void CSymbol::Read()
 {
@@ -57,21 +59,18 @@ void CSymbol::Read()
 	if(m_ReadTick <= CHECK_READ_TICK)
 		return;
 
-	void *db = DBConnect();
-	if(db == NULL)
-		return;
+	//void *db = DBConnect();
+	//if(db == NULL)
+		//return;
 		
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
 
-	my_query(db,sql);
-	void *result = db_result(db);
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
 
     char **row = NULL;
 	if(result == NULL)
-	{
-		DBClose(db);
 		return;
-	}
 		
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -81,7 +80,7 @@ void CSymbol::Read()
 
 	db_free_result(result);
 		
-	DBClose(db);
+	//DBClose(db);
 	m_ReadTick = 0;
 	
 	/*
@@ -113,66 +112,6 @@ bool CSymbol::GetBusy()
 	return m_Busy;
 }
 
-void CSymbol::Blink()
-{
-	if(m_OnList.Length() == 0)
-		return;
-		
-	m_BlinkTick++;	
-	SOnOff ptr = m_OnList.Get(m_Step);
-	
-	if(m_LightOn)
-	{
-		if(ptr.on <= m_BlinkTick)
-		{
-			m_LightOn = false;
-			m_BlinkTick = 0;
-		}
-	}
-
-	if(!m_LightOn)
-	{
-		if(ptr.off <= m_BlinkTick)
-		{
-			m_LightOn = true;
-			m_BlinkTick = 0;
-			m_Step++;
-		}
-	}
-	
-	if(m_Step == m_OnList.Length())
-	{
-		m_Step = 0;
-	}
-
-	if(m_Broker)
-		m_Broker->Refresh(m_Broker->GetParentPtr());
-
-}
-void CSymbol::OnTick()
-{
-	if(m_Broker == NULL)
-		return;
-	
-	bool result = false;
-
-	Read();
-	
-	if(CheckCommand())
-		result = true;
-	if(CheckAlert())
-		result = true;
-	
-	CheckCollision();
-	
-	if(result)
-		m_Broker->Refresh(m_Broker->GetParentPtr());
-}
-
-void CSymbol::OnTickExit()
-{
-	m_TickExit = true;
-}
 
 
 bool CSymbol::CheckCollision()
@@ -221,50 +160,6 @@ bool CSymbol::CheckCollision()
 	return true;
 }
 
-bool  CSymbol::CheckCommand()
-{
-	m_CommandTick++;
-	m_CommandTickOn++;
-	
-	if(m_CommandTickOn >= CHECK_COMMAND_TICK_ON)
-	{
-		m_BusyOn = !m_BusyOn;
-		m_CommandTickOn = 0;
-	}
-
-	if(m_CommandTick <= CHECK_COMMAND_TICK)
-		return false;
-		
-	void *db = DBConnect();
-	if(db == NULL)
-		return false;
-	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
-	my_query(db,sql);
-	void *result = db_result(db);
-	
-    char **row = NULL;
-	if(result == NULL)
-	{
-		DBClose(db);
-		return false;
-	}
-	
-	m_Busy = false;
-	while(row = (char**)db_fetch_row(result))
-	{
-		int cmd;
-		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
-		m_Busy = true;
-	}
-	
-	db_free_result(result);
-	DBClose(db);
-	m_CommandTick = 1;
-	
-	return true;
-}
-
 bool CSymbol::CheckAlert()
 {
 	m_AlertTick++;
@@ -276,24 +171,16 @@ bool CSymbol::CheckAlert()
 		m_AlertTickOn = 0;
 	}
 
-
 	if(m_AlertTick <= CHECK_ALERT_TICK)
 		return false;
 	
-	void *db = DBConnect();
-	if(db == NULL)
-		return false;
-	
 	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND confirmed ='%d'"),TABLE_ALERT,m_IdSBMS,ALERT_NOT_CONFIRMED);
-	my_query(db,sql);
-	void *result = db_result(db);
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
 	
     char **row = NULL;
 	if(result == NULL)
-	{
-		DBClose(db);
 		return false;
-	}
 	
 	m_Alert = false;
 	row = (char**)db_fetch_row(result);
@@ -308,10 +195,70 @@ bool CSymbol::CheckAlert()
 	}
 	
 	db_free_result(result);
-	DBClose(db);	
 	m_AlertTick = 1;
 	
 	return true;
+}
+
+bool  CSymbol::CheckCommand()
+{
+	m_CommandTick++;
+	m_CommandTickOn++;
+	
+	if(m_CommandTickOn >= CHECK_COMMAND_TICK_ON)
+	{
+		m_BusyOn = !m_BusyOn;
+		m_CommandTickOn = 0;
+	}
+
+	if(m_CommandTick <= CHECK_COMMAND_TICK)
+		return false;
+	
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+	
+    char **row = NULL;
+	if(result == NULL)
+		return false;
+	
+	m_Busy = false;
+	while(row = (char**)db_fetch_row(result))
+	{
+		int cmd;
+		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
+		m_Busy = true;
+	}
+	
+	db_free_result(result);
+	m_CommandTick = 1;
+	
+	return true;
+}
+
+void CSymbol::OnTick(void *db)
+{
+	m_DB = db;
+	if(m_Broker == NULL)
+		return;
+	
+	bool result = false;
+
+	Read();
+	
+	if(CheckCommand())
+		result = true;
+	if(CheckAlert())
+		result = true;
+	
+	CheckCollision();
+	
+}
+
+void CSymbol::OnTickExit()
+{
+	m_TickExit = true;
 }
 
 void CSymbol::CreateSymbol(void *MemoryBlock,long MemoryBlockSize)

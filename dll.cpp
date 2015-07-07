@@ -132,6 +132,7 @@ CMapPlugin::~CMapPlugin()
 	
 	FreeMutex();
 	DBClose(m_DB);
+
 }
 
 void CMapPlugin::ReadDBConfig()
@@ -244,12 +245,8 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 		SmoothScaleFactor = Factor;
 }
 
-void CMapPlugin::Read()
-{
-	
-	void *db = DBConnect();
-	if(db == NULL)
-		return;
+void CMapPlugin::ReadSymbol(void *db)
+{	
 	
 	wxString sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,on_position,in_monitoring,name FROM %s"),TABLE_SYMBOL);
 	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
@@ -286,11 +283,10 @@ void CMapPlugin::Read()
 		
     char **row = NULL;
 	if(result == NULL)
-	{
-		DBClose(db);
 		return;
-	}
-		
+	
+	
+	
 	while(row = (char**)db_fetch_row(result))
 	{
 		double lon;
@@ -327,13 +323,22 @@ void CMapPlugin::Read()
 		if(add)
 			m_SymbolList->Add(ptr);
 
-		ptr->OnTick();
 	}
 		
 	db_free_result(result);
-	DBClose(db);
+		
 	
 
+}
+
+void CMapPlugin::ReadSymbolValues(void *db)
+{  
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->OnTick(db);	
+	}
+	
 }
 
 void CMapPlugin::Clear()
@@ -443,7 +448,6 @@ void CMapPlugin::Run(void *Params)
 		return;
 	}	
 	
-	Read();
 	CreateApiMenu(); // jezyki
 
 	m_Ticker = new CTicker(this,TICK_DLL);
@@ -460,7 +464,7 @@ void CMapPlugin::Kill(void)
 	while(m_Reading)
 		wxMilliSleep(100);
 	WriteConfig();
-
+	
 }
 
 void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
@@ -938,20 +942,20 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTick()
 {
-	//GetMutex()->Lock();
+	int t = GetTickCount();	
 	SetRemove();
-	Read();
-	Remove();
-	
-	//GetMutex()->Unlock();
-	
+	ReadSymbol(m_DB);			//przeczytaj symbole
+	fprintf(stderr,"%d\n",GetTickCount() - t);
+	Remove();				//usuń
+	ReadSymbolValues(m_DB);	// wczytaj inne opcje
+	fprintf(stderr,"%d\n",GetTickCount() - t);
 	SendInsertSignal();
-	m_Broker->Refresh(m_Broker->GetParentPtr());
 
+	
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
+	m_Broker->Refresh(m_Broker->GetParentPtr());
 
-	//m_On = !m_On;
 }
 
 void CMapPlugin::OnTickExit()

@@ -91,7 +91,7 @@ void CTicker::SendSignal()
 	switch(Id)
 	{
 		case TICK_DLL:			((CMapPlugin*)Parent)->OnTick();	break;
-		case TICK_SYMBOL:		((CSymbol*)Parent)->OnTick();			break;
+		//case TICK_SYMBOL:		((CSymbol*)Parent)->OnTick();			break;
 		
 	}
 
