@@ -17,8 +17,8 @@ BEGIN_EVENT_TABLE(CMyFrame,wxDialog)
 	EVT_TEXT(ID_LAT,CMyFrame::OnLat)
 END_EVENT_TABLE()
 
-extern CNaviMapIOApi *ThisPtr;
-extern CNaviBroker *BrokerPtr;
+//extern CNaviMapIOApi *ThisPtr;
+//extern CNaviBroker *BrokerPtr;
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)

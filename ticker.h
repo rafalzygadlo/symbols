@@ -21,7 +21,7 @@ class CTicker
 	int _Sleep;
 	bool _Stop;
 	bool _Working;
-	
+		
 #if defined (_WIN32) || defined(_WIN64)
 	DWORD ThreadID;
 	HANDLE TickerHANDLE;
@@ -47,6 +47,7 @@ public:
 #ifdef THREAD
 	void Start(int sleep);
 	void Stop();
+	void _Wait();
 #endif
 #ifdef TIMER
 	void Notify();

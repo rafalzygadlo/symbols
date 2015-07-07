@@ -78,12 +78,15 @@ class CMapPlugin :public CNaviMapIOApi
 	int DisplaySignalType;
 	wxArrayPtrVoid *m_SymbolList;
 	float m_AnimMarkerSize;
+	wxString m_OldSearchText;
 
 	void ReadDBConfig();
 	void CreateApiMenu(void);
 	void Menu(int type);
 	void WritecConfig();
 	void Read();
+	void Clear();
+	void Remove();
 	void WriteConfig();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
@@ -112,6 +115,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowProperties();
 	void ShowInfo(int x, int y);
 	CSymbol *Exists(int id);
+	void SetExists();
 		
 	int Count();
 	CSymbol *Get(int id);
@@ -155,6 +159,7 @@ public:
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();
+	void OnTickExit();
 
 	virtual void Run(void *Params); 
 	virtual void Kill(void);

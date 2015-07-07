@@ -15,6 +15,7 @@ CTicker::CTicker(void *parent, int id)
 	Exit = false;
 	Parent = parent;
 	Id = id;
+	
 }
 
 CTicker::~CTicker()
@@ -40,6 +41,10 @@ void CTicker::Start(int sleep)
 void CTicker::Stop()
 {
 	_Stop = true;
+}
+
+void CTicker::_Wait()
+{
 	if(!IsDetached())
 	{
 		if(IsRunning())
@@ -51,8 +56,8 @@ void *CTicker::Entry()
 {
 	while(1)
 	{
-		SendSignal();	
 		Sleep(_Sleep);
+		SendSignal();	
 		if(_Stop)
 			break;
 	}
@@ -63,6 +68,12 @@ void *CTicker::Entry()
 void CTicker::OnExit()
 {
 	_Working = false;
+	switch(Id)
+	{
+		case TICK_DLL:			((CMapPlugin*)Parent)->OnTickExit();	break;
+		case TICK_SYMBOL:		((CSymbol*)Parent)->OnTickExit();		break;
+		
+	}
 }
 
 #endif

@@ -2,6 +2,7 @@
 #include "tools.h"
 #include "display.h"
 #include "options.h"
+#include "filterdialog.h"
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 
@@ -10,7 +11,7 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 //	EVT_HYPERLINK(ID_DATA,CDisplayPlugin::OnData)
 //	EVT_HYPERLINK(ID_CONFIG,CDisplayPlugin::OnConfig)
 //	EVT_BUTTON(ID_ON,CDisplayPlugin::OnPowerOn)
-//	EVT_BUTTON(ID_OFF,CDisplayPlugin::OnPowerOff)
+	EVT_BUTTON(ID_FILTER,OnFilter)
 	EVT_TEXT(ID_SEARCH,OnSearchText)
 	EVT_TEXT_ENTER(ID_SEARCH,OnSearchEnter)
 	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
@@ -73,6 +74,19 @@ void CDisplayPlugin::OnSearchEnter(wxCommandEvent &event)
 	SetSearchTextChanged(true);
 }
 
+void CDisplayPlugin::OnFilter(wxCommandEvent &event)
+{
+	CFilterDialog *FilterDialog = new CFilterDialog();
+	if(FilterDialog->ShowModal()== wxID_OK)
+	{
+		SetSelectedAreaId(FilterDialog->GetAreaId());
+		SetSelectedSeawayId(FilterDialog->GetSeawayId());
+		SetSelectedSymbolTypeId(FilterDialog->GetSymbolTypeId());
+	}
+	
+	delete FilterDialog;
+}
+
 void CDisplayPlugin::OnSearchText(wxCommandEvent &event)
 {
 	if(m_SearchText->GetValue().CmpNoCase(GetSearchText()) != 0)
@@ -97,20 +111,23 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 		
+	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(hSizer,0,wxALL|wxEXPAND,0);
+
 	m_SearchText = new wxSearchCtrl(Panel,ID_SEARCH,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
-	Sizer->Add(m_SearchText,0,wxALL|wxEXPAND,0);
+	hSizer->Add(m_SearchText,1,wxALL|wxEXPAND,0);
 	m_SearchText->SetValue(GetSearchText());
 	
-	//wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER),wxDefaultPosition,wxSize(20,-1));
-	//hSizer->Add(BFilter,0,wxALL,0);
+	wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER_DOT),wxDefaultPosition,wxSize(20,-1));
+	hSizer->Add(BFilter,0,wxALL,0);
+	
 
-	//m_SearchText->SetValue(m_SearchText);
-	
-	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL |wxLC_VRULES | wxLC_HRULES );
+	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
 	wxListItem item;
-	item.SetWidth(80);	item.SetText(GetMsg(MSG_NUMBER));	m_HtmlCtrl->InsertColumn(0,item);
-	item.SetWidth(200);	item.SetText(GetMsg(MSG_NAME));		m_HtmlCtrl->InsertColumn(1,item);
 	
+	item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
+	item.SetWidth(250); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
+
 	Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
 	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());

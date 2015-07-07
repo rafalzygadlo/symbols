@@ -37,8 +37,6 @@ COptionsDialog::COptionsDialog()
 	m_SecondsBetweenTries->SetMin(1);
 	m_SecondsBetweenTries->SetMax(60);
 	FlexSizer->Add(m_SecondsBetweenTries,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
-		
-
 
 	wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
 	Sizer->Add(line,0,wxALL|wxEXPAND,0);
