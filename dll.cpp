@@ -251,7 +251,7 @@ void CMapPlugin::Read()
 	if(db == NULL)
 		return;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
+	wxString sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,on_position,in_monitoring,name FROM %s"),TABLE_SYMBOL);
 	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
@@ -267,8 +267,6 @@ void CMapPlugin::Read()
 	int seaway_id = GetSelectedSeawayId();
 	if(seaway_id > 0)
 		sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
-
-
 	//............................................................
 
 	sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
@@ -324,7 +322,7 @@ void CMapPlugin::Read()
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
-		ptr->SetExists(true);		
+		ptr->SetRemove(true);		
 		
 		if(add)
 			m_SymbolList->Add(ptr);
@@ -365,12 +363,12 @@ void CMapPlugin::Remove()
 	}
 }
 
-void CMapPlugin::SetExists()
+void CMapPlugin::SetRemove()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->SetExists(false);
+		ptr->SetRemove(false);
 	}
 }
 
@@ -905,7 +903,7 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::Render(void)
 {
-	GetMutex()->Lock();
+	//GetMutex()->Lock();
 	//Font->Clear();
 	glEnable(GL_POINT_SMOOTH);
 	MapScale = m_Broker->GetMapScale();
@@ -928,7 +926,7 @@ void CMapPlugin::Render(void)
 	//Font->Render();
 	glDisable(GL_POINT_SMOOTH);
 	
-	GetMutex()->Unlock();
+	//GetMutex()->Unlock();
 		
 }
 
@@ -940,13 +938,12 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTick()
 {
-	GetMutex()->Lock();
-	SetExists();
+	//GetMutex()->Lock();
+	SetRemove();
 	Read();
 	Remove();
 	
-	m_Reading = false;
-	GetMutex()->Unlock();
+	//GetMutex()->Unlock();
 	
 	SendInsertSignal();
 	m_Broker->Refresh(m_Broker->GetParentPtr());

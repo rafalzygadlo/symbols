@@ -90,7 +90,7 @@ public:
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
-	void SetExists(bool v);
+	void SetRemove(bool v);
 
 	int GetId();
 	int GetIdSBMS();

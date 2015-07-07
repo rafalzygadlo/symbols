@@ -151,12 +151,6 @@ wxString CHtmlCtrl::OnGetItemText(long item, long column) const
 
 }
 
-
-wxColour CHtmlCtrl::GetSelectedTextColour(const wxColour& colFg) const
-{
-    return wxColor(0,0,0);
-}
-
 void CHtmlCtrl::SetSelection(CSymbol *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
@@ -235,6 +229,7 @@ int CHtmlCtrl::OnGetItemImage(long item) const
 	return -1;
 }
 
+
 void CHtmlCtrl::Sort()
 {
 	myCompareClass a(this);
@@ -253,9 +248,6 @@ bool myCompareClass::operator() (void *g1, void *g2)
 	
 	CSymbol *c1 = (CSymbol*)g1;
 	CSymbol *c2 = (CSymbol*)g2;
-
-	setlocale( LC_ALL, "C" );
-	//setlocale(
 
 	if(GetSortColumnId() == 0)
 	{

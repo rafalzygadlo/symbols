@@ -19,9 +19,7 @@ class CHtmlCtrl: public wxListCtrl
 	void OnSelect(wxCommandEvent &event);
 	void OnColClick(wxListEvent& event);
 	//virtual wxString OnGetItem(size_t item) const;
-	virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
-	//virtual wxColour GetSelectedTextBgColour(const wxColour& colBg) const;
-
+	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
 	void SetColumnImage(int col, int image);

@@ -49,7 +49,6 @@ CSymbol::~CSymbol()
 
 }
 
-	m_Broker = NULL;
 
 void CSymbol::Read()
 {
@@ -596,7 +595,7 @@ void CSymbol::SetName(wxString v)
 	m_Name = v;
 }
 
-void CSymbol::SetExists(bool v)
+void CSymbol::SetRemove(bool v)
 {
 	m_Exists = v;
 }

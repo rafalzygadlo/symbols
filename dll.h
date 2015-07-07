@@ -115,7 +115,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowProperties();
 	void ShowInfo(int x, int y);
 	CSymbol *Exists(int id);
-	void SetExists();
+	void SetRemove();
 		
 	int Count();
 	CSymbol *Get(int id);
