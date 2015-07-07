@@ -120,6 +120,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Number Of Tries",L"Iloœæ prób"},
 	{L"Number",L"Numer"},
 	{L"Symbols (%d)",L"Znaki (%d)"},
+	{L"..",L".."},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

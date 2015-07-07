@@ -38,6 +38,7 @@ CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
 	SetItemCount(0);
 	m_Control = NULL;
 	m_ColumnWithId = 0;
+	m_Count = 0;
 	
 	m_ImageListSmall = new wxImageList(16,16);
 		
@@ -79,6 +80,54 @@ CListCtrl::~CListCtrl()
 	}
 
 }
+
+void CListCtrl::SetList(wxArrayPtrVoid *ptr)
+{
+	m_List = ptr;
+	int count = m_List->size();
+
+	if(m_Count != count)
+	{
+		SetItemCount(count);
+		Refresh();
+	}
+	
+	m_Count = count;
+}
+
+void CListCtrl::SetSelection(CSymbol *ptr)
+{
+	if(ptr == NULL || m_List == NULL)
+	{
+		//this->SetS (-1);
+		return;
+	}
+	
+	if(this->GetItemCount() != m_List->size())
+		return;
+	
+	for(size_t i = 0; i < m_List->size();i++)
+	{ 
+		CSymbol *Symbol = (CSymbol*)m_List->Item(i);
+		if(Symbol != NULL)
+		{
+		
+			if(Symbol == ptr)
+			{
+				EnsureVisible(i);
+				SetItemState(i,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+				//Refresh();
+				
+			}else{
+				SetItemState(i,0, wxLIST_STATE_SELECTED| wxLIST_STATE_SELECTED);
+
+			}
+		}
+	}
+		
+	Refresh();
+}
+
 
 void CListCtrl::SetColumnWithId(int id)
 {

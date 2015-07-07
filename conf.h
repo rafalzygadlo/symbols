@@ -183,6 +183,7 @@
 #define MSG_NUMBER_OF_TRIES			100
 #define MSG_NUMBER					101
 #define MSG_SYMBOLS					102
+#define MSG_FILTER_DOT				103
 
 #define HTML_ANCHOR_LAST_REPORT	0
 
@@ -281,7 +282,7 @@
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	1000
-#define TICK_DLL_TIME		2000
+#define TICK_DLL_TIME		1000
 #define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
 #define CHECK_ALERT_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund

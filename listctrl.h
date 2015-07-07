@@ -4,12 +4,15 @@
 #include <wx/wx.h>
 #include <wx/listctrl.h>
 #include "dialog.h"
+#include "symbol.h"
 
 class CDisplayPlugin;
 class CDialog;
 class CDialogPanel;
 class CListCtrl: public wxListCtrl
 {
+	wxArrayPtrVoid *m_List;
+	int m_Count;
 	void *m_DB;
 	CListCtrl *m_ThisPtr;
 	wxArrayPtrVoid m_ColumnArray;
@@ -75,6 +78,8 @@ public:
 	void SetColumnWithId(int id);
 	void SetColumnWithName(int id);
 	void SetColumnImage(int col, int image);
+	void SetList(wxArrayPtrVoid *ptr);
+	void SetSelection(CSymbol *ptr);
 
 	DECLARE_EVENT_TABLE();
 

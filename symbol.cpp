@@ -40,37 +40,15 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_IdBaseStation = 0;
 	m_RenderRestricted = false;
 	m_Selected = false;
-	m_Ticker0 = NULL;
 	m_AlertCount = 0;
 	m_TickExit = false;
 }
 
 CSymbol::~CSymbol()
 {
-	//m_Ticker0->Stop();
-	m_Broker = NULL;	
-#ifdef THREAD_JOINABLE
-	delete m_Ticker0;
-#endif
+
 }
 
-void CSymbol::Start()
-{
-	m_Ticker0 = new CTicker(this,TICK_SYMBOL);
-	m_Ticker0->Start(TICK_SYMBOL_TIME);
-}
-
-void CSymbol::Stop()
-{
-	m_Ticker0->Stop();
-}
-
-void CSymbol::Wait()
-{
-	m_Ticker0->_Wait();
-	fprintf(stderr,"STOP\n");
-	
-}
 
 void CSymbol::Read()
 {
@@ -186,7 +164,7 @@ void CSymbol::OnTick()
 		result = true;
 	
 	CheckCollision();
-	fprintf(stderr,"OnTick\n");
+	
 	if(result)
 		m_Broker->Refresh(m_Broker->GetParentPtr());
 }
@@ -617,6 +595,11 @@ void CSymbol::SetName(wxString v)
 	m_Name = v;
 }
 
+void CSymbol::SetExists(bool v)
+{
+	m_Exists = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -671,4 +654,9 @@ wxString CSymbol::GetName()
 wxString CSymbol::GetNumber()
 {
 	return m_Number;
+}
+
+bool CSymbol::GetExists()
+{
+	return m_Exists;
 }

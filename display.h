@@ -58,6 +58,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void OnMenu(wxContextMenuEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnSearchText(wxCommandEvent &event);
+	void OnFilter(wxCommandEvent &event);
 	void Signal();
 	void SignalSynchro();
 
@@ -77,6 +78,7 @@ public:
 	enum
 	{
 		ID_SEARCH,
+		ID_FILTER,
 	};
 
 	DECLARE_EVENT_TABLE();

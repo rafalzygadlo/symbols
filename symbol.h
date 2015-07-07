@@ -12,7 +12,6 @@
 class CSymbol
 {
 	nvCircle m_Circle;
-	CTicker *m_Ticker0;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	TTexture *m_TextureTGA_0;
@@ -52,6 +51,7 @@ class CSymbol
 	int m_AlertCount;
 	wxString m_Name;
 	wxString m_Number;
+	bool m_Exists;
 		
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -62,6 +62,7 @@ class CSymbol
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
 	void Blink(); 
+	void Read();
 	void RenderSymbol();
 	void RenderLightOn();
 	void RenderBusy();
@@ -89,7 +90,8 @@ public:
 	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
-	
+	void SetExists(bool v);
+
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
@@ -102,11 +104,8 @@ public:
 	int GetAlertCount();
 	wxString GetName();
 	wxString GetNumber();
-
-	void Start();
-	void Stop();
-	void Wait();
-	void Read();
+	bool GetExists();
+	
 	void Render();
 
 };

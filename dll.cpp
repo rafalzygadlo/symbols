@@ -64,6 +64,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	DisplaySignal = new CDisplaySignal(NDS_SYMBOL);
 	SelectedPtr = HighlightedPtr = NULL;
 	DBLClick = false;
+	m_OldSearchText = wxEmptyString;
+
 	m_SymbolList = new wxArrayPtrVoid();
 	//Font = new nvFastFont();
 	//Font->Assign( (nvFastFont*)NaviBroker->GetFont( 1 ) );		// 1 = nvAriali 
@@ -122,22 +124,9 @@ CMapPlugin::~CMapPlugin()
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->Stop();
+		delete ptr;
 	}
 	
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->Wait();
-	}	
-
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		delete ptr;
-	}	
-		
-
 	m_SymbolList->Clear();
 	delete m_SymbolList;
 	
@@ -263,10 +252,37 @@ void CMapPlugin::Read()
 		return;
 	
 	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL);
+	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
+	m_OldSearchText = GetSearchText();
+	
+	//Filter.....................................................
+	int area_id = GetSelectedAreaId();
+	if(area_id > 0)
+		sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
 
-	if(GetSearchText() != wxEmptyString)
-		sql << wxString::Format(_(" WHERE %s LIKE '%%%s%%' OR %s LIKE '%%%s%%'"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
-		
+	int symbol_type_id = GetSelectedSymbolTypeId();
+	if(symbol_type_id > 0)
+		sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
+
+	int seaway_id = GetSelectedSeawayId();
+	if(seaway_id > 0)
+		sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
+
+
+	//............................................................
+
+	sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
+	
+	if(GetSortOrder())
+		sql << _("ASC");
+	else
+		sql << _("DESC");
+	
+	if(GetSortChanged())
+	{
+		Clear();
+	}
+
 	my_query(db,sql);
 	void *result = db_result(db);
 		
@@ -308,19 +324,54 @@ void CMapPlugin::Read()
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
-				
+		ptr->SetExists(true);		
+		
 		if(add)
-		{
 			m_SymbolList->Add(ptr);
-			ptr->Start();
-		}
+
+		ptr->OnTick();
 	}
-	
-	SendInsertSignal();
+		
 	db_free_result(result);
 	DBClose(db);
 	
 
+}
+
+void CMapPlugin::Clear()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		delete ptr;
+		
+	}
+	
+	m_SymbolList->Clear();
+}
+
+
+void CMapPlugin::Remove()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		if(!ptr->GetExists())
+		{
+			m_SymbolList->Remove(ptr);
+			delete ptr;
+			i = 0;
+		}
+	}
+}
+
+void CMapPlugin::SetExists()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->SetExists(false);
+	}
 }
 
 CSymbol *CMapPlugin::Exists(int id)
@@ -854,6 +905,7 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::Render(void)
 {
+	GetMutex()->Lock();
 	//Font->Clear();
 	glEnable(GL_POINT_SMOOTH);
 	MapScale = m_Broker->GetMapScale();
@@ -875,6 +927,8 @@ void CMapPlugin::Render(void)
 	//Font->CreateBuffers();
 	//Font->Render();
 	glDisable(GL_POINT_SMOOTH);
+	
+	GetMutex()->Unlock();
 		
 }
 
@@ -886,10 +940,20 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTick()
 {
-	m_Reading = true;
+	GetMutex()->Lock();
+	SetExists();
 	Read();
+	Remove();
+	
 	m_Reading = false;
-	//m_Broker->Refresh(m_Broker->GetParentPtr());
+	GetMutex()->Unlock();
+	
+	SendInsertSignal();
+	m_Broker->Refresh(m_Broker->GetParentPtr());
+
+	//display potrzebuje tej flagi
+	SetSortChanged(false);
+
 	//m_On = !m_On;
 }
 

@@ -11,12 +11,19 @@ wxString GetDBHost();
 wxString GetDBUser();
 wxString GetDBPassword();
 wxString GetDBName();
+wxString GetSearchText();
+wxString GetSortColumn();
 int GetDBPort();
 float GetUpperTreshold();
 float GetLowerTreshold();
 bool GetExit();
 bool GetSearchTextChanged();
-wxString GetSearchText();
+int GetSortColumnId();
+bool GetSortOrder();
+bool GetSortChanged();
+int GetSelectedAreaId();
+int GetSelectedSeawayId();
+int GetSelectedSymbolTypeId();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
@@ -30,5 +37,15 @@ void SetLowerTreshold(float v);
 void SetExit(bool v);
 void SetSearchTextChanged(bool v);
 void SetSearchText(wxString v);
+void SetSortColumnId(int v);
+void SetSortOrder(bool v);
+void SetSortColumn(wxString v);
+void SetSortChanged(bool v);
+void SetSelectedAreaId(int v);
+void SetSelectedSeawayId(int v);
+void SetSelectedSymbolTypeId(int v);
+
+
 
 #endif
+
