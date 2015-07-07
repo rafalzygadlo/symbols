@@ -262,7 +262,7 @@ void CMapPlugin::Read()
 		return;
 	}
 	
-	/*
+	
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
@@ -270,7 +270,7 @@ void CMapPlugin::Read()
 		delete ptr; 
 	}
 	m_SymbolList->Clear();
-	*/
+	
 
 	while(row = (char**)db_fetch_row(result))
 	{

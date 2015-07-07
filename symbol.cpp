@@ -61,6 +61,7 @@ void CSymbol::Start()
 
 void CSymbol::Stop()
 {
+	m_Broker = NULL;
 	m_Ticker0->Stop();
 	fprintf(stderr,"stop\n");
 }
@@ -160,12 +161,15 @@ void CSymbol::Blink()
 		m_Step = 0;
 	}
 
-	m_Broker->Refresh(m_Broker->GetParentPtr());
+	if(m_Broker)
+		m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }
 
 void CSymbol::OnTick()
 {
+	if(m_Broker == NULL)
+		return;
 	
 	bool result = false;
 
