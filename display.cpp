@@ -77,11 +77,16 @@ void CDisplayPlugin::OnSearchEnter(wxCommandEvent &event)
 void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 {
 	CFilterDialog *FilterDialog = new CFilterDialog();
+	FilterDialog->SetAreaId(GetSelectedAreaId());
+	FilterDialog->SetSeawayId(GetSelectedSeawayId());
+	FilterDialog->SetSymbolTypeId(GetSelectedSymbolTypeId());
+
 	if(FilterDialog->ShowModal()== wxID_OK)
 	{
 		SetSelectedAreaId(FilterDialog->GetAreaId());
 		SetSelectedSeawayId(FilterDialog->GetSeawayId());
 		SetSelectedSymbolTypeId(FilterDialog->GetSymbolTypeId());
+		SetFilterChanged(true);
 	}
 	
 	delete FilterDialog;
@@ -128,6 +133,7 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
 	item.SetWidth(250); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
 
+	m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
 	Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
 	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());

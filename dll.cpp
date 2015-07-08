@@ -31,7 +31,12 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	SetBGColor(DEFAULT_BG_COLOR);
 	SetFGColor(DEFAULT_FG_COLOR);
+// pamietaj usuń
+//......................
+	
 	SetUID(4);
+	
+//.......................
 	m_DB = NULL;
 	m_Symbol = NULL;
 	m_Items = NULL;
@@ -60,6 +65,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	MapX = 0.0;
 	MapY = 0.0;
 	FirstRun = true;
+	m_OffsetX = m_OffsetY = 0;
 	//m_ShowWindow = false;
 	DisplaySignal = new CDisplaySignal(NDS_SYMBOL);
 	SelectedPtr = HighlightedPtr = NULL;
@@ -88,7 +94,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Reading = false;
 	m_Ticker = NULL;
 	
-	m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
+	ReadConfig();
+	//m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 	
 }
 
@@ -134,6 +141,66 @@ CMapPlugin::~CMapPlugin()
 	DBClose(m_DB);
 
 }
+
+void CMapPlugin::ReadConfig()
+{
+	wxFileConfig *FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
+//	FileConfig->Read(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_0_WIDTH)),&Column1Width,COLUM_0_WIDTH);
+//	FileConfig->Read(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_1_WIDTH)),&Column2Width,COLUM_1_WIDTH);
+//	FileConfig->Read(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_2_WIDTH)),&Column3Width,COLUM_2_WIDTH);
+
+	int id = 0;
+	wxString str;
+	//FILTER
+	FileConfig->Read(_(KEY_FILTER_AREA_ID),&id);			SetSelectedAreaId(id);
+	FileConfig->Read(_(KEY_FILTER_SEAWAY_ID),&id);			SetSelectedSeawayId(id);
+	FileConfig->Read(_(KEY_FILTER_SYMBOL_TYPE_ID),&id);		SetSelectedSymbolTypeId(id);
+
+	//SORT
+	FileConfig->Read(_(KEY_SORT_ORDER),&id);						SetSortOrder(id);
+	FileConfig->Read(_(KEY_SORT_COLUMN),&str,FN_SYMBOL_GROUP_NAME);	SetSortColumn(str);
+	FileConfig->Read(_(KEY_SORT_COLUMN_ID),&id);					SetSortColumnId(id);
+
+	//COLORS
+	wxString _color;
+	FileConfig->Read(_(KEY_NORMAL_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_NORMAL_COLOR)));			SetColor(SYMBOL_NORMAL_COLOR,StrToRGBA(_color));
+	FileConfig->Read(_(KEY_NO_MONITOR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_NO_MONITOR_COLOR)));	SetColor(SYMBOL_NO_MONITOR_COLOR,StrToRGBA(_color));
+	FileConfig->Read(_(KEY_ERROR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_ERROR_COLOR)));			SetColor(SYMBOL_ERROR_COLOR,StrToRGBA(_color));
+	FileConfig->Read(_(KEY_LIGHT_ON_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_LIGHT_ON_COLOR)));		SetColor(SYMBOL_LIGHT_ON_COLOR,StrToRGBA(_color));
+
+	delete FileConfig;
+}
+
+
+void CMapPlugin::WriteConfig()
+{
+	wxFileConfig *FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
+	
+//	ShipList->GetColumn(0,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_0_WIDTH)),item.GetWidth());
+//	ShipList->GetColumn(1,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_1_WIDTH)),item.GetWidth());
+//	ShipList->GetColumn(2,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_2_WIDTH)),item.GetWidth());
+	
+	//FILTER
+	FileConfig->Write(_(KEY_FILTER_AREA_ID),GetSelectedAreaId());
+	FileConfig->Write(_(KEY_FILTER_SEAWAY_ID),GetSelectedSeawayId());
+	FileConfig->Write(_(KEY_FILTER_SYMBOL_TYPE_ID),GetSelectedSymbolTypeId());
+
+	//SORT
+	FileConfig->Write(_(KEY_SORT_ORDER),GetSortOrder());
+	FileConfig->Write(_(KEY_SORT_COLUMN),GetSortColumn());
+	FileConfig->Write(_(KEY_SORT_COLUMN_ID),GetSortColumnId());
+
+	//COLORS
+	FileConfig->Write(_(KEY_NORMAL_COLOR),RGBAToStr(&GetColor(SYMBOL_NORMAL_COLOR)));
+	FileConfig->Write(_(KEY_NO_MONITOR_COLOR),RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));	
+	FileConfig->Write(_(KEY_ERROR_COLOR),RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));			
+	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));		
+
+
+	delete FileConfig;
+
+}
+
 
 void CMapPlugin::ReadDBConfig()
 {
@@ -245,35 +312,39 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 		SmoothScaleFactor = Factor;
 }
 
-void CMapPlugin::ReadSymbol(void *db)
-{	
+void CMapPlugin::SetSql(wxString &sql)
+{
 	
-	wxString sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,on_position,in_monitoring,name FROM %s"),TABLE_SYMBOL);
+	sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,on_position,in_monitoring,name FROM %s"),TABLE_SYMBOL);
 	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
-	//Filter.....................................................
 	int area_id = GetSelectedAreaId();
-	if(area_id > 0)
-		sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
-
+	if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
+	
 	int symbol_type_id = GetSelectedSymbolTypeId();
-	if(symbol_type_id > 0)
-		sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
+	if(symbol_type_id > 0) sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
 
 	int seaway_id = GetSelectedSeawayId();
-	if(seaway_id > 0)
-		sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
-	//............................................................
+	if(seaway_id > 0) sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
+		
+	if(GetSortColumn() != wxEmptyString)
+	{
+		sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
+	
+		if(GetSortOrder())
+			sql << _("ASC");
+		else
+			sql << _("DESC");
+	}
+	
+	
+}
 
-	sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
-	
-	if(GetSortOrder())
-		sql << _("ASC");
-	else
-		sql << _("DESC");
-	
-	if(GetSortChanged())
+void CMapPlugin::ReadSymbol(void *db, wxString sql)
+{	
+		
+	if(GetSortChanged() || GetFilterChanged())
 	{
 		Clear();
 	}
@@ -284,9 +355,7 @@ void CMapPlugin::ReadSymbol(void *db)
     char **row = NULL;
 	if(result == NULL)
 		return;
-	
-	
-	
+		
 	while(row = (char**)db_fetch_row(result))
 	{
 		double lon;
@@ -326,8 +395,6 @@ void CMapPlugin::ReadSymbol(void *db)
 	}
 		
 	db_free_result(result);
-		
-	
 
 }
 
@@ -366,6 +433,8 @@ void CMapPlugin::Remove()
 			i = 0;
 		}
 	}
+
+	fprintf(stderr,"Size:%d\n",m_SymbolList->size());
 }
 
 void CMapPlugin::SetRemove()
@@ -399,11 +468,6 @@ bool CMapPlugin::ShipIsSelected(SSymbol *ship)
 		
 }
 */
-
-void CMapPlugin::WriteConfig()
-{
-	
-}
 
 void CMapPlugin::SendInsertSignal()
 {
@@ -777,7 +841,7 @@ void CMapPlugin::SetValues()
 	RectWidth = RECT_WIDTH / SmoothScaleFactor;
 	RectHeight = RECT_HEIGHT / SmoothScaleFactor;
 	TranslationX = 0.0; //(RECT_WIDTH /2)/SmoothScaleFactor; 
-	TranslationY = -(RECT_HEIGHT /2)/SmoothScaleFactor; 
+	TranslationY = 0.0;	//-(RECT_HEIGHT /2)/SmoothScaleFactor; 
 		
 	InfoHeight = INFO_HEIGHT/SmoothScaleFactor;
 	InfoWidth = INFO_WIDTH/SmoothScaleFactor;
@@ -800,7 +864,7 @@ void CMapPlugin::RenderSelected()
 	
 	glColor4f(1.0f,1.0f,1.0f,0.5f);	
 	glTranslatef(x, y ,0.0f);
-	glTranslatef(0.0, -RectWidth/2 ,0.0f);
+	glTranslatef(m_OffsetX, m_OffsetY,0.0f);
 	glLineWidth(2);
 	nvCircle c;
 	c.Center.x = 0.0;
@@ -826,7 +890,7 @@ void CMapPlugin::RenderHighlighted()
 	
 	glColor4f(1.0f,0.0f,0.0f,0.2f);	
 	glTranslatef(x, y ,0.0f);
-	glTranslatef(0.0, -RectWidth/2 ,0.0f);
+	glTranslatef(m_OffsetX, m_OffsetY ,0.0f);
 	glLineWidth(2);
 	nvCircle c;
 	c.Center.x = 0.0;
@@ -942,9 +1006,13 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::OnTick()
 {
+	wxString sql;
 	int t = GetTickCount();	
 	SetRemove();
-	ReadSymbol(m_DB);			//przeczytaj symbole
+		
+	SetSql(sql);
+	
+	ReadSymbol(m_DB,sql);			//przeczytaj symbole
 	fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
 	ReadSymbolValues(m_DB);	// wczytaj inne opcje
@@ -954,6 +1022,7 @@ void CMapPlugin::OnTick()
 	
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
+	SetFilterChanged(false);
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

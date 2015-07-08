@@ -405,31 +405,34 @@ void CSymbol::RenderBusy()
 
 void CSymbol::RenderSymbol()
 {
-	glEnable(GL_TEXTURE_2D);
+	
 #if 0	
 	if(m_LightOn)
 		glColor4f(1.0f,1.0f,1.0f,0.5f);
 	else
 		glColor4f(0.0f,0.0f,0.0f,0.5f);
 #endif
+	SetColor(SYMBOL_NORMAL_COLOR);
+	
 	if(m_IdSBMS > 0)
 	{
 		if(m_Alert)
 		{
 			if(m_AlertOn)
-				glColor4f(1.0f,0.0f,0.0f,0.8f);
-			else
-				glColor4f(1.0f,1.0f,1.0f,0.8f);
+				SetColor(SYMBOL_ERROR_COLOR);
 		}
+	
 	}else{
 		
-		glColor4f(0.0f,0.0f,0.0f,0.8f);
+		SetColor(SYMBOL_NO_MONITOR_COLOR);
 	}
-
+/*
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
 	glPushMatrix();
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
 		
+	
 	glBegin(GL_QUADS);
 		glTexCoord2f(1.0f,1.0f); glVertex2f(  m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
 		glTexCoord2f(1.0f,0.0f); glVertex2f(  m_RectWidth/2 + m_TranslationX,   m_RectHeight/2 + m_TranslationY);
@@ -438,8 +441,28 @@ void CSymbol::RenderSymbol()
 	glEnd();
 	
 	glPopMatrix();
-
 	glDisable(GL_TEXTURE_2D);
+*/
+		
+	glPushMatrix();
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glBegin(GL_LINES);
+		glVertex2f(0.0f,m_RectWidth);
+		glVertex2f(0.0f,-m_RectWidth);
+		glVertex2f(m_RectWidth,0.0);
+		glVertex2f(-m_RectWidth,0.0);
+	glEnd();
+	
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth/2;
+	nvDrawCircle(&c);
+	nvDrawCircleFilled(&c);
+	glPopMatrix();
+	
+
+
 
 }
 
@@ -491,13 +514,18 @@ void CSymbol::Render()
 #if 0
 	RenderAlert();
 #endif
-	RenderGPS();
+	//RenderGPS();
 	RenderSymbol();
 		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
 
+}
+
+void CSymbol::SetColor(int id)
+{
+	glColor4ub(GetColor(id).R,GetColor(id).G,GetColor(id).B,GetColor(id).A);
 }
 
 //SET

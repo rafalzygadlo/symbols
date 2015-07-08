@@ -28,6 +28,20 @@
 #define KEY_FRAME_WIDTH "frame_width"
 #define KEY_FRAME_HEIGHT "frame_height"
 
+#define KEY_FILTER_AREA_ID			"area_id"
+#define KEY_FILTER_SEAWAY_ID		"seaway_id"
+#define KEY_FILTER_SYMBOL_TYPE_ID	"symbol_type_id"
+
+#define KEY_SORT_ORDER	"sort_order"
+#define KEY_SORT_COLUMN "sort_column"
+#define KEY_SORT_COLUMN_ID "sort_column_id"
+
+//COLORS
+#define KEY_NORMAL_COLOR		"normal_color"
+#define KEY_NO_MONITOR_COLOR	"no_monitor_color"
+#define KEY_ERROR_COLOR			"error_color"
+#define KEY_LIGHT_ON_COLOR		"light_on_color"
+
 #define PAGE_0 0
 
 #define COLUMN_NUMBER	0
@@ -184,6 +198,11 @@
 #define MSG_NUMBER					101
 #define MSG_SYMBOLS					102
 #define MSG_FILTER_DOT				103
+#define MSG_SYMBOL_COLORS			104
+#define MSG_SYMBOL_COLOR_NORMAL		105
+#define MSG_SYMBOL_NO_MONITOR		106
+#define MSG_SYMBOL_ERROR_COLOR		107
+#define MSG_SYMBOL_LIGHT_ON			108
 
 #define HTML_ANCHOR_LAST_REPORT	0
 
@@ -490,10 +509,9 @@
 
 // pola tabeli BASE_STATAION
 #define FI_BASE_STATION_ID					0
-#define FI_BASE_STATION_HID					1
-#define FI_BASE_STATION_NAME				2
-#define FI_BASE_STATION_IP					3
-#define FI_BASE_STATION_INFO				6
+#define FI_BASE_STATION_NAME				1
+#define FI_BASE_STATION_IP					2
+#define FI_BASE_STATION_INFO				5
 
 #define FN_BASE_STATION_ID					"id"
 #define FN_BASE_STATION_HID					"hid"
@@ -617,14 +635,16 @@
 #define COMMAND_COUNT 8 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
-//typy komunikacji
-//#define COMMUNICATION_RADIO 1
-//#define COMMUNICATION_AIS	2
-//#define COMMUNICATION_GPRS	3
-
 #define RESTRICTED_AREA_RADIUS 100 //m ?
 
 //#define PAGE_MANAGEMENT 1	// index strony notebook management panel
+
+//KOLORY
+#define SYMBOL_NORMAL_COLOR			0	
+#define SYMBOL_NO_MONITOR_COLOR		1
+#define SYMBOL_ERROR_COLOR			2
+#define SYMBOL_LIGHT_ON_COLOR		3
+
 
 /*
 typedef struct Symbol

@@ -19,10 +19,8 @@ class CHtmlCtrl: public wxListCtrl
 	void OnSelect(wxCommandEvent &event);
 	void OnColClick(wxListEvent& event);
 	//virtual wxString OnGetItem(size_t item) const;
-	
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
-	void SetColumnImage(int col, int image);
 	int OnGetItemImage(long item) const;
 	void Sort();
 
@@ -36,6 +34,7 @@ public:
 	wxString GetItemValue(long item, long column);
 	const char *GetSelectedColumn();
 	void SetSelection(CSymbol *ptr);
+	void SetColumnImage(int col, int image);
 
 	DECLARE_EVENT_TABLE();
 

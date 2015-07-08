@@ -121,6 +121,11 @@ const wchar_t *nvLanguage[][2] =
 	{L"Number",L"Numer"},
 	{L"Symbols (%d)",L"Znaki (%d)"},
 	{L"..",L".."},
+	{L"Symbol Colors",L"Kolory znaków"},
+	{L"Normal Color",L"Normalny"},
+	{L"No Monitor",L"Nie monitorowany"},
+	{L"Error",L"Kolor b³êdu"},
+	{L"Light On",L"Œwiat³o zapalone"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -792,6 +797,17 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, in
 	return ptr;
 }
 
+void ComboSetSelection(wxComboBox *combo, int id)
+{
+	for(int i = 0; i < combo->GetCount(); i++)
+	{
+		int cid = (int)combo->GetClientData(i);
+		if(cid == id)
+			combo->SetSelection(i);
+	
+	}
+}
+
 wxString GetFontFolderPath()
 {
 	#ifdef __WXMSW__
@@ -936,6 +952,26 @@ void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,id,off);
 	UpdateDBCommand(id,_cmd);
 }
+
+wxString RGBAToStr(nvRGBA *RGB)
+{
+	return wxString::Format(_("%03d%03d%03d%03d"), RGB->R, RGB->G, RGB->B,RGB->A);
+}
+
+nvRGBA StrToRGBA(wxString str)
+{
+	nvRGBA RGB;
+	
+	wxString str1; 
+	
+	str1 = str.substr(0,3);	RGB.R = atoi(str1.char_str());
+	str1 = str.substr(3,3);	RGB.G = atoi(str1.char_str());
+	str1 = str.substr(6,3);	RGB.B = atoi(str1.char_str());
+	str1 = str.substr(9,3);	RGB.A = atoi(str1.char_str());
+
+	return RGB;
+}
+
 
 
 #if 0

@@ -52,7 +52,8 @@ class CSymbol
 	wxString m_Name;
 	wxString m_Number;
 	bool m_Exists;
-		
+	
+	void CSymbol::SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);

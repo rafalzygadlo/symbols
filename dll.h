@@ -65,6 +65,7 @@ class CMapPlugin :public CNaviMapIOApi
 	double InfoWidth, InfoHeight;
 	double InfoMargin;
 	double TranslationX, TranslationY;
+	double m_OffsetX,m_OffsetY;
 	bool ClickedOnButton;
 	TTexture *TextureTGA_0;
 	GLuint TextureID_0;
@@ -84,10 +85,12 @@ class CMapPlugin :public CNaviMapIOApi
 	void CreateApiMenu(void);
 	void Menu(int type);
 	void WritecConfig();
-	void ReadSymbol(void *db);
+	void ReadSymbol(void *db,wxString sql);
+	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);
 	void Clear();
 	void Remove();
+	void ReadConfig();
 	void WriteConfig();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);

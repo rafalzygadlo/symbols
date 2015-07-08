@@ -15,22 +15,16 @@ END_EVENT_TABLE()
 
 
 CFilterDialog::CFilterDialog()
-	:wxDialog(NULL,wxID_ANY, _(PRODUCT_NAME), wxDefaultPosition, wxDefaultSize )
+	:wxDialog(NULL,wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize )
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(Sizer);
 	
  	Sizer->Add(GetPanel(this),0,wxALL|wxEXPAND,5);
-	
-
-	//m_ButtonSelect = new wxButton(this,ID_SELECT_ALL,GetMsg(MSG_SELECT_ALL),wxDefaultPosition,wxDefaultSize);
-	//m_MainSizer->Add(m_ButtonSelect,0,wxALL,5);
-
+			
 	wxButton *ButtonClose = new wxButton(this,wxID_OK,GetMsg(MSG_CLOSE),wxDefaultPosition,wxDefaultSize);
 	Sizer->Add(ButtonClose,0,wxALL|wxALIGN_RIGHT,5);
-
-
-
+	
 	Sizer->SetSizeHints(this);
 	Center();
 		
@@ -88,6 +82,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	return Panel;
 }
 
+//GET
 int CFilterDialog::GetAreaId()
 {
 	return (int)m_ComboArea->GetClientData(m_ComboArea->GetSelection());
@@ -103,8 +98,19 @@ int CFilterDialog::GetSeawayId()
 	return (int)m_ComboSeaway->GetClientData(m_ComboSeaway->GetSelection());
 }
 
-void CFilterDialog::Set(int id, bool checked)
+//SET
+void CFilterDialog::SetAreaId(int id)
 {
+	ComboSetSelection(m_ComboArea,id);
+}
 
+void CFilterDialog::SetSymbolTypeId(int id)
+{
+	ComboSetSelection(m_ComboSymbolType,id);
+}
+
+void CFilterDialog::SetSeawayId(int id)
+{
+	ComboSetSelection(m_ComboSeaway,id);
 }
 

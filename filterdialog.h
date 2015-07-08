@@ -20,6 +20,11 @@ public:
 	int GetSymbolTypeId();
 	int GetSeawayId();
 
+	void SetAreaId(int id);
+	void SetSymbolTypeId(int id);
+	void SetSeawayId(int id);
+
+
 	DECLARE_EVENT_TABLE();
 
 	enum

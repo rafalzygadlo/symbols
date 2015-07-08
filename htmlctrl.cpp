@@ -41,6 +41,8 @@ CHtmlCtrl::CHtmlCtrl(wxWindow *Parent, int style )
 	SetItemCount(0);
 	m_List = NULL;
 	m_Count = 0;
+
+	
 }
 
 CHtmlCtrl::~CHtmlCtrl()
@@ -187,7 +189,7 @@ void CHtmlCtrl::SetSelection(CSymbol *ptr)
 void CHtmlCtrl::OnColClick(wxListEvent& event)
 {
 	
-	static bool x = false;
+	static bool x = GetSortOrder();
     	
 	int col = -1;
 	
