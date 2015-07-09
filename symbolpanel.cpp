@@ -177,7 +177,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>[%d]%s</b></font></td></tr>"),atoi(row[FI_SBMS_SMBSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>(%d) - %s</b></font></td></tr>"),atoi(row[FI_SBMS_SMBSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
 		int phone = atoi(row[Fi_SBMS_PHONE]);
 		if(phone)
 			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),phone));

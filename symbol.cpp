@@ -40,6 +40,8 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Selected = false;
 	m_AlertCount = 0;
 	m_TickExit = false;
+	m_PhotoCellNightTime = false;
+	m_ForcedOff = false;
 }
 
 CSymbol::~CSymbol()
@@ -58,11 +60,7 @@ void CSymbol::Read()
 	
 	if(m_ReadTick <= CHECK_READ_TICK)
 		return;
-
-	//void *db = DBConnect();
-	//if(db == NULL)
-		//return;
-		
+			
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
 
 	my_query(m_DB,sql);
@@ -79,32 +77,32 @@ void CSymbol::Read()
 	}
 
 	db_free_result(result);
-		
-	//DBClose(db);
-	m_ReadTick = 0;
 	
-	/*
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_characteristic = '%d'"),TABLE_CHARACTERISTIC_ON_OFF,m_CharacteristicId);
+	
+	//SBMS VALUES
+	sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms = '%d'"),TABLE_SBMS_VALUES,m_IdSBMS);
 	my_query(m_DB,sql);
-	void *result = db_result(m_DB);
+	result = db_result(m_DB);
 
-    char **row = NULL;
+    row = NULL;
 	if(result == NULL)
 		return;
 
 	while(row = (char**)db_fetch_row(result))
 	{
-		SOnOff ptr;
-		float on,off;
-		sscanf(row[FI_CHARACTERISTIC_ON_OFF_ON],"%f",&on);
-		sscanf(row[FI_CHARACTERISTIC_ON_OFF_OFF],"%f",&off);
-		ptr.on = on * 10;
-		ptr.off = off * 10;
-		m_OnList.Append(ptr);
+		SetForcedOff(atoi(row[FI_SBMS_VALUES_MODE_FORCED_OFF]));
+		SetPhotoCellNightTime(atoi(row[FI_SBMS_VALUES_MODE_PHOTOCELL_NIGHT_TIME]));
 	}
-
+	
+	if(!m_ForcedOff & m_PhotoCellNightTime)
+		SetLightOn(true);
+	else
+		SetLightOn(false);
+	
+	
 	db_free_result(result);
-	*/
+	m_ReadTick = 0;
+
 }
 
 bool CSymbol::GetBusy()
@@ -375,29 +373,29 @@ void CSymbol::RenderBusy()
 {
 	if(!m_Busy)
 		return;
-
-	float angle = (float)(360.0/CHECK_COMMAND_TICK) * m_CommandTick;
-
+		
 	float x = 0.0;
 	float y = 0.0;
 
 	glPushMatrix();
 	glColor4f(1.0f,0.0f,0.0f,0.8f);
-	glTranslatef(m_LonMap + m_RectWidth/2,m_LatMap - m_RectWidth,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	//glTranslatef(m_RectWidth/3,- m_RectWidth/3,0.0f);
 
 	glPointSize(10);
 	glLineWidth(2);
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
-	c.Radius = m_RectWidth/4;
-	nvDrawCircle(&c);
+	c.Radius = m_RectWidth;
+	
 		
 	if(m_BusyOn)
-		glColor4f(1.0f,0.0f,0.0f,0.8f);
+		glColor4f(1.0f,0.0f,0.0f,0.6f);
 	else
-		glColor4f(1.0f,1.0f,1.0f,0.8f);
+		glColor4f(1.0f,1.0f,1.0f,0.6f);
 	
+	nvDrawCircleArcFilled(&c,90,180);
 	nvDrawPoint(x,y);
 	glPopMatrix();
 	
@@ -405,14 +403,10 @@ void CSymbol::RenderBusy()
 
 void CSymbol::RenderSymbol()
 {
-	
-#if 0	
-	if(m_LightOn)
-		glColor4f(1.0f,1.0f,1.0f,0.5f);
-	else
-		glColor4f(0.0f,0.0f,0.0f,0.5f);
-#endif
+
 	SetColor(SYMBOL_NORMAL_COLOR);
+	if(m_LightOn)
+		SetColor(SYMBOL_LIGHT_ON_COLOR);
 	
 	if(m_IdSBMS > 0)
 	{
@@ -426,6 +420,12 @@ void CSymbol::RenderSymbol()
 		
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 	}
+
+	
+
+
+
+
 /*
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
@@ -446,6 +446,15 @@ void CSymbol::RenderSymbol()
 		
 	glPushMatrix();
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth/2;
+	
+	nvDrawCircleFilled(&c);
+	
+	glColor4f(0.0,0.0,0.0,0.5);
 	glBegin(GL_LINES);
 		glVertex2f(0.0f,m_RectWidth);
 		glVertex2f(0.0f,-m_RectWidth);
@@ -453,12 +462,8 @@ void CSymbol::RenderSymbol()
 		glVertex2f(-m_RectWidth,0.0);
 	glEnd();
 	
-	nvCircle c;
-	c.Center.x = 0.0;
-	c.Center.y = 0.0;
-	c.Radius = m_RectWidth/2;
 	nvDrawCircle(&c);
-	nvDrawCircleFilled(&c);
+
 	glPopMatrix();
 	
 
@@ -575,6 +580,21 @@ void CSymbol::SetRemove(bool v)
 	m_Exists = v;
 }
 
+void CSymbol::SetForcedOff(bool v)
+{
+	m_ForcedOff = v;
+}
+
+void CSymbol::SetPhotoCellNightTime(bool v)
+{
+	m_PhotoCellNightTime = v;
+}
+
+void CSymbol::SetLightOn(bool v)
+{
+	m_LightOn = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -634,4 +654,9 @@ wxString CSymbol::GetNumber()
 bool CSymbol::GetExists()
 {
 	return m_Exists;
+}
+
+bool CSymbol::GetLightOn()
+{
+	return m_LightOn;
 }

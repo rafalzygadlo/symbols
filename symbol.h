@@ -52,6 +52,9 @@ class CSymbol
 	wxString m_Name;
 	wxString m_Number;
 	bool m_Exists;
+	bool m_ForcedOff;
+	bool m_PhotoCellNightTime;
+	
 	
 	void CSymbol::SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -92,6 +95,9 @@ public:
 	void SetName(wxString v);
 	void SetRemove(bool v);
 	void SetDB(void *db);
+	void SetForcedOff(bool v);
+	void SetPhotoCellNightTime(bool v);
+	void SetLightOn(bool v);
 
 	int GetId();
 	int GetIdSBMS();
@@ -106,7 +112,9 @@ public:
 	wxString GetName();
 	wxString GetNumber();
 	bool GetExists();
-	
+	bool GetLightOn();
+
+
 	void Render();
 
 };
