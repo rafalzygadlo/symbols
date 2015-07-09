@@ -426,7 +426,7 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	//Sizer->Add(GetSymbolFilterPanel(Panel),0,wxALL|wxEXPAND,0);
 	
 	m_PicturePanel = new CPicturePanel(m_DB, Panel);
-	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
 	
 	return Panel;
 }
@@ -460,7 +460,7 @@ wxPanel *CDialogPanel::GetPicturePanel(wxWindow *Parent)
 	Panel->SetSizer(Sizer);
 	m_PicturePanel = new CPicturePanel(m_DB,Panel);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
-	Sizer->Add(m_PicturePanel,1,wxALL|wxEXPAND,0);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
 	return Panel;
 }
 

@@ -21,10 +21,6 @@ COptionsDialog::COptionsDialog()
 	wxNotebook *m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetColorPanel(m_Notebook),GetMsg(MSG_COLOR));
 	Sizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
-	
-	wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
-	Sizer->Add(line,0,wxALL|wxEXPAND,0);
-	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
 	
 	SetSizer(Sizer);

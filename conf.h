@@ -42,7 +42,7 @@
 #define KEY_ERROR_COLOR			"error_color"
 #define KEY_LIGHT_ON_COLOR		"light_on_color"
 
-#define PAGE_0 0
+#define PAGE_ALL 1
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1

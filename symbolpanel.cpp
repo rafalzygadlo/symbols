@@ -34,25 +34,25 @@ void CSymbolPanel::GetPage1()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	
-	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(hSizer);
+	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	//Sizer->Add(hSizer);
 	
 	m_PicturePanel = new CPicturePanel(NULL,this);
-	hSizer->Add(m_PicturePanel,0,wxALL,0);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 	
-	wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
-	hSizer->Add(vSizer,0,wxALL|wxEXPAND,4);
+	//wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
+	//Sizer->Add(vSizer,0,wxALL|wxEXPAND,4);
 
 	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
-	vSizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
+	Sizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
 	m_ButtonManagement->Disable();
 
 	m_ButtonGraph = new wxButton(this,ID_GRAPH,GetMsg(MSG_GRAPH));
-	vSizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
+	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
 	m_ButtonGraph->Disable();
 	
 	m_ButtonAlert = new wxButton(this,ID_ALERT,GetMsg(MSG_ALERT));
-	vSizer->Add(m_ButtonAlert,0,wxALL|wxEXPAND,2);
+	Sizer->Add(m_ButtonAlert,0,wxALL|wxEXPAND,2);
 	m_ButtonAlert->Disable();
 
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
@@ -138,16 +138,16 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 		str.Append(_("<hr>"));
 		//str.Append(_("<font size=2>symbol info</font>"));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetLat(),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetLon(),DEFAULT_DEGREE_FORMAT)));
 	
 		if(atoi(row[FI_SYMBOL_IN_MONITORING]))
-			str.Append(wxString::Format(_("<tr><td><font size=3>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
 	
 		if(atoi(row[FI_SYMBOL_ON_POSITION]))
-			str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetMsg(MSG_ON_POSITION)));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_ON_POSITION)));
 			
 		if(m_IdSBMS == 0)
 			str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
@@ -290,6 +290,7 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	{
 		m_PicturePanel->SetDB(db);
 		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
+		this->Layout();
 	}
 		
 	db_free_result(result);

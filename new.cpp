@@ -181,7 +181,7 @@ wxPanel *CNew::GetPicturePanel(wxWindow *Parent)
 	m_PicturePanel = new CPicturePanel(m_DB,Panel,PICTURE_PANEL_PICKER);
 	m_PicturePanel->SetPictureId(m_PictureId);
 	Sizer->Add(m_PicturePanel,1,wxALL|wxEXPAND,5);
-
+	
 	return Panel;
 }
 

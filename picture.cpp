@@ -41,6 +41,7 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 	}
 			
 	SetSizer(Sizer);
+
 }
 
 CPicturePanel::~CPicturePanel()
@@ -200,6 +201,7 @@ void CPicturePanel::Read()
 	
 	this->Refresh();
 	this->Layout();
+	this->GetParent()->Layout();
 
 	db_free_result(result);
 	

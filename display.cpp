@@ -174,9 +174,9 @@ void CDisplayPlugin::ShowControls()
 			
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	
+	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
-	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_INFO));
-	m_Notebook->AddPage(GetPage3(m_Notebook),GetMsg(MSG_OPTIONS));
+	//m_Notebook->AddPage(GetPage3(m_Notebook),GetMsg(MSG_OPTIONS));
 	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 	SetSizer(Main);
@@ -300,7 +300,7 @@ void CDisplayPlugin::SignalInsert()
 	int count = ptr->size();
 
 	if(m_OldCount != count)
-			m_Notebook->SetPageText(PAGE_0,wxString::Format(GetMsg(MSG_SYMBOLS),count));
+			m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
 		m_OldCount = count;
 
 
