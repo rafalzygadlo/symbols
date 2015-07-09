@@ -49,7 +49,7 @@ class CMapPlugin :public CNaviMapIOApi
 	double Factor;
 	double MOM_X, MOM_Y;
 	CSymbol *SelectedPtr, *HighlightedPtr;
-	double SmoothScaleFactor;
+	double m_SmoothScaleFactor;
 	bool NeedExit;
 	bool IsData;
 	double MapScale;
@@ -74,7 +74,7 @@ class CMapPlugin :public CNaviMapIOApi
 	double MarkerX,MarkerY;
 	double VisibleMap[4];
 	bool FromLMB;
-	nvFastFont *Font;
+	nvFastFont *m_NameFont;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
 	wxArrayPtrVoid *m_SymbolList;
@@ -108,6 +108,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderMouseSelection();
 	void RenderAnimation();
 	void RenderDistance();
+	void RenderNames();
 
 	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
 	void RenderText(double x, double y, wchar_t *text);

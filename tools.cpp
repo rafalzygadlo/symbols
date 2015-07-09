@@ -126,6 +126,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"No Monitor",L"Nie monitorowany"},
 	{L"Error",L"Kolor b³êdu"},
 	{L"Light On",L"Œwiat³o zapalone"},
+	{L"Standard Report",L"Raport standardowy"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -163,6 +164,7 @@ const char *nvCommand[10] =
 	{"RipleDelay(%d)\r\n"},
 	{"PowerOff(%d)\r\n"},
     {"GetTime()\r\n"},
+	{"sr()\r\n"}
 		
 };
 
@@ -926,9 +928,9 @@ wxString GetNvTime(nvtime_t v)
 }
 
 //COMMANDS . . . . . . . . . . . . . . . .
-int SetDBCommand(int SBMSID,int id_base_station)
+int SetDBCommand(int SBMSID,int id_base_station, int id_command)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,SBMSID,id_base_station,_GetUID());
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,SBMSID,id_base_station,id_command,_GetUID());
 	void *db = DBConnect();
 	my_query(db,sql);
 	int last_id = db_last_insert_id(db);
@@ -947,11 +949,20 @@ void UpdateDBCommand(int id,wxString cmd)
 
 void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
 {
-	int id = SetDBCommand(SBMSID,id_base_station);
+	int id = SetDBCommand(SBMSID,id_base_station,COMMAND_FORCED_OFF);
 	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,id,off);
 	UpdateDBCommand(id,_cmd);
 }
+
+void SetCommandStandardReport(int SBMSID, int id_base_station)
+{
+	int id = SetDBCommand(SBMSID,id_base_station,COMMAND_STANDARD_REPORT);
+	const char *cmd = GetCommand(COMMAND_STANDARD_REPORT);
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,id);
+	UpdateDBCommand(id,_cmd);
+}
+
 
 wxString RGBAToStr(nvRGBA *RGB)
 {

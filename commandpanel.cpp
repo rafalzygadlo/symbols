@@ -11,7 +11,7 @@ BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_SLIDER(ID_POWER_OF_LIGHT,OnPowerOfLight)
 	EVT_CHECKBOX(ID_FORCED_OFF,OnForcedOff)
 	EVT_CHECKBOX(ID_SEASON_CONTROL,OnSeasonControl)
-	
+	EVT_CHECKBOX(ID_STANDARD_REPORT,OnStandardReport)
 	EVT_BUTTON(ID_BUTTON_OK,OnButtonOk)
 END_EVENT_TABLE()
 
@@ -28,6 +28,7 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 	m_PowerOfLightValue = 1;
 	m_ForcedOffValue = false;
 	m_SeasonControlValue = false;
+	m_StandardReportValue = false;
 		
 	SetSizer(m_Sizer);
 	SetGui();
@@ -58,6 +59,18 @@ void CCommandPanel::OnPowerOfLight(wxCommandEvent &event)
 		
 	SetButtonState();
 }
+
+void CCommandPanel::OnStandardReport(wxCommandEvent &event)
+{
+
+	if(m_StandardReportValue != m_StandardReport->GetValue())
+		m_Changed[COMMAND_STANDARD_REPORT] = true;
+	else
+		m_Changed[COMMAND_STANDARD_REPORT] = false;
+	
+	SetButtonState();
+}
+
 
 void CCommandPanel::OnForcedOff(wxCommandEvent &event)
 {
@@ -129,7 +142,8 @@ void CCommandPanel::SetCommand(int id)
 	switch(id)
 	{
 		//case COMMAND_DRIVE_CURRENT:	SetDriveCurrent(m_SBMSID,m_DriveCurrentValue);
-		case COMMAND_FORCED_OFF:	SetCommandForcedOff(SBMSID,id_base_station,m_ForcedOffValue); break;
+		case COMMAND_FORCED_OFF:		SetCommandForcedOff(SBMSID,id_base_station,m_ForcedOffValue);	break;
+		case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(SBMSID,id_base_station);				break;
 		//case COMMAND_FLASH_CODE:	SetFlashCode(m_IdSBMS,m_FlashCode
 
 	}
@@ -190,7 +204,6 @@ wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
 {
 		
     wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	Panel->SetBackgroundColour(*wxRED);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 
@@ -220,11 +233,10 @@ wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 {
 		
     wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	Panel->SetBackgroundColour(*wxRED);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
-	wxTextCtrl *aa = new wxTextCtrl(Panel,wxID_ANY);	
+	wxTextCtrl *aa = new wxTextCtrl(Panel,wxID_ANY);
 	Sizer->Add(aa,0,wxALL|wxEXPAND,5);	
 	
 	//m_ButtonDelete->Disable();
@@ -243,6 +255,10 @@ void CCommandPanel::SetGui()
 
 	m_InfoText = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
 	PanelSizer->Add(m_InfoText,0,wxALL,5);
+
+	//standardowy raport
+	m_StandardReport = new wxCheckBox(Panel,ID_STANDARD_REPORT,GetMsg(MSG_STANDARD_REPORT));
+	PanelSizer->Add(m_StandardReport,0,wxALL,5);
 
 	//serwisowe wy³¹czenie
 	m_ForcedOff = new wxCheckBox(Panel,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF));

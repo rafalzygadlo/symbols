@@ -58,8 +58,8 @@
 
 #define DEFAULT_FRAME_HEIGHT 400
 #define DEFAULT_FRAME_WIDTH	 280
-#define RECT_WIDTH 32
-#define RECT_HEIGHT 32
+#define RECT_WIDTH 24
+#define RECT_HEIGHT 24
 #define INFO_WIDTH 128
 #define INFO_HEIGHT 32
 #define INFO_MARGIN 2
@@ -92,6 +92,8 @@
 #define COMMAND_STATUS_NEW		0
 #define COMMAND_STATUS_SEND		1
 #define COMMAND_STATUS_OK		2
+
+#define DEFAULT_FONT_FACTOR		50.0
 
 // Languages
 #define MSG_MANAGER					0
@@ -203,6 +205,8 @@
 #define MSG_SYMBOL_NO_MONITOR		106
 #define MSG_SYMBOL_ERROR_COLOR		107
 #define MSG_SYMBOL_LIGHT_ON			108
+#define MSG_STANDARD_REPORT			109
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 
@@ -631,8 +635,10 @@
 #define COMMAND_PHOTO_CELL_RESISTANCE	5 //fotorezystor czułość
 #define COMMAND_RIPLE_DELAY				6 //opóźnienie impulsu
 #define COMMAND_POWER_OFF				7 //ręczne wyłączenie
+#define COMMAND_GET_TIME				8 //pobierz czas
+#define COMMAND_STANDARD_REPORT			9 //standardowy raport
 
-#define COMMAND_COUNT 8 //ilosc komend
+#define COMMAND_COUNT 10 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
 #define RESTRICTED_AREA_RADIUS 100 //m ?

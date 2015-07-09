@@ -60,5 +60,6 @@ nvRGBA StrToRGBA(wxString str);
 
 //COMMANDS
 void SetCommandForcedOff(int SBMSID, int id_base_station, bool off);
+void SetCommandStandardReport(int SBMSID, int id_base_station);
 #endif
 

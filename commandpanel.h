@@ -18,6 +18,7 @@ class CCommandPanel: public wxPanel
 	wxPanel *m_SeasonControlPanel;
 	wxStaticText *m_InfoText;
 	wxButton *m_ButtonOk;
+	wxCheckBox *m_StandardReport;
 
 	CSymbol *m_SelectedPtr;
 	//values
@@ -25,11 +26,13 @@ class CCommandPanel: public wxPanel
 	int m_PowerOfLightValue;
 	bool m_ForcedOffValue;
 	bool m_SeasonControlValue;
+	bool m_StandardReportValue;
 
 	void OnDriveCurrent(wxCommandEvent &event);
 	void OnPowerOfLight(wxCommandEvent &event);
 	void OnForcedOff(wxCommandEvent &event);
 	void OnSeasonControl(wxCommandEvent &event);
+	void OnStandardReport(wxCommandEvent &event);
 	
 	void OnButtonOk(wxCommandEvent &event);
 	void SetButtonState();
@@ -62,6 +65,7 @@ public:
 		ID_FORCED_OFF,
 		ID_BUTTON_OK,
 		ID_FROM_TIME,
+		ID_STANDARD_REPORT,
 	};
 
 };

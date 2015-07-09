@@ -73,17 +73,17 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_OldSearchText = wxEmptyString;
 
 	m_SymbolList = new wxArrayPtrVoid();
-	//Font = new nvFastFont();
-	//Font->Assign( (nvFastFont*)NaviBroker->GetFont( 1 ) );		// 1 = nvAriali 
-	//Font->SetEffect( nvEFFECT_SMOOTH );
-	//Font->SetEffect( nvEFFECT_GLOW );
-    
-	//Font->SetGlyphColor(1.0f, 0.0f, 0.0f);
-	//Font->SetGlyphCenter(0.0001f);
-    //Font->SetGlyphOffset( 0.5f );
 
-	//Font->SetGlowColor(0.8f, 0.8f, 0.8f );
-	//Font->SetGlowCenter( 4.0f );
+	m_NameFont = NULL;
+	
+	m_NameFont = new nvFastFont();
+	m_NameFont->Assign( (nvFastFont*)NaviBroker->GetFont( 0 ) );	// 1 = nvAriali
+	m_NameFont->SetEffect( nvEFFECT_GLOW );
+    
+	m_NameFont->SetGlyphColor(0.0f, 0.0f, 0.0f);
+	m_NameFont->SetGlyphOffset( 4.0f );
+	m_NameFont->SetGlowColor(0.8f, 0.8f, 0.8f );
+	
 		
 	//AddExecuteFunction("manager_GetThisPtr",GetThisPtrFunc);
 	//AddExecuteFunction("manager_SetSelShip",SetSelectedShipFunc);
@@ -137,6 +137,8 @@ CMapPlugin::~CMapPlugin()
 	m_SymbolList->Clear();
 	delete m_SymbolList;
 	
+	delete m_NameFont;
+
 	FreeMutex();
 	DBClose(m_DB);
 
@@ -301,15 +303,16 @@ int CMapPlugin::GetDisplaySignal()
 
 void CMapPlugin::OnInitGL()
 {
-	//Font->InitGL();
+	if(m_NameFont)
+		m_NameFont->InitGL();
 }
 
 void CMapPlugin::SetSmoothScaleFactor(double _Scale) 
 {
 	if( _Scale > Factor )
-		SmoothScaleFactor = _Scale;
+		m_SmoothScaleFactor = _Scale;
 	else
-		SmoothScaleFactor = Factor;
+		m_SmoothScaleFactor = Factor;
 }
 
 void CMapPlugin::SetSql(wxString &sql)
@@ -590,11 +593,11 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 
 CSymbol *CMapPlugin::SetSelection(double x, double y)
 {
-	
+	float d = 1.5;
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/2) + TranslationX, ptr->GetLatMap() - (RectHeight/2) + TranslationY, ptr->GetLonMap() + (RectWidth/2) + TranslationX , ptr->GetLatMap() + (RectHeight/2) + TranslationY))
+		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/d) + TranslationX, ptr->GetLatMap() - (RectHeight/d) + TranslationY, ptr->GetLonMap() + (RectWidth/d) + TranslationX , ptr->GetLatMap() + (RectHeight/d) + TranslationY))
 			return ptr;
 		
 	}
@@ -836,16 +839,17 @@ void CMapPlugin::SetMapScale(double scale)
 // must be in render to set all values
 void CMapPlugin::SetValues()
 {
+	MapScale = m_Broker->GetMapScale();
 	SetSmoothScaleFactor( MapScale );
 	
-	RectWidth = RECT_WIDTH / SmoothScaleFactor;
-	RectHeight = RECT_HEIGHT / SmoothScaleFactor;
+	RectWidth = RECT_WIDTH / m_SmoothScaleFactor;
+	RectHeight = RECT_HEIGHT / m_SmoothScaleFactor;
 	TranslationX = 0.0; //(RECT_WIDTH /2)/SmoothScaleFactor; 
 	TranslationY = 0.0;	//-(RECT_HEIGHT /2)/SmoothScaleFactor; 
 		
-	InfoHeight = INFO_HEIGHT/SmoothScaleFactor;
-	InfoWidth = INFO_WIDTH/SmoothScaleFactor;
-	InfoMargin = INFO_MARGIN/SmoothScaleFactor;
+	InfoHeight = INFO_HEIGHT/m_SmoothScaleFactor;
+	InfoWidth = INFO_WIDTH/m_SmoothScaleFactor;
+	InfoMargin = INFO_MARGIN/m_SmoothScaleFactor;
 
 	m_Broker->GetVisibleMap(VisibleMap);
 	
@@ -969,29 +973,45 @@ void CMapPlugin::RenderSymbols()
 	}
 }
 
+void CMapPlugin::RenderNames()
+{
+	m_NameFont->Clear();
+	
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->Render();
+
+		//5.0/m_SmoothScaleFactor
+		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),5.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5,3.2);
+		//m_NameFont->Print(ptr->GetLonMap(),ptr->GetLon(),
+	}
+
+	m_NameFont->ClearBuffers();
+	m_NameFont->CreateBuffers();
+	m_NameFont->Render();	
+
+}
+
+
+
 void CMapPlugin::Render(void)
 {
-	//GetMutex()->Lock();
-	//Font->Clear();
+	
 	glEnable(GL_POINT_SMOOTH);
-	MapScale = m_Broker->GetMapScale();
+	
 	SetValues();
-		
 	RenderSymbols();
 				
 	if(SelectedPtr != NULL)
-	{
 		RenderSelected();
-		//RenderAnimation();
-	}
 		
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
+	RenderNames();
 	
-	//Font->ClearBuffers();
-	//Font->CreateBuffers();
-	//Font->Render();
+	
 	glDisable(GL_POINT_SMOOTH);
 	
 	//GetMutex()->Unlock();
