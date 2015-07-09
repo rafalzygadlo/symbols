@@ -127,6 +127,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Error",L"Kolor b³êdu"},
 	{L"Light On",L"Œwiat³o zapalone"},
 	{L"Standard Report",L"Raport standardowy"},
+	{L"No SBMS Record in database",L"Brak rekordu z ustawieniami SBMS"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

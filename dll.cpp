@@ -373,7 +373,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		if(ptr == NULL)
 		{
 			add = true;
-			ptr = new CSymbol(m_Broker);
+			ptr = new CSymbol(m_Broker,m_NameFont);
 		}
 
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
@@ -975,21 +975,17 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::RenderNames()
 {
-	m_NameFont->Clear();
 	
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		//5.0/m_SmoothScaleFactor
-		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),5.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5,3.2);
-		//m_NameFont->Print(ptr->GetLonMap(),ptr->GetLon(),
+		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5,3.2);
+		if(ptr->GetBusy())
+			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5,-0.1);
+		
 	}
-
-	m_NameFont->ClearBuffers();
-	m_NameFont->CreateBuffers();
-	m_NameFont->Render();	
 
 }
 
@@ -997,6 +993,8 @@ void CMapPlugin::RenderNames()
 
 void CMapPlugin::Render(void)
 {
+	
+	m_NameFont->Clear();
 	
 	glEnable(GL_POINT_SMOOTH);
 	
@@ -1011,6 +1009,10 @@ void CMapPlugin::Render(void)
 
 	RenderNames();
 	
+
+	m_NameFont->ClearBuffers();
+	m_NameFont->CreateBuffers();
+	m_NameFont->Render();	
 	
 	glDisable(GL_POINT_SMOOTH);
 	

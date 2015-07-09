@@ -9,7 +9,7 @@
 #include "navidisplayapi.h"
 #include "conf.h"
 #include "positiondialog.h"
-#include "nvFastFont.h"
+#include "nvfastfont.h"
 #include "dialog.h"
 #include "ticker.h"
 #include "symbol.h"

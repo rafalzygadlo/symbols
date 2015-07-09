@@ -177,7 +177,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>(%d) - %s</b></font></td></tr>"),atoi(row[FI_SBMS_SMBSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>(%d) - %s</b></font></td></tr>"),atoi(row[FI_SBMS_SBMSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
 		int phone = atoi(row[Fi_SBMS_PHONE]);
 		if(phone)
 			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),phone));
@@ -341,7 +341,7 @@ void CSymbolPanel::OnManagement(wxCommandEvent &event)
 	if(db == NULL)
 		return;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms ='%d'"),TABLE_SBMS_VALUES,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,m_IdSBMS);
 	my_query(db,sql);
 
 	void *result = db_result(db);
@@ -356,11 +356,13 @@ void CSymbolPanel::OnManagement(wxCommandEvent &event)
 			CCommandDialog *CommandDialog = new CCommandDialog(this,m_Symbol);
 			CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
-			ptr->SetForcedOff(atoi(row[FI_SBMS_VALUES_MODE_FORCED_OFF]));
+			ptr->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 			
 			CommandDialog->ShowModal();
 			delete CommandDialog;
 	
+		}else{
+			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
 		}
 	}
 	

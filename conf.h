@@ -206,6 +206,7 @@
 #define MSG_SYMBOL_ERROR_COLOR		107
 #define MSG_SYMBOL_LIGHT_ON			108
 #define MSG_STANDARD_REPORT			109
+#define MSG_NO_SBMS_RECORD			110
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -367,7 +368,7 @@
 #define TABLE_ALERT				"alert"
 #define TABLE_SBMS				"sbms"
 #define TABLE_STANDARD_REPORT	"standard_report"
-#define TABLE_SBMS_VALUES		"sbms_values"
+
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -570,34 +571,31 @@
 #define FI_RIGHT_INFO				2
 
 //pola tabeli SBMS
-#define FI_SBMS_ID					0
-#define FI_SBMS_SMBSID				1
-#define FI_SBMS_ID_BASE_STATION		2
-#define FI_SBMS_NAME				3
-#define Fi_SBMS_PHONE				4
-#define FI_SBMS_MMSI				5
 
-//pola tabeli SBMS_VALUES
-#define FI_SBMS_VALUES_ID							0
-#define FI_SBMS_VALUES_ID_SBMS						1
-#define FI_SBMS_VALUES_MODES						2
-#define FI_SBMS_VALUES_MODE_CALIBRATED				3
-#define FI_SBMS_VALUES_MODE_FORCED_OFF				4
-#define FI_SBMS_VALUES_MODE_PHOTOCELL_NIGHT_TIME	5
-#define FI_SBMS_VALUES_MODE_RESERVED				6
-#define FI_SBMS_VALUES_MODE_FAULT_OUTPUT			7
-#define FI_SBMS_VALUES_MODE_SOLAR_CHARGER_ON		8
-#define FI_SBMS_VALUES_MODE_SYNC_MASTER				9
-#define FI_SBMS_VALUES_MODE_SEASON_CONTROL			10
-#define FI_SBMS_VALUES_MONITORED_CHANNELS			11
-#define FI_SBMS_VALUES_OVERLOAD_CHANNELS			12
-#define FI_SBMS_VALUES_DOWN_CHANNELS				13
-#define FI_SBMS_VALUES_ANALOG_PIN					14
-#define FI_SBMS_VALUES_DIGITAL_VALUE				15
-#define FI_SBMS_VALUES_INPUT_VOLT					16
-#define FI_SBMS_VALUES_ANALOG_VALUE					17
-#define FI_SBMS_VALUES_DATE_TIME_STAMP				18
-#define FI_SBMS_VALUES_LOCAL_UTC_TIME				19
+#define FI_SBMS_ID							0
+#define FI_SBMS_SBMSID						1
+#define FI_SBMS_ID_BASE_STATION				2
+#define FI_SBMS_NAME						3
+#define Fi_SBMS_PHONE						4
+#define FI_SBMS_MMSI						5
+#define FI_SBMS_MODES						6
+#define FI_SBMS_MODE_CALIBRATED				7
+#define FI_SBMS_MODE_FORCED_OFF				8
+#define FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME	9
+#define FI_SBMS_MODE_RESERVED				10
+#define FI_SBMS_MODE_FAULT_OUTPUT			11
+#define FI_SBMS_MODE_SOLAR_CHARGER_ON		12
+#define FI_SBMS_MODE_SYNC_MASTER			13
+#define FI_SBMS_MODE_SEASON_CONTROL			14
+#define FI_SBMS_MONITORED_CHANNELS			15
+#define FI_SBMS_OVERLOAD_CHANNELS			16
+#define FI_SBMS_DOWN_CHANNELS				17
+#define FI_SBMS_ANALOG_PIN					18
+#define FI_SBMS_DIGITAL_VALUE				19
+#define FI_SBMS_INPUT_VOLT					20
+#define FI_SBMS_ANALOG_VALUE				21
+#define FI_SBMS_DATE_TIME_STAMP				22
+#define FI_SBMS_LOCAL_UTC_TIME				23
 
 
 //pola tabeli STANDARD_REPORT
@@ -641,7 +639,7 @@
 #define COMMAND_COUNT 10 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
-#define RESTRICTED_AREA_RADIUS 100 //m ?
+#define RESTRICTED_AREA_RADIUS 50 //m ?
 
 //#define PAGE_MANAGEMENT 1	// index strony notebook management panel
 

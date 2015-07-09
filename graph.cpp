@@ -123,8 +123,10 @@ void CGraph::OnKeyUp(wxKeyEvent &event)
 	if(m_MoveX > 0)
 		m_MoveX = 0;
 
-	//if(m_MoveX < m_GraphRight)
-		//m_MoveX = m_GraphRight;
+	//float left = (m_GraphLeft*m_Scale) - (m_GraphLeft - m_GraphRight);
+
+	//if(m_MoveX < left)
+		//m_MoveX = left;
 	
 	Refresh(false);
 }

@@ -10,8 +10,9 @@
 #include "options.h"
 //#include "nvtime.h"
 
-CSymbol::CSymbol(CNaviBroker *broker)
+CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 {
+	m_Font = font;
 	m_Broker = broker;
 	m_Scale = 1;
 	m_Factor = DEFAULT_FACTOR;
@@ -72,35 +73,19 @@ void CSymbol::Read()
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		m_SBMSID = atoi(row[FI_SBMS_SMBSID]);
+		m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
 		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
+		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 	}
 
-	db_free_result(result);
-	
-	
-	//SBMS VALUES
-	sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms = '%d'"),TABLE_SBMS_VALUES,m_IdSBMS);
-	my_query(m_DB,sql);
-	result = db_result(m_DB);
-
-    row = NULL;
-	if(result == NULL)
-		return;
-
-	while(row = (char**)db_fetch_row(result))
-	{
-		SetForcedOff(atoi(row[FI_SBMS_VALUES_MODE_FORCED_OFF]));
-		SetPhotoCellNightTime(atoi(row[FI_SBMS_VALUES_MODE_PHOTOCELL_NIGHT_TIME]));
-	}
-	
 	if(!m_ForcedOff & m_PhotoCellNightTime)
 		SetLightOn(true);
 	else
 		SetLightOn(false);
 	
-	
 	db_free_result(result);
+	
 	m_ReadTick = 0;
 
 }
@@ -135,12 +120,12 @@ bool CSymbol::CheckCollision()
 		nvCircle c1,c2;
 		c1.Center.x = m_Lon;
 		c1.Center.y = m_Lat;
-		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_LonMap,m_LatMap);
 		c2.Center.x = ptr->lon;
 		c2.Center.y = ptr->lat;
 		c2.Radius = (double)ptr->length/1852/GetMilesPerDegree(ptr->lon,ptr->lat);
 			
-		if(nvIsCircleColision(&c1, &c2))
+		if(nvIsCircleColision(&c1, &c2) || nvIsCircleInCircle(&c1,&c2))
 		{
 			m_RenderRestricted = true;
 			//fprintf(stderr,"COLLISION\n");
@@ -213,7 +198,7 @@ bool  CSymbol::CheckCommand()
 		return false;
 	
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -221,13 +206,14 @@ bool  CSymbol::CheckCommand()
 	if(result == NULL)
 		return false;
 	
-	m_Busy = false;
+	
 	while(row = (char**)db_fetch_row(result))
-	{
-		int cmd;
-		sscanf(row[FI_COMMAND_ID],"%d",&cmd);
+		sscanf(row[0],"%d",&m_CommandCount);
+		
+	if(m_CommandCount > 0)
 		m_Busy = true;
-	}
+	else
+		m_Busy = false;
 	
 	db_free_result(result);
 	m_CommandTick = 1;
@@ -374,31 +360,29 @@ void CSymbol::RenderBusy()
 	if(!m_Busy)
 		return;
 		
-	float x = 0.0;
-	float y = 0.0;
-
 	glPushMatrix();
-	glColor4f(1.0f,0.0f,0.0f,0.8f);
+	
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	//glTranslatef(m_RectWidth/3,- m_RectWidth/3,0.0f);
 
-	glPointSize(10);
-	glLineWidth(2);
+	//glPointSize(10);
+	//glLineWidth(2);
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
-	c.Radius = m_RectWidth;
+	c.Radius = m_RectWidth*1.2;
 	
 		
 	if(m_BusyOn)
-		glColor4f(1.0f,0.0f,0.0f,0.6f);
+		glColor4f(1.0f,0.0f,0.0f,0.3f);
 	else
-		glColor4f(1.0f,1.0f,1.0f,0.6f);
+		glColor4f(1.0f,1.0f,1.0f,0.3f);
 	
 	nvDrawCircleArcFilled(&c,90,180);
-	nvDrawPoint(x,y);
+	nvDrawPoint(0.0,0.0);
+		
 	glPopMatrix();
-	
+
 }
 
 void CSymbol::RenderSymbol()
@@ -455,13 +439,13 @@ void CSymbol::RenderSymbol()
 	nvDrawCircleFilled(&c);
 	
 	glColor4f(0.0,0.0,0.0,0.5);
+	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex2f(0.0f,m_RectWidth);
 		glVertex2f(0.0f,-m_RectWidth);
 		glVertex2f(m_RectWidth,0.0);
 		glVertex2f(-m_RectWidth,0.0);
 	glEnd();
-	
 	nvDrawCircle(&c);
 
 	glPopMatrix();
@@ -473,16 +457,16 @@ void CSymbol::RenderSymbol()
 
 void CSymbol::RenderRestricted()
 {
-	if(!m_RenderRestricted)
-		return;
+	
+	if(m_RenderRestricted)
+		glColor4f(1.0,0.0,0.0,0.1);
+	else
+		glColor4f(0.0,1.0,0.0,0.1);
 	
 	nvCircle c;
 	c.Center.x = m_LonMap;
 	c.Center.y = m_LatMap;
-	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_LonMap,m_LatMap);
-	glColor4f(1.0f,0.0f,0.0f,0.6f);
-	nvDrawCircle(&c);
-	glColor4f(1.0f,0.0f,0.0f,0.1f);
+	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
 	nvDrawCircleFilled(&c);
 }
 
@@ -659,4 +643,10 @@ bool CSymbol::GetExists()
 bool CSymbol::GetLightOn()
 {
 	return m_LightOn;
+}
+
+wxString CSymbol::GetCommandCount()
+{
+	return wxString::Format(_("%d"),m_CommandCount);
+	
 }

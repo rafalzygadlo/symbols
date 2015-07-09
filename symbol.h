@@ -8,6 +8,7 @@
 #include "tgamem.h"
 #include "picture.h"
 #include "geometrytools.h"
+#include "nvfastfont.h"
 
 class CSymbol
 {
@@ -17,6 +18,7 @@ class CSymbol
 	CNaviArray <SOnOff> m_OnList;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
+	nvFastFont *m_Font;
 	bool m_FirstTime;
 	int m_Step;
 	bool m_Begin;
@@ -54,6 +56,7 @@ class CSymbol
 	bool m_Exists;
 	bool m_ForcedOff;
 	bool m_PhotoCellNightTime;
+	int m_CommandCount;
 	
 	
 	void CSymbol::SetColor(int id);
@@ -76,7 +79,7 @@ class CSymbol
 			
 public:
 
-	CSymbol(CNaviBroker *broker);
+	CSymbol(CNaviBroker *broker,nvFastFont *font);
 	~CSymbol();
 
 	void OnTick(void *db);
@@ -113,7 +116,7 @@ public:
 	wxString GetNumber();
 	bool GetExists();
 	bool GetLightOn();
-
+	wxString GetCommandCount();
 
 	void Render();
 
