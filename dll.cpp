@@ -1007,22 +1007,28 @@ void CMapPlugin::SetMouseXY(int x, int y)
 void CMapPlugin::OnTick()
 {
 	wxString sql;
-	int t = GetTickCount();	
+	int t = GetTickCount();
+
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+
 	SetRemove();
-		
 	SetSql(sql);
 	
-	ReadSymbol(m_DB,sql);			//przeczytaj symbole
+	ReadSymbol(db,sql);			//przeczytaj symbole
 	fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
-	ReadSymbolValues(m_DB);	// wczytaj inne opcje
+	ReadSymbolValues(db);	// wczytaj inne opcje
 	fprintf(stderr,"%d\n",GetTickCount() - t);
 	SendInsertSignal();
 
-	
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
 	SetFilterChanged(false);
+
+	DBClose(db);
+	
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

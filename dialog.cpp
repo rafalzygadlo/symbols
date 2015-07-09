@@ -1413,6 +1413,8 @@ void CDialogPanel::OnSelect(int id)
 		my_query(m_DB,sql);
 
 		void *result = db_result(m_DB);
+		if(result == NULL)
+			return;
 		char** row = (char**)db_fetch_row(result);
 		if(row)
 			m_ID = atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]);
