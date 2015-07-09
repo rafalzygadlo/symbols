@@ -875,9 +875,18 @@ void CMapPlugin::RenderSelected()
 	c.Center.y = 0.0;
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
-	glPopMatrix();
+
 	
+	glPopMatrix();
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1,0.0);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1,1.0);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1,2.0);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1,3.0);
+
 	glDisable(GL_BLEND);
+
+
+	
 #endif
 
 }
@@ -902,6 +911,12 @@ void CMapPlugin::RenderHighlighted()
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
 	glPopMatrix();
+
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1,0.0);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1,1.0);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1,2.0);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1,3.0);
+
 	glDisable(GL_BLEND);
 	
 }
@@ -1007,7 +1022,7 @@ void CMapPlugin::Render(void)
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
-	RenderNames();
+	//RenderNames();
 	
 
 	m_NameFont->ClearBuffers();
