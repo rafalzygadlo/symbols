@@ -999,12 +999,9 @@ void CMapPlugin::RenderNames()
 		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5,3.2);
 		if(ptr->GetBusy())
 			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5,-0.1);
-		
 	}
 
 }
-
-
 
 void CMapPlugin::Render(void)
 {
@@ -1022,9 +1019,8 @@ void CMapPlugin::Render(void)
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
-	//RenderNames();
+	RenderNames();
 	
-
 	m_NameFont->ClearBuffers();
 	m_NameFont->CreateBuffers();
 	m_NameFont->Render();	

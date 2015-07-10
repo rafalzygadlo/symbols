@@ -216,9 +216,14 @@ void CMyFrame::ShowWindow(bool show)
 			pt.y = pt.y - size.GetHeight();
 		}
 		
+		if(pt.y < 0)
+			pt.y = 0;
+
+
 		m_SymbolPanel->SetPage1(SelectedPtr);
 		this->SetPosition(pt);
 		
+				
 	}
 	
 	Show(show);
