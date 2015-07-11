@@ -53,8 +53,8 @@
 #define OVERLOAD_CHANNELS	4
 #define DOWN_CHANNELS		4
 
-#define ALERT_NOT_CONFIRMED	0
-#define ALERT_CONFIRMED		1
+#define ALARM_NOT_CONFIRMED	0
+#define ALARM_CONFIRMED		1
 
 #define DEFAULT_FRAME_HEIGHT 400
 #define DEFAULT_FRAME_WIDTH	 280
@@ -94,6 +94,8 @@
 #define COMMAND_STATUS_OK		2
 
 #define DEFAULT_FONT_FACTOR		50.0
+#define DEFAULT_FONT_SIZE		6.1
+#define DEFAULT_VIEW_FONT_SCALE 1000
 
 // Languages
 #define MSG_MANAGER					0
@@ -170,7 +172,7 @@
 #define MSG_NO_SBMS					71
 #define MSG_REPORT					72
 #define MSG_OPTIONS					73
-#define MSG_ALERT					74
+#define MSG_ALARM					74
 #define MSG_CALIBRATED				75
 #define MSG_LAST_REPORT				76
 #define MSG_PHOTOCELL_NIGHT_TIME	77
@@ -207,6 +209,18 @@
 #define MSG_SYMBOL_LIGHT_ON			108
 #define MSG_STANDARD_REPORT			109
 #define MSG_NO_SBMS_RECORD			110
+#define MSG_SYMBOL_FONT				111
+#define MSG_FONT					112
+#define MSG_FONT_SIZE				113
+#define MSG_VIEW_NAME_SCALE			114
+
+#define MSG_CALIBRATED_SHORT			115
+#define MSG_FORCED_OFF_SHORT			116
+#define MSG_PHOTOCELL_NIGHT_TIME_SHORT	117
+#define MSG_FAULT_OUTPUT_SHORT			118
+#define MSG_SOLAR_CHARGER_ON_SHORT		119
+#define MSG_SYNC_MASTER_SHORT			120
+#define MSG_SEASON_CONTROL_SHORT		121
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -302,6 +316,12 @@
 #define TEXT_INFO_WIDTH 320
 #define TEXT_INFO_HEIGHT 150
 
+//ALARM BITS
+#define ALARM_OPENING_MAIN_FLAP			0
+#define ALARM_POWER_SUPPLY_FAULT		1
+#define ALARM_IMPACT_DETECTED			2
+
+
 //TICK
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
@@ -309,8 +329,8 @@
 #define TICK_DLL_TIME		1000
 #define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
-#define CHECK_ALERT_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_ALERT_TICK_ON		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_ALARM_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_ALARM_TICK_ON		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COLLISION_TICK	(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_READ_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //
@@ -365,7 +385,7 @@
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
 #define TABLE_CHARACTERISTIC	"characteristic"
-#define TABLE_ALERT				"alert"
+#define TABLE_ALARM				"alarm"
 #define TABLE_SBMS				"sbms"
 #define TABLE_STANDARD_REPORT	"standard_report"
 

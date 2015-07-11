@@ -26,8 +26,8 @@ class CSymbol
 	bool m_LightOn;
 	bool m_BusyOn;
 	bool m_Busy;
-	bool m_Alert;
-	bool m_AlertOn;
+	bool m_Alarm;
+	bool m_AlarmOn;
 	double m_Lon;
 	double m_Lat;
 	double m_LonMap;
@@ -44,13 +44,13 @@ class CSymbol
 	int m_CommandTick,m_CommandTickOn;
 	int m_ReadTick;
 	int m_CollisionTick;
-	int m_AlertTick,m_AlertTickOn;
+	int m_AlarmTick,m_AlarmTickOn;
 	int m_IdSBMS;
 	int m_SBMSID;
 	int m_IdBaseStation;
 	bool m_RenderRestricted;
 	bool m_Selected;
-	int m_AlertCount;
+	int m_AlarmCount;
 	wxString m_Name;
 	wxString m_Number;
 	bool m_Exists;
@@ -64,7 +64,7 @@ class CSymbol
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
 	bool CheckCommand();
-	bool CheckAlert();
+	bool CheckAlarm();
 	bool CheckCollision();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
@@ -73,7 +73,7 @@ class CSymbol
 	void RenderLightOn();
 	void RenderBusy();
 	void RenderRestricted();
-	void RenderAlert();
+	void RenderAlarm();
 	void RenderGPS();		//real position
 	void RenderSelected();
 			
@@ -111,7 +111,7 @@ public:
 	double GetLonMap();
 	double GetLatMap();
 	bool GetBusy();					//zajêty komendami
-	int GetAlertCount();
+	int GetAlarmCount();
 	wxString GetName();
 	wxString GetNumber();
 	bool GetExists();

@@ -878,10 +878,10 @@ void CMapPlugin::RenderSelected()
 
 	
 	glPopMatrix();
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1,0.0);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1,1.0);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1,2.0);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1,3.0);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1f,0.0f);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1f,1.0f);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1f,2.0f);
+	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1f,3.0f);
 
 	glDisable(GL_BLEND);
 
@@ -912,10 +912,10 @@ void CMapPlugin::RenderHighlighted()
 	nvDrawCircleFilled(&c);
 	glPopMatrix();
 
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1,0.0);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1,1.0);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1,2.0);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1,3.0);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1f,0.0f);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1f,1.0f);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1f,2.0f);
+	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1f,3.0f);
 
 	glDisable(GL_BLEND);
 	
@@ -996,9 +996,9 @@ void CMapPlugin::RenderNames()
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5,3.2);
+		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5f,3.2f);
 		if(ptr->GetBusy())
-			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5,-0.1);
+			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5f,-0.1f);
 	}
 
 }

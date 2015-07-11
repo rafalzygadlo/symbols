@@ -25,21 +25,21 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_FirstTime = true;
 	m_Step = 0;
 	m_CommandTick = CHECK_COMMAND_TICK;
-	m_AlertTick = CHECK_ALERT_TICK;
-	m_AlertTickOn = CHECK_ALERT_TICK_ON;
+	m_AlarmTick = CHECK_ALARM_TICK;
+	m_AlarmTickOn = CHECK_ALARM_TICK_ON;
 	m_CollisionTick = CHECK_COLLISION_TICK;
 	m_CommandTickOn = CHECK_COMMAND_TICK_ON;
 	m_ReadTick = CHECK_READ_TICK;
 	m_Busy = false;
 	m_BusyOn = false;
-	m_Alert = false;
-	m_AlertOn = false;
+	m_Alarm = false;
+	m_AlarmOn = false;
 	m_IdSBMS = 0;
 	m_SBMSID = 0;
 	m_IdBaseStation = 0;
 	m_RenderRestricted = false;
 	m_Selected = false;
-	m_AlertCount = 0;
+	m_AlarmCount = 0;
 	m_TickExit = false;
 	m_PhotoCellNightTime = false;
 	m_ForcedOff = false;
@@ -143,21 +143,21 @@ bool CSymbol::CheckCollision()
 	return true;
 }
 
-bool CSymbol::CheckAlert()
+bool CSymbol::CheckAlarm()
 {
-	m_AlertTick++;
-	m_AlertTickOn++;
+	m_AlarmTick++;
+	m_AlarmTickOn++;
 
-	if(m_AlertTickOn >= CHECK_ALERT_TICK_ON)
+	if(m_AlarmTickOn >= CHECK_ALARM_TICK_ON)
 	{
 		//m_AlertOn = !m_AlertOn;
-		m_AlertTickOn = 0;
+		m_AlarmTickOn = 0;
 	}
 
-	if(m_AlertTick <= CHECK_ALERT_TICK)
+	if(m_AlarmTick <= CHECK_ALARM_TICK)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND confirmed ='%d'"),TABLE_ALERT,m_IdSBMS,ALERT_NOT_CONFIRMED);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND confirmed ='%d'"),TABLE_ALARM,m_IdSBMS,ALARM_NOT_CONFIRMED);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -165,20 +165,20 @@ bool CSymbol::CheckAlert()
 	if(result == NULL)
 		return false;
 	
-	m_Alert = false;
+	m_Alarm = false;
 	row = (char**)db_fetch_row(result);
-	sscanf(row[0],"%d",&m_AlertCount);
+	sscanf(row[0],"%d",&m_AlarmCount);
 	
-	if(m_AlertCount > 0)
+	if(m_AlarmCount > 0)
 	{
-		m_Alert = true;
-		m_AlertOn = true;
+		m_Alarm = true;
+		m_AlarmOn = true;
 	}else{
-		m_Alert = false;
+		m_Alarm = false;
 	}
 	
 	db_free_result(result);
-	m_AlertTick = 1;
+	m_AlarmTick = 1;
 	
 	return true;
 }
@@ -233,7 +233,7 @@ void CSymbol::OnTick(void *db)
 	
 	if(CheckCommand())
 		result = true;
-	if(CheckAlert())
+	if(CheckAlarm())
 		result = true;
 	
 	CheckCollision();
@@ -335,9 +335,9 @@ void CSymbol::RenderLightOn()
 		
 }
 
-void CSymbol::RenderAlert()
+void CSymbol::RenderAlarm()
 {
-	if(!m_Alert)
+	if(!m_Alarm)
 		return;
 		
 	glPushMatrix();
@@ -394,9 +394,9 @@ void CSymbol::RenderSymbol()
 	
 	if(m_IdSBMS > 0)
 	{
-		if(m_Alert)
+		if(m_Alarm)
 		{
-			if(m_AlertOn)
+			if(m_AlarmOn)
 				SetColor(SYMBOL_ERROR_COLOR);
 		}
 	
@@ -501,7 +501,7 @@ void CSymbol::Render()
 	RenderRestricted();
 	RenderBusy();
 #if 0
-	RenderAlert();
+	RenderAlarm();
 #endif
 	//RenderGPS();
 	RenderSymbol();
@@ -620,9 +620,9 @@ double CSymbol::GetLatMap()
 	return m_LatMap;
 }
 
-int CSymbol::GetAlertCount()
+int CSymbol::GetAlarmCount()
 {
-	return m_AlertCount;
+	return m_AlarmCount;
 }
 
 wxString CSymbol::GetName()

@@ -26,6 +26,8 @@ int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
 int GetFilterChanged();
+float GetFontSize();
+int GetViewFontScale();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
@@ -47,6 +49,9 @@ void SetSelectedAreaId(int v);
 void SetSelectedSeawayId(int v);
 void SetSelectedSymbolTypeId(int v);
 void SetFilterChanged(bool v);
+void SetFontSize(float v);
+
+
 
 //COLORS
 nvRGBA GetDefaultColor(int type);
