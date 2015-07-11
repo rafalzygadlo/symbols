@@ -22,7 +22,7 @@ END_EVENT_TABLE()
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
-	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER|wxDEFAULT_DIALOG_STYLE)
+	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER)
 {
 	m_SymbolPanel = NULL;
 	m_DLL = (CMapPlugin*)Parent;
@@ -35,7 +35,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
-	
+	/*
 	wxPanel *ButtonPanel = new wxPanel(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	MainSizer->Add(ButtonPanel,0,wxALL|wxEXPAND,5);
 	wxBoxSizer *ButtonPanelSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -44,7 +44,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	ButtonPanelSizer->AddStretchSpacer(1);
 	ButtonClose = new wxButton(ButtonPanel,ID_CLOSE,GetMsg(MSG_CLOSE),wxDefaultPosition,wxDefaultSize);
 	ButtonPanelSizer->Add(ButtonClose,0,wxALL|wxALIGN_RIGHT,5);
-		
+	*/	
 	this->SetSizer(MainSizer);
 		
 	if(GetSizer())

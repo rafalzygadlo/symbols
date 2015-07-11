@@ -35,6 +35,8 @@ class CSymbolPanel : public wxPanel
 	void SetGraph(void *db, int id_sbms, int id_base_station);
 	void OnManagement(wxCommandEvent &event);
 	void OnGraph(wxCommandEvent &event);
+	void OnMenu(wxContextMenuEvent &event);
+	void OnShowMenu(wxCommandEvent &event);
 
 public:
 
@@ -50,6 +52,7 @@ public:
 		ID_MANAGEMENT = 7000,
 		ID_GRAPH,
 		ID_ALERT,
+		ID_SHOW_PICTURE,
 	};
 
 	DECLARE_EVENT_TABLE();

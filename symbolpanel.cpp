@@ -15,6 +15,8 @@
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
+	EVT_CONTEXT_MENU(OnMenu)
+	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
 END_EVENT_TABLE()
 
 
@@ -40,6 +42,9 @@ void CSymbolPanel::GetPage1()
 	m_PicturePanel = new CPicturePanel(NULL,this);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 	
+	m_Html = new wxHtmlWindow(this,wxID_ANY);
+	m_Html->SetMinSize(wxSize(200,150));
+	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
 	//wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
 	//Sizer->Add(vSizer,0,wxALL|wxEXPAND,4);
 
@@ -55,12 +60,29 @@ void CSymbolPanel::GetPage1()
 	Sizer->Add(m_ButtonAlert,0,wxALL|wxEXPAND,2);
 	m_ButtonAlert->Disable();
 
-	m_Html = new wxHtmlWindow(this,wxID_ANY);
-	m_Html->SetMinSize(wxSize(200,150));
-	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
+	
 	this->SetSizer(Sizer);
 			
 }
+
+void CSymbolPanel::OnMenu(wxContextMenuEvent &event)
+{
+	wxMenu *Menu = new wxMenu();
+	Menu->AppendCheckItem(ID_SHOW_PICTURE,_("Show picture"));
+
+	PopupMenu(Menu);
+	delete Menu;
+
+}
+
+void CSymbolPanel::OnShowMenu(wxCommandEvent &event)
+{
+	bool static a = false;
+	a =!a;
+	m_PicturePanel->Show(a);
+	this->Layout();
+}
+
 
 void CSymbolPanel::SetPageEmpty()
 {
@@ -103,9 +125,10 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 
 	PictureInfo(db,ptr);
 	SymbolInfo(db,ptr);
-	SBMSInfo(db,m_IdSBMS);
 	BaseStationInfo(db,m_IdBaseStation);
-	SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
+	SBMSInfo(db,m_IdSBMS);
+	
+	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	
 	DBClose(db);
@@ -135,7 +158,6 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	if(row)
 	{
 		wxString str;
-		str.Append(_("<hr>"));
 		//str.Append(_("<font size=2>symbol info</font>"));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
@@ -177,7 +199,8 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>(%d) - %s</b></font></td></tr>"),atoi(row[FI_SBMS_SBMSID]),Convert(row[FI_SBMS_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
+		
 		int phone = atoi(row[Fi_SBMS_PHONE]);
 		if(phone)
 			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),phone));
@@ -185,6 +208,29 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		int mmsi = atoi(row[FI_SBMS_MMSI]);
 		if(mmsi)
 			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),mmsi));
+		
+				
+		nvtime_t dt;
+		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
+		
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),GetNvDateTime(dt)));
+
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_SBMS_ANALOG_PIN]));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_SBMS_DIGITAL_VALUE]));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
+		str.Append(_("<tr><td><br></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetOnOff(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_RESERVED),GetOnOff(atoi(row[FI_SBMS_MODE_RESERVED]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SYNC_MASTER),GetOnOff(atoi(row[FI_SBMS_MODE_SYNC_MASTER]))));
+		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
 		
 		str.Append(_("</table>"));
 			
@@ -234,12 +280,11 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 	while(row = (char**)db_fetch_row(result))
 	{
 		wxString str;
-		str.Append(_("<hr>"));
 		//str.Append(wxString::Format(_("<font size=2><a name=\"%d\"><b>%s</b></a></font>"),HTML_ANCHOR_LAST_REPORT,GetMsg(MSG_LAST_REPORT)));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		
 		nvtime_t dt;
-		nvdatetime(atoi(row[FI_STANDARD_REPORT_DATE_TIME_STAMP]),&dt);
+		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
 		
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),GetNvDateTime(dt)));
 

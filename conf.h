@@ -365,7 +365,7 @@
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
 #define TABLE_CHARACTERISTIC	"characteristic"
-#define TABLE_ALERT				"alert"
+#define TABLE_ALERT				"alarm"
 #define TABLE_SBMS				"sbms"
 #define TABLE_STANDARD_REPORT	"standard_report"
 
@@ -594,8 +594,8 @@
 #define FI_SBMS_DIGITAL_VALUE				19
 #define FI_SBMS_INPUT_VOLT					20
 #define FI_SBMS_ANALOG_VALUE				21
-#define FI_SBMS_DATE_TIME_STAMP				22
-#define FI_SBMS_LOCAL_UTC_TIME				23
+#define FI_SBMS_DATE_TIME_STAMP				24
+#define FI_SBMS_LOCAL_UTC_TIME				25
 
 
 //pola tabeli STANDARD_REPORT
