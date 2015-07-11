@@ -20,7 +20,10 @@ COptionsDialog::COptionsDialog()
 	
 	wxNotebook *m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetColorPanel(m_Notebook),GetMsg(MSG_COLOR));
+	m_Notebook->AddPage(GetFontPanel(m_Notebook),GetMsg(MSG_FONT));
 	Sizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
+
+
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
 	
 	SetSizer(Sizer);
@@ -113,6 +116,90 @@ wxPanel *COptionsDialog::GetColorPanel(wxWindow *Parent)
 }
 
 
+wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
+{
+	wxColor color;
+	
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_FONT));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+		
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(3);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+	
+	wxStaticText *TextFontSize = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FONT_SIZE),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextFontSize,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	
+	m_FontSize = new wxSlider(Panel,ID_FONT_SIZE,0,0,1,wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(m_FontSize,0,wxALL,2);
+	m_FontSize->SetMin(50);
+	m_FontSize->SetMax(200);
+	m_FontSize->SetValue(GetFontSize() * 10);
+	
+	wxStaticText *TextViewNameScale = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_VIEW_NAME_SCALE),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextViewNameScale,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	
+	m_ViewNameScale = new wxSlider(Panel,ID_VIEW_NAME_SCALE,0,0,1,wxDefaultPosition,wxDefaultSize);
+	m_ViewNameScale->SetMin(1);
+	m_ViewNameScale->SetMax(10000);
+	m_ViewNameScale->SetValue(GetViewFontScale());
+	
+	FlexSizer->Add(m_ViewNameScale,0,wxALL,2);
+	
+
+	return Panel;
+}
+
+/*
+wxPanel *COptionsDialog::GetRestrictedAreaPanel(wxWindow *Parent)
+{
+	wxColor color;
+	
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_COLORS));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);	
+		
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(3);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+
+	//NORMAL COLOR
+	wxStaticText *TextSymbolNormalColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_COLOR_NORMAL),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextSymbolNormalColor,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	
+	m_SymbolNormalColor = new wxColourPickerCtrl(Panel,ID_SYMBOL_NORMAL_COLOR,*wxBLACK,wxDefaultPosition,wxDefaultSize);
+	color.Set(GetColor(SYMBOL_NORMAL_COLOR).R,GetColor(SYMBOL_NORMAL_COLOR).G,GetColor(SYMBOL_NORMAL_COLOR).B,GetColor(SYMBOL_NORMAL_COLOR).A);
+	m_SymbolNormalColor->SetColour(color);
+	FlexSizer->Add(m_SymbolNormalColor,0,wxALL,2);
+	
+	m_SymbolNormalColorAlpha = new wxSlider(Panel,ID_SYMBOL_NORMAL_ALPHA,0,0,1,wxDefaultPosition,wxDefaultSize);
+	m_SymbolNormalColorAlpha->SetMin(0);
+	m_SymbolNormalColorAlpha->SetMax(255);
+	m_SymbolNormalColorAlpha->SetValue(GetAlpha(SYMBOL_NORMAL_COLOR));
+	FlexSizer->Add(m_SymbolNormalColorAlpha,0,wxALL,2);
+	
+	//NO MONITOR
+	wxStaticText *TextSymbolNoMonitorColor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_NO_MONITOR),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextSymbolNoMonitorColor,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	
+	m_SymbolNoMonitorColor = new wxColourPickerCtrl(Panel,ID_SYMBOL_NO_MONITOR_COLOR,*wxBLACK,wxDefaultPosition,wxDefaultSize);
+	color.Set(GetColor(SYMBOL_NO_MONITOR_COLOR).R,GetColor(SYMBOL_NO_MONITOR_COLOR).G,GetColor(SYMBOL_NO_MONITOR_COLOR).B,GetColor(SYMBOL_NO_MONITOR_COLOR).A);
+	m_SymbolNoMonitorColor->SetColour(color);
+	FlexSizer->Add(m_SymbolNoMonitorColor,0,wxALL,2);
+	
+	m_SymbolNoMonitorColorAlpha = new wxSlider(Panel,ID_SYMBOL_NO_MONITOR_ALPHA,0,0,1,wxDefaultPosition,wxDefaultSize);
+	m_SymbolNoMonitorColorAlpha->SetMin(0);
+	m_SymbolNoMonitorColorAlpha->SetMax(255);
+	m_SymbolNoMonitorColorAlpha->SetValue(GetAlpha(SYMBOL_NO_MONITOR_COLOR));
+	FlexSizer->Add(m_SymbolNoMonitorColorAlpha,0,wxALL,2);
+
+}
+*/
 wxPanel *COptionsDialog::GetButtonPanel(wxWindow *parent)
 {
 

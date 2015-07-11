@@ -12,6 +12,7 @@
 #include "graphdialog.h"
 #include "options.h"
 
+
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
@@ -29,24 +30,36 @@ CSymbolPanel::CSymbolPanel(wxWindow *parent)
 }
 CSymbolPanel::~CSymbolPanel()
 {
-	delete m_GraphDialog;
+	if(m_GraphDialog)
+		delete m_GraphDialog;
+		
 }
 
 void CSymbolPanel::GetPage1()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	
-	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	//Sizer->Add(hSizer);
-	
+		
 	m_PicturePanel = new CPicturePanel(NULL,this);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
-	
+		
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
-	//wxBoxSizer * vSizer = new wxBoxSizer(wxVERTICAL);
-	//Sizer->Add(vSizer,0,wxALL|wxEXPAND,4);
+	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxEXPAND,2);
+	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxEXPAND,2);
+	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxEXPAND,2);
+	m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxEXPAND,2);
+	m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxEXPAND,2);
+	m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxEXPAND,2);
+	m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL_SHORT));				hSizer->Add(m_SeasonControl,0,wxALL|wxEXPAND,2);
+	
+	//m_Calibrated->Disable();
+	//m_ForcedOff->Disable();
+	//m_PhotoCellNightTime->Disable();
+	//m_FaultOutput->Disable();
+	//m_SolarCharger->Disable();
+	//m_SyncMaster->Disable();
+	//m_SeasonControl->Disable();
 
 	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	Sizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
@@ -56,10 +69,10 @@ void CSymbolPanel::GetPage1()
 	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
 	m_ButtonGraph->Disable();
 	
-	m_ButtonAlert = new wxButton(this,ID_ALERT,GetMsg(MSG_ALERT));
-	Sizer->Add(m_ButtonAlert,0,wxALL|wxEXPAND,2);
-	m_ButtonAlert->Disable();
-
+	m_ButtonAlarm = new wxButton(this,ID_ALARM,GetMsg(MSG_ALARM));
+	Sizer->Add(m_ButtonAlarm,0,wxALL|wxEXPAND,2);
+	m_ButtonAlarm->Disable();
+		
 	
 	this->SetSizer(Sizer);
 			
@@ -90,6 +103,14 @@ void CSymbolPanel::SetPageEmpty()
 
 void CSymbolPanel::SetPage1(CSymbol *ptr)
 {
+	//m_Calibrated->Disable();
+	//m_ForcedOff->Disable();
+	//m_PhotoCellNightTime->Disable();
+	//m_FaultOutput->Disable();
+	//m_SolarCharger->Disable();
+	//m_SyncMaster->Disable();
+	//m_SeasonControl->Disable();
+
 	m_Symbol = ptr;
 	void *db = DBConnect();
 	if(db == NULL)
@@ -105,16 +126,16 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	else
 		m_ButtonManagement->Enable();
 
-	int count = ptr->GetAlertCount();
+	int count = ptr->GetAlarmCount();
 	if(count > 0)
 	{
-		m_ButtonAlert->Enable();
-		m_ButtonAlert->SetLabel(wxString::Format(_("%s (%d)"),GetMsg(MSG_ALERT),count));
+		m_ButtonAlarm->Enable();
+		m_ButtonAlarm->SetLabel(wxString::Format(_("%s (%d)"),GetMsg(MSG_ALARM),count));
 
 	}else{
 
-		m_ButtonAlert->Disable();
-		m_ButtonAlert->SetLabel(GetMsg(MSG_ALERT));
+		m_ButtonAlarm->Disable();
+		m_ButtonAlarm->SetLabel(GetMsg(MSG_ALARM));
 	}
 
 	m_ButtonGraph->Enable();
@@ -299,16 +320,19 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_CALIBRATED]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_FORCED_OFF]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_PHOTOCELL_NIGHT_TIME]))));
-		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_RESERVED),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_RESERVED]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SYNC_MASTER),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SYNC_MASTER]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SEASON_CONTROL]))));
 
+		SetCalibrated(atoi(row[FI_STANDARD_REPORT_MODE_CALIBRATED]));
+		SetForcedOff(atoi(row[FI_STANDARD_REPORT_MODE_FORCED_OFF]));
+		SetPhotoCellNightTime(atoi(row[FI_STANDARD_REPORT_MODE_PHOTOCELL_NIGHT_TIME]));
+		SetFaultOutput(atoi(row[FI_STANDARD_REPORT_MODE_FAULT_OUTPUT]));
+		SetSolarCharger(atoi(row[FI_STANDARD_REPORT_MODE_SOLAR_CHARGER_ON]));
+		SetSyncMaster(atoi(row[FI_STANDARD_REPORT_MODE_SYNC_MASTER]));
+		SetSeasonControl(atoi(row[FI_STANDARD_REPORT_MODE_SEASON_CONTROL]));
 		
-		
-		
-
 		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
 		str.Append(_("</table>"));
 				
@@ -486,4 +510,60 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
 	m_GraphDialog->ShowModal();
 
+}
+
+void CSymbolPanel::SetCalibrated(bool v)
+{
+	m_Calibrated->Enable(v);
+}
+
+void CSymbolPanel::SetForcedOff(bool v)
+{
+	if(v)
+		m_ForcedOff->SetBackgroundColour(*wxGREEN);
+	else
+		m_ForcedOff->SetBackgroundColour(*wxRED);
+	
+}
+
+void CSymbolPanel::SetPhotoCellNightTime(bool v)
+{
+	if(v)
+		m_PhotoCellNightTime->SetBackgroundColour(*wxGREEN);
+	else
+		m_PhotoCellNightTime->SetBackgroundColour(*wxRED);
+
+}
+
+void CSymbolPanel::SetFaultOutput(bool v)
+{
+	if(v)
+		m_FaultOutput->SetBackgroundColour(*wxGREEN);
+	else
+		m_FaultOutput->SetBackgroundColour(*wxRED);
+	
+}
+
+void CSymbolPanel::SetSolarCharger(bool v)
+{
+	if(v)
+		m_SolarCharger->SetBackgroundColour(*wxGREEN);
+	else
+		m_SolarCharger->SetBackgroundColour(*wxRED);
+		
+}
+void CSymbolPanel::SetSyncMaster(bool v)
+{
+	if(v)
+		m_SyncMaster->SetBackgroundColour(*wxGREEN);
+	else
+		m_SyncMaster->SetBackgroundColour(*wxRED);
+	
+}
+void CSymbolPanel::SetSeasonControl(bool v)
+{
+	if(v)
+		m_SeasonControl->SetBackgroundColour(*wxGREEN);
+	else
+		m_SeasonControl->SetBackgroundColour(*wxRED);
 }

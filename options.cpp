@@ -21,6 +21,8 @@ int m_SortColumnId = 0;
 int m_SelectedAreaId = 0;
 int	m_SelectedSeawayId = 0;
 int m_SelectedSymbolTypeId = 0;
+double m_FontSize = DEFAULT_FONT_SIZE;
+int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 nvRGBA SymbolNormalColor, SymbolNoMonitorColor, SymbolErrorColor, SymbolLightOnColor;
 
 //SET
@@ -45,7 +47,7 @@ void SetSelectedAreaId(int v)			{	m_SelectedAreaId = v;		}
 void SetSelectedSeawayId(int v)			{	m_SelectedSeawayId = v;		}
 void SetSelectedSymbolTypeId(int v)		{	m_SelectedSymbolTypeId = v;	}
 void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
-
+void SetFontSize( float size)			{	m_FontSize = size/10;		}
 
 //GET
 wxColor GetBGColor()			{	return m_BGColor;			}
@@ -64,11 +66,15 @@ bool GetSearchTextChanged()		{	return m_SearchTextChanged;	}
 int GetSortColumnId()			{	return m_SortColumnId;		}
 bool GetSortOrder()				{	return m_SortOrder;			}
 bool GetSortChanged()			{	return m_SortChanged;		}
+float GetFontSize()				{	return m_FontSize;			}
+int GetViewFontScale()			{	return m_ViewFontScale;		}
+
 //filter
 int GetSelectedAreaId()			{	return m_SelectedAreaId;		}
 int GetSelectedSeawayId()		{	return m_SelectedSeawayId;		}
 int GetSelectedSymbolTypeId()	{	return m_SelectedSymbolTypeId;	}
 int GetFilterChanged()			{	return m_FilterChanged;			}
+
 
 
 

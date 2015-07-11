@@ -60,7 +60,6 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 CMyFrame::~CMyFrame(void)
 {
 	WriteConfig();
-	delete m_SymbolPanel;
 }
 
 void CMyFrame::WriteConfig()
