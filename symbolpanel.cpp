@@ -45,6 +45,7 @@ void CSymbolPanel::GetPage1()
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	Sizer->Add(hSizer,0,wxALL|wxEXPAND,5);
 	
+
 	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxEXPAND,2);
 	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxEXPAND,2);
 	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxEXPAND,2);
@@ -250,7 +251,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetOnOff(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]))));
-		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_RESERVED),GetOnOff(atoi(row[FI_SBMS_MODE_RESERVED]))));
+		//str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_RESERVED),GetOnOff(atoi(row[FI_SBMS_MODE_RESERVED]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SYNC_MASTER),GetOnOff(atoi(row[FI_SBMS_MODE_SYNC_MASTER]))));

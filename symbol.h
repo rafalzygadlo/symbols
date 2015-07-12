@@ -57,7 +57,8 @@ class CSymbol
 	bool m_ForcedOff;
 	bool m_PhotoCellNightTime;
 	int m_CommandCount;
-	
+	int m_MMSI;
+
 	
 	void CSymbol::SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -101,6 +102,7 @@ public:
 	void SetForcedOff(bool v);
 	void SetPhotoCellNightTime(bool v);
 	void SetLightOn(bool v);
+	void SetMMSI(int v);
 
 	int GetId();
 	int GetIdSBMS();
@@ -117,6 +119,7 @@ public:
 	bool GetExists();
 	bool GetLightOn();
 	wxString GetCommandCount();
+	int GetMMSI();
 
 	void Render();
 
