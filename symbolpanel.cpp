@@ -41,10 +41,10 @@ void CSymbolPanel::GetPage1()
 		
 	m_PicturePanel = new CPicturePanel(NULL,this);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
-		
-	m_Html = new wxHtmlWindow(this,wxID_ANY);
-	m_Html->SetMinSize(wxSize(200,150));
-	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
+	
+	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	Sizer->Add(hSizer,0,wxALL|wxEXPAND,5);
+	
 	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxEXPAND,2);
 	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxEXPAND,2);
 	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxEXPAND,2);
@@ -53,6 +53,9 @@ void CSymbolPanel::GetPage1()
 	m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxEXPAND,2);
 	m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL_SHORT));				hSizer->Add(m_SeasonControl,0,wxALL|wxEXPAND,2);
 	
+	m_Html = new wxHtmlWindow(this,wxID_ANY);
+	m_Html->SetMinSize(wxSize(200,150));
+	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
 	//m_Calibrated->Disable();
 	//m_ForcedOff->Disable();
 	//m_PhotoCellNightTime->Disable();
@@ -256,6 +259,15 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(_("</table>"));
 			
 		m_Html->AppendToPage(str);
+
+		SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
+		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
+		SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
+		SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
+		SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
+		SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
+		
 	}
 
 	db_free_result(result);
@@ -514,7 +526,11 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 
 void CSymbolPanel::SetCalibrated(bool v)
 {
-	m_Calibrated->Enable(v);
+	if(v)
+		m_Calibrated->SetBackgroundColour(*wxGREEN);
+	else
+		m_Calibrated->SetBackgroundColour(*wxRED);
+	
 }
 
 void CSymbolPanel::SetForcedOff(bool v)
