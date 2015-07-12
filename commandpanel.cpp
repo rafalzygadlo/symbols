@@ -139,11 +139,12 @@ void CCommandPanel::SetCommand(int id)
 	wxString sql;
 	int SBMSID = m_SelectedPtr->GetSBMSID();
 	int id_base_station = m_SelectedPtr->GetBaseStationId();
+	int mmsi = m_SelectedPtr->GetMMSI();
 	switch(id)
 	{
 		//case COMMAND_DRIVE_CURRENT:	SetDriveCurrent(m_SBMSID,m_DriveCurrentValue);
-		case COMMAND_FORCED_OFF:		SetCommandForcedOff(SBMSID,id_base_station,m_ForcedOffValue);	break;
-		case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(SBMSID,id_base_station);				break;
+		case COMMAND_FORCED_OFF:		SetCommandForcedOff(mmsi,SBMSID,id_base_station,m_ForcedOffValue);	break;
+		case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(mmsi,SBMSID,id_base_station);				break;
 		//case COMMAND_FLASH_CODE:	SetFlashCode(m_IdSBMS,m_FlashCode
 
 	}
@@ -157,7 +158,7 @@ void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
 
 void CCommandPanel::Set()
 {
-	if(m_SelectedPtr->GetSBMSID() == 0)
+	if(m_SelectedPtr->GetSBMSID() == 0 & m_SelectedPtr->GetMMSI() == 0)
 	{
 		Disable();
 		SetNoSBMS(true);

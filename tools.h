@@ -59,7 +59,7 @@ wxString RGBAToStr(nvRGBA *RGB);
 nvRGBA StrToRGBA(wxString str);
 
 //COMMANDS
-void SetCommandForcedOff(int SBMSID, int id_base_station, bool off);
-void SetCommandStandardReport(int SBMSID, int id_base_station);
+void SetCommandForcedOff(int mmsi,int SBMSID, int id_base_station, bool off);
+void SetCommandStandardReport(int mmsi,int SBMSID, int id_base_station);
 #endif
 

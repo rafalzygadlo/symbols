@@ -941,9 +941,9 @@ wxString GetNvTime(nvtime_t v)
 }
 
 //COMMANDS . . . . . . . . . . . . . . . .
-int SetDBCommand(int SBMSID,int id_base_station, int id_command)
+int SetDBCommand(int mmsi,int SBMSID,int id_base_station, int id_command)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,SBMSID,id_base_station,id_command,_GetUID());
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,mmsi,SBMSID,id_base_station,id_command,_GetUID());
 	void *db = DBConnect();
 	my_query(db,sql);
 	int last_id = db_last_insert_id(db);
@@ -960,17 +960,17 @@ void UpdateDBCommand(int id,wxString cmd)
 	DBClose(db);
 }
 
-void SetCommandForcedOff(int SBMSID, int id_base_station, bool off)
+void SetCommandForcedOff(int mmsi,int SBMSID, int id_base_station, bool off)
 {
-	int id = SetDBCommand(SBMSID,id_base_station,COMMAND_FORCED_OFF);
+	int id = SetDBCommand(mmsi,SBMSID,id_base_station,COMMAND_FORCED_OFF);
 	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,id,off);
 	UpdateDBCommand(id,_cmd);
 }
 
-void SetCommandStandardReport(int SBMSID, int id_base_station)
+void SetCommandStandardReport(int mmsi,int SBMSID, int id_base_station)
 {
-	int id = SetDBCommand(SBMSID,id_base_station,COMMAND_STANDARD_REPORT);
+	int id = SetDBCommand(mmsi,SBMSID,id_base_station,COMMAND_STANDARD_REPORT);
 	const char *cmd = GetCommand(COMMAND_STANDARD_REPORT);
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,id);
 	UpdateDBCommand(id,_cmd);

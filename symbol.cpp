@@ -43,6 +43,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_TickExit = false;
 	m_PhotoCellNightTime = false;
 	m_ForcedOff = false;
+	m_MMSI = 0;
 }
 
 CSymbol::~CSymbol()
@@ -77,6 +78,7 @@ void CSymbol::Read()
 		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
+		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 	}
 
 	if(!m_ForcedOff & m_PhotoCellNightTime)
@@ -197,8 +199,12 @@ bool  CSymbol::CheckCommand()
 	if(m_CommandTick <= CHECK_COMMAND_TICK)
 		return false;
 	
-	
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
+	wxString sql;
+	if(m_MMSI == 0)
+		sql = wxString::Format(_("SELECT count(*) FROM %s WHERE SBMSID='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_IdBaseStation,COMMAND_STATUS_NEW);
+	else
+		sql = wxString::Format(_("SELECT count(*) FROM %s WHERE mmsi='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_MMSI,m_IdBaseStation,COMMAND_STATUS_NEW);
+
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -579,6 +585,11 @@ void CSymbol::SetLightOn(bool v)
 	m_LightOn = v;
 }
 
+void CSymbol::SetMMSI(int v)
+{
+	m_MMSI = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -649,4 +660,9 @@ wxString CSymbol::GetCommandCount()
 {
 	return wxString::Format(_("%d"),m_CommandCount);
 	
+}
+
+int CSymbol::GetMMSI()
+{
+	return m_MMSI;
 }
