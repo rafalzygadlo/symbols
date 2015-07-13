@@ -24,7 +24,7 @@ int m_SelectedSymbolTypeId = 0;
 double m_FontSize = DEFAULT_FONT_SIZE;
 int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 int m_CommTimeout = DEFAULT_COMM_TIMEOUT;
-bool m_InMonitoring = false;
+int m_InMonitoring = DEFAULT_MONITORING_VALUE;
 nvRGBA SymbolNormalColor, SymbolNoMonitorColor, SymbolErrorColor, SymbolLightOnColor;
 
 //SET
@@ -52,6 +52,7 @@ void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
 void SetFontSize( float size)			{	m_FontSize = size/10;		}
 void SetViewFontScale(int v)			{	m_ViewFontScale = v;		}
 void SetCommTimeout(int v)				{	m_CommTimeout = v;			}
+void SetInMonitoring(int v)				{	m_InMonitoring = v;			}
 
 //GET
 wxColor GetBGColor()			{	return m_BGColor;			}
@@ -80,7 +81,7 @@ int GetSelectedAreaId()			{	return m_SelectedAreaId;		}
 int GetSelectedSeawayId()		{	return m_SelectedSeawayId;		}
 int GetSelectedSymbolTypeId()	{	return m_SelectedSymbolTypeId;	}
 int GetFilterChanged()			{	return m_FilterChanged;			}
-bool GetInMonitoring()			{	return m_InMonitoring;			}
+int GetInMonitoring()			{	return m_InMonitoring;			}
 
 
 nvRGBA GetDefaultColor(int type)

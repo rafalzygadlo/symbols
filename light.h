@@ -60,7 +60,7 @@ public:
 	DECLARE_EVENT_TABLE();
 	enum
 	{
-		ID_DELETE = 10000,
+		ID_DELETE = 2000,
 		ID_NEW,
 		ID_EDIT,
 	};

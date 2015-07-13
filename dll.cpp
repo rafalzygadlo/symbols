@@ -157,6 +157,7 @@ void CMapPlugin::ReadConfig()
 	FileConfig->Read(_(KEY_FILTER_AREA_ID),&id);			SetSelectedAreaId(id);
 	FileConfig->Read(_(KEY_FILTER_SEAWAY_ID),&id);			SetSelectedSeawayId(id);
 	FileConfig->Read(_(KEY_FILTER_SYMBOL_TYPE_ID),&id);		SetSelectedSymbolTypeId(id);
+	FileConfig->Read(_(KEY_FILTER_IN_MONITORING),&id);		SetInMonitoring(id);
 
 	//SORT
 	FileConfig->Read(_(KEY_SORT_ORDER),&id);						SetSortOrder(id);
@@ -190,6 +191,7 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_FILTER_AREA_ID),GetSelectedAreaId());
 	FileConfig->Write(_(KEY_FILTER_SEAWAY_ID),GetSelectedSeawayId());
 	FileConfig->Write(_(KEY_FILTER_SYMBOL_TYPE_ID),GetSelectedSymbolTypeId());
+	FileConfig->Write(_(KEY_FILTER_IN_MONITORING),GetInMonitoring());
 
 	//SORT
 	FileConfig->Write(_(KEY_SORT_ORDER),GetSortOrder());
@@ -327,10 +329,11 @@ void CMapPlugin::SetSql(wxString &sql)
 {
 	
 	sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,in_monitoring,name FROM %s"),TABLE_SYMBOL);
-	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%') AND in_monitoring='%d'"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText(),GetInMonitoring());
+	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
-	
+	int in_monitoring = GetInMonitoring();
+	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
 	
 	int area_id = GetSelectedAreaId();
 	if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
@@ -1038,15 +1041,11 @@ void CMapPlugin::Render(void)
 	RenderSymbols();
 				
 	if(SelectedPtr != NULL)
-	{
 		RenderSelected();
-		//RenderInfo(SelectedPtr);
-	}
-
+	
 	if(HighlightedPtr != NULL)
-	{
 		RenderHighlighted();
-		//RenderInfo(HighlightedPtr);
+	
 	if(MapScale > GetViewFontScale())
 	{
 		RenderNames();

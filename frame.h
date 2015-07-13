@@ -51,7 +51,7 @@ public:
 
 	enum
 	{
-		ID_CLOSE = 5000,
+		ID_CLOSE = 1400,
 		ID_NAME,
 		ID_DESCRIPTION,
 		ID_DELETE,

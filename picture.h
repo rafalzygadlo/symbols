@@ -38,7 +38,7 @@ public:
 
 	enum
 	{
-		ID_NEW = 8000,
+		ID_NEW = 2400,
 		ID_DELETE,
 		ID_PICK,
 	};

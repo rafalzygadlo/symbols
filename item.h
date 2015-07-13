@@ -58,7 +58,7 @@ public:
 	
 	enum
 	{
-		ID_DELETE = 8000,
+		ID_DELETE = 1800,
 		ID_NEW,
 		ID_EDIT,
 	};
@@ -85,7 +85,7 @@ public:
 	
 	enum
 	{
-		ID_DELETE = 9000,
+		ID_DELETE = 1900,
 		
 	};
 

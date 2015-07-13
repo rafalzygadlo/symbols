@@ -80,12 +80,14 @@ void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 	FilterDialog->SetAreaId(GetSelectedAreaId());
 	FilterDialog->SetSeawayId(GetSelectedSeawayId());
 	FilterDialog->SetSymbolTypeId(GetSelectedSymbolTypeId());
+	FilterDialog->SetInMonitoring(GetInMonitoring());
 
 	if(FilterDialog->ShowModal()== wxID_OK)
 	{
 		SetSelectedAreaId(FilterDialog->GetAreaId());
 		SetSelectedSeawayId(FilterDialog->GetSeawayId());
 		SetSelectedSymbolTypeId(FilterDialog->GetSymbolTypeId());
+		SetInMonitoring(FilterDialog->GetInMonitoring());
 		SetFilterChanged(true);
 	}
 	

@@ -77,7 +77,7 @@ public:
 
 	enum
 	{
-		ID_SEARCH,
+		ID_SEARCH = 1200,
 		ID_FILTER,
 	};
 

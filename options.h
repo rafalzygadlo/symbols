@@ -26,7 +26,7 @@ bool GetSortChanged();
 int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
-bool GetInMonitoring();
+int GetInMonitoring();
 int GetFilterChanged();
 
 float GetFontSize();

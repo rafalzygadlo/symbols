@@ -60,7 +60,7 @@ public:
 	
 	enum
 	{
-		ID_MANAGEMENT = 7000,
+		ID_MANAGEMENT = 2600,
 		ID_GRAPH,
 		ID_ALARM,
 		ID_SHOW_PICTURE,

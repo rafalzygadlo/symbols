@@ -6,11 +6,16 @@
 class CFilterDialog: public wxDialog
 {
 	wxButton *m_ButtonSelect;
-	void Set(int id, bool checked);
-	wxPanel *GetPanel(wxWindow *Parent);
+	//wxCheckBox *m_CheckInMonitoring;
 	wxComboBox *m_ComboArea;
 	wxComboBox *m_ComboSeaway;
+	wxComboBox *m_ComboInMonitoring;
 	wxComboBox *m_ComboSymbolType;
+	
+	void Set(int id, bool checked);
+	wxPanel *GetPanel(wxWindow *Parent);
+	wxPanel *GetButtonPanel(wxWindow *parent);
+	
 
 public:
 
@@ -19,17 +24,19 @@ public:
 	int GetAreaId();
 	int GetSymbolTypeId();
 	int GetSeawayId();
+	int GetInMonitoring();
 
 	void SetAreaId(int id);
 	void SetSymbolTypeId(int id);
 	void SetSeawayId(int id);
+	void SetInMonitoring(int v);
 
 
 	DECLARE_EVENT_TABLE();
 
 	enum
 	{
-		ID_FILTER_BEGIN = 5213,
+		ID_FILTER_BEGIN = 1300,
 		ID_SELECT_ALL,
 		ID_DESELECT_ALL,
 	};

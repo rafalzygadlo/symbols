@@ -18,6 +18,7 @@ class CHtmlCtrl: public wxListCtrl
 	void OnEraseBackground(wxEraseEvent &event);
 	void OnSelect(wxCommandEvent &event);
 	void OnColClick(wxListEvent& event);
+	void OnContextMenu(wxContextMenuEvent &event);
 	//virtual wxString OnGetItem(size_t item) const;
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
@@ -40,13 +41,14 @@ public:
 
 	enum
 	{
-		ID_LIST,
-		ID_PROPERTIES,
-		ID_DELETE_FROM_QUEUE,
-		ID_DELETE_FROM_INSTALLED,
-		ID_SET_ITEM,
+		ID_LIST = 1700,
 		ID_HTML,
+		ID_DELETE,
+		ID_EDIT,
+		ID_NEW,
+		ID_GROUP,
 	};
+
 
 };
 

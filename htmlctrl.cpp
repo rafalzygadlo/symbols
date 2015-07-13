@@ -21,6 +21,7 @@ BEGIN_EVENT_TABLE(CHtmlCtrl,wxListCtrl)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	//EVT_LISTBOX(ID_HTML, CHtmlCtrl::OnSelect)
 	EVT_LIST_COL_CLICK(ID_HTML,CHtmlCtrl::OnColClick)
+	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
  
@@ -67,6 +68,32 @@ void CHtmlCtrl::SetList(wxArrayPtrVoid *ptr)
 	}
 	
 	m_Count = count;
+}
+void CHtmlCtrl::OnContextMenu(wxContextMenuEvent &event)
+{
+	long n_item = -1;
+	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+	
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(n_item > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+		
+	}
+	
+	PopupMenu(Menu);
+	delete Menu;
 }
 
 void CHtmlCtrl::OnSelect(wxCommandEvent &event)

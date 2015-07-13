@@ -85,7 +85,7 @@ public:
 
 	enum
 	{
-		ID_LIST,
+		ID_LIST = 2100,
 		ID_DELETE,
 		ID_EDIT,
 		ID_NEW,

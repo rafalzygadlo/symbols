@@ -149,7 +149,7 @@ public:
 
 	enum
 	{
-		ID_ITEM_TYPE = 5000,
+		ID_ITEM_TYPE = 2200,
 		ID_FILTER,
 		ID_LON,
 		ID_LAT,
