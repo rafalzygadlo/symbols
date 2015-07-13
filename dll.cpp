@@ -170,6 +170,10 @@ void CMapPlugin::ReadConfig()
 	FileConfig->Read(_(KEY_ERROR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_ERROR_COLOR)));			SetColor(SYMBOL_ERROR_COLOR,StrToRGBA(_color));
 	FileConfig->Read(_(KEY_LIGHT_ON_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_LIGHT_ON_COLOR)));		SetColor(SYMBOL_LIGHT_ON_COLOR,StrToRGBA(_color));
 
+	float size;
+	FileConfig->Read(_(KEY_FONT_SIZE),&size,DEFAULT_FONT_SIZE);				SetFontSize(size*10);
+	FileConfig->Read(_(KEY_VIEW_FONT_SCALE),&size,DEFAULT_VIEW_FONT_SCALE);	SetViewFontScale(size);
+
 	delete FileConfig;
 }
 
@@ -197,6 +201,10 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_NO_MONITOR_COLOR),RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));	
 	FileConfig->Write(_(KEY_ERROR_COLOR),RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));			
 	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));		
+
+	//FONT
+	FileConfig->Write(_(KEY_FONT_SIZE),GetFontSize());
+	FileConfig->Write(_(KEY_VIEW_FONT_SCALE),GetViewFontScale());
 
 
 	delete FileConfig;
@@ -318,9 +326,11 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 void CMapPlugin::SetSql(wxString &sql)
 {
 	
-	sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,on_position,in_monitoring,name FROM %s"),TABLE_SYMBOL);
-	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
+	sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,in_monitoring,name FROM %s"),TABLE_SYMBOL);
+	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%') AND in_monitoring='%d'"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText(),GetInMonitoring());
 	m_OldSearchText = GetSearchText();
+	
+	
 	
 	int area_id = GetSelectedAreaId();
 	if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
@@ -390,6 +400,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
+		ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
 		ptr->SetRemove(true);		
 		
 		if(add)
@@ -996,9 +1007,9 @@ void CMapPlugin::RenderNames()
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5f,3.2f);
+		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5f,3.2f);
 		if(ptr->GetBusy())
-			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5f,-0.1f);
+			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5f,-0.1f);
 	}
 
 }
@@ -1019,11 +1030,13 @@ void CMapPlugin::Render(void)
 	if(HighlightedPtr != NULL)
 		RenderHighlighted();
 
-	RenderNames();
-	
-	m_NameFont->ClearBuffers();
-	m_NameFont->CreateBuffers();
-	m_NameFont->Render();	
+	if(MapScale > GetViewFontScale())
+	{
+		RenderNames();
+		m_NameFont->ClearBuffers();
+		m_NameFont->CreateBuffers();
+		m_NameFont->Render();	
+	}
 	
 	glDisable(GL_POINT_SMOOTH);
 	

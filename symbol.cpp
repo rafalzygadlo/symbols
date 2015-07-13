@@ -44,6 +44,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_PhotoCellNightTime = false;
 	m_ForcedOff = false;
 	m_MMSI = 0;
+	m_InMonitoring = false;
 }
 
 CSymbol::~CSymbol()
@@ -398,7 +399,7 @@ void CSymbol::RenderSymbol()
 	if(m_LightOn)
 		SetColor(SYMBOL_LIGHT_ON_COLOR);
 	
-	if(m_IdSBMS > 0)
+	if(m_InMonitoring)
 	{
 		if(m_Alarm)
 		{
@@ -410,11 +411,7 @@ void CSymbol::RenderSymbol()
 		
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 	}
-
 	
-
-
-
 
 /*
 	glEnable(GL_TEXTURE_2D);
@@ -589,6 +586,12 @@ void CSymbol::SetMMSI(int v)
 {
 	m_MMSI = v;
 }
+
+void CSymbol::SetInMonitoring(bool v)
+{
+	m_InMonitoring = v;
+}
+
 
 //GET
 int CSymbol::GetId()

@@ -31,7 +31,6 @@ class CNew: public wxDialog
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
 	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
-	wxCheckBox *m_CheckOnPosition;
 	wxCheckBox *m_CheckInMonitoring;
 
 	bool m_LonValid,m_LatValid;
@@ -46,7 +45,7 @@ class CNew: public wxDialog
 	wxString m_Name,m_Info,m_Type,m_Host,m_Port;
 	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
 	int m_PictureId;
-	bool m_OnPosition,m_InMonitoring;
+	bool m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
 
 	wxListBox *m_ListBox;
@@ -114,7 +113,6 @@ public:
 	wxString GetCharacteristic();
 	CLightPanel *GetLightPanel();
 	CItemPanel *GetItemPanel();
-	bool GetOnPosition();
 	bool GetInMonitoring();
 	wxString GetCode();
 	wxString GetIala();
@@ -140,7 +138,6 @@ public:
 	void SetNumber(wxString v);
 	void SetCoverage(wxString v);
 	void SetCharacteristic(wxString v);
-	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetCode(wxString v);
 	void SetIala(wxString v);

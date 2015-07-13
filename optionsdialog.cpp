@@ -10,6 +10,8 @@
 BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_COLOURPICKER_CHANGED(wxID_ANY,OnColorPicker)
 	EVT_SLIDER(wxID_ANY,OnAlpha)
+	EVT_SLIDER(ID_VIEW_NAME_SCALE, OnNameScale)
+	EVT_SLIDER(ID_FONT_SIZE,OnFontSize)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
@@ -19,8 +21,10 @@ COptionsDialog::COptionsDialog()
 	SetSizer(Sizer);		
 	
 	wxNotebook *m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
-	m_Notebook->AddPage(GetColorPanel(m_Notebook),GetMsg(MSG_COLOR));
-	m_Notebook->AddPage(GetFontPanel(m_Notebook),GetMsg(MSG_FONT));
+	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
+	
+	
+
 	Sizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 
 
@@ -34,6 +38,19 @@ COptionsDialog::COptionsDialog()
 COptionsDialog::~COptionsDialog()
 {
 	
+}
+
+wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	
+	Sizer->Add(GetFontPanel(Panel),0,wxALL,5);
+	Sizer->Add(GetColorPanel(Panel),0,wxALL,5);
+	Sizer->Add(GetOtherPanel(Panel),0,wxALL,5);
+	
+	return Panel;
 }
 
 wxPanel *COptionsDialog::GetColorPanel(wxWindow *Parent)
@@ -127,7 +144,7 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
 	Panel->SetSizer(Sizer);
 		
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(3);
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
 	
 	wxStaticText *TextFontSize = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FONT_SIZE),wxDefaultPosition,wxDefaultSize);
@@ -152,6 +169,44 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 
 	return Panel;
 }
+
+wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
+{
+	
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_TIMEOUT));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+		
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+		
+
+	wxStaticText *TextCommTimeout = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMM_TIMEOUT),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextCommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	
+	m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	m_CommTimeout->SetMin(0);
+	m_CommTimeout->SetMax(60*24);
+	m_CommTimeout->SetValue(GetCommTimeout());
+
+
+	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	//FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	//m_CommTimeout->SetValue(GetCommTimeout());
+
+
+	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	//m_CommTimeout->SetValue(GetViewFontScale());
+
+
+	return Panel;
+
+}
+
 
 /*
 wxPanel *COptionsDialog::GetRestrictedAreaPanel(wxWindow *Parent)
@@ -246,6 +301,18 @@ void COptionsDialog::OnAlpha(wxCommandEvent &event)
 		case ID_SYMBOL_LIGHT_ON_ALPHA:		SetAlpha(SYMBOL_LIGHT_ON_COLOR,event.GetInt());		break;
 	}
 
+	event.Skip();
 	///Signal();
 	
+}
+
+void COptionsDialog::OnNameScale(wxCommandEvent &event)
+{
+	SetViewFontScale(event.GetInt());
+		
+}
+
+void COptionsDialog::OnFontSize(wxCommandEvent &event)
+{
+	SetFontSize(event.GetInt());
 }

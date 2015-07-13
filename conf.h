@@ -42,6 +42,10 @@
 #define KEY_ERROR_COLOR			"error_color"
 #define KEY_LIGHT_ON_COLOR		"light_on_color"
 
+#define KEY_FONT_SIZE		"font_size"
+#define KEY_VIEW_FONT_SCALE "view_font_scale"
+
+
 #define PAGE_ALL 1
 
 #define COLUMN_NUMBER	0
@@ -84,7 +88,6 @@
 #define DEFAULT_LOWER_TRESHOLD	11.00
 #define DEFAULT_UPPER_TRESHOLD	15.00
 
-
 #define DEFAULT_OFFSET_SECONS	60
 #define DEFAULT_OFFSET_MINUTES	(60*60)
 #define DEFAULT_OFFSET_HOURS	(24*60*60)
@@ -96,6 +99,8 @@
 #define DEFAULT_FONT_FACTOR		50.0
 #define DEFAULT_FONT_SIZE		6.1
 #define DEFAULT_VIEW_FONT_SCALE 1000
+
+#define DEFAULT_COMM_TIMEOUT	60*6	
 
 // Languages
 #define MSG_MANAGER					0
@@ -213,7 +218,6 @@
 #define MSG_FONT					112
 #define MSG_FONT_SIZE				113
 #define MSG_VIEW_NAME_SCALE			114
-
 #define MSG_CALIBRATED_SHORT			115
 #define MSG_FORCED_OFF_SHORT			116
 #define MSG_PHOTOCELL_NIGHT_TIME_SHORT	117
@@ -221,6 +225,8 @@
 #define MSG_SOLAR_CHARGER_ON_SHORT		119
 #define MSG_SYNC_MASTER_SHORT			120
 #define MSG_SEASON_CONTROL_SHORT		121
+#define MSG_COMM_TIMEOUT				122
+#define MSG_SYMBOL_TIMEOUT				123
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -385,7 +391,7 @@
 #define TABLE_BASE_STATION		"base_station"
 #define TABLE_COMMAND			"command"
 #define TABLE_CHARACTERISTIC	"characteristic"
-#define TABLE_ALARM				"alarm"
+#define TABLE_ALARM				"alarm_report"
 #define TABLE_SBMS				"sbms"
 #define TABLE_STANDARD_REPORT	"standard_report"
 
@@ -400,10 +406,9 @@
 #define FI_SYMBOL_NUMBER			5
 #define FI_SYMBOL_LON				6
 #define FI_SYMBOL_LAT				7
-#define FI_SYMBOL_ON_POSITION		8
-#define FI_SYMBOL_IN_MONITORING		9
-#define FI_SYMBOL_NAME				10
-#define FI_SYMBOL_INFO				11
+#define FI_SYMBOL_IN_MONITORING		8
+#define FI_SYMBOL_NAME				9
+#define FI_SYMBOL_INFO				10
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
@@ -412,7 +417,6 @@
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"
-#define FN_SYMBOL_ON_POSITION		"on_position"
 #define FN_SYMBOL_IN_MONITORING		"in_monitoring"
 #define FN_SYMBOL_NAME				"name"
 #define FN_SYMBOL_INFO				"info"
@@ -595,9 +599,9 @@
 #define FI_SBMS_ID							0
 #define FI_SBMS_SBMSID						1
 #define FI_SBMS_ID_BASE_STATION				2
-#define FI_SBMS_NAME						3
-#define Fi_SBMS_PHONE						4
-#define FI_SBMS_MMSI						5
+#define Fi_SBMS_PHONE						3
+#define FI_SBMS_MMSI						4
+#define FI_SBMS_NAME						5
 #define FI_SBMS_MODES						6
 #define FI_SBMS_MODE_CALIBRATED				7
 #define FI_SBMS_MODE_FORCED_OFF				8

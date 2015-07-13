@@ -158,7 +158,7 @@ void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
 
 void CCommandPanel::Set()
 {
-	if(m_SelectedPtr->GetSBMSID() == 0 & m_SelectedPtr->GetMMSI() == 0)
+	if(m_SelectedPtr->GetSBMSID() == 0 && m_SelectedPtr->GetMMSI() == 0)
 	{
 		Disable();
 		SetNoSBMS(true);

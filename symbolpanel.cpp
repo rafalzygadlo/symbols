@@ -46,13 +46,13 @@ void CSymbolPanel::GetPage1()
 	Sizer->Add(hSizer,0,wxALL|wxEXPAND,5);
 	
 
-	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxEXPAND,2);
-	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxEXPAND,2);
-	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxEXPAND,2);
-	m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxEXPAND,2);
-	m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxEXPAND,2);
-	m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxEXPAND,2);
-	m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL_SHORT));				hSizer->Add(m_SeasonControl,0,wxALL|wxEXPAND,2);
+	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxCENTER,2);
+	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxCENTER,2);
+	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxCENTER,2);
+	m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxCENTER,2);
+	m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxCENTER,2);
+	m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
+	m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
@@ -192,9 +192,6 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	
 		if(atoi(row[FI_SYMBOL_IN_MONITORING]))
 			str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	
-		if(atoi(row[FI_SYMBOL_ON_POSITION]))
-			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_ON_POSITION)));
 			
 		if(m_IdSBMS == 0)
 			str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
@@ -527,60 +524,36 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 
 void CSymbolPanel::SetCalibrated(bool v)
 {
-	if(v)
-		m_Calibrated->SetBackgroundColour(*wxGREEN);
-	else
-		m_Calibrated->SetBackgroundColour(*wxRED);
-	
+	m_Calibrated->SetOn(v);
 }
 
 void CSymbolPanel::SetForcedOff(bool v)
 {
-	if(v)
-		m_ForcedOff->SetBackgroundColour(*wxGREEN);
-	else
-		m_ForcedOff->SetBackgroundColour(*wxRED);
-	
+	m_ForcedOff->SetOn(v);
 }
 
 void CSymbolPanel::SetPhotoCellNightTime(bool v)
 {
-	if(v)
-		m_PhotoCellNightTime->SetBackgroundColour(*wxGREEN);
-	else
-		m_PhotoCellNightTime->SetBackgroundColour(*wxRED);
-
+	m_PhotoCellNightTime->SetOn(v);
 }
 
 void CSymbolPanel::SetFaultOutput(bool v)
 {
-	if(v)
-		m_FaultOutput->SetBackgroundColour(*wxGREEN);
-	else
-		m_FaultOutput->SetBackgroundColour(*wxRED);
-	
+	m_FaultOutput->SetOn(v);
 }
 
 void CSymbolPanel::SetSolarCharger(bool v)
 {
-	if(v)
-		m_SolarCharger->SetBackgroundColour(*wxGREEN);
-	else
-		m_SolarCharger->SetBackgroundColour(*wxRED);
-		
+	m_SolarCharger->SetOn(v);
 }
+
 void CSymbolPanel::SetSyncMaster(bool v)
 {
-	if(v)
-		m_SyncMaster->SetBackgroundColour(*wxGREEN);
-	else
-		m_SyncMaster->SetBackgroundColour(*wxRED);
-	
+	m_SyncMaster->SetOn(v);
 }
+
 void CSymbolPanel::SetSeasonControl(bool v)
 {
-	if(v)
-		m_SeasonControl->SetBackgroundColour(*wxGREEN);
-	else
-		m_SeasonControl->SetBackgroundColour(*wxRED);
+	m_SeasonControl->SetOn(v);
+
 }
