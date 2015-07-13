@@ -22,12 +22,16 @@ bool GetSearchTextChanged();
 int GetSortColumnId();
 bool GetSortOrder();
 bool GetSortChanged();
+//filter
 int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
+bool GetInMonitoring();
 int GetFilterChanged();
+
 float GetFontSize();
 int GetViewFontScale();
+int GetCommTimeout();
 
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
@@ -45,12 +49,16 @@ void SetSortColumnId(int v);
 void SetSortOrder(bool v);
 void SetSortColumn(wxString v);
 void SetSortChanged(bool v);
+//filter
 void SetSelectedAreaId(int v);
 void SetSelectedSeawayId(int v);
 void SetSelectedSymbolTypeId(int v);
+void SetInMonitoring(int v);
 void SetFilterChanged(bool v);
-void SetFontSize(float v);
 
+void SetFontSize(float v);
+void SetViewFontScale(int v);
+void SetCommTimeout(int v);
 
 
 //COLORS

@@ -50,11 +50,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Sizer1->Add(FlexSizer,1,wxALL|wxEXPAND,0);
-
-	wxCheckBox *CheckOnPosition = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_ON_POSITION));
-	FlexSizer->AddSpacer(1);
-	FlexSizer->Add(CheckOnPosition,0,wxALL,2);
-	
+		
 	wxCheckBox *CheckInMOnitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	FlexSizer->AddSpacer(1);
 	FlexSizer->Add(CheckInMOnitoring,0,wxALL,2);

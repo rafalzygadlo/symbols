@@ -60,6 +60,7 @@ class CSymbol
 	int m_CommandCount;
 	int m_MMSI;
 	nvtime_t m_nvTime;
+	bool m_InMonitoring;
 
 	
 	void CSymbol::SetColor(int id);
@@ -96,7 +97,6 @@ public:
 	void SetSBMSID(int v);
 	//void SetBaseStationId();
 	void SetNumber(wxString v);
-	void SetOnPosition(bool v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
 	void SetRemove(bool v);

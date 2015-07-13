@@ -32,7 +32,7 @@ CNew::CNew(void *db,int type, int id_type, int item_id, bool edit)
 	m_IDType = id_type;
 	m_ItemID = item_id;
 	m_Edit = edit;
-	m_OnPosition = m_InMonitoring = false;
+	m_InMonitoring = false;
 	m_TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
 	
@@ -222,12 +222,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
-	
-	m_CheckOnPosition = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_ON_POSITION));
-	m_CheckOnPosition->SetValue(m_OnPosition);
-	FlexGridSizer->Add(m_CheckOnPosition,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
-	
+		
 	m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	m_CheckInMonitoring->SetValue(m_InMonitoring);
 	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
@@ -947,11 +942,6 @@ void CNew::SetCharacteristic(wxString v)
 	m_Characteristic = v;
 }
 
-void CNew::SetOnPosition(bool v)
-{
-	m_OnPosition = v;
-}
-
 void CNew::SetInMonitoring(bool v)
 {
 	m_InMonitoring = v;
@@ -1066,11 +1056,6 @@ CLightPanel *CNew::GetLightPanel()
 CTimePanel *CNew::GetTimePanel()
 {
 	return m_TimePanel;
-}
-
-bool CNew::GetOnPosition()
-{
-	return m_CheckOnPosition->GetValue();
 }
 
 bool CNew::GetInMonitoring()

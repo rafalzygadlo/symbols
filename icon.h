@@ -13,6 +13,7 @@ public:
 		
 	CMyIcon(wxWindow *Parent,int id,wxString name,wxString tip);
 	~CMyIcon();
+	void SetOn(bool v);
 	DECLARE_EVENT_TABLE();
 
 };

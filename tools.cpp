@@ -139,6 +139,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"SCH",L"SCH"},
 	{L"SMA",L"SMA"},
 	{L"SCO",L"SCO"},
+	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
+	{L"Symbol timeout",L"Czas oczekiwania"},
 	
 };
 
