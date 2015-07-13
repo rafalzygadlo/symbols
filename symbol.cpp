@@ -79,6 +79,9 @@ void CSymbol::Read()
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
+		nvtime_t dt;
+		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
+		SetNvTime(dt);
 	}
 
 	if(!m_ForcedOff & m_PhotoCellNightTime)
@@ -590,6 +593,11 @@ void CSymbol::SetMMSI(int v)
 	m_MMSI = v;
 }
 
+void CSymbol::SetNvTime(nvtime_t dt)
+{
+	m_nvTime = dt;
+}	
+
 //GET
 int CSymbol::GetId()
 {
@@ -665,4 +673,9 @@ wxString CSymbol::GetCommandCount()
 int CSymbol::GetMMSI()
 {
 	return m_MMSI;
+}
+
+nvtime_t CSymbol::GetNvTime()
+{
+	return m_nvTime;
 }

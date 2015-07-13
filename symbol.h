@@ -9,6 +9,7 @@
 #include "picture.h"
 #include "geometrytools.h"
 #include "nvfastfont.h"
+#include "nvtime.h"
 
 class CSymbol
 {
@@ -58,6 +59,7 @@ class CSymbol
 	bool m_PhotoCellNightTime;
 	int m_CommandCount;
 	int m_MMSI;
+	nvtime_t m_nvTime;
 
 	
 	void CSymbol::SetColor(int id);
@@ -103,6 +105,7 @@ public:
 	void SetPhotoCellNightTime(bool v);
 	void SetLightOn(bool v);
 	void SetMMSI(int v);
+	void SetNvTime(nvtime_t dt);
 
 	int GetId();
 	int GetIdSBMS();
@@ -120,6 +123,8 @@ public:
 	bool GetLightOn();
 	wxString GetCommandCount();
 	int GetMMSI();
+	nvtime_t GetNvTime();
+	
 
 	void Render();
 

@@ -876,18 +876,26 @@ void CMapPlugin::RenderSelected()
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
 
-	
 	glPopMatrix();
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1f,0.0f);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1f,1.0f);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1f,2.0f);
-	m_NameFont->Print(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1f,3.0f);
-
+	
 	glDisable(GL_BLEND);
 
 
 	
 #endif
+
+}
+
+void CMapPlugin::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
+{	
+	wchar_t buffer[128];
+	va_list args;
+	va_start(args,format);
+	//swprintf_s(buffer,format,args);
+	vswprintf ( buffer, 128, format, args );
+	va_end(args);
+	
+	m_NameFont->Print(x,y,6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
 
 }
 
@@ -912,13 +920,15 @@ void CMapPlugin::RenderHighlighted()
 	nvDrawCircleFilled(&c);
 	glPopMatrix();
 
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"1.test komunikatu",-0.1f,0.0f);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"2.test komunikatu",-0.1f,1.0f);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"3.test komunikatu",-0.1f,2.0f);
-	m_NameFont->Print(HighlightedPtr->GetLonMap(),HighlightedPtr->GetLatMap(),7.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,L"4.test komunikatu",-0.1f,3.0f);
-
 	glDisable(GL_BLEND);
 	
+}
+
+void CMapPlugin::RenderInfo(CSymbol *ptr)
+{
+	RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
+	nvtime_t t = ptr->GetNvTime();
+	RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 }
 
 void CMapPlugin::RenderDistance()
@@ -975,7 +985,7 @@ void CMapPlugin::RenderDistance()
 				
 	glLineWidth(1);
 
-}
+}	
 
 
 
@@ -996,9 +1006,12 @@ void CMapPlugin::RenderNames()
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetNumber(),0.5f,3.2f);
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetNumber());
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
+		nvtime_t t = ptr->GetNvTime();
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 		if(ptr->GetBusy())
-			m_NameFont->Print(ptr->GetLonMap(),ptr->GetLatMap(),6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0.0,ptr->GetCommandCount(),-1.5f,-0.1f);
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCount());
 	}
 
 }
@@ -1014,11 +1027,16 @@ void CMapPlugin::Render(void)
 	RenderSymbols();
 				
 	if(SelectedPtr != NULL)
+	{
 		RenderSelected();
-		
-	if(HighlightedPtr != NULL)
-		RenderHighlighted();
+		//RenderInfo(SelectedPtr);
+	}
 
+	if(HighlightedPtr != NULL)
+	{
+		RenderHighlighted();
+		//RenderInfo(HighlightedPtr);
+	}
 	RenderNames();
 	
 	m_NameFont->ClearBuffers();

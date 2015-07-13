@@ -109,9 +109,10 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderAnimation();
 	void RenderDistance();
 	void RenderNames();
+	void RenderInfo(CSymbol *ptr);
 
-	void RenderButton(float x1, float y1, float x2, float y2, bool selected);
-	void RenderText(double x, double y, wchar_t *text);
+	void RenderText(float x, float y, float vx, float vy, const wchar_t *format...);
+	//void RenderText(double x, double y, wchar_t *text);
 	bool IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2);
 	void RenderPositionMarker(double x, double y);
 	void SetValues();
