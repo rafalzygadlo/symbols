@@ -100,18 +100,18 @@ void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 
 void CCommandPanel::SetButtonState()
 {
-	m_ButtonOk->Disable();
+	m_ButtonSend->Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
 	{		
 		if(m_Changed[i])
-			m_ButtonOk->Enable();
+			m_ButtonSend->Enable();
 	}
 
 }
 
 void CCommandPanel::ButtonDisable()
 {
-	m_ButtonOk->Disable();
+	m_ButtonSend->Disable();
 }
 
 void CCommandPanel::OnButtonOk(wxCommandEvent &event)
@@ -276,9 +276,9 @@ void CCommandPanel::SetGui()
 	PanelSizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 		
 	//charakterystyka
-	wxStaticText *LabelFlashCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FLASH_CODE));
-	FlexSizer->Add(LabelFlashCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	FlexSizer->Add(CharacteristicPanel(Panel),0,wxALL|wxEXPAND,5);
+	//wxStaticText *LabelFlashCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FLASH_CODE));
+	//FlexSizer->Add(LabelFlashCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	//FlexSizer->Add(CharacteristicPanel(Panel),0,wxALL|wxEXPAND,5);
 		
 	// pr¹d podk³adu
 	wxStaticText *LabelDriveCurrent = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVE_CURRENT));
@@ -296,11 +296,15 @@ void CCommandPanel::SetGui()
 	m_PowerOfLight->SetMin(POWER_OF_LIGHT_MIN);
 	m_PowerOfLight->SetMax(POWER_OF_LIGHT_MAX);
 
-	//czu³oœæ fotorezystora
-	m_ButtonOk = new wxButton(Panel,ID_BUTTON_OK,GetMsg(MSG_OK));
-	PanelSizer->Add(m_ButtonOk,0,wxALL|wxALIGN_RIGHT,5);
-	m_ButtonOk->Disable();
 	
+	m_ButtonSend = new wxButton(Panel,ID_BUTTON_OK,GetMsg(MSG_SEND_COMMAND));
+	m_ButtonSend->SetWindowStyle(wxNO_BORDER);
+	PanelSizer->Add(m_ButtonSend,0,wxALL|wxEXPAND,5);
+	m_ButtonSend->Disable();
+	
+	m_ButtonCancel = new wxButton(Panel,ID_BUTTON_OK,GetMsg(MSG_CANCEL));
+	PanelSizer->Add(m_ButtonCancel,0,wxALL|wxEXPAND,5);
+
 }
 
 //VALUES. . . . . . . . . . .  . . . . . .

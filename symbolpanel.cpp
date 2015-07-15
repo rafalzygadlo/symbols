@@ -125,10 +125,10 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	else
 		m_ButtonManagement->Disable();
 
-	if(ptr->GetBusy())
-		m_ButtonManagement->Disable();
-	else
-		m_ButtonManagement->Enable();
+	//if(ptr->GetBusy())
+		//m_ButtonManagement->Disable();
+	//else
+		//m_ButtonManagement->Enable();
 
 	int count = ptr->GetAlarmCount();
 	if(count > 0)

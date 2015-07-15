@@ -119,16 +119,18 @@ bool CSymbol::CheckCollision()
 	
 	m_RenderRestricted = false;
 		
+	double to_x,to_y;
 	for(size_t i = 0; i < count; i++)
 	{
 		SAisData *ptr = (SAisData*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisItem",&i);
 			
 		nvCircle c1,c2;
-		c1.Center.x = m_Lon;
-		c1.Center.y = m_Lat;
-		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_LonMap,m_LatMap);
-		c2.Center.x = ptr->lon;
-		c2.Center.y = ptr->lat;
+		c1.Center.x = m_LonMap;
+		c1.Center.y = m_LatMap;
+		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
+		c2.Center.x =  to_x;
+		c2.Center.y = -to_y;
 		c2.Radius = (double)ptr->length/1852/GetMilesPerDegree(ptr->lon,ptr->lat);
 			
 		if(nvIsCircleColision(&c1, &c2) || nvIsCircleInCircle(&c1,&c2))
@@ -456,9 +458,7 @@ void CSymbol::RenderSymbol()
 
 	glPopMatrix();
 	
-
-
-
+	
 }
 
 void CSymbol::RenderRestricted()

@@ -15,12 +15,12 @@ CCommandDialog::CCommandDialog(wxWindow *parent, CSymbol *ptr)
 	m_CommandPanel = new CCommandPanel(this);
 	m_CommandPanel->SetSelectedPtr(ptr);
 	m_CommandPanel->Set();
-	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,2);
 	
 	wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
 	Sizer->Add(line,0,wxALL|wxEXPAND,0);
 
-	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
+	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	
 	SetSizer(Sizer);
 	Fit();

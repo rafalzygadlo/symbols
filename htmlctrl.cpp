@@ -22,6 +22,7 @@ BEGIN_EVENT_TABLE(CHtmlCtrl,wxListCtrl)
 	//EVT_LISTBOX(ID_HTML, CHtmlCtrl::OnSelect)
 	EVT_LIST_COL_CLICK(ID_HTML,CHtmlCtrl::OnColClick)
 	EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_MENU(ID_MANAGEMENT,OnManagement)
 END_EVENT_TABLE()
 
  
@@ -75,21 +76,12 @@ void CHtmlCtrl::OnContextMenu(wxContextMenuEvent &event)
 	n_item = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	
 	wxMenu *Menu = new wxMenu();
-	
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
-			
+				
 	if(n_item > -1)
 	{
-		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
-			Menu->FindItem(ID_EDIT)->Enable(false);
-		
-		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
-			Menu->FindItem(ID_DELETE)->Enable(false);
-		
+		Menu->Append(ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
+		if(!db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+			Menu->FindItem(ID_MANAGEMENT)->Enable(false);
 	}
 	
 	PopupMenu(Menu);
@@ -108,58 +100,11 @@ void CHtmlCtrl::OnSelect(wxCommandEvent &event)
 	
 }
 
-void CHtmlCtrl::OnEraseBackground(wxEraseEvent &event)
+void CHtmlCtrl::OnManagement(wxCommandEvent &event)
 {
-	// to prevent flickering, erase only content *outside* of the 
-   // actual list items stuff
-	/*
-   if(GetItemCount() > 0) {
-       wxDC * dc = event.GetDC();
-       assert(dc);
 
-       // get some info
-       wxCoord width = 0, height = 0;
-       GetClientSize(&width, &height);
-
-       wxCoord x, y, w, h;
-       dc->SetClippingRegion(0, 0, width, height);
-       dc->GetClippingBox(&x, &y, &w, &h); 
-
-       long top_item = GetTopItem();
-       long bottom_item = top_item + GetCountPerPage();
-       if(bottom_item >= GetItemCount()) {
-           bottom_item = GetItemCount() - 1;
-       }                
-
-       // trick: we want to exclude a couple pixels
-       // on the left side thus use wxLIST_RECT_LABEL
-       // for the top rect and wxLIST_RECT_BOUNDS for bottom
-       // rect
-       wxRect top_rect, bottom_rect;
-       GetItemRect(top_item, top_rect, wxLIST_RECT_LABEL);
-       GetItemRect(bottom_item, bottom_rect, wxLIST_RECT_BOUNDS);
-
-       // set the new clipping region and do erasing
-       wxRect items_rect(top_rect.GetLeftTop(), bottom_rect.GetBottomRight());
-       wxRegion reg(wxRegion(x, y, w, h)); 
-       reg.Subtract(items_rect);
-       dc->DestroyClippingRegion();
-       dc->SetClippingRegion(reg);
-
-       // do erasing
-       dc->SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
-       dc->Clear();
-
-       // restore old clipping region
-       dc->DestroyClippingRegion();
-       dc->SetClippingRegion(wxRegion(x, y, w, h));
-   } else {
-       event.Skip();
-  
-  }
-  */
-  
 }
+
 
 wxString CHtmlCtrl::OnGetItemText(long item, long column) const
 {

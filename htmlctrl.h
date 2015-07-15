@@ -19,6 +19,7 @@ class CHtmlCtrl: public wxListCtrl
 	void OnSelect(wxCommandEvent &event);
 	void OnColClick(wxListEvent& event);
 	void OnContextMenu(wxContextMenuEvent &event);
+	void OnManagement(wxCommandEvent &event);
 	//virtual wxString OnGetItem(size_t item) const;
 	wxString OnGetItemText(long item, long column) const;
 	//wxListItemAttr *OnGetItemAttr(long item) const;
@@ -43,10 +44,7 @@ public:
 	{
 		ID_LIST = 1700,
 		ID_HTML,
-		ID_DELETE,
-		ID_EDIT,
-		ID_NEW,
-		ID_GROUP,
+		ID_MANAGEMENT,
 	};
 
 

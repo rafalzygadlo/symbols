@@ -142,7 +142,9 @@ const wchar_t *nvLanguage[][2] =
 	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
 	{L"Symbol timeout",L"Czas oczekiwania"},
 	{L"NOT In Monitoring",L"Nie monitorowany"},
+	{L"Send command(s)",L"Wyœlij komendy"},
 	
+
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

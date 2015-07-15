@@ -17,7 +17,8 @@ class CCommandPanel: public wxPanel
 	wxCheckBox *m_SeasonControl;
 	wxPanel *m_SeasonControlPanel;
 	wxStaticText *m_InfoText;
-	wxButton *m_ButtonOk;
+	wxButton *m_ButtonSend;
+	wxButton *m_ButtonCancel;
 	wxCheckBox *m_StandardReport;
 
 	CSymbol *m_SelectedPtr;
