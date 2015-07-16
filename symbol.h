@@ -17,6 +17,8 @@ class CSymbol
 	nvCircle m_Circle;
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
+	CNaviArray <nvPoint3f> m_PosBuffer;
+
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
 	nvFastFont *m_Font;
@@ -29,10 +31,8 @@ class CSymbol
 	bool m_Busy;
 	bool m_Alarm;
 	bool m_AlarmOn;
-	double m_Lon;
-	double m_Lat;
-	double m_LonMap;
-	double m_LatMap;
+	//pozycja referencyjna
+	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
 	double m_Scale;
 	double m_Factor; 
 	double m_SmoothScaleFactor;
@@ -42,7 +42,7 @@ class CSymbol
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	bool m_TickExit;
-	int m_CommandTick,m_CommandTickOn;
+	int m_CommandTick,m_CommandTickOn,m_PositionsTick;
 	int m_ReadTick;
 	int m_CollisionTick;
 	int m_AlarmTick,m_AlarmTickOn;
@@ -61,8 +61,7 @@ class CSymbol
 	int m_MMSI;
 	nvtime_t m_nvTime;
 	bool m_InMonitoring;
-
-	
+		
 	void CSymbol::SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -70,6 +69,7 @@ class CSymbol
 	bool CheckCommand();
 	bool CheckAlarm();
 	bool CheckCollision();
+	bool SetPositions();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
 	void Read();
@@ -79,6 +79,7 @@ class CSymbol
 	void RenderRestricted();
 	void RenderAlarm();
 	void RenderGPS();		//real position
+	void RenderPositions();
 	void RenderSelected();
 			
 public:
@@ -89,10 +90,9 @@ public:
 	void OnTick(void *db);
 	void OnTickExit();
 	void SetId(int v);
-	void SetLon(double v);
-	void SetLat(double v);
-	void SetLonMap(double v);
-	void SetLatMap(double v);
+	//pozycja referencyjna
+	void SetRLon(double v);	void SetRLat(double v);	void SetRLonMap(double v);	void SetRLatMap(double v);
+	
 	void SetIdSBMS(int v);
 	void SetSBMSID(int v);
 	//void SetBaseStationId();
@@ -111,10 +111,8 @@ public:
 	int GetIdSBMS();
 	int GetSBMSID();
 	int GetBaseStationId();
-	double GetLon();
-	double GetLat();
-	double GetLonMap();
-	double GetLatMap();
+	//pozycja referencyjna
+	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
 	bool GetBusy();					//zajêty komendami
 	int GetAlarmCount();
 	wxString GetName();

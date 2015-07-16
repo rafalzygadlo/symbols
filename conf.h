@@ -337,12 +337,13 @@
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	1000
 #define TICK_DLL_TIME		1000
-#define CHECK_COMMAND_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_COMMAND_TICK_ON   (2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
-#define CHECK_ALARM_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_ALARM_TICK_ON		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_COLLISION_TICK	(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_READ_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COMMAND_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COMMAND_TICK_ON		(2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
+#define CHECK_ALARM_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_ALARM_TICK_ON			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COLLISION_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_READ_TICK				(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_POSITIONS_TICK_ON		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund pozycje
 //
 
 #define MODULE_AREA "area"
@@ -622,6 +623,8 @@
 #define FI_SBMS_DIGITAL_VALUE				19
 #define FI_SBMS_INPUT_VOLT					20
 #define FI_SBMS_ANALOG_VALUE				21
+#define FI_SBMS_LON							22
+#define FI_SBMS_LAT							23
 #define FI_SBMS_DATE_TIME_STAMP				24
 #define FI_SBMS_LOCAL_UTC_TIME				25
 
@@ -730,4 +733,6 @@ typedef struct OnOff
 	int off;
 
 }SOnOff;
+
+
 #endif

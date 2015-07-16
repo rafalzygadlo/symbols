@@ -396,10 +396,10 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
 		ptr->SetId(id);
-		ptr->SetLon(lon);
-		ptr->SetLat(lat);
-		ptr->SetLonMap(to_x);
-		ptr->SetLatMap(-to_y);
+		ptr->SetRLon(lon);
+		ptr->SetRLat(lat);
+		ptr->SetRLonMap(to_x);
+		ptr->SetRLatMap(-to_y);
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
@@ -608,10 +608,15 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 CSymbol *CMapPlugin::SetSelection(double x, double y)
 {
 	float d = 1.5;
+	double _x = 0;
+	double _y = 0;
+	
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		if(IsPointInsideBox(MapX, MapY, ptr->GetLonMap() - (RectWidth/d) + TranslationX, ptr->GetLatMap() - (RectHeight/d) + TranslationY, ptr->GetLonMap() + (RectWidth/d) + TranslationX , ptr->GetLatMap() + (RectHeight/d) + TranslationY))
+		_x = ptr->GetRLonMap();
+		_y = ptr->GetRLatMap();
+		if(IsPointInsideBox(x, y, _x - (RectWidth/d) + TranslationX, _y - (RectHeight/d) + TranslationY, _x + (RectWidth/d) + TranslationX , _y + (RectHeight/d) + TranslationY))
 			return ptr;
 		
 	}
@@ -874,8 +879,8 @@ void CMapPlugin::RenderSelected()
 	double x,y;
 	//SelectedPtr->RenderSelected();
 #if 1
-	x = SelectedPtr->GetLonMap(); 
-	y = SelectedPtr->GetLatMap();
+	x = SelectedPtr->GetRLonMap(); 
+	y = SelectedPtr->GetRLatMap();
 		
 	glEnable(GL_BLEND);
 	glPushMatrix();
@@ -917,8 +922,8 @@ void CMapPlugin::RenderHighlighted()
 {
 			
 	double x,y;
-	x = HighlightedPtr->GetLonMap(); 
-	y = HighlightedPtr->GetLatMap();
+	x = HighlightedPtr->GetRLonMap(); 
+	y = HighlightedPtr->GetRLatMap();
 	
 	glEnable(GL_BLEND);
 	glPushMatrix();
@@ -940,9 +945,9 @@ void CMapPlugin::RenderHighlighted()
 
 void CMapPlugin::RenderInfo(CSymbol *ptr)
 {
-	RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
+	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
 	nvtime_t t = ptr->GetNvTime();
-	RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 }
 
 void CMapPlugin::RenderDistance()
@@ -954,7 +959,7 @@ void CMapPlugin::RenderDistance()
 	{
 		glBegin(GL_LINES);
 			glColor4f(1.0f,0.0f,0.0f,0.8f);
-			glVertex2f(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap());
+			glVertex2f(SelectedPtr->GetRLonMap(),SelectedPtr->GetRLatMap());
 			glVertex2f(MapX,MapY);
 		glEnd();
 		
@@ -1020,12 +1025,12 @@ void CMapPlugin::RenderNames()
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetNumber());
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
 		nvtime_t t = ptr->GetNvTime();
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 		if(ptr->GetBusy())
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCount());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCount());
 	}
 
 }

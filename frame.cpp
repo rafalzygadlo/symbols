@@ -193,8 +193,8 @@ void CMyFrame::ShowWindow(bool show)
 		
 		float scale = m_DLL->GetBroker()->GetMapScale();
 		wxPoint pt;
-		pt.x = (int)((-vm[0] + SelectedPtr->GetLonMap()) * scale) + ParentX;
-		pt.y = (int)((-vm[1] + SelectedPtr->GetLatMap()) * scale) + ParentY;
+		pt.x = (int)((-vm[0] + SelectedPtr->GetRLonMap()) * scale) + ParentX;
+		pt.y = (int)((-vm[1] + SelectedPtr->GetRLatMap()) * scale) + ParentY;
 		
 		wxPoint p2,p4;
 		wxSize size = this->GetSize();

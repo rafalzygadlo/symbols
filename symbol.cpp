@@ -8,6 +8,7 @@
 #include "navidrawer.h"
 #include "ais.h"
 #include "options.h"
+#include "render.h"
 //#include "nvtime.h"
 
 CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
@@ -125,9 +126,9 @@ bool CSymbol::CheckCollision()
 		SAisData *ptr = (SAisData*)m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_GetAisItem",&i);
 			
 		nvCircle c1,c2;
-		c1.Center.x = m_LonMap;
-		c1.Center.y = m_LatMap;
-		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+		c1.Center.x = m_RLonMap;
+		c1.Center.y = m_RLatMap;
+		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
 		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
 		c2.Center.x =  to_x;
 		c2.Center.y = -to_y;
@@ -233,6 +234,85 @@ bool  CSymbol::CheckCommand()
 	return true;
 }
 
+bool CSymbol::SetPositions()
+{	
+	m_PositionsTick++;
+	
+	if(m_PositionsTick >= CHECK_POSITIONS_TICK_ON)
+	{
+		m_PositionsTick = 0;
+	}
+	
+	m_PosBuffer.Clear();
+	wxString sql;
+	//if(m_Update)
+	sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp "),TABLE_STANDARD_REPORT,m_IdSBMS);
+	//else{
+		//Clear();
+		//sql = wxString::Format(_("SELECT lon,lat FROM `%s_%d`  WHERE gpstimestamp > unix_timestamp(utc_timestamp()) - %d*3600"),TABLE_POSITION,m_Station->GetMonitorId(),m_Station->GetDataBefore() );
+	//}
+	
+	my_query(m_DB,sql);
+
+	void *result = db_result(m_DB);
+    char **row = NULL;
+	
+	if(result == NULL)
+		return false;
+	
+	int counter = 0;
+	nvPoint3f pt;
+	double to_x,to_y;
+	while(row = (char**)db_fetch_row(result))
+	{
+		sscanf(row[0],"%lf",&pt.x);
+		sscanf(row[1],"%lf",&pt.y);
+		m_Broker->Unproject(pt.x,pt.y,&to_x,&to_y);
+		pt.x = to_x;
+		pt.y = -to_y;
+		//m_PosData.Append(pos);
+		m_PosBuffer.Append(pt);
+		
+		//float accuracy = atof(row[FID_POSITION_D]);
+		//SetAverageAccuracy(accuracy = (accuracy + accuracy)/counter);
+		//m_Update = true;
+		counter++;
+	}
+	
+	/*
+	if(counter)
+	{
+		m_Station->SetLastAccuracy(pt.d);
+		m_Station->SetLastTimestamp(pt.gpstimestamp);
+		m_Station->SetReferenceSID(pt.sid);
+		m_Station->SetFix(pt.fix);
+		m_Station->SetSatUsed(pt.satused);
+		m_Station->SetSatInView(pt.satinview);
+		m_Station->SetHDOP(pt.hdop);
+		m_Station->SetAge(pt.age);
+		m_Station->SetSigmaLon(pt.sigmalon);
+		m_Station->SetSigmaLat(pt.sigmalat);
+		m_Station->SetSigmaHeight(pt.sigmaheight);
+		m_Station->SetLastPoint(pt);
+		
+		if((m_PosData.Length() > DEFAULT_DATA_BEFORE * 3600) && m_Update)
+		{
+			int count = m_PosData.Length() - (DEFAULT_DATA_BEFORE * 3600);
+			for(int i = 0; i < count;i++)
+			{
+				m_PosData.Remove(0);
+			}
+		}
+	}
+	
+	m_Station->SetPointsCount(m_PosData.Length());
+	*/
+	//db_free_result(result);
+	
+	return true;
+}
+
+
 void CSymbol::OnTick(void *db)
 {
 	m_DB = db;
@@ -246,6 +326,9 @@ void CSymbol::OnTick(void *db)
 	if(CheckCommand())
 		result = true;
 	if(CheckAlarm())
+		result = true;
+	
+	if(SetPositions())
 		result = true;
 	
 	CheckCollision();
@@ -331,7 +414,7 @@ void CSymbol::RenderLightOn()
 		
 	glPushMatrix();
 	glColor4f(1.0f,1.0f,1.0f,0.9f);
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 
 	glPointSize(10);
 
@@ -354,7 +437,7 @@ void CSymbol::RenderAlarm()
 		
 	glPushMatrix();
 	glColor4f(1.0f,0.0f,0.0f,0.9f);
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 	glTranslatef(0.0,-m_RectWidth/2,0.0f);
 
 	nvCircle c;
@@ -374,7 +457,7 @@ void CSymbol::RenderBusy()
 		
 	glPushMatrix();
 	
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 	//glTranslatef(m_RectWidth/3,- m_RectWidth/3,0.0f);
 
 	//glPointSize(10);
@@ -437,7 +520,7 @@ void CSymbol::RenderSymbol()
 */
 		
 	glPushMatrix();
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 	
 	nvCircle c;
 	c.Center.x = 0.0;
@@ -470,9 +553,9 @@ void CSymbol::RenderRestricted()
 		glColor4f(0.0,1.0,0.0,0.1);
 	
 	nvCircle c;
-	c.Center.x = m_LonMap;
-	c.Center.y = m_LatMap;
-	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_Lon,m_Lat);
+	c.Center.x = m_RLonMap;
+	c.Center.y = m_RLatMap;
+	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
 	nvDrawCircleFilled(&c);
 }
 
@@ -480,12 +563,25 @@ void CSymbol::RenderGPS()
 {
 	glPushMatrix();
 	glColor4f(1.0f,1.0f,1.0f,0.9f);
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 
 	glPointSize(10);
 	nvDrawPoint(0.0,0.0);
 	glPopMatrix();
 
+}
+
+void CSymbol::RenderPositions()
+{
+	glEnable(GL_BLEND);
+	glPointSize(20);
+	glColor3f(0.0f,1.0f,0.0f);
+	if(m_PosBuffer.Length() > 0)
+		RenderGeometry(GL_POINTS,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
+	
+	glPointSize(1);
+	glDisable(GL_BLEND);
+	
 }
 
 void CSymbol::Render()
@@ -510,7 +606,9 @@ void CSymbol::Render()
 	RenderAlarm();
 #endif
 	//RenderGPS();
+
 	RenderSymbol();
+	RenderPositions();
 		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -529,24 +627,24 @@ void CSymbol::SetId(int v)
 	m_Id = v;
 }
 
-void CSymbol::SetLon(double v)
+void CSymbol::SetRLon(double v)
 {
-	m_Lon = v;
+	m_RLon = v;
 }
 
-void CSymbol::SetLat(double v)
+void CSymbol::SetRLat(double v)
 {
-	m_Lat = v;
+	m_RLat = v;
 }
 
-void CSymbol::SetLonMap(double v)
+void CSymbol::SetRLonMap(double v)
 {
-	m_LonMap = v;
+	m_RLonMap = v;
 }
 
-void CSymbol::SetLatMap(double v)
+void CSymbol::SetRLatMap(double v)
 {
-	m_LatMap = v;
+	m_RLatMap = v;
 }
 
 
@@ -622,24 +720,24 @@ int CSymbol::GetBaseStationId()
 	return m_IdBaseStation;
 }
 
-double CSymbol::GetLon()
+double CSymbol::GetRLon()
 {
-	return m_Lon;
+	return m_RLon;
 }
 
-double CSymbol::GetLat()
+double CSymbol::GetRLat()
 {
-	return m_Lat;
+	return m_RLat;
 }
 
-double CSymbol::GetLonMap()
+double CSymbol::GetRLonMap()
 {
-	return m_LonMap;
+	return m_RLonMap;
 }
 
-double CSymbol::GetLatMap()
+double CSymbol::GetRLatMap()
 {
-	return m_LatMap;
+	return m_RLatMap;
 }
 
 int CSymbol::GetAlarmCount()

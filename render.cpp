@@ -10,3 +10,11 @@ void RenderGeometry(GLenum Mode, GLvoid* RawData,GLvoid *RawColor, size_t DataLe
     glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
+
+void RenderGeometry(GLenum Mode, GLvoid* RawData, size_t DataLength)
+{
+	glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_DOUBLE, 0, RawData);
+    glDrawArrays(Mode, 0, DataLength);
+	glDisableClientState(GL_VERTEX_ARRAY);
+}
