@@ -231,6 +231,7 @@
 #define MSG_SYMBOL_TIMEOUT				123
 #define MSG_NOT_IN_MONITORING			124
 #define MSG_SEND_COMMAND				125
+#define MSG_ADD_TO_GROUP				126
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -258,6 +259,7 @@
 #define CONTROL_CHARACTERISTIC	12
 #define CONTROL_SYMBOL_LIST		13
 #define CONTROL_OPTIONS			14
+
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -366,11 +368,12 @@
 #define ACTION_RIGHT "right"
 	
 //wsp�lne 
-#define ACTION_NEW "new"
-#define ACTION_EDIT "edit"
-#define ACTION_DELETE "delete"
-#define ACTION_PROPERTIES "properties"
-#define ACTION_MANAGEMENT "management"
+#define ACTION_NEW			"new"
+#define ACTION_EDIT			"edit"
+#define ACTION_DELETE		"delete"
+#define ACTION_PROPERTIES	"properties"
+#define ACTION_MANAGEMENT	"management"
+#define ACTION_ADD_TO_GROUP "add_to_group"
 
 #define TABLE_AREA				"area"
 #define TABLE_SEAWAY			"seaway"
@@ -484,6 +487,9 @@
 #define FN_SYMBOL_GROUP_ID			"id"
 #define FN_SYMBOL_GROUP_NAME		"name"
 #define FN_SYMBOL_GROUP_INFO		"info"
+
+//pola tabeli SYMBOL_TO_GROUP
+#define FI_SYMBOL_TO_GROUP_ID_GROUP	1
 
 //pola tabeli ITEM
 #define FI_ITEM_ID				0

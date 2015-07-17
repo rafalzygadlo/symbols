@@ -327,9 +327,14 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 
 void CMapPlugin::SetSql(wxString &sql)
 {
+	int id_group = GetSelectedGroupId();
 	
-	sql = wxString::Format(_("SELECT id,id_area,id_seaway,id_symbol_type,id_sbms,number,lon,lat,in_monitoring,name FROM %s"),TABLE_SYMBOL);
-	sql << wxString::Format(_(" WHERE (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
+	if(id_group > 0)
+		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
+	else
+		sql = wxString::Format(_("SELECT * FROM %s WHERE "),TABLE_SYMBOL);
+				
+	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
 	int in_monitoring = GetInMonitoring();
@@ -415,6 +420,42 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 
 }
 
+void CMapPlugin::ReadGroup(void *db)
+{
+	int group_id = 1;
+
+	wxString sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d'"),TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP,group_id);
+
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		int id;
+		sscanf(row[FI_SYMBOL_ID],"%d",&id);
+		CSymbol *ptr = NULL;
+		ptr = Exists(id);
+		bool add = false;
+		
+		if(ptr == NULL)
+		{
+			add = true;
+			ptr = new CSymbol(m_Broker,m_NameFont);
+		}
+				
+		//ptr->SetRemove(true);		
+		
+		if(add)
+			m_SymbolList->Add(ptr);
+
+	}
+	
+}
+
 void CMapPlugin::ReadSymbolValues(void *db)
 {  
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
@@ -453,6 +494,8 @@ void CMapPlugin::Remove()
 
 	fprintf(stderr,"Size:%d\n",m_SymbolList->size());
 }
+
+
 
 void CMapPlugin::SetRemove()
 {

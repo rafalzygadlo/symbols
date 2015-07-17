@@ -11,6 +11,7 @@
 #include "wx/laywin.h"
 #include "light.h"
 #include "conf.h"
+#include "symbolgroup.h"
 
 SHeader Header[] =
 {
@@ -1377,6 +1378,13 @@ void CDialogPanel::OnDelete(int id)
 	}
 
 	delete MessageDialog;
+}
+
+void CDialogPanel::OnAddToGroup(int id)
+{
+	CSymbolGroup *SymbolGroup = new CSymbolGroup(m_DB,id);
+	SymbolGroup->ShowModal();
+	delete SymbolGroup;
 }
 
 void CDialogPanel::OnColumnCLick(wxString field, int order)

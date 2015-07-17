@@ -26,6 +26,7 @@ bool GetSortChanged();
 int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
+int GetSelectedGroupId();
 int GetInMonitoring();
 int GetFilterChanged();
 
@@ -55,6 +56,7 @@ void SetSelectedSeawayId(int v);
 void SetSelectedSymbolTypeId(int v);
 void SetInMonitoring(int v);
 void SetFilterChanged(bool v);
+void SetSelectedGroupId(int v);
 
 void SetFontSize(float v);
 void SetViewFontScale(int v);

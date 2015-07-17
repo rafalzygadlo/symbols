@@ -72,6 +72,12 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	//FlexSizer->AddSpacer(1);
 	//FlexSizer->Add(m_CheckInMonitoring,0,wxALL,5);
 	
+	wxStaticText *LabelGroup = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_GROUP));
+	FlexSizer->Add(LabelGroup,0,wxALL,5);
+	m_ComboGroup = GetCombo(db,Panel,TABLE_SYMBOL_GROUP,wxEmptyString,FI_SYMBOL_GROUP_ID,FI_SYMBOL_GROUP_NAME, true);
+	m_ComboGroup->SetSelection(0);
+	FlexSizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,5);
+
 	wxStaticText *LabelInMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	FlexSizer->Add(LabelInMonitoring,0,wxALL,5);
 	m_ComboInMonitoring = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
@@ -80,8 +86,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboInMonitoring->Append(GetMsg(MSG_IN_MONITORING));
 	m_ComboInMonitoring->SetSelection(0);
 	FlexSizer->Add(m_ComboInMonitoring,0,wxALL|wxEXPAND,5);
-
-
+	
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexSizer->Add(LabelArea,0,wxALL,5);
 	m_ComboArea = GetCombo(db,Panel,TABLE_AREA,wxEmptyString,FI_AREA_ID,FI_AREA_NAME, true);
@@ -126,6 +131,11 @@ int CFilterDialog::GetInMonitoring()
 	return m_ComboInMonitoring->GetSelection() - 1; 
 }
 
+int CFilterDialog::GetGroupId()
+{
+	return (int)m_ComboGroup->GetClientData(m_ComboGroup->GetSelection());
+}
+
 //SET
 void CFilterDialog::SetAreaId(int id)
 {
@@ -147,3 +157,7 @@ void CFilterDialog::SetInMonitoring(int v)
 	m_ComboInMonitoring->SetSelection(v + 1);
 }
 
+void CFilterDialog::SetGroupId(int id)
+{
+	ComboSetSelection(m_ComboGroup,id);
+}

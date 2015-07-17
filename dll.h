@@ -86,6 +86,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Menu(int type);
 	void WritecConfig();
 	void ReadSymbol(void *db,wxString sql);
+	void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);
 	void Clear();

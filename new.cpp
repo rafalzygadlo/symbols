@@ -63,7 +63,9 @@ void CNew::GetPanel(int type)
 		
 		case CONTROL_SYMBOL_TYPE:	
 		case CONTROL_AREA:
+		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_SEAWAY:		EditNamePanel(); break;
+		
 		
 		
 

@@ -13,13 +13,14 @@
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
 BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
-	EVT_LIST_ITEM_ACTIVATED(ID_LIST,CListCtrl::OnActivate)
-	EVT_CONTEXT_MENU(CListCtrl::OnContextMenu)
-	EVT_LIST_ITEM_SELECTED(ID_LIST,CListCtrl::OnSelected)
-	EVT_LIST_COL_CLICK(ID_LIST,CListCtrl::OnColClick)
-	EVT_MENU(ID_NEW,CListCtrl::OnNew)
-	EVT_MENU(ID_EDIT,CListCtrl::OnEdit)
-	EVT_MENU(ID_DELETE,CListCtrl::OnDelete)
+	EVT_LIST_ITEM_ACTIVATED(ID_LIST,OnActivate)
+	EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_LIST_ITEM_SELECTED(ID_LIST,OnSelected)
+	EVT_LIST_COL_CLICK(ID_LIST,OnColClick)
+	EVT_MENU(ID_NEW,OnNew)
+	EVT_MENU(ID_EDIT,OnEdit)
+	EVT_MENU(ID_DELETE,OnDelete)
+	EVT_MENU(ID_ADD_TO_GROUP,OnAddToGroup)
 	//EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
 //	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
 	
@@ -296,6 +297,16 @@ wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 {
 	wxMenu *Menu = new wxMenu();
 	
+	if(id > -1)
+	{
+		Menu->Append(ID_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP));
+		if(!db_check_right(module ,ACTION_ADD_TO_GROUP,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+
+		Menu->AppendSeparator();
+	}
+
+
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
 	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(ID_NEW)->Enable(false);
@@ -376,10 +387,14 @@ void CListCtrl::OnNew(wxCommandEvent &event)
 
 void CListCtrl::OnDelete(wxCommandEvent &event)
 {
-	//long id;
-	//GetValue(_GetColumn(m_ColumnWithId),m_SelectedItem).ToLong(&id);
 	int id = m_Ids.Item(m_SelectedItem);
 	m_Control->OnDelete(id);
+}
+
+void CListCtrl::OnAddToGroup(wxCommandEvent &event)
+{
+	int id = m_Ids.Item(m_SelectedItem);
+	m_Control->OnAddToGroup(id);
 }
 
 wxArrayString *CListCtrl::_GetColumn(int column)

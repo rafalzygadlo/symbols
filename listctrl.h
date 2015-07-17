@@ -49,6 +49,7 @@ class CListCtrl: public wxListCtrl
 	void OnColClick(wxListEvent &event);
 	void OnEdit(wxCommandEvent &event);
 	void OnDelete(wxCommandEvent &event);
+	void OnAddToGroup(wxCommandEvent &event);
 	void OnNew(wxCommandEvent &event);
 	void OnProperties(wxCommandEvent &event);
 	void OnChangePassword(wxCommandEvent &event);
@@ -93,6 +94,7 @@ public:
 		ID_CHANGE_PASSWORD,
 		ID_GROUP,
 		ID_RIGHT,
+		ID_ADD_TO_GROUP,
 		
 	};
 

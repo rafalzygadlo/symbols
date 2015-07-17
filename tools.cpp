@@ -141,9 +141,9 @@ const wchar_t *nvLanguage[][2] =
 	{L"SCO",L"SCO"},
 	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
 	{L"Symbol timeout",L"Czas oczekiwania"},
-	{L"NOT In Monitoring",L"Nie monitorowany"},
+	{L"Not In Monitoring",L"Nie monitorowany"},
 	{L"Send command(s)",L"Wyœlij komendy"},
-	
+	{L"Add to group",L"Dodaj do grupy"},
 
 };
 
