@@ -158,6 +158,7 @@ void CMapPlugin::ReadConfig()
 	FileConfig->Read(_(KEY_FILTER_SEAWAY_ID),&id);			SetSelectedSeawayId(id);
 	FileConfig->Read(_(KEY_FILTER_SYMBOL_TYPE_ID),&id);		SetSelectedSymbolTypeId(id);
 	FileConfig->Read(_(KEY_FILTER_IN_MONITORING),&id);		SetInMonitoring(id);
+	FileConfig->Read(_(KEY_FILTER_GROUP_ID),&id);			SetSelectedGroupId(id);
 
 	//SORT
 	FileConfig->Read(_(KEY_SORT_ORDER),&id);						SetSortOrder(id);
@@ -192,6 +193,7 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_FILTER_SEAWAY_ID),GetSelectedSeawayId());
 	FileConfig->Write(_(KEY_FILTER_SYMBOL_TYPE_ID),GetSelectedSymbolTypeId());
 	FileConfig->Write(_(KEY_FILTER_IN_MONITORING),GetInMonitoring());
+	FileConfig->Write(_(KEY_FILTER_GROUP_ID),GetSelectedGroupId());
 
 	//SORT
 	FileConfig->Write(_(KEY_SORT_ORDER),GetSortOrder());
@@ -200,9 +202,9 @@ void CMapPlugin::WriteConfig()
 
 	//COLORS
 	FileConfig->Write(_(KEY_NORMAL_COLOR),RGBAToStr(&GetColor(SYMBOL_NORMAL_COLOR)));
-	FileConfig->Write(_(KEY_NO_MONITOR_COLOR),RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));	
-	FileConfig->Write(_(KEY_ERROR_COLOR),RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));			
-	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));		
+	FileConfig->Write(_(KEY_NO_MONITOR_COLOR),RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));
+	FileConfig->Write(_(KEY_ERROR_COLOR),RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));
+	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));
 
 	//FONT
 	FileConfig->Write(_(KEY_FONT_SIZE),GetFontSize());
@@ -492,7 +494,7 @@ void CMapPlugin::Remove()
 		}
 	}
 
-	fprintf(stderr,"Size:%d\n",m_SymbolList->size());
+	//fprintf(stderr,"Size:%d\n",m_SymbolList->size());
 }
 
 
@@ -1127,10 +1129,10 @@ void CMapPlugin::OnTick()
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);			//przeczytaj symbole
-	fprintf(stderr,"%d\n",GetTickCount() - t);
+	//fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
 	ReadSymbolValues(db);	// wczytaj inne opcje
-	fprintf(stderr,"%d\n",GetTickCount() - t);
+	//fprintf(stderr,"%d\n",GetTickCount() - t);
 	SendInsertSignal();
 
 	//display potrzebuje tej flagi

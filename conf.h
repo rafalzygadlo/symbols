@@ -32,6 +32,7 @@
 #define KEY_FILTER_SEAWAY_ID		"seaway_id"
 #define KEY_FILTER_SYMBOL_TYPE_ID	"symbol_type_id"
 #define KEY_FILTER_IN_MONITORING	"in_monitoring"
+#define KEY_FILTER_GROUP_ID			"group_id"
 
 #define KEY_SORT_ORDER	"sort_order"
 #define KEY_SORT_COLUMN "sort_column"
@@ -687,7 +688,10 @@
 #define SYMBOL_LIGHT_ON_COLOR		3
 
 
+#define VALID_LON_LAT	1
+
 /*
+
 typedef struct Symbol
 {
 	int id;

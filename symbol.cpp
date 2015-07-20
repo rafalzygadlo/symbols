@@ -73,7 +73,9 @@ void CSymbol::Read()
     char **row = NULL;
 	if(result == NULL)
 		return;
-		
+	
+	double lon,lat,to_x,to_y;
+	
 	while(row = (char**)db_fetch_row(result))
 	{
 		m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
@@ -81,6 +83,18 @@ void CSymbol::Read()
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
+
+		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
+		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
+		double to_x,to_y;
+		m_Broker->Unproject(lon,lat,&to_x,&to_y);
+
+		SetLon(lon);
+		SetLat(lat);
+
+		SetLonMap(to_x);
+		SetLatMap(-to_y);
+
 		nvtime_t dt;
 		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
 		SetNvTime(dt);
@@ -244,14 +258,8 @@ bool CSymbol::SetPositions()
 	}
 	
 	m_PosBuffer.Clear();
-	wxString sql;
-	//if(m_Update)
-	sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp "),TABLE_STANDARD_REPORT,m_IdSBMS);
-	//else{
-		//Clear();
-		//sql = wxString::Format(_("SELECT lon,lat FROM `%s_%d`  WHERE gpstimestamp > unix_timestamp(utc_timestamp()) - %d*3600"),TABLE_POSITION,m_Station->GetMonitorId(),m_Station->GetDataBefore() );
-	//}
-	
+	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp LIMIT 50"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
+		
 	my_query(m_DB,sql);
 
 	void *result = db_result(m_DB);
@@ -270,44 +278,12 @@ bool CSymbol::SetPositions()
 		m_Broker->Unproject(pt.x,pt.y,&to_x,&to_y);
 		pt.x = to_x;
 		pt.y = -to_y;
-		//m_PosData.Append(pos);
 		m_PosBuffer.Append(pt);
-		
-		//float accuracy = atof(row[FID_POSITION_D]);
-		//SetAverageAccuracy(accuracy = (accuracy + accuracy)/counter);
-		//m_Update = true;
 		counter++;
 	}
 	
-	/*
-	if(counter)
-	{
-		m_Station->SetLastAccuracy(pt.d);
-		m_Station->SetLastTimestamp(pt.gpstimestamp);
-		m_Station->SetReferenceSID(pt.sid);
-		m_Station->SetFix(pt.fix);
-		m_Station->SetSatUsed(pt.satused);
-		m_Station->SetSatInView(pt.satinview);
-		m_Station->SetHDOP(pt.hdop);
-		m_Station->SetAge(pt.age);
-		m_Station->SetSigmaLon(pt.sigmalon);
-		m_Station->SetSigmaLat(pt.sigmalat);
-		m_Station->SetSigmaHeight(pt.sigmaheight);
-		m_Station->SetLastPoint(pt);
-		
-		if((m_PosData.Length() > DEFAULT_DATA_BEFORE * 3600) && m_Update)
-		{
-			int count = m_PosData.Length() - (DEFAULT_DATA_BEFORE * 3600);
-			for(int i = 0; i < count;i++)
-			{
-				m_PosData.Remove(0);
-			}
-		}
-	}
-	
-	m_Station->SetPointsCount(m_PosData.Length());
-	*/
-	//db_free_result(result);
+	fprintf(stderr,"%d\n",counter);
+	db_free_result(result);
 	
 	return true;
 }
@@ -499,7 +475,6 @@ void CSymbol::RenderSymbol()
 		
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 	}
-	
 
 /*
 	glEnable(GL_TEXTURE_2D);
@@ -647,6 +622,25 @@ void CSymbol::SetRLatMap(double v)
 	m_RLatMap = v;
 }
 
+void CSymbol::SetLon(double v)
+{
+	m_Lon = v;
+}
+
+void CSymbol::SetLat(double v)
+{
+	m_Lat = v;
+}
+
+void CSymbol::SetLonMap(double v)
+{
+	m_LonMap = v;
+}
+
+void CSymbol::SetLatMap(double v)
+{
+	m_LatMap = v;
+}
 
 void CSymbol::SetIdSBMS(int v)
 {

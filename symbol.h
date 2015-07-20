@@ -33,6 +33,8 @@ class CSymbol
 	bool m_AlarmOn;
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
+	//pozycja GPS
+	double m_Lon, m_Lat, m_LonMap, m_LatMap;
 	double m_Scale;
 	double m_Factor; 
 	double m_SmoothScaleFactor;
@@ -106,7 +108,11 @@ public:
 	void SetLightOn(bool v);
 	void SetMMSI(int v);
 	void SetNvTime(nvtime_t dt);
-
+	void SetLon(double v);
+	void SetLat(double v);
+	void SetLonMap(double v);
+	void SetLatMap(double v);
+	
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
