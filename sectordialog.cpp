@@ -64,14 +64,17 @@ CSectorDialog::~CSectorDialog()
 wxPanel *CSectorDialog::GetButtonPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(this);
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(PanelSizer);	
+	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(Sizer);	
 	
-	PanelSizer->AddStretchSpacer();
+	wxStaticText *LabelProductInfo = new wxStaticText(Panel,wxID_ANY,GetProductInfo() ,wxDefaultPosition,wxDefaultSize);
+	Sizer->Add(LabelProductInfo,0,wxALL,5);
+	Sizer->AddStretchSpacer(1);
+		
 	wxButton *ButtonOk = new wxButton(Panel,wxID_OK,GetMsg(MSG_OK));
-	PanelSizer->Add(ButtonOk,0,wxALL,5);
+	Sizer->Add(ButtonOk,0,wxALL,5);
 	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CANCEL));
-	PanelSizer->Add(ButtonClose,0,wxALL,5);
+	Sizer->Add(ButtonClose,0,wxALL,5);
 	
 	return Panel;
 }

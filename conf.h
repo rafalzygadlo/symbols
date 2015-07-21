@@ -233,6 +233,7 @@
 #define MSG_NOT_IN_MONITORING			124
 #define MSG_SEND_COMMAND				125
 #define MSG_ADD_TO_GROUP				126
+#define MSG_CONFIRM						127
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -743,6 +744,13 @@ typedef struct OnOff
 	int off;
 
 }SOnOff;
+
+typedef struct SAlert
+{
+	int error;
+	int gpstimestamp;
+	bool exists;
+}SAlert;
 
 
 #endif

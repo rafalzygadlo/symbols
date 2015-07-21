@@ -146,28 +146,31 @@ void CDialog::ReadConfig()
 wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 {
 
-	wxPanel *Panel = new wxPanel(this);
+	wxPanel *Panel = new wxPanel(parent);
 		
-	wxBoxSizer *PanelSizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(PanelSizer);	
+	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(Sizer);	
 	
+	wxStaticText *LabelProductInfo = new wxStaticText(Panel,wxID_ANY,GetProductInfo() ,wxDefaultPosition,wxDefaultSize);
+	Sizer->Add(LabelProductInfo,0,wxALL,5);
+	Sizer->AddStretchSpacer(1);
 	
 	if(m_Picker)
 	{
-		PanelSizer->AddStretchSpacer();
+		Sizer->AddStretchSpacer();
 		m_ButtonOk = new wxButton(Panel,wxID_OK,GetMsg(MSG_OK));
-		PanelSizer->Add(m_ButtonOk,0,wxALL,5);
+		Sizer->Add(m_ButtonOk,0,wxALL,5);
 		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CANCEL));
-		PanelSizer->Add(ButtonClose,0,wxALL,5);
+		Sizer->Add(ButtonClose,0,wxALL,5);
+	
 	}else{
 	
 		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
-		PanelSizer->AddStretchSpacer();
-		PanelSizer->Add(ButtonClose,0,wxALL,2);
+		Sizer->AddStretchSpacer();
+		Sizer->Add(ButtonClose,0,wxALL,2);
 	
 	}
 	
-
 	return Panel;
 }
 

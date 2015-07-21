@@ -38,6 +38,7 @@ class CSymbolPanel : public wxPanel
 	void SetGraph(void *db, int id_sbms, int id_base_station);
 	void OnManagement(wxCommandEvent &event);
 	void OnGraph(wxCommandEvent &event);
+	void OnAlarm(wxCommandEvent &event);
 	void OnMenu(wxContextMenuEvent &event);
 	void OnShowMenu(wxCommandEvent &event);
 	void SetCalibrated(bool v);

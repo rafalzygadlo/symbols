@@ -50,10 +50,10 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_OptionsDialog = NULL;
 
 	m_On = false;
-	m_AnimMarkerSize = 5.0f;	
+	m_AnimMarkerSize = 5.0f;
 	m_Broker = NaviBroker;
 	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
-	Factor = DEFAULT_FACTOR; 
+	Factor = DEFAULT_FACTOR;
 	MouseX = 0;
 	MouseY = 0;
 	Type = -1;

@@ -10,12 +10,14 @@
 #include "nvtime.h"
 #include "commanddialog.h"
 #include "graphdialog.h"
+#include "alarmdialog.h"
 #include "options.h"
 
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
+	EVT_BUTTON(ID_ALARM,OnAlarm)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
 END_EVENT_TABLE()
@@ -523,6 +525,13 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 	m_GraphDialog->ShowModal();
 
 }
+void CSymbolPanel::OnAlarm(wxCommandEvent &event)
+{
+	CAlarmDialog *AlarmDialog = new CAlarmDialog(NULL,_("test"));
+	AlarmDialog->ShowModal();
+	delete AlarmDialog;
+}
+
 
 void CSymbolPanel::SetCalibrated(bool v)
 {

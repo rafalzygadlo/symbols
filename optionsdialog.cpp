@@ -261,6 +261,11 @@ wxPanel *COptionsDialog::GetButtonPanel(wxWindow *parent)
 	wxPanel *Panel = new wxPanel(this);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);	
+			
+	wxStaticText *LabelProductInfo = new wxStaticText(Panel,wxID_ANY,GetProductInfo() ,wxDefaultPosition,wxDefaultSize);
+	Sizer->Add(LabelProductInfo,0,wxALL,5);
+	Sizer->AddStretchSpacer(1);
+	
 	wxButton *ButtonOk = new wxButton(Panel,wxID_OK,GetMsg(MSG_CLOSE));
 	//wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CANCEL));
 	Sizer->AddStretchSpacer();

@@ -15,7 +15,14 @@ class CCommandPanel: public wxPanel
 	wxSlider *m_PowerOfLight;
 	wxCheckBox *m_ForcedOff;
 	wxCheckBox *m_SeasonControl;
+	
+	wxPanel *m_StandardReportPanel;
+	wxPanel *m_ForcedOffPanel;
+	wxPanel *m_DriveCurrentPanel;
+	wxPanel *m_PowerOfLightPanel;
 	wxPanel *m_SeasonControlPanel;
+		
+	
 	wxStaticText *m_InfoText;
 	wxButton *m_ButtonSend;
 	wxButton *m_ButtonCancel;
@@ -36,9 +43,16 @@ class CCommandPanel: public wxPanel
 	void OnStandardReport(wxCommandEvent &event);
 	
 	void OnButtonOk(wxCommandEvent &event);
+	void OnButtonCancel(wxCommandEvent &event);
 	void SetButtonState();
+	wxPanel *StandardReportPanel(wxPanel *parent);
+	wxPanel *ForcedOffPanel(wxPanel *parent);
+	wxPanel *DriveCurrentPanel(wxPanel *parent);
+	wxPanel *PowerOfLightPanel(wxPanel *parent);
 	wxPanel *CharacteristicPanel(wxPanel *parent);
 	wxPanel *SeasonControlPanel(wxPanel *parent);
+	void EnableControls(bool v);
+	
 	void SetCommand(int id);
 	void SetGui();
 	void SetBusy(bool v);
@@ -65,6 +79,7 @@ public:
 		ID_SEASON_CONTROL,
 		ID_FORCED_OFF,
 		ID_BUTTON_OK,
+		ID_BUTTON_CANCEL,
 		ID_FROM_TIME,
 		ID_STANDARD_REPORT,
 	};

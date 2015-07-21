@@ -180,7 +180,7 @@ bool CSymbol::CheckAlarm()
 	if(m_AlarmTick <= CHECK_ALARM_TICK)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND confirmed ='%d'"),TABLE_ALARM,m_IdSBMS,ALARM_NOT_CONFIRMED);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_ALARM,m_IdSBMS,ALARM_NOT_CONFIRMED);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
