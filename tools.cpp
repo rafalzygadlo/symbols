@@ -144,6 +144,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Not In Monitoring",L"Nie monitorowany"},
 	{L"Send command(s)",L"Wyœlij komendy"},
 	{L"Add to group",L"Dodaj do grupy"},
+	{L"Voltage threshold",L"Próg napiêcia"},
 
 };
 

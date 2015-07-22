@@ -234,6 +234,7 @@
 #define MSG_SEND_COMMAND				125
 #define MSG_ADD_TO_GROUP				126
 #define MSG_CONFIRM						127
+#define MSG_THRESHOLD					128
 
 
 #define HTML_ANCHOR_LAST_REPORT	0

@@ -49,7 +49,9 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	Sizer->Add(GetFontPanel(Panel),0,wxALL,5);
 	Sizer->Add(GetColorPanel(Panel),0,wxALL,5);
 	Sizer->Add(GetOtherPanel(Panel),0,wxALL,5);
-	
+	Sizer->Add(GetThresholdPanel(Panel),0,wxALL,5);
+
+
 	return Panel;
 }
 
@@ -207,6 +209,18 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 
 }
 
+wxPanel *COptionsDialog::GetThresholdPanel(wxWindow *Parent)
+{
+	
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_THRESHOLD));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
 
 /*
 wxPanel *COptionsDialog::GetRestrictedAreaPanel(wxWindow *Parent)
@@ -269,7 +283,7 @@ wxPanel *COptionsDialog::GetButtonPanel(wxWindow *parent)
 	wxButton *ButtonOk = new wxButton(Panel,wxID_OK,GetMsg(MSG_CLOSE));
 	//wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CANCEL));
 	Sizer->AddStretchSpacer();
-	Sizer->Add(ButtonOk,0,wxALL,2);
+	Sizer->Add(ButtonOk,0,wxALL,5);
 	//Sizer->Add(ButtonClose,0,wxALL,2);
 	
 	return Panel;

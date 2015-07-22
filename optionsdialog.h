@@ -16,11 +16,12 @@ class COptionsDialog: public wxDialog
 	
 	wxSpinCtrl *m_CommTimeout;
 
-	
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetColorPanel(wxWindow *parent);
 	wxPanel *GetFontPanel(wxWindow *Parent);
 	wxPanel *GetOtherPanel(wxWindow *Parent);
+	wxPanel *GetThresholdPanel(wxWindow *Parent);
+
 
 	wxPanel *GetPage1(wxWindow *Parent);
 

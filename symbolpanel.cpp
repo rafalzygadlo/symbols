@@ -48,13 +48,13 @@ void CSymbolPanel::GetPage1()
 	Sizer->Add(hSizer,0,wxALL|wxEXPAND,5);
 	
 
-	m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxCENTER,2);
-	m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxCENTER,2);
-	m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxCENTER,2);
-	m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxCENTER,2);
-	m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxCENTER,2);
-	m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
-	m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
+	//m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxCENTER,2);
+	//m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxCENTER,2);
+	//m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxCENTER,2);
+	//m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxCENTER,2);
+	//m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxCENTER,2);
+	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
+	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
 	m_Html = new wxHtmlWindow(this,wxID_ANY);
 	m_Html->SetMinSize(wxSize(200,150));
@@ -223,15 +223,15 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
 		int phone = atoi(row[Fi_SBMS_PHONE]);
 		if(phone)
-			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),phone));
+			str.Append(wxString::Format(_("<tr><td><font size=3><b>%d</b></font></td></tr>"),phone));
 
 		int mmsi = atoi(row[FI_SBMS_MMSI]);
 		if(mmsi)
-			str.Append(wxString::Format(_("<tr><td><font size=4><b>%d</b></font></td></tr>"),mmsi));
+			str.Append(wxString::Format(_("<tr><td><font size=3><b>%d</b></font></td></tr>"),mmsi));
 		
 				
 		nvtime_t dt;
@@ -262,13 +262,13 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 			
 		m_Html->AppendToPage(str);
 
-		SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
-		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
-		SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
-		SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
-		SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
-		SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
+		//SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
+		//SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		//SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
+		//SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
+		//SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
+		//SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
+		//SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
 		
 	}
 
@@ -463,7 +463,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		m_GraphDialog = new CGraphDialog(this,m_Symbol);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 	
-	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,m_SBMSID,m_IdBaseStation);
+	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,m_IdSBMS);
 	my_query(db,sql);
 			
 	void *result = db_result(db);
