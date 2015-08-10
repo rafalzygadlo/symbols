@@ -46,10 +46,10 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	
-	Sizer->Add(GetFontPanel(Panel),0,wxALL,5);
-	Sizer->Add(GetColorPanel(Panel),0,wxALL,5);
-	Sizer->Add(GetOtherPanel(Panel),0,wxALL,5);
-	Sizer->Add(GetThresholdPanel(Panel),0,wxALL,5);
+	Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
 	return Panel;
@@ -189,12 +189,13 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 	wxStaticText *TextCommTimeout = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMM_TIMEOUT),wxDefaultPosition,wxDefaultSize);
 	FlexSizer->Add(TextCommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	
+	/*
 	m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
 	FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	m_CommTimeout->SetMin(0);
 	m_CommTimeout->SetMax(60*24);
 	m_CommTimeout->SetValue(GetCommTimeout());
-
+	*/
 
 	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
 	//FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
@@ -217,6 +218,23 @@ wxPanel *COptionsDialog::GetThresholdPanel(wxWindow *Parent)
 
 	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_THRESHOLD));
 	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+
+
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+
+	wxStaticText *TextLowerThreshold = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LOWER_THRESHOLD));
+	FlexSizer->Add(TextLowerThreshold,0,wxALL,5);
+	m_LowerThreshold = new wxTextCtrl(Panel,wxID_ANY);
+	m_LowerThreshold->SetValue(wxString::Format(_("%4.2f"),GetLowerTreshold()));
+	FlexSizer->Add(m_LowerThreshold,0,wxALL,5);
+
+	wxStaticText *TextUpperThreshold = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_UPPER_THRESHOLD));
+	FlexSizer->Add(TextUpperThreshold,0,wxALL,5);
+	m_UpperThreshold = new wxTextCtrl(Panel,wxID_ANY);
+	m_UpperThreshold->SetValue(wxString::Format(_("%4.2f"),GetUpperTreshold()));
+	FlexSizer->Add(m_UpperThreshold,0,wxALL,5);
+
 	Panel->SetSizer(Sizer);
 
 	return Panel;

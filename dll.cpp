@@ -48,6 +48,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
 	m_OptionsDialog = NULL;
+	m_SBMSDialog = NULL;
 
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;
@@ -119,9 +120,11 @@ CMapPlugin::~CMapPlugin()
 	delete m_BaseStation;
 	delete m_Characteristic;
 	delete m_OptionsDialog;
+	delete m_SBMSDialog;
 	delete m_FileConfig;
 	delete m_Frame;
 	delete DisplaySignal;
+	
 	
 	//if(PositionDialog != NULL)
 		//delete PositionDialog;
@@ -172,11 +175,18 @@ void CMapPlugin::ReadConfig()
 	FileConfig->Read(_(KEY_ERROR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_ERROR_COLOR)));			SetColor(SYMBOL_ERROR_COLOR,StrToRGBA(_color));
 	FileConfig->Read(_(KEY_LIGHT_ON_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_LIGHT_ON_COLOR)));		SetColor(SYMBOL_LIGHT_ON_COLOR,StrToRGBA(_color));
 
+	//FONT
 	float size;
 	FileConfig->Read(_(KEY_FONT_SIZE),&size,DEFAULT_FONT_SIZE);				SetFontSize(size*10);
 	FileConfig->Read(_(KEY_VIEW_FONT_SCALE),&size,DEFAULT_VIEW_FONT_SCALE);	SetViewFontScale(size);
-
+	
+	//THRESHOLD
+	float v;
+	FileConfig->Read(_(KEY_LOWER_THRESHOLD),&v,DEFAULT_LOWER_TRESHOLD);		SetLowerTreshold(v);
+	FileConfig->Read(_(KEY_UPPER_THRESHOLD),&v,DEFAULT_UPPER_TRESHOLD);		SetUpperTreshold(v);
+		
 	delete FileConfig;
+
 }
 
 
@@ -210,6 +220,10 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_FONT_SIZE),GetFontSize());
 	FileConfig->Write(_(KEY_VIEW_FONT_SCALE),GetViewFontScale());
 
+	//THRESHOLD
+	float v;
+	FileConfig->Write(_(KEY_LOWER_THRESHOLD),GetLowerTreshold());
+	FileConfig->Write(_(KEY_UPPER_THRESHOLD),GetUpperTreshold());
 
 	delete FileConfig;
 
@@ -759,6 +773,13 @@ void CMapPlugin::Options()
 	m_OptionsDialog->Show();
 }
 
+void CMapPlugin::SBMS()
+{
+	if(m_SBMSDialog == NULL)
+		m_SBMSDialog = new CDialog(m_DB,CONTROL_SBMS);
+	m_SBMSDialog->Show();
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -772,6 +793,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHARACTERISTIC),this, MenuCharacteristic );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SBMS),this, MenuSBMS );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	NaviApiMenu->AddItem(L"-",this, NULL );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
@@ -798,6 +820,14 @@ void *CMapPlugin::MenuPicture(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
 	ThisPtr->Menu(CONTROL_PICTURE);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuSBMS(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_SBMS);
 	
 	return NULL;	
 }
@@ -880,6 +910,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_BASE_STATION:		BaseStation();		break;
 		case CONTROL_CHARACTERISTIC:	Characteristic();	break;
 		case CONTROL_OPTIONS:			Options();			break;
+		case CONTROL_SBMS:				SBMS();				break;
 	}
 
 }

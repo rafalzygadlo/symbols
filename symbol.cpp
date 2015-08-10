@@ -282,7 +282,7 @@ bool CSymbol::SetPositions()
 		counter++;
 	}
 	
-	fprintf(stderr,"%d\n",counter);
+	//fprintf(stderr,"%d\n",counter);
 	db_free_result(result);
 	
 	return true;

@@ -33,6 +33,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_OldCount = 0;
 	ReadConfig();
 	ShowControls();
+	SetRenderBackground(false);
 }
 
 CDisplayPlugin::~CDisplayPlugin()

@@ -32,8 +32,7 @@ SHeader Header[] =
 
 	{CONTROL_SYMBOL_TYPE,250, {FI_SYMBOL_TYPE_NAME , FN_SYMBOL_TYPE_NAME, MSG_NAME} },
 	{CONTROL_SYMBOL_TYPE,250, {FI_SYMBOL_TYPE_INFO , FN_SYMBOL_TYPE_INFO, MSG_INFO} },
-	
-	
+		
 	{CONTROL_PICTURE,250, {FI_PICTURE_NAME  , FN_PICTURE_NAME, MSG_NAME} },
 	{CONTROL_PICTURE,100, {FI_PICTURE_INFO  , FN_PICTURE_INFO, MSG_INFO} },
 
@@ -48,6 +47,11 @@ SHeader Header[] =
 	{CONTROL_CHARACTERISTIC,50, {FI_CHARACTERISTIC_CODE  , FN_CHARACTERISTIC_CODE, MSG_CODE} },
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_IALA  , FN_CHARACTERISTIC_IALA, MSG_IALA} },
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_TIME  , FN_CHARACTERISTIC_TIME, MSG_TIME} },
+	
+	{CONTROL_SBMS,180, {FI_SBMS_NAME  , FN_SBMS_NAME, MSG_NAME} },
+	{CONTROL_SBMS,80, {FI_SBMS_MMSI  , FN_SBMS_MMSI, MSG_MMSI} },
+
+
 	{-1},
 
 };
@@ -61,7 +65,8 @@ SIds Id[] =
 	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
 	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE}, 
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP}, 
-	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION}, 
+	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
+	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
 
 };
 
@@ -358,6 +363,7 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_BASE_STATION:
 		case CONTROL_CHARACTERISTIC:
+		case CONTROL_SBMS:
 				return GetPanelList(Parent);
 	}
 	
@@ -597,6 +603,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_SYMBOL_GROUP:		m_Table = TABLE_SYMBOL_GROUP;	break;
 		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
 		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
+		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
 	
 	}
 }
@@ -619,6 +626,7 @@ void CDialogPanel::Read()
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_BASE_STATION:
 		case CONTROL_CHARACTERISTIC:
+		case CONTROL_SBMS:
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table);
 		break;
 	}
@@ -778,6 +786,7 @@ void CDialogPanel::OnNew()
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_BASE_STATION:
 		case CONTROL_CHARACTERISTIC:
+		case CONTROL_SBMS:
 			New();	
 		break;
 				
@@ -1028,11 +1037,12 @@ void CDialogPanel::OnEdit(int id)
 		case CONTROL_ITEM:				EditItem(id);			break;
 		case CONTROL_BASE_STATION:		EditBaseStation(id);	break;
 		case CONTROL_CHARACTERISTIC:	EditCharacteristic(id);	break;
+		case CONTROL_SBMS:				EditSBMS(id);			break;
 
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:	EditName(id);		break;
-		
+		case CONTROL_SYMBOL_GROUP:
+		case CONTROL_SYMBOL_TYPE:		EditName(id);			break;
 	}
 
 }
@@ -1283,6 +1293,37 @@ void CDialogPanel::EditBaseStation(int id)
 	
 	ptr->SetName(Convert(row[FI_BASE_STATION_NAME]));
 	ptr->SetInfo(Convert(row[FI_BASE_STATION_INFO]));
+	db_free_result(result);	
+	
+	ptr->Create();	
+	
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
+		my_query(m_DB,sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+}
+
+
+void CDialogPanel::EditSBMS(int id)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),m_Table,id);
+	
+	if(!my_query(m_DB,sql))
+		return;
+		
+	CNew *ptr = new CNew(m_DB,m_ControlType);
+		
+	void *result = db_result(m_DB);
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetName(Convert(row[FI_SBMS_NAME]));
+	//ptr->SetMMSI Info(Convert(row[FI_INFO]));
 	db_free_result(result);	
 	
 	ptr->Create();	

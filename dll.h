@@ -33,7 +33,9 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolGroup;
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
+	CDialog *m_SBMSDialog;
 	COptionsDialog *m_OptionsDialog;
+
 
 	bool m_On;
 	bool m_Reading;
@@ -141,6 +143,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Characteristic();
 	void Options();
 	void Synchro();
+	void SBMS();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -153,6 +156,8 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuItems(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuPicture(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuOptions(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuSBMS(void *NaviMapIOApiPtr, void *Input);
+
 
 public:
 	

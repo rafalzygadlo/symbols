@@ -11,7 +11,7 @@
 #define THREAD_JOINABLE
 #endif
 #define DEFAULT_MYSQL_PORT 3306
-#define DIR_WORKDIR "workdir"
+#define DIR_WORKDIR "data"
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
 #define PRODUCT_NAME "Symbol Manager"
@@ -47,6 +47,8 @@
 #define KEY_FONT_SIZE		"font_size"
 #define KEY_VIEW_FONT_SCALE "view_font_scale"
 
+#define KEY_LOWER_THRESHOLD "lower_threshold"
+#define KEY_UPPER_THRESHOLD "upper_threshold"
 
 #define PAGE_ALL 1
 
@@ -221,20 +223,21 @@
 #define MSG_FONT						112
 #define MSG_FONT_SIZE					113
 #define MSG_VIEW_NAME_SCALE				114
-#define MSG_CALIBRATED_SHORT			115
-#define MSG_FORCED_OFF_SHORT			116
-#define MSG_PHOTOCELL_NIGHT_TIME_SHORT	117
-#define MSG_FAULT_OUTPUT_SHORT			118
-#define MSG_SOLAR_CHARGER_ON_SHORT		119
-#define MSG_SYNC_MASTER_SHORT			120
-#define MSG_SEASON_CONTROL_SHORT		121
-#define MSG_COMM_TIMEOUT				122
-#define MSG_SYMBOL_TIMEOUT				123
-#define MSG_NOT_IN_MONITORING			124
-#define MSG_SEND_COMMAND				125
-#define MSG_ADD_TO_GROUP				126
-#define MSG_CONFIRM						127
-#define MSG_THRESHOLD					128
+#define MSG_COMM_TIMEOUT				115
+#define MSG_SYMBOL_TIMEOUT				116
+#define MSG_NOT_IN_MONITORING			117
+#define MSG_SEND_COMMAND				118
+#define MSG_ADD_TO_GROUP				119
+#define MSG_CONFIRM						120
+#define MSG_THRESHOLD					121
+#define MSG_LOWER_THRESHOLD				122
+#define MSG_UPPER_THRESHOLD				123
+#define MSG_GET_TIME					124
+#define MSG_GET_UPTIME					125
+#define MSG_AUTO_MANAGEMENT				126
+#define MSG_HUMAN_MANAGEMENT			127
+#define MSG_SBMS						128
+#define MSG_MMSI						129
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -262,7 +265,7 @@
 #define CONTROL_CHARACTERISTIC	12
 #define CONTROL_SYMBOL_LIST		13
 #define CONTROL_OPTIONS			14
-
+#define CONTROL_SBMS			15
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -276,6 +279,7 @@
 
 #define COLUMN_ITEM_WITH_ID 0
 #define COLUMN_ITEM_WITH_NAME 2
+#define COLUMN_SBMS_WITH_NAME 5	
 
 // globalne id dla pól takich samych
 // raz jest pole name a raz type
@@ -336,13 +340,14 @@
 #define ALARM_POWER_SUPPLY_FAULT		1
 #define ALARM_IMPACT_DETECTED			2
 
+#define COMMAND_PANEL_BG_COLOR wxColor(255,255,255)
 
 //TICK
 #define TICK_DLL	0
 #define TICK_SYMBOL	1
 #define TICK_SYMBOL_TIME	1000
 #define TICK_DLL_TIME		1000
-#define CHECK_COMMAND_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_COMMAND_TICK			(2 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COMMAND_TICK_ON		(2 *(1000/TICK_SYMBOL_TIME)) //co sekund ON/OFF
 #define CHECK_ALARM_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_ALARM_TICK_ON			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
@@ -361,7 +366,8 @@
 #define MODULE_SYMBOL_GROUP "symbol_group"
 #define MODULE_BASE_STATION "base_station"
 #define MODULE_CHARACTERISTIC "characteristic"
-#define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
+#define MODULE_SBMS	"sbms"
+
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -378,33 +384,34 @@
 #define ACTION_MANAGEMENT	"management"
 #define ACTION_ADD_TO_GROUP "add_to_group"
 
-#define TABLE_AREA				"area"
-#define TABLE_SEAWAY			"seaway"
-#define TABLE_RIGHT				"right"
-#define TABLE_HISTORY			"history"
-#define TABLE_SYMBOL			"symbol"
-#define TABLE_SYMBOL_ITEM		"symbol_item"
-#define TABLE_SYMBOL_TYPE		"symbol_type"
-#define TABLE_SYMBOL_LIGHT		"symbol_light"
-#define TABLE_SYMBOL_PICTURE	"symbol_picture"
-#define TABLE_SYMBOL_GROUP		"symbol_group"
-#define TABLE_SYMBOL_TO_GROUP	"symbol_to_group"
-#define TABLE_ITEM				"item"
-#define TABLE_ITEM_TYPE			"item_type"
-#define TABLE_ITEM_FEATURE		"item_feature"
-#define TABLE_ITEM_TYPE_FEATURE	"item_type_feature"
-#define TABLE_ITEM_VALUE		"item_value"
-#define TABLE_PICTURE			"picture"
-#define TABLE_USER				"user"
-#define TABLE_USER_GROUP		"user_group"
-#define TABLE_USER_GROUP_RIGHT	"user_group_right"
-#define TABLE_USER_TO_GROUP		"user_to_group"
-#define TABLE_BASE_STATION		"base_station"
-#define TABLE_COMMAND			"command"
-#define TABLE_CHARACTERISTIC	"characteristic"
-#define TABLE_ALARM				"alarm_report"
-#define TABLE_SBMS				"sbms"
-#define TABLE_STANDARD_REPORT	"standard_report"
+#define TABLE_AREA					"area"
+#define TABLE_SEAWAY				"seaway"
+#define TABLE_RIGHT					"right"
+#define TABLE_HISTORY				"history"
+#define TABLE_SYMBOL				"symbol"
+#define TABLE_SYMBOL_ITEM			"symbol_item"
+#define TABLE_SYMBOL_TYPE			"symbol_type"
+#define TABLE_SYMBOL_LIGHT			"symbol_light"
+#define TABLE_SYMBOL_PICTURE		"symbol_picture"
+#define TABLE_SYMBOL_GROUP			"symbol_group"
+#define TABLE_SYMBOL_TO_GROUP		"symbol_to_group"
+#define TABLE_ITEM					"item"
+#define TABLE_ITEM_TYPE				"item_type"
+#define TABLE_ITEM_FEATURE			"item_feature"
+#define TABLE_ITEM_TYPE_FEATURE		"item_type_feature"
+#define TABLE_ITEM_VALUE			"item_value"
+#define TABLE_PICTURE				"picture"
+#define TABLE_USER					"user"
+#define TABLE_USER_GROUP			"user_group"
+#define TABLE_USER_GROUP_RIGHT		"user_group_right"
+#define TABLE_USER_TO_GROUP			"user_to_group"
+#define TABLE_BASE_STATION			"base_station"
+#define TABLE_COMMAND				"command"
+#define TABLE_CHARACTERISTIC		"characteristic"
+#define TABLE_ALARM					"alarm_report"
+#define TABLE_SBMS					"sbms"
+#define TABLE_STANDARD_REPORT		"standard_report"
+#define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 
 
 // pola tabeli SYMBOL
@@ -637,6 +644,8 @@
 #define FI_SBMS_DATE_TIME_STAMP				24
 #define FI_SBMS_LOCAL_UTC_TIME				25
 
+#define FN_SBMS_NAME "name"
+#define FN_SBMS_MMSI "mmsi"
 
 //pola tabeli STANDARD_REPORT
 #define FI_STANDARD_REPORT_ID							0
@@ -665,18 +674,26 @@
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
-#define COMMAND_FLASH_CODE				0 //charakterystyka świecenia
-#define COMMAND_DRIVE_CURRENT			1 //prąd podkładu
-#define COMMAND_POWER_OF_LIGHT			2 //moc
-#define COMMAND_FORCED_OFF				3 //serwisowe wyłączenie
-#define COMMAND_SEASON_CONTROL			4 //praca sezonowa ON/OFF
-#define COMMAND_PHOTO_CELL_RESISTANCE	5 //fotorezystor czułość
-#define COMMAND_RIPLE_DELAY				6 //opóźnienie impulsu
-#define COMMAND_POWER_OFF				7 //ręczne wyłączenie
-#define COMMAND_GET_TIME				8 //pobierz czas
-#define COMMAND_STANDARD_REPORT			9 //standardowy raport
+#define COMMAND_FLASH_CODE				0	//charakterystyka świecenia
+#define COMMAND_DRIVE_CURRENT			1	//prąd podkładu
+#define COMMAND_POWER_OF_LIGHT			2	//moc
+#define COMMAND_FORCED_OFF				3	//serwisowe wyłączenie
+#define COMMAND_SEASON_CONTROL			4	//praca sezonowa ON/OFF
+#define COMMAND_PHOTO_CELL_RESISTANCE	5	//fotorezystor czułość
+#define COMMAND_RIPLE_DELAY				6	//opóźnienie impulsu
+#define COMMAND_POWER_OFF				7	//ręczne wyłączenie
+#define COMMAND_GET_TIME				8	//pobierz czas
+#define COMMAND_STANDARD_REPORT			9	//standardowy raport
+#define COMMAND_GET_UPTIME				10	//uptime
+#define COMMAND_LIGHT_ON				11	// light on off
+#define COMMAND_MMSI					12	//mmsi change
+#define COMMAND_RESET					13	//reset
+#define COMMAND_SAVE					14	//save
+#define COMMAND_HUMAN_MANAGEMENT		15	//człowiek coś tam
+#define COMMAND_POWER					16	//ais power
+#define COMMAND_ACCEL_THRESHOLD			17	//próg akcelerometru
 
-#define COMMAND_COUNT 10 //ilosc komend
+#define COMMAND_COUNT 18 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
 #define RESTRICTED_AREA_RADIUS 50 //m ?

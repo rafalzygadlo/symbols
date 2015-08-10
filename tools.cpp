@@ -132,19 +132,21 @@ const wchar_t *nvLanguage[][2] =
 	{L"Font",L"Czcionka"},
 	{L"Font Size",L"Rozmiar czcionki"},
 	{L"Font View",L"Widocznoœæ czcionki"},
-	{L"CAL",L"CAL"},
-	{L"FOF",L"FOF"},
-	{L"PNT",L"PNT"},
-	{L"FOU",L"FOU"},
-	{L"SCH",L"SCH"},
-	{L"SMA",L"SMA"},
-	{L"SCO",L"SCO"},
 	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
 	{L"Symbol timeout",L"Czas oczekiwania"},
 	{L"Not In Monitoring",L"Nie monitorowany"},
 	{L"Send command(s)",L"Wyœlij komendy"},
 	{L"Add to group",L"Dodaj do grupy"},
+	{L"Confirm",L"PotwierdŸ"},
 	{L"Voltage threshold",L"Próg napiêcia"},
+	{L"Lower threshold",L"Dolny próg"},
+	{L"Upper threshold",L"Górny próg"},
+	{L"Get Time",L"Podaj czas"},
+	{L"Get Uptime",L"Podaj czas dzia³ania"},
+	{L"Auto Management",L"Automatyczne zarz¹dzanie"},
+	{L"Human Management",L"Rêczne zarz¹dzanie"},
+	{L"SBMS Driver",L"Sterownik SBMS"},
+	{L"MMSI",L"MMSI"},
 
 };
 
@@ -172,18 +174,27 @@ const wxChar *nvDistanceN[2][3] =
 
 };
 
-const char *nvCommand[10] =
+const char *nvCommand[COMMAND_COUNT] =
 {
- 	{"FlashCode(%d)\r\n"},
-	{"DriveCurrent(%d)\r\n"},
-	{"PowerOfLight(%d)\r\n"},
-	{"AM6Off(%d,%d,%d)\r\n"},
-	{"SeasonControl(%d)\r\n"},
-	{"PhotoCellResistance(%d)\r\n"},
-	{"RipleDelay(%d)\r\n"},
-	{"PowerOff(%d)\r\n"},
-    {"GetTime()\r\n"},
-	{"sr()\r\n"}
+ 	{"FlashCode(%d)"},
+	{"DriveCurrent(%d)"},
+	{"PowerOfLight(%d)"},
+	{"AM6Off(%d,%d,%d)"},
+	{"SeasonControl(%d)"},
+	{"PhotoCellResistance(%d)"},
+	{"RipleDelay(%d)"},
+	{"PowerOff(%d)"},
+    {"gt(%d)"},				//get time
+	{"sr(%d)"},				//standard report
+	{"gut(%d)"},			//get uptime
+	{"l(%d,%d)"},			//light on/off
+	{"m(%d,%d)"},			//zmiana mmsi
+	{"r(%d)"},				//reset
+	{"s(%d)"},				//save
+	{"h(%d,%d)"},			//human management tylko OFF (0,0)
+	{"p(%d,%d)"},			//ais power 1W itd.
+	{"g(%d,%d)"},			//akcelarator próg
+
 		
 };
 
@@ -218,7 +229,7 @@ wxString GetWorkDir()
 {
 	static wxString buffer;
 	wxStandardPaths Paths = wxStandardPaths::Get();
-	buffer.Printf(wxT("%s%s%s%s"), Paths.GetUserDataDir().wc_str(wxConvUTF8),  wxT(DIR_SEPARATOR), wxT(DIR_WORKDIR), wxT(DIR_SEPARATOR) );
+	buffer.Printf(wxT("%s%s%s%s"), Paths.GetDataDir().wc_str(wxConvUTF8),  wxT(DIR_SEPARATOR), wxT(DIR_WORKDIR), wxT(DIR_SEPARATOR) );
 	return buffer;
 }
 
@@ -966,18 +977,18 @@ void UpdateDBCommand(int id,wxString cmd)
 	DBClose(db);
 }
 
-void SetCommandForcedOff(int mmsi,int SBMSID, int id_base_station, bool off)
+void SetCommandForcedOff(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool off)
 {
-	int id = SetDBCommand(mmsi,SBMSID,id_base_station,COMMAND_FORCED_OFF);
-	const char *cmd = GetCommand(COMMAND_FORCED_OFF);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,id,off);
+	int id = SetDBCommand(mmsi,SBMSID,id_base_station,cmd_id);
+	const char *cmd = GetCommand(cmd_id);
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
 	UpdateDBCommand(id,_cmd);
 }
 
-void SetCommandStandardReport(int mmsi,int SBMSID, int id_base_station)
+void SetCommandStandardReport(int cmd_id,int mmsi,int SBMSID, int id_base_station)
 {
-	int id = SetDBCommand(mmsi,SBMSID,id_base_station,COMMAND_STANDARD_REPORT);
-	const char *cmd = GetCommand(COMMAND_STANDARD_REPORT);
+	int id = SetDBCommand(mmsi,SBMSID,id_base_station,cmd_id);
+	const char *cmd = GetCommand(cmd_id);
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,id);
 	UpdateDBCommand(id,_cmd);
 }

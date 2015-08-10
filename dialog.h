@@ -70,7 +70,7 @@ class CDialogPanel: public wxPanel
 	void EditCharacteristic(int id);
 	void EditItem(int id);
 	void EditBaseStation(int id);
-	int GetItemTypeId(int id);
+	void EditSBMS(int id);
 			
 	void EditName(int id); // wszystkie tabele z polami [type]
 	void EditType(int id); // wszystkie tabele z polami [type]
@@ -78,7 +78,7 @@ class CDialogPanel: public wxPanel
 	
 	void Read();
 	wxString ReadItems();
-	
+	int GetItemTypeId(int id);
 
 	void Clear();
 	void Select();

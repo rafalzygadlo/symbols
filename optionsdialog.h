@@ -13,8 +13,8 @@ class COptionsDialog: public wxDialog
 	wxColourPickerCtrl *m_SymbolNormalColor,*m_SymbolNoMonitorColor,*m_SymbolErrorColor,*m_SymbolLightOn;
 	wxSlider *m_SymbolNormalColorAlpha,*m_SymbolNoMonitorColorAlpha,*m_SymbolErrorAlpha,*m_SymbolLightOnAlpha;
 	wxSlider *m_FontSize,*m_ViewNameScale;
-	
-	wxSpinCtrl *m_CommTimeout;
+	wxTextCtrl *m_LowerThreshold,*m_UpperThreshold;
+	//wxSpinCtrl *m_CommTimeout;
 
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetColorPanel(wxWindow *parent);

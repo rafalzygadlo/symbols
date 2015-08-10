@@ -239,6 +239,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);				break;
 		case CONTROL_BASE_STATION:	_Menu = MenuBaseStation(m_SelectedItem,MODULE_BASE_STATION);	break;
 		case CONTROL_CHARACTERISTIC:_Menu = Menu(m_SelectedItem,MODULE_CHARACTERISTIC);				break;
+		case CONTROL_SBMS:			_Menu = Menu(m_SelectedItem,MODULE_SBMS);						break;
 	}
 	
 	if(_Menu)
@@ -266,7 +267,6 @@ wxMenu *CListCtrl::Menu(int id, const char *module)
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
 		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(ID_DELETE)->Enable(false);
-		
 	}
 		
 	return Menu;
