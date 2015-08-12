@@ -40,27 +40,31 @@ public:
 class CDialogPanel: public wxPanel
 {
 	void *m_DB;
-	wxString m_Field;	
-	wxString m_Order;
 	CListCtrl *m_List;	
-	int m_ControlType,m_ColumnWithName;
-	wxString m_Table;
-	int m_ID;
-	wxString m_Name;
-	int	m_IDMaster;
 	wxStaticText *m_TopLabel;
+	wxStaticText *m_RecordCount;
 	wxListBox *m_ListBox;
 	wxComboBox *m_ComboBox;
-	int m_IDType;
-	wxArrayString m_FilterArray;
+	wxSearchCtrl *m_SearchText;
 	CDialogPanel *m_Slave;
 	CPicturePanel *m_PicturePanel;
+	wxTimer *m_Ticker;
+
+	wxString m_Name;
+	int	m_IDMaster;
+	int m_ID;
+	wxString m_Table;
+	int m_ControlType;
+	int	m_ColumnWithName;
+	wxString m_Field;
+	wxString m_Order;
+	int m_IDType;
+	wxArrayString m_FilterArray;
 	int m_IsSlave;
 	wxWindow *m_Parent;
-	wxSearchCtrl *m_SearchText;
 	wxString m_SearchTextValue;
-	wxTimer *m_Ticker;
 	bool m_SearchTextChanged;
+
 				
 	void New();
 	void EditArea(int id);
@@ -77,6 +81,8 @@ class CDialogPanel: public wxPanel
 	void EditPicture(int id);
 	
 	void Read();
+	void ReadData();
+	void SetStatus();
 	wxString ReadItems();
 	int GetItemTypeId(int id);
 
@@ -114,8 +120,8 @@ class CDialogPanel: public wxPanel
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 	wxPanel *GetSearchPanel(wxWindow *Parent);
 	wxPanel *GetSymbolFilterPanel(wxWindow *Parent);
-
-
+	wxPanel *GetStatusPanel(wxWindow *Parent);
+	
 	void SetSearchText(const wchar_t *txt);
 	const wchar_t *GetSearchText();
 	bool GetSearchTextChanged();

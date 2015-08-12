@@ -11,12 +11,13 @@ class CDialog;
 class CDialogPanel;
 class CListCtrl: public wxListCtrl
 {
+	CListCtrl *m_ThisPtr;
 	wxArrayPtrVoid *m_List;
+	wxFont m_Font;
 	int m_Count;
 	void *m_DB;
-	CListCtrl *m_ThisPtr;
 	wxArrayPtrVoid m_ColumnArray;
-	wxArrayString m_DataArray;
+	wxArrayPtrVoid m_DataArray;
 	wxArrayInt m_ColumnIds;
 	wxArrayInt m_Ids;
 	wxArrayString m_ColumnFields;
@@ -28,6 +29,7 @@ class CListCtrl: public wxListCtrl
 	int m_ColumnWithId,m_ColumnWithName;
 	wxImageList *m_ImageListSmall;
 	wxArrayInt m_Checked;
+	wxListItemAttr *m_ListAttr;
 	
 	wxMenu *Menu(int id, const char *module);
 	wxMenu *MenuSymbol(int id, const char *module);
@@ -38,10 +40,16 @@ class CListCtrl: public wxListCtrl
 	void NewUser();
 	void NewGroup();
 	wxArrayString *_GetColumn(int column);
+	wxArrayString *_GetDataColumn(int column);
 	wxArrayString GetRow(int row);
 	wxString GetValue(wxArrayString *ptr, int record);
 	bool IsChecked(long id);
 	void SetChecked(long id, bool checked);
+
+	void SetSBMSAttr(long item, wxListItemAttr *v);
+	void SetSymbolAttr(long item, wxListItemAttr *v);
+
+	void SetFontBold(bool v);
 	
 	void OnActivate(wxListEvent &event);
 	void OnSelected(wxListEvent &event);
@@ -60,7 +68,7 @@ class CListCtrl: public wxListCtrl
 	
 	
 	wxString OnGetItemText(long item, long column) const;
-	//wxListItemAttr *OnGetItemAttr(long item) const;
+	wxListItemAttr *OnGetItemAttr(long item) const;
 	//int OnGetItemColumnImage(long item, long column) const; 
 	int OnGetItemImage(long item) const;
 

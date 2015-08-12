@@ -231,6 +231,12 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_CheckInMonitoring->SetValue(m_InMonitoring);
 	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
+	
+	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
+	FlexGridSizer->Add(LabelSBMS,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME);
+	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
+	//m_SymbolTypeCombo->SetSelection(0);
 		
 	//wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
 	//FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
@@ -241,21 +247,19 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID,FI_AREA_ID,FI_AREA_NAME);
-	//m_AreaCombo->SetSelection(0);
 	FlexGridSizer->Add(m_AreaCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
 	FlexGridSizer->Add(LabelSeaway,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SeawayCombo = GetCombo(m_DB,Panel,TABLE_SEAWAY,m_SeawayID,FI_SEAWAY_ID,FI_SEAWAY_NAME);
-	//m_SeawayCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SeawayCombo,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SymbolTypeCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID,FI_SYMBOL_TYPE_ID,FI_SYMBOL_TYPE_NAME);
-	//m_SymbolTypeCombo->SetSelection(0);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
 		
+
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -291,7 +295,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
 	m_TextInfo->SetValue(m_Info);
 	m_TextInfo->SetValidator(m_TextValidator);
-	FlexGridSizer->AddGrowableRow(9);
+	FlexGridSizer->AddGrowableRow(8);
 	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
 	FlexGridSizer->AddSpacer(1);
 		
@@ -951,6 +955,11 @@ void CNew::SetInMonitoring(bool v)
 	m_InMonitoring = v;
 }
 
+void CNew::SetSBMS(wxString v)
+{
+	m_SBMSId = v;
+}
+
 void CNew::SetHost(wxString v)
 {
 	m_Host = v;
@@ -1000,6 +1009,11 @@ int CNew::GetSeawayId()
 int CNew::GetSymbolTypeId()
 {
 	return (int)m_SymbolTypeCombo->GetClientData(m_SymbolTypeCombo->GetSelection());
+}
+
+int CNew::GetSBMSId()
+{
+	return (int)m_SBMSCombo->GetClientData(m_SBMSCombo->GetSelection());
 }
 
 double CNew::GetLon()

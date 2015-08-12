@@ -14,6 +14,7 @@ class CNew: public wxDialog
 	void *m_DB;
 	int m_IDType;
 	int m_ControlType;
+	
 	wxTextValidator m_TextValidator;
 	
 	wxTextCtrl *m_TextName;
@@ -30,7 +31,10 @@ class CNew: public wxDialog
 	wxTextCtrl *m_TextTime;
 	wxComboBox *m_ComboItemType;
 	wxComboBox *m_ComboFilterType;
-	wxComboBox *m_SeawayCombo, *m_AreaCombo, *m_SymbolTypeCombo;
+	wxComboBox *m_SeawayCombo;
+	wxComboBox *m_AreaCombo;
+	wxComboBox *m_SymbolTypeCombo;
+	wxComboBox *m_SBMSCombo;
 	wxCheckBox *m_CheckInMonitoring;
 
 	bool m_LonValid,m_LatValid;
@@ -41,9 +45,17 @@ class CNew: public wxDialog
 	CTimePanel *m_TimePanel;
 
 	wxString m_Number;
-	double m_Lon,m_Lat;
-	wxString m_Name,m_Info,m_Type,m_Host,m_Port;
-	wxString m_SeawayID,m_AreaID,m_SymbolTypeID;
+	double m_Lon;
+	double m_Lat;
+	wxString m_Name;
+	wxString m_Info;
+	wxString m_Type;
+	wxString m_Host;
+	wxString m_Port;
+	wxString m_SeawayID;
+	wxString m_AreaID;
+	wxString m_SymbolTypeID;
+	wxString m_SBMSId;
 	int m_PictureId;
 	bool m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
@@ -105,6 +117,7 @@ public:
 	int GetSeawayId();
 	int GetAreaId();
 	int GetSymbolTypeId();
+	int GetSBMSId();
 	//int GetBaseStationId();
 	double GetLon();
 	double GetLat();
@@ -132,6 +145,7 @@ public:
 	void SetSeaway(wxString id);
 	void SetArea(wxString id);
 	void SetSymbolType(wxString id);
+	void SetSBMS(wxString v);
 	void SetColor(wxString v);
 	void SetLon(double v);
 	void SetLat(double v);

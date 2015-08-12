@@ -48,10 +48,11 @@ SHeader Header[] =
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_IALA  , FN_CHARACTERISTIC_IALA, MSG_IALA} },
 	{CONTROL_CHARACTERISTIC,100, {FI_CHARACTERISTIC_TIME  , FN_CHARACTERISTIC_TIME, MSG_TIME} },
 	
+	{CONTROL_SBMS,80,  {FI_SBMS_SBMSID  , FN_SBMS_SBMSID, MSG_SBMSID} },
+	{CONTROL_SBMS,80,  {FI_SBMS_MMSI  , FN_SBMS_MMSI, MSG_MMSI} },
 	{CONTROL_SBMS,180, {FI_SBMS_NAME  , FN_SBMS_NAME, MSG_NAME} },
-	{CONTROL_SBMS,80, {FI_SBMS_MMSI  , FN_SBMS_MMSI, MSG_MMSI} },
-
-
+	{CONTROL_SBMS,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
+	
 	{-1},
 
 };
@@ -63,11 +64,10 @@ SIds Id[] =
 	{CONTROL_AREA, COLUMN_WITH_ID, COLUMN_WITH_NAME, MSG_AREA},
 	{CONTROL_SEAWAY, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SEAWAY},
 	{CONTROL_SYMBOL_TYPE, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_TYPE},
-	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE}, 
-	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP}, 
+	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE},
+	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
-
 };
 
 CDialog::CDialog(void *db,int control_type, bool picker)
@@ -90,7 +90,6 @@ CDialog::CDialog(void *db,int control_type, bool picker)
 	ReadConfig();
 	Center();
 	
-
 }
 
 CDialog::CDialog(void *db,int control_master, int control_slave,bool picker)
@@ -220,7 +219,11 @@ CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slav
 	//TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
 	
 	Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,5);
+	//Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0); // taki myk bo READ() wpisuje ilosc rekodów
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
+	
+	Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0);
+	Read();
 
 	m_Ticker = new wxTimer(this,ID_TICK_SEARCH);	//frequency
 	m_Ticker->Start(1000);
@@ -368,6 +371,19 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 	}
 	
 	return NULL;
+}
+
+wxPanel *CDialogPanel::GetStatusPanel(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetBackgroundColour(wxColor(200,200,200));
+	Panel->SetSizer(Sizer);
+	
+	m_RecordCount = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
+	Sizer->Add(m_RecordCount,0,wxALL|wxEXPAND,5);
+
+	return Panel;
 }
 
 wxPanel *CDialogPanel::GetSymbolFilterPanel(wxWindow *Parent)
@@ -581,8 +597,7 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 
 	m_List->SetControlType(m_ControlType,this);
 	m_List->InitColumns();
-	Read();
-		
+			
 	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
 	return Panel;
@@ -608,13 +623,25 @@ void CDialogPanel::SetTable()
 	}
 }
 
+
 void CDialogPanel::Read()
+{
+	ReadData();
+	SetStatus();
+}
+
+void CDialogPanel::SetStatus()
+{
+	m_RecordCount->SetLabel(wxString::Format(_("%d"),m_List->GetItemCount()));
+}
+
+void CDialogPanel::ReadData()
 {
 	wxString sql;
 	switch(m_ControlType)
 	{
 		case CONTROL_PICTURE:		
-			sql = wxString::Format(_("SELECT %s,%s,%s FROM `%s` WHERE"),FN_PICTURE_ID,FN_PICTURE_NAME,FN_PICTURE_INFO,m_Table); //sql dal zdjêcia bez selektu bloba który spowalnia bo jest du¿ym polem danych
+			sql = wxString::Format(_("SELECT %s,%s,%s FROM `%s` WHERE"),FN_PICTURE_ID,FN_PICTURE_NAME,FN_PICTURE_INFO,m_Table); //sql dla zdjêcia bez selektu bloba który spowalnia bo jest du¿ym polem danych
 		break;	
 		case CONTROL_ITEM:
 			sql = ReadItems();
@@ -672,6 +699,8 @@ void CDialogPanel::Read()
 
 	m_List->Read(sql);
 	m_List->Refresh();
+
+	
 
 }
 
@@ -851,12 +880,16 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_sbms='%d', id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
+		TABLE_SYMBOL,ptr->GetSBMSId(), ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
 	int id = db_last_insert_id(m_DB);
-
+	
+	//SBMS in use
+	//sql = wxString::Format(_("UPDATE %s SET in_use='%d' WHERE id='%d'"),TABLE_SBMS,SBMS_IN_USE,ptr->GetSBMSId());
+	//my_query(m_DB,sql);
+	
 	//light
 	CLightPanel *LightPanel = ptr->GetLightPanel();
 
@@ -1130,6 +1163,7 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 	ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
+	ptr->SetSBMS(Convert(row[FI_SYMBOL_ID_SBMS]));
 
 	db_free_result(result);	
 	SetSymbolPicture(ptr,id);
@@ -1141,8 +1175,8 @@ void CDialogPanel::EditSymbol(int id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_sbms='%d', id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
+			m_Table,ptr->GetSBMSId(),ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		
 		//light
@@ -1323,7 +1357,7 @@ void CDialogPanel::EditSBMS(int id)
 	char **row = (char**)db_fetch_row(result);
 	
 	ptr->SetName(Convert(row[FI_SBMS_NAME]));
-	//ptr->SetMMSI Info(Convert(row[FI_INFO]));
+	ptr->SetInfo(Convert(row[FI_SBMS_INFO]));
 	db_free_result(result);	
 	
 	ptr->Create();	

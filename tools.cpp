@@ -147,7 +147,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Human Management",L"Rêczne zarz¹dzanie"},
 	{L"SBMS Driver",L"Sterownik SBMS"},
 	{L"MMSI",L"MMSI"},
-
+	{L"Date (UTC)",L"Data (UTC)"},
+	{L"SBMSID",L"SBMSID"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

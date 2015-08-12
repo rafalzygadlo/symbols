@@ -238,7 +238,8 @@
 #define MSG_HUMAN_MANAGEMENT			127
 #define MSG_SBMS						128
 #define MSG_MMSI						129
-
+#define MSG_UTC_TIME					130
+#define MSG_SBMSID						131
 
 #define HTML_ANCHOR_LAST_REPORT	0
 
@@ -641,11 +642,17 @@
 #define FI_SBMS_ANALOG_VALUE				21
 #define FI_SBMS_LON							22
 #define FI_SBMS_LAT							23
-#define FI_SBMS_DATE_TIME_STAMP				24
-#define FI_SBMS_LOCAL_UTC_TIME				25
+#define FI_SBMS_IN_USE						24
+#define FI_SBMS_INFO						25
+#define FI_SBMS_DATE_TIME_STAMP				26
+#define FI_SBMS_LOCAL_UTC_TIME_STAMP		27
+#define FI_SBMS_LOCAL_UTC_TIME				28
 
-#define FN_SBMS_NAME "name"
-#define FN_SBMS_MMSI "mmsi"
+#define FN_SBMS_NAME			"name"
+#define FN_SBMS_MMSI			"mmsi"
+#define FN_SBMS_LOCAL_UTC_TIME	"local_utc_time"
+#define FN_SBMS_SBMSID			"sbmsid"
+#define FN_SBMS_NAME			"name"
 
 //pola tabeli STANDARD_REPORT
 #define FI_STANDARD_REPORT_ID							0

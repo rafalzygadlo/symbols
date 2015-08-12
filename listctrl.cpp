@@ -23,15 +23,16 @@ BEGIN_EVENT_TABLE(CListCtrl,wxListCtrl)
 	EVT_MENU(ID_ADD_TO_GROUP,OnAddToGroup)
 	//EVT_LEFT_DOWN(CListCtrl::OnMouseEvent)
 //	EVT_LIST_ITEM_FOCUSED(ID_LIST,CListCtrl::OnFocused)
-	
 END_EVENT_TABLE()
 
 
-CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
+CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style)
 :wxListCtrl( Parent, ID_LIST, wxDefaultPosition, wxDefaultSize, style )
 {
 	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
 	//SetDoubleBuffered(true);
+	m_Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+	m_ThisPtr = this;
 	m_DB = db;
 	m_ThisPtr = this;
 	m_FieldCount = 0;
@@ -40,6 +41,7 @@ CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
 	m_Control = NULL;
 	m_ColumnWithId = 0;
 	m_Count = 0;
+	m_ListAttr = new wxListItemAttr();
 	
 	m_ImageListSmall = new wxImageList(16,16);
 		
@@ -72,10 +74,18 @@ CListCtrl::CListCtrl(void *db, wxWindow *Parent, int style )
 CListCtrl::~CListCtrl()
 {
 	delete m_ImageListSmall;
-
+	delete m_ListAttr;
+	
 	for(size_t i = 0; i < m_ColumnArray.size(); i++)
 	{	
 		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
+		ptr->Clear();
+		delete ptr;
+	}
+
+	for(size_t i = 0; i < m_DataArray.size(); i++)
+	{	
+		wxArrayString *ptr = (wxArrayString*)m_DataArray.Item(i);
 		ptr->Clear();
 		delete ptr;
 	}
@@ -173,6 +183,12 @@ void CListCtrl::Clear()
 		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
 		ptr->Clear();
 	}
+
+	for(size_t i = 0; i < m_DataArray.size(); i++)
+	{	
+		wxArrayString *ptr = (wxArrayString*)m_DataArray.Item(i);
+		ptr->Clear();
+	}
 	
 	m_Ids.Clear();
 }
@@ -192,21 +208,34 @@ void CListCtrl::Read(wxString query)
 	int rows = 0;
 	void *result = db_result(m_DB);
 	char **row;
-		
+	
+	if(result == NULL)
+		return;
 
+	for(int i = 0; i < m_FieldCount; i++)
+	{
+		wxArrayString *data = new wxArrayString();
+		m_DataArray.Add(data);
+	}
+	
 	while(row = (char**)db_fetch_row(result))
 	{
 		for(int i = 0; i < m_FieldCount; i++)
 		{
+			wxString str(row[i],wxConvUTF8);
+		
 			for(size_t j = 0; j < m_ColumnIds.size(); j++)
 			{
 				if(i == m_ColumnIds.Item(j))
 				{
-					wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(j);
-					wxString str(row[i],wxConvUTF8);
+					wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(j); //j
 					ptr->Add(str);
 				}
 			}
+						
+			wxArrayString *ptr = (wxArrayString*)m_DataArray.Item(i); //j
+			ptr->Add(str);
+
 		}
 		
 		m_Ids.Add(atoi(row[m_ColumnWithId]));
@@ -402,6 +431,12 @@ wxArrayString *CListCtrl::_GetColumn(int column)
 	return (wxArrayString*)m_ColumnArray.Item(column);
 }
 
+wxArrayString *CListCtrl::_GetDataColumn(int column)
+{
+	return (wxArrayString*)m_DataArray.Item(column);
+}
+
+
 wxArrayString CListCtrl::GetRow(int row)
 {
 	wxArrayString _row;
@@ -476,48 +511,46 @@ void CListCtrl::SetChecked(long id, bool checked)
 }
 
 
-/*
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
-{
+{	
+	switch(m_ControlType)
+	{
+		case CONTROL_SBMS:			m_ThisPtr->SetSBMSAttr(item,m_ListAttr); break;
+		case CONTROL_SYMBOL:		m_ThisPtr->SetSymbolAttr(item,m_ListAttr); break;
+		default: 
+			return NULL;
+	}
 	
-	//if(Plugin->IsLoading())
-		return NULL;
-	
-	//if(GetMutex()->TryLock())
-//		return NULL;
-	
-	//if(CatalogGeometryGroup->Length() == 0 || CatalogGeometryGroup->Length() < item )
-		//return NULL;
-	
-	//CNaviGeometry *Geometry = CatalogGeometryGroup->GetGeometry(item);
-	
-	 //je¿eli geometria zainstalowana to sprawdz czy plik geometri istnieje 
-	//CNaviGeometry *Installed = Plugin->IsInstalled(Geometry); 
-	//GetMutex()->Unlock();
-	
-	//if(Installed != NULL)
-	//{
-		//if(!wxFileExists(Installed->GetAttributes()->GetValueAsString(GEOMETRY_ATTRIBUTE_9)))
-			//return (wxListItemAttr *)&error;
-	//}
-		
-
-//	if(Installed && Plugin->ChartCheckUpdate(Installed) != NULL)				// geometria potrzebuje update
-		//return (wxListItemAttr *)&error;
-	
-	//if (last_selected_item == item && Installed)								// zainstalowana
-		//return (wxListItemAttr *)&selected_and_installed;				
-		
-	if (last_selected_item == item)
-		return (wxListItemAttr *)&selected;
-		
-	//if(Installed && Type == LIST_TYPE_ALL)
-		//return (wxListItemAttr *)&installed;
-		    
-
-    return NULL;
+    return m_ListAttr;
 }
-*/
+
+void CListCtrl::SetSBMSAttr(long item, wxListItemAttr *v)
+{
+	wxString v1 = GetValue(_GetDataColumn(FI_SBMS_IN_USE),item);
+	long _v;
+	v1.ToLong(&_v);
+	
+	SetFontBold(_v);
+	v->SetFont(m_Font);
+}
+
+void CListCtrl::SetSymbolAttr(long item, wxListItemAttr *v)
+{
+	wxString v1 = GetValue(_GetDataColumn(FI_SYMBOL_ID_SBMS),item);
+	long _v;
+	v1.ToLong(&_v);
+	
+	SetFontBold(_v);
+	v->SetFont(m_Font);
+}
+
+void CListCtrl::SetFontBold(bool v)
+{
+	if(v)
+		m_Font.SetWeight(wxFONTWEIGHT_NORMAL);
+	else
+		m_Font.SetWeight(wxFONTWEIGHT_BOLD);
+}
 
 int wxCALLBACK
 MyCompareFunction(wxIntPtr item1, wxIntPtr item2, wxIntPtr WXUNUSED(sortData))
