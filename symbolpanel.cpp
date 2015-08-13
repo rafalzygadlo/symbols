@@ -441,6 +441,7 @@ void CSymbolPanel::OnManagement(wxCommandEvent &event)
 			CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
 			ptr->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+			ptr->SetAuto(atoi(row[FI_SBMS_AUTO]));
 			
 			CommandDialog->ShowModal();
 			delete CommandDialog;

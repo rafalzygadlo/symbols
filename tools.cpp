@@ -144,11 +144,14 @@ const wchar_t *nvLanguage[][2] =
 	{L"Get Time",L"Podaj czas"},
 	{L"Get Uptime",L"Podaj czas dzia³ania"},
 	{L"Auto Management",L"Automatyczne zarz¹dzanie"},
-	{L"Human Management",L"Rêczne zarz¹dzanie"},
+	{L"Manual Management",L"Rêczne zarz¹dzanie"},
 	{L"SBMS Driver",L"Sterownik SBMS"},
 	{L"MMSI",L"MMSI"},
 	{L"Date (UTC)",L"Data (UTC)"},
 	{L"SBMSID",L"SBMSID"},
+	{L"Light On",L"W³¹cz"},
+	{L"Light Off",L"Wy³¹cz"},
+
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -179,7 +182,7 @@ const char *nvCommand[COMMAND_COUNT] =
 {
  	{"FlashCode(%d)"},
 	{"DriveCurrent(%d)"},
-	{"PowerOfLight(%d)"},
+	{"PowerOfLight(%d)",},
 	{"AM6Off(%d,%d,%d)"},
 	{"SeasonControl(%d)"},
 	{"PhotoCellResistance(%d)"},
@@ -199,9 +202,42 @@ const char *nvCommand[COMMAND_COUNT] =
 		
 };
 
+int nvCommandMSG[COMMAND_COUNT] =
+{
+ 	{MSG_FLASH_CODE},
+	{MSG_DRIVE_CURRENT},
+	{MSG_POWER_OF_LIGHT},
+	{MSG_POWER_OF_LIGHT},
+	{MSG_SEASON_CONTROL},
+	{MSG_PHOTOCELL_NIGHT_TIME},
+	{MSG_PHOTOCELL_NIGHT_TIME},
+	{MSG_POWER_OF_LIGHT},
+    {MSG_GET_TIME},			//get time
+	{MSG_STANDARD_REPORT},	//standard report
+	{MSG_GET_UPTIME},		//get uptime
+	{MSG_LIGHT_ON},			//light on/off
+	{MSG_MMSI},				//zmiana mmsi
+	{MSG_MMSI},				//reset
+	{MSG_MMSI},				//save
+	{MSG_AUTO_MANAGEMENT},	//human management tylko OFF (0,0)
+	{MSG_MMSI},				//ais power 1W itd.
+	{MSG_NO_SBMS},			//akcelarator próg
+
+		
+};
+
+
+
+
+
 const char *GetCommand(int id)
 {
     return nvCommand[id];
+}
+
+const wchar_t *GetCommandName(int id)
+{
+	return GetMsg(nvCommandMSG[id]);
 }
 
 wxMutex *GetMutex()
@@ -1014,6 +1050,33 @@ nvRGBA StrToRGBA(wxString str)
 	return RGB;
 }
 
+
+void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, float req, uint32_t *TimeOnLight, uint32_t *TimeOffLight) 
+{
+
+	SUN_PRECISION J = 367.0 * (SUN_PRECISION)y - uint16_t(7 * (y + uint16_t(((SUN_PRECISION)m + 9.0) / 12.0)) / 4.0) + uint16_t(275.0 * (SUN_PRECISION)m / 9.0) + d - 730531.5;
+	SUN_PRECISION Cent = J / 36525.0;
+	SUN_PRECISION L = fmod((4.8949504201433 + 628.331969753199 * Cent), 6.28318530718);
+	SUN_PRECISION G = fmod((6.2400408 + 628.3019501 * Cent), 6.28318530718);
+	SUN_PRECISION O = 0.409093 - 0.0002269 * Cent;
+	SUN_PRECISION F = 0.033423 * sin(G) + 0.00034907 * sin(2.0 * G);
+	SUN_PRECISION E = 0.0430398 * sin(2.0 * (L + F)) - 0.00092502 * sin(4.0 * (L + F)) - F;
+	SUN_PRECISION A = asin(sin(O) * sin(L + F));
+	SUN_PRECISION C = (sin(0.017453293 * req) - sin(0.017453293 * lat) * sin(A)) / (cos(0.017453293 * lat) * cos(A));
+	SUN_PRECISION OnLight = (SUN_PI - (E + 0.017453293 * lon + (-1.0) * acos(C))) * 57.295779551 / 15.0;
+	SUN_PRECISION OffLight = (SUN_PI - (E + 0.017453293 * lon + 1.0 * acos(C))) * 57.29577951 / 15.0;
+
+	float HourPercent = OnLight - (uint32_t)OnLight;
+	*TimeOnLight = (3600 * (uint32_t)OnLight) + (uint32_t)(3600.0 * HourPercent);
+	HourPercent = OffLight - (uint32_t)OffLight;
+	*TimeOffLight = (3600 * (uint32_t)OffLight) + (uint32_t)(3600.0 * HourPercent);
+
+};
+
+/*
+wywo³anie:
+	GetOnOffLightTime(DatePtr->Year, DatePtr->Month, DatePtr->Day, cr->StaticLon, cr->StaticLat, cr->OnOffLightReq, &LightOnTime, &LightOffTime);
+*/
 
 
 #if 0

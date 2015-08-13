@@ -10,15 +10,16 @@
 BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_SLIDER(ID_DRIVE_CURRENT,OnDriveCurrent)
 	EVT_SLIDER(ID_POWER_OF_LIGHT,OnPowerOfLight)
-	EVT_CHECKBOX(ID_FORCED_OFF,OnForcedOff)
 	EVT_CHECKBOX(ID_SEASON_CONTROL,OnSeasonControl)
 	EVT_CHECKBOX(ID_STANDARD_REPORT,OnStandardReport)
 	EVT_CHECKBOX(ID_TIME,OnTime)
 	EVT_CHECKBOX(ID_UPTIME,OnUptime)
 	EVT_BUTTON(ID_BUTTON_OK,OnButtonOk)
-	EVT_BUTTON(ID_BUTTON_CANCEL,OnButtonCancel)
+	EVT_BUTTON(ID_BUTTON_CANCEL,OnButtonCancel)	
 	EVT_RADIOBUTTON(ID_AUTO,OnAuto)
-	EVT_RADIOBUTTON(ID_HUMAN,OnHuman)
+	EVT_RADIOBUTTON(ID_MANUAL,OnManual)
+	EVT_BUTTON(ID_LIGHT_ON,OnLightOn)
+	EVT_BUTTON(ID_LIGHT_OFF,OnLightOff)
 
 END_EVENT_TABLE()
 
@@ -33,14 +34,14 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 
 	m_DriveCurrentValue = 1;
 	m_PowerOfLightValue = 1;
-	m_ForcedOffValue = false;
+	m_LightValue = false;
 	m_SeasonControlValue = false;
 	m_StandardReportValue = false;
 	m_UptimeValue = false;
-	m_Time = false;
+	m_TimeValue = false;
 		
-	
 	SetGui();
+	
 	
 }
 
@@ -57,6 +58,8 @@ void CCommandPanel::OnDriveCurrent(wxCommandEvent &event)
 		m_Changed[COMMAND_DRIVE_CURRENT] = false;
 	
 	SetButtonState();
+	SetTextLog();
+	
 }
 
 void CCommandPanel::OnPowerOfLight(wxCommandEvent &event)
@@ -67,6 +70,8 @@ void CCommandPanel::OnPowerOfLight(wxCommandEvent &event)
 		m_Changed[COMMAND_POWER_OF_LIGHT] = false;
 		
 	SetButtonState();
+	SetTextLog();
+	
 }
 
 void CCommandPanel::OnStandardReport(wxCommandEvent &event)
@@ -78,17 +83,20 @@ void CCommandPanel::OnStandardReport(wxCommandEvent &event)
 		m_Changed[COMMAND_STANDARD_REPORT] = false;
 	
 	SetButtonState();
+	SetTextLog();
+	
 }
 
 void CCommandPanel::OnTime(wxCommandEvent &event)
 {
-
 	if(m_TimeValue != m_Time->GetValue())
 		m_Changed[COMMAND_GET_TIME] = true;
 	else
 		m_Changed[COMMAND_GET_TIME] = false;
 	
 	SetButtonState();
+	SetTextLog();
+	
 }
 
 void CCommandPanel::OnUptime(wxCommandEvent &event)
@@ -99,20 +107,43 @@ void CCommandPanel::OnUptime(wxCommandEvent &event)
 	else
 		m_Changed[COMMAND_GET_UPTIME] = false;
 	
-	SetButtonState();	
+	SetButtonState();
+	SetTextLog();
+	
 }
 
 
-void CCommandPanel::OnForcedOff(wxCommandEvent &event)
+void CCommandPanel::OnLightOff(wxCommandEvent &event)
 {
+	m_LightOn->Enable(true);
+	m_LightOff->Enable(false);
 
-	if(m_ForcedOffValue != m_ForcedOff->GetValue())
+	if(m_LightValue)
 		m_Changed[COMMAND_LIGHT_ON] = true;
 	else
 		m_Changed[COMMAND_LIGHT_ON] = false;
 	
 	SetButtonState();
+	SetTextLog();
+	
+	
 }
+
+void CCommandPanel::OnLightOn(wxCommandEvent &event)
+{
+	m_LightOn->Enable(false);
+	m_LightOff->Enable(true);
+	
+	if(m_LightValue)
+		m_Changed[COMMAND_LIGHT_ON] = false;
+	else
+		m_Changed[COMMAND_LIGHT_ON] = true;
+	
+	SetButtonState();
+	SetTextLog();
+	
+}
+
 
 void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 {
@@ -126,7 +157,24 @@ void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 	}
 		
 	SetButtonState();
+	SetTextLog();
 	
+}
+
+void CCommandPanel::SetTextLog()
+{
+	m_TextLog->Clear();
+	
+	for(size_t i = 0; i < COMMAND_COUNT; i++)
+	{		
+		if(m_Changed[i])
+		{
+			m_TextLog->AppendText(wxString::Format(_("%s %s"),GetCommandName(i),GetCommand(i)));
+			m_TextLog->AppendText("\r\n");
+		}
+			
+	}
+
 }
 
 void CCommandPanel::SetButtonState()
@@ -163,20 +211,20 @@ void CCommandPanel::OnButtonCancel(wxCommandEvent &event)
 
 void CCommandPanel::OnAuto(wxCommandEvent &event)
 {
-	EnableControls(false);
+	m_LightPanel->Disable();
 }
 
-void CCommandPanel::OnHuman(wxCommandEvent &event)
+void CCommandPanel::OnManual(wxCommandEvent &event)
 {
-	EnableControls(true);
+	m_LightPanel->Enable();
 }
 
 void CCommandPanel::SetValues()
 {
-	m_DriveCurrentValue = m_DriveCurrent->GetValue();
-	m_PowerOfLightValue = m_PowerOfLight->GetValue();
+	//m_DriveCurrentValue = m_DriveCurrent->GetValue();
+	//m_PowerOfLightValue = m_PowerOfLight->GetValue();
 	m_SeasonControlValue = m_SeasonControl->GetValue();
-	m_ForcedOffValue = m_ForcedOff->GetValue();
+	//m_LightValue = m_Ligh ForcedOff->GetValue();
 
 }
 
@@ -189,7 +237,7 @@ void CCommandPanel::SetCommand(int id)
 	
 	switch(id)
 	{
-		case COMMAND_LIGHT_ON:			SetCommandForcedOff(id,mmsi,SBMSID,id_base_station,m_ForcedOffValue);	break;
+//		case COMMAND_LIGHT_ON:			SetCommandForcedOff(id,mmsi,SBMSID,id_base_station,m_ForcedOffValue);	break;
 		case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(id,mmsi,SBMSID,id_base_station);				break;
 	}
 	
@@ -222,12 +270,13 @@ void CCommandPanel::EnableControls(bool v)
 {
 	SetBusy(!v);
 	m_ButtonCancel->Enable(!v);
-	m_StandardReportPanel->Enable(v);
-	m_ForcedOffPanel->Enable(v);
+	//m_StandardReportPanel->Enable(v);
+	m_LightPanel->Enable(v);
 	m_TimePanel->Enable(v);
 	m_UptimePanel->Enable(v);
-	m_DriveCurrentPanel->Enable(v);
-	m_PowerOfLightPanel->Enable(v);
+	m_AutoPanel->Enable(v);
+	//m_DriveCurrentPanel->Enable(v);
+	//m_PowerOfLightPanel->Enable(v);
 	m_SeasonControlPanel->Enable(v);
 
 }
@@ -257,7 +306,6 @@ void CCommandPanel::SetBusy(bool v)
 wxPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
 {
     wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
@@ -268,20 +316,52 @@ wxPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
 
 }
 
-wxPanel *CCommandPanel::ForcedOffPanel(wxPanel *parent)
+wxPanel *CCommandPanel::AutoPanel(wxPanel *parent)
+{
+    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+
+	m_LightAuto = new wxRadioButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
+	Sizer->Add(m_LightAuto,0,wxALL|wxEXPAND,5);
+	
+	m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
+	Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
+		
+	return Panel;
+}
+
+wxPanel *CCommandPanel::LightPanel(wxPanel *parent)
+{
+    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel->SetSizer(Sizer);
+		
+	m_LightOn = new wxButton(Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	Sizer->Add(m_LightOn,0,wxALL,5);
+
+	m_LightOff = new wxButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	Sizer->Add(m_LightOff,0,wxALL,5);
+
+		
+	return Panel;
+}
+
+/*
+wxPanel *CCommandPanel::GetTimePanel(wxPanel *parent)
 {
 		
     wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
-	m_ForcedOff = new wxCheckBox(Panel,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF));
-	Sizer->Add(m_ForcedOff,0,wxALL,5);
+	m_Auto = new wxCheckBox(Panel,ID_TIME,GetMsg(MSG_));
+	Sizer->Add(m_Time,0,wxALL,5);
 		
 	return Panel;
 
 }
+*/
 
 wxPanel *CCommandPanel::GetTimePanel(wxPanel *parent)
 {
@@ -355,7 +435,7 @@ wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 	Panel->SetSizer(Sizer);
 	
 	wxTextCtrl *aa = new wxTextCtrl(Panel,wxID_ANY);
-	Sizer->Add(aa,0,wxALL|wxEXPAND,5);	
+	Sizer->Add(aa,0,wxALL|wxEXPAND,5);
 	
 	//m_ButtonDelete->Disable();
 		
@@ -401,6 +481,18 @@ wxPanel *CCommandPanel::PowerOfLightPanel(wxPanel *parent)
 
 }
 
+wxPanel *CCommandPanel::TextLogPanel(wxPanel *parent)
+{
+	wxPanel *Panel = new wxPanel(parent, wxID_ANY);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	
+	m_TextLog = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(-1,200),wxTE_MULTILINE);
+	Sizer->Add(m_TextLog,0,wxALL|wxEXPAND,5);
+
+	return Panel;
+}
+
 wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 {
 
@@ -412,14 +504,6 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	m_InfoText = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
 	Sizer->Add(m_InfoText,0,wxALL,2);
 
-	//standardowy raport
-	m_StandardReportPanel = StandardReportPanel(Panel);
-	Sizer->Add(m_StandardReportPanel,0,wxALL|wxEXPAND,2);
-	
-	//serwisowe wy³¹czenie
-	m_ForcedOffPanel = ForcedOffPanel(Panel);
-	Sizer->Add(m_ForcedOffPanel,0,wxALL|wxEXPAND,2);
-	
 	//pobranie czasu
 	m_TimePanel = GetTimePanel(Panel);
 	Sizer->Add(m_TimePanel,0,wxALL|wxEXPAND,2);
@@ -427,24 +511,46 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	//pobranie czasu (uptime)
 	m_UptimePanel = GetUptimePanel(Panel);
 	Sizer->Add(m_UptimePanel,0,wxALL|wxEXPAND,2);
+
+	//standardowy raport
+	//m_StandardReportPanel = StandardReportPanel(Panel);
+	//Sizer->Add(m_StandardReportPanel,0,wxALL|wxEXPAND,2);
 	
+	wxStaticBoxSizer *BoxSizer = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_LIGHT));
+	Sizer->Add(BoxSizer,0,wxALL|wxEXPAND,5);
+
+	//serwisowe wy³¹czenie
+	m_AutoPanel = AutoPanel(Panel);
+	BoxSizer->Add(m_AutoPanel,0,wxALL|wxEXPAND,2);
+	m_LightPanel = LightPanel(Panel);
+	BoxSizer->Add(m_LightPanel,0,wxALL|wxEXPAND,2);
+		
 	//sezonowa praca
+	wxStaticBoxSizer *BoxSizer1 = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SEASON_CONTROL));
+	Sizer->Add(BoxSizer1,0,wxALL|wxEXPAND,5);
+
 	m_SeasonControlPanel = SeasonControlPanel(Panel);
-	Sizer->Add(m_SeasonControlPanel,0,wxALL|wxEXPAND,2);
-			
+	BoxSizer1->Add(m_SeasonControlPanel,0,wxALL|wxEXPAND,2);
+	
+	
 	// pr¹d podk³adu
-	m_DriveCurrentPanel = DriveCurrentPanel(Panel);
-	Sizer->Add(m_DriveCurrentPanel,0,wxALL|wxEXPAND,2);
+	//m_DriveCurrentPanel = DriveCurrentPanel(Panel);
+	//Sizer->Add(m_DriveCurrentPanel,0,wxALL|wxEXPAND,2);
 	
 	//moc œwiat³a
-	m_PowerOfLightPanel = PowerOfLightPanel(Panel);
-	Sizer->Add(m_PowerOfLightPanel,0,wxALL|wxEXPAND,2);
+	//m_PowerOfLightPanel = PowerOfLightPanel(Panel);
+	//Sizer->Add(m_PowerOfLightPanel,0,wxALL|wxEXPAND,2);
+
+	//text log
+	m_TextLogPanel = TextLogPanel(Panel);
+	Sizer->Add(m_TextLogPanel,0,wxALL|wxEXPAND,2);
+	
 
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	Sizer->Add(hSizer,0,wxALL|wxEXPAND,0);
-
+	
 	m_ButtonSend = new wxButton(Panel,ID_BUTTON_OK,GetMsg(MSG_SEND_COMMAND));
-	hSizer->Add(m_ButtonSend,1,wxALL|wxEXPAND,5);
+	hSizer->Add(m_ButtonSend,0,wxALL|wxEXPAND,5);
 	m_ButtonSend->Disable();
 	
 	m_ButtonCancel = new wxButton(Panel,ID_BUTTON_CANCEL,GetMsg(MSG_CANCEL));
@@ -455,8 +561,9 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 
 wxPanel *CCommandPanel::GetAutoPanel(wxPanel *parent)
 {
-	wxPanel *Panel = new wxPanel(parent);
 	
+	wxPanel *Panel = new wxPanel(parent);
+	/*
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 
@@ -465,7 +572,7 @@ wxPanel *CCommandPanel::GetAutoPanel(wxPanel *parent)
 	
 	wxRadioButton *m_Human = new wxRadioButton(Panel,ID_HUMAN,GetMsg(MSG_HUMAN_MANAGEMENT));
 	Sizer->Add(m_Human,0,wxALL|wxEXPAND,5);
-
+	*/
 	return Panel;
 }
 
@@ -473,17 +580,33 @@ void CCommandPanel::SetGui()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
-	Sizer->Add(GetAutoPanel(this),0,wxALL|wxEXPAND,2);
-	wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
-	Sizer->Add(line,0,wxALL|wxEXPAND,0);
-
+	//Sizer->Add(GetAutoPanel(this),0,wxALL|wxEXPAND,2);
+	//wxStaticLine *line = new wxStaticLine(this,wxID_ANY);
+	//Sizer->Add(line,0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetCommandPanel(this),1,wxALL|wxEXPAND,2);
 }
 
 //VALUES. . . . . . . . . . .  . . . . . .
 void CCommandPanel::SetForcedOff(bool v)
 {
-	m_ForcedOff->SetValue(v);
-	m_ForcedOffValue = v;
+	m_LightValue = v;
+	
+	if(v)
+	{
+		m_LightOn->Disable();
+		m_LightOff->Enable();
+	}else{
+		m_LightOn->Enable();
+		m_LightOff->Disable();
+	}
 
+}
+
+void CCommandPanel::SetAuto(bool v)
+{
+	m_LightAuto->SetValue(v);
+	m_LightManual->SetValue(!v);
+	
+	m_LightPanel->Enable(!v);
+	
 }

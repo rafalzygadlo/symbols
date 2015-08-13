@@ -513,6 +513,8 @@ void CListCtrl::SetChecked(long id, bool checked)
 
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
 {	
+	return NULL;
+	
 	switch(m_ControlType)
 	{
 		case CONTROL_SBMS:			m_ThisPtr->SetSBMSAttr(item,m_ListAttr); break;
