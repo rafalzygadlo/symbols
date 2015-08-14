@@ -58,9 +58,10 @@ wxString GetOverloadChannels(int v);
 wxString GetDownChannels(int v);
 wxString RGBAToStr(nvRGBA *RGB);
 nvRGBA StrToRGBA(wxString str);
+void SetAutoManagement();
 
 //COMMANDS
-void SetCommandForcedOff(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool off);
-void SetCommandStandardReport(int cmd_id,int mmsi,int SBMSID, int id_base_station);
+void _SetCommand(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool on);
+
 #endif
 

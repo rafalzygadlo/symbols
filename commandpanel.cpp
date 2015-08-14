@@ -20,7 +20,6 @@ BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_RADIOBUTTON(ID_MANUAL,OnManual)
 	EVT_BUTTON(ID_LIGHT_ON,OnLightOn)
 	EVT_BUTTON(ID_LIGHT_OFF,OnLightOff)
-
 END_EVENT_TABLE()
 
 CCommandPanel::CCommandPanel(wxWindow *parent)
@@ -39,9 +38,8 @@ CCommandPanel::CCommandPanel(wxWindow *parent)
 	m_StandardReportValue = false;
 	m_UptimeValue = false;
 	m_TimeValue = false;
-		
+	m_Busy = false;	
 	SetGui();
-	
 	
 }
 
@@ -115,13 +113,14 @@ void CCommandPanel::OnUptime(wxCommandEvent &event)
 
 void CCommandPanel::OnLightOff(wxCommandEvent &event)
 {
+	m_LightOnValue = false;
 	m_LightOn->Enable(true);
 	m_LightOff->Enable(false);
 
 	if(m_LightValue)
-		m_Changed[COMMAND_LIGHT_ON] = true;
+		m_Changed[COMMAND_LIGHT_OFF] = true;
 	else
-		m_Changed[COMMAND_LIGHT_ON] = false;
+		m_Changed[COMMAND_LIGHT_OFF] = false;
 	
 	SetButtonState();
 	SetTextLog();
@@ -131,6 +130,8 @@ void CCommandPanel::OnLightOff(wxCommandEvent &event)
 
 void CCommandPanel::OnLightOn(wxCommandEvent &event)
 {
+	
+	m_LightOnValue = true;
 	m_LightOn->Enable(false);
 	m_LightOff->Enable(true);
 	
@@ -161,6 +162,45 @@ void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 	
 }
 
+
+void CCommandPanel::OnAuto(wxCommandEvent &event)
+{
+	m_AutoValue = true;
+	m_Changed[COMMAND_LIGHT_ON] = false;
+	
+	if(!m_AutoValue)
+		m_Changed[COMMAND_AUTO_MANAGEMENT] = true;
+		
+	m_LightPanel->Disable();	
+
+	SetButtonState();
+	SetTextLog();
+	
+}
+
+void CCommandPanel::OnManual(wxCommandEvent &event)
+{
+	m_AutoValue = false;
+	m_Changed[COMMAND_AUTO_MANAGEMENT] = false;
+	
+	m_LightPanel->Enable();
+	
+	if(m_LightValue)
+	{
+		m_LightOn->Disable();
+		m_LightOff->Enable();
+	}else{
+		m_LightOn->Enable();
+		m_LightOff->Disable();
+	}
+	
+	
+	SetButtonState();
+	SetTextLog();
+	
+}
+
+
 void CCommandPanel::SetTextLog()
 {
 	m_TextLog->Clear();
@@ -169,7 +209,7 @@ void CCommandPanel::SetTextLog()
 	{		
 		if(m_Changed[i])
 		{
-			m_TextLog->AppendText(wxString::Format(_("%s %s"),GetCommandName(i),GetCommand(i)));
+			m_TextLog->AppendText(wxString::Format(_("%s"),GetCommandName(i),GetCommand(i)));
 			m_TextLog->AppendText("\r\n");
 		}
 			
@@ -195,8 +235,9 @@ void CCommandPanel::ButtonDisable()
 
 void CCommandPanel::OnButtonOk(wxCommandEvent &event)
 {
-	Disable();
 	SetValues();
+	
+	Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
 	{
 		if(m_Changed[i])
@@ -209,23 +250,13 @@ void CCommandPanel::OnButtonCancel(wxCommandEvent &event)
 	
 }
 
-void CCommandPanel::OnAuto(wxCommandEvent &event)
-{
-	m_LightPanel->Disable();
-}
-
-void CCommandPanel::OnManual(wxCommandEvent &event)
-{
-	m_LightPanel->Enable();
-}
 
 void CCommandPanel::SetValues()
 {
 	//m_DriveCurrentValue = m_DriveCurrent->GetValue();
 	//m_PowerOfLightValue = m_PowerOfLight->GetValue();
 	m_SeasonControlValue = m_SeasonControl->GetValue();
-	//m_LightValue = m_Ligh ForcedOff->GetValue();
-
+		
 }
 
 void CCommandPanel::SetCommand(int id)
@@ -237,8 +268,13 @@ void CCommandPanel::SetCommand(int id)
 	
 	switch(id)
 	{
-//		case COMMAND_LIGHT_ON:			SetCommandForcedOff(id,mmsi,SBMSID,id_base_station,m_ForcedOffValue);	break;
-		case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(id,mmsi,SBMSID,id_base_station);				break;
+		case COMMAND_LIGHT_ON:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
+		case COMMAND_LIGHT_OFF:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
+		case COMMAND_AUTO_MANAGEMENT:	_SetCommand(id,mmsi,SBMSID,id_base_station,m_AutoValue);		break;
+		case COMMAND_GET_TIME:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_TimeValue);		break;
+		case COMMAND_GET_UPTIME:		_SetCommand(id,mmsi,SBMSID,id_base_station,m_UptimeValue);		break;
+
+		//case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(id,mmsi,SBMSID,id_base_station);	break;
 	}
 	
 }
@@ -247,6 +283,33 @@ void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
 {
 	m_SelectedPtr = ptr;
 }
+
+void CCommandPanel::ReadCommands()
+{
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+
+	int sbmsid = m_SelectedPtr->GetSBMSID();
+	int mmsi = m_SelectedPtr->GetMMSI();
+	int id_base_station = m_SelectedPtr->GetBaseStationId();
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE SBMSID='%d' AND mmsi='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,sbmsid,mmsi,id_base_station,COMMAND_STATUS_NEW);
+	
+	my_query(db,sql);
+	void *result = db_result(db);
+	
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		m_TextLog->AppendText(GetCommandName(atoi(row[FI_COMMAND_ID_COMMAND])));
+		m_TextLog->AppendText("\r\n");
+	}
+}
+
 
 void CCommandPanel::Set()
 {
@@ -259,6 +322,9 @@ void CCommandPanel::Set()
 
 	SetNoSBMS(false);
 	
+	ReadCommands();
+
+
 	if(m_SelectedPtr->GetBusy())
 		EnableControls(false);
 	else
@@ -275,6 +341,9 @@ void CCommandPanel::EnableControls(bool v)
 	m_TimePanel->Enable(v);
 	m_UptimePanel->Enable(v);
 	m_AutoPanel->Enable(v);
+	m_LightOn->Enable(v);
+	m_LightOff->Enable(v);
+	
 	//m_DriveCurrentPanel->Enable(v);
 	//m_PowerOfLightPanel->Enable(v);
 	m_SeasonControlPanel->Enable(v);
@@ -295,6 +364,7 @@ void CCommandPanel::SetNoSBMS(bool v)
 
 void CCommandPanel::SetBusy(bool v)
 {
+	m_Busy = v;
 	if(v)
 		m_InfoText->SetLabel(GetMsg(MSG_BUSY));
 	else
@@ -487,7 +557,7 @@ wxPanel *CCommandPanel::TextLogPanel(wxPanel *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	
-	m_TextLog = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(-1,200),wxTE_MULTILINE);
+	m_TextLog = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(-1,150),wxTE_MULTILINE);
 	Sizer->Add(m_TextLog,0,wxALL|wxEXPAND,5);
 
 	return Panel;
@@ -589,9 +659,12 @@ void CCommandPanel::SetGui()
 //VALUES. . . . . . . . . . .  . . . . . .
 void CCommandPanel::SetForcedOff(bool v)
 {
-	m_LightValue = v;
+	if(m_Busy)
+		return;
 	
-	if(v)
+	m_LightValue = !v; // forced off neguje
+	
+	if(m_LightValue)
 	{
 		m_LightOn->Disable();
 		m_LightOff->Enable();
@@ -604,9 +677,9 @@ void CCommandPanel::SetForcedOff(bool v)
 
 void CCommandPanel::SetAuto(bool v)
 {
+	m_AutoValue = v;
 	m_LightAuto->SetValue(v);
 	m_LightManual->SetValue(!v);
 	
 	m_LightPanel->Enable(!v);
-	
 }

@@ -191,7 +191,8 @@ const char *nvCommand[COMMAND_COUNT] =
     {"gt(%d)"},				//get time
 	{"sr(%d)"},				//standard report
 	{"gut(%d)"},			//get uptime
-	{"l(%d,%d)"},			//light on/off
+	{"l(%d,1)"},			//light on
+	{"l(%d,0)"},			//light off
 	{"m(%d,%d)"},			//zmiana mmsi
 	{"r(%d)"},				//reset
 	{"s(%d)"},				//save
@@ -216,6 +217,7 @@ int nvCommandMSG[COMMAND_COUNT] =
 	{MSG_STANDARD_REPORT},	//standard report
 	{MSG_GET_UPTIME},		//get uptime
 	{MSG_LIGHT_ON},			//light on/off
+	{MSG_LIGHT_OFF},		//light on/off
 	{MSG_MMSI},				//zmiana mmsi
 	{MSG_MMSI},				//reset
 	{MSG_MMSI},				//save
@@ -225,10 +227,6 @@ int nvCommandMSG[COMMAND_COUNT] =
 
 		
 };
-
-
-
-
 
 const char *GetCommand(int id)
 {
@@ -1014,23 +1012,22 @@ void UpdateDBCommand(int id,wxString cmd)
 	DBClose(db);
 }
 
-void SetCommandForcedOff(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool off)
+void _SetCommand(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool on)
 {
 	int id = SetDBCommand(mmsi,SBMSID,id_base_station,cmd_id);
 	const char *cmd = GetCommand(cmd_id);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,off);
+	wxString _cmd = wxString::Format(_(cmd),SBMSID,on);
 	UpdateDBCommand(id,_cmd);
 }
-
-void SetCommandStandardReport(int cmd_id,int mmsi,int SBMSID, int id_base_station)
+/*
+void SetAutoManagement()
 {
-	int id = SetDBCommand(mmsi,SBMSID,id_base_station,cmd_id);
-	const char *cmd = GetCommand(cmd_id);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,id);
-	UpdateDBCommand(id,_cmd);
+	wxString sql = wxString::Format(_("UPDATE `%s` SET auto='%d' WHERE id='%d'"),TABLE_SBMS, AUTO_MANAGEMENT );
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
 }
-
-
+*/
 wxString RGBAToStr(nvRGBA *RGB)
 {
 	return wxString::Format(_("%03d%03d%03d%03d"), RGB->R, RGB->G, RGB->B,RGB->A);

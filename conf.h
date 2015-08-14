@@ -576,6 +576,7 @@
 #define FI_COMMAND_ID				0
 #define FI_COMMAND_ID_COMMUNICATION	1
 #define FI_COMMAND_CMD				2
+#define FI_COMMAND_ID_COMMAND		5
 #define FN_COMMAND_ID				"id"
 #define FN_COMMAND_ID_SYMBOL		"id_symbol"
 #define FN_COMMAND_ID_COMMAND		"id_command"
@@ -695,15 +696,16 @@
 #define COMMAND_GET_TIME				8	//pobierz czas
 #define COMMAND_STANDARD_REPORT			9	//standardowy raport
 #define COMMAND_GET_UPTIME				10	//uptime
-#define COMMAND_LIGHT_ON				11	// light on off
-#define COMMAND_MMSI					12	//mmsi change
-#define COMMAND_RESET					13	//reset
-#define COMMAND_SAVE					14	//save
-#define COMMAND_HUMAN_MANAGEMENT		15	//człowiek coś tam
-#define COMMAND_POWER					16	//ais power
-#define COMMAND_ACCEL_THRESHOLD			17	//próg akcelerometru
+#define COMMAND_LIGHT_ON				11	//light on off
+#define COMMAND_LIGHT_OFF				12	//light on off
+#define COMMAND_MMSI					13	//mmsi change
+#define COMMAND_RESET					14	//reset
+#define COMMAND_SAVE					15	//save
+#define COMMAND_AUTO_MANAGEMENT			16	//człowiek coś tam
+#define COMMAND_POWER					17	//ais power
+#define COMMAND_ACCEL_THRESHOLD			18	//próg akcelerometru
 
-#define COMMAND_COUNT 18 //ilosc komend
+#define COMMAND_COUNT 19 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
 #define RESTRICTED_AREA_RADIUS 50 //m ?
@@ -724,7 +726,8 @@
 #define ONOFFLIGHT_LAT	53.89704
 #define ONOFFLIGHT_REQ	-1
 
-
+#define MANUAL_MANAGEMENT	0
+#define AUTO_MANAGEMENT		1
 
 /*
 

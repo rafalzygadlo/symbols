@@ -1021,7 +1021,11 @@ void CMapPlugin::RenderHighlighted()
 
 void CMapPlugin::RenderInfo(CSymbol *ptr)
 {
-	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
+	if(ptr->GetMMSI() > 0)
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
+	else
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
+	
 	nvtime_t t = ptr->GetNvTime();
 	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 }
@@ -1102,9 +1106,13 @@ void CMapPlugin::RenderNames()
 		ptr->Render();
 
 		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%d",ptr->GetMMSI());
-		nvtime_t t = ptr->GetNvTime();
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+		if(ptr->GetMMSI() > 0)
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
+		else
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
+		
+		//nvtime_t t = ptr->GetNvTime();
+		//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 		if(ptr->GetBusy())
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCount());
 	}

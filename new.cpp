@@ -998,22 +998,38 @@ wxImage CNew::GetPicture()
 
 int CNew::GetAreaId()
 {
+	int id = m_AreaCombo->GetSelection();
+	if(id < 0)
+		return 0;
+	
 	return (int)m_AreaCombo->GetClientData(m_AreaCombo->GetSelection());
 }
 
 int CNew::GetSeawayId()
 {
+	int id = m_SeawayCombo->GetSelection();
+	if(id < 0)
+		return 0;
+
 	return (int)m_SeawayCombo->GetClientData(m_SeawayCombo->GetSelection());
 }
 
 int CNew::GetSymbolTypeId()
 {
-	return (int)m_SymbolTypeCombo->GetClientData(m_SymbolTypeCombo->GetSelection());
+	int id = m_SymbolTypeCombo->GetSelection();
+	if(id < 0)
+		return 0;
+	else
+		return (int)m_SymbolTypeCombo->GetClientData(m_SymbolTypeCombo->GetSelection());
 }
 
 int CNew::GetSBMSId()
 {
-	return (int)m_SBMSCombo->GetClientData(m_SBMSCombo->GetSelection());
+	int id = m_SymbolTypeCombo->GetSelection();
+	if(id < 0)
+		return 0;
+	else
+		return (int)m_SBMSCombo->GetClientData(m_SBMSCombo->GetSelection());
 }
 
 double CNew::GetLon()

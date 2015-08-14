@@ -9,6 +9,7 @@
 class CCommandPanel: public wxPanel
 {
 	bool *m_Changed;
+	bool m_Busy;
 	wxBoxSizer *m_Sizer;
 	wxSlider *m_FlashCode;
 	wxSlider *m_DriveCurrent;
@@ -47,6 +48,8 @@ class CCommandPanel: public wxPanel
 	bool m_StandardReportValue;
 	bool m_TimeValue;
 	bool m_UptimeValue;
+	bool m_AutoValue;
+	bool m_LightOnValue;
 
 	void OnDriveCurrent(wxCommandEvent &event);
 	void OnPowerOfLight(wxCommandEvent &event);
@@ -83,6 +86,7 @@ class CCommandPanel: public wxPanel
 	void SetGui();
 	void SetBusy(bool v);
 	void SetValues();
+	void ReadCommands();
 
 public:
 
