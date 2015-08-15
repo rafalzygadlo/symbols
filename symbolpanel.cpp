@@ -67,16 +67,19 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster->Disable();
 	//m_SeasonControl->Disable();
 
+	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
+	Sizer->Add(WrapSizer,0,wxALL|wxEXPAND,5);
+
 	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
-	Sizer->Add(m_ButtonManagement,0,wxALL|wxEXPAND,2);
+	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
 	m_ButtonManagement->Disable();
 
 	m_ButtonGraph = new wxButton(this,ID_GRAPH,GetMsg(MSG_GRAPH));
-	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
+	WrapSizer->Add(m_ButtonGraph,0,wxALL,2);
 	m_ButtonGraph->Disable();
 	
 	m_ButtonAlarm = new wxButton(this,ID_ALARM,GetMsg(MSG_ALARM));
-	Sizer->Add(m_ButtonAlarm,0,wxALL|wxEXPAND,2);
+	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
 	m_ButtonAlarm->Disable();
 		
 	

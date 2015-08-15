@@ -990,7 +990,7 @@ void CMapPlugin::RenderText(float x, float y, float vx, float vy, const wchar_t 
 	vswprintf ( buffer, 128, format, args );
 	va_end(args);
 	
-	m_NameFont->Print(x,y,6.0/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
+	m_NameFont->Print(x,y,GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
 
 }
 
@@ -1100,21 +1100,29 @@ void CMapPlugin::RenderSymbols()
 void CMapPlugin::RenderNames()
 {
 	
+
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetName());
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetNumber());
 		if(ptr->GetMMSI() > 0)
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
 		else
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
 		
-		//nvtime_t t = ptr->GetNvTime();
-		//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,6.3f,ptr->GetAgeAsString());
+
+		GetLocalTimestamp();
+		//ptr->GetLocalTimestamp();
+
 		if(ptr->GetBusy())
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCount());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
+		
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
+
 	}
 
 }

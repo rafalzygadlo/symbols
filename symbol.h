@@ -44,7 +44,10 @@ class CSymbol
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	bool m_TickExit;
-	int m_CommandTick,m_CommandTickOn,m_PositionsTick;
+	int m_CommandTick;
+	int	m_CommandTickOn;
+	int m_PositionsTick;
+	int m_ReportTick;
 	int m_ReadTick;
 	int m_CollisionTick;
 	int m_AlarmTick,m_AlarmTickOn;
@@ -54,6 +57,7 @@ class CSymbol
 	bool m_RenderRestricted;
 	bool m_Selected;
 	int m_AlarmCount;
+	int m_ReportCount;
 	wxString m_Name;
 	wxString m_Number;
 	bool m_Exists;
@@ -62,6 +66,9 @@ class CSymbol
 	int m_CommandCount;
 	int m_MMSI;
 	nvtime_t m_nvTime;
+	int m_Timestamp;
+	int m_Age;
+	wxString m_AgeString;
 	bool m_InMonitoring;
 		
 	void CSymbol::SetColor(int id);
@@ -71,6 +78,7 @@ class CSymbol
 	bool CheckCommand();
 	bool CheckAlarm();
 	bool CheckCollision();
+	bool CheckReport();
 	bool SetPositions();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
@@ -112,6 +120,9 @@ public:
 	void SetLat(double v);
 	void SetLonMap(double v);
 	void SetLatMap(double v);
+	void SetTimestamp(int v);
+	void SetAge(int v);
+	void SetAge(wxString v);
 	
 	int GetId();
 	int GetIdSBMS();
@@ -125,11 +136,14 @@ public:
 	wxString GetNumber();
 	bool GetExists();
 	bool GetLightOn();
-	wxString GetCommandCount();
 	int GetMMSI();
 	nvtime_t GetNvTime();
+	int GetAge();
+	wxString GetAgeAsString();
+	wxString GetReportCountAsString();
+	wxString GetCommandCountAsString();
 	
-
+	
 	void Render();
 
 };

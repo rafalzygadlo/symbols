@@ -118,10 +118,15 @@ void CCommandPanel::OnLightOff(wxCommandEvent &event)
 	m_LightOff->Enable(false);
 
 	if(m_LightValue)
+	{
+		m_Changed[COMMAND_LIGHT_ON] = false;
 		m_Changed[COMMAND_LIGHT_OFF] = true;
-	else
+	}else{
+		m_Changed[COMMAND_LIGHT_ON] = false;
 		m_Changed[COMMAND_LIGHT_OFF] = false;
-	
+	}
+
+	//m_LightValue = false;
 	SetButtonState();
 	SetTextLog();
 	
@@ -136,10 +141,16 @@ void CCommandPanel::OnLightOn(wxCommandEvent &event)
 	m_LightOff->Enable(true);
 	
 	if(m_LightValue)
+	{
 		m_Changed[COMMAND_LIGHT_ON] = false;
-	else
-		m_Changed[COMMAND_LIGHT_ON] = true;
+		m_Changed[COMMAND_LIGHT_OFF] = false;
+	}else{
 	
+		m_Changed[COMMAND_LIGHT_ON] = true;
+		m_Changed[COMMAND_LIGHT_OFF] = false;
+	}
+
+	//m_LightValue = true;
 	SetButtonState();
 	SetTextLog();
 	
@@ -165,14 +176,15 @@ void CCommandPanel::OnSeasonControl(wxCommandEvent &event)
 
 void CCommandPanel::OnAuto(wxCommandEvent &event)
 {
-	m_AutoValue = true;
+	
 	m_Changed[COMMAND_LIGHT_ON] = false;
+	m_Changed[COMMAND_LIGHT_OFF] = false;
 	
 	if(!m_AutoValue)
 		m_Changed[COMMAND_AUTO_MANAGEMENT] = true;
 		
 	m_LightPanel->Disable();	
-
+	m_AutoValue = true;
 	SetButtonState();
 	SetTextLog();
 	

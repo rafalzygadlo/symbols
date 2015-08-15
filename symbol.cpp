@@ -31,6 +31,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_CollisionTick = CHECK_COLLISION_TICK;
 	m_CommandTickOn = CHECK_COMMAND_TICK_ON;
 	m_ReadTick = CHECK_READ_TICK;
+	m_ReportTick = CHECK_REPORT_TICK;
 	m_Busy = false;
 	m_BusyOn = false;
 	m_Alarm = false;
@@ -46,6 +47,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_ForcedOff = false;
 	m_MMSI = 0;
 	m_InMonitoring = false;
+	m_ReportCount = 0;
 }
 
 CSymbol::~CSymbol()
@@ -60,10 +62,10 @@ void CSymbol::SetDB(void *db)
 
 void CSymbol::Read()
 {
-	m_ReadTick++;
+	//m_ReadTick++;
 	
-	if(m_ReadTick <= CHECK_READ_TICK)
-		return;
+	//if(m_ReadTick <= CHECK_READ_TICK)
+		//return;
 			
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
 
@@ -83,7 +85,15 @@ void CSymbol::Read()
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
-
+		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
+		SetTimestamp(timestamp);
+		SetAge(GetLocalTimestamp() - timestamp);
+		
+		int seconds = GetLocalTimestamp() - timestamp;
+		int minutes = seconds/60;
+		div_t _div = div(seconds,60);
+		SetAge(wxString::Format(_("%02d:%02d"), minutes,_div.rem));
+		
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
 		double to_x,to_y;
@@ -285,6 +295,35 @@ bool CSymbol::SetPositions()
 	return true;
 }
 
+bool CSymbol::CheckReport()
+{
+	m_ReportTick++;
+	
+	if(m_ReportTick <= CHECK_REPORT_TICK)
+		return false;
+			
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_STANDARD_REPORT,m_IdSBMS);
+
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+
+    char **row = NULL;
+	if(result == NULL)
+		return false;
+	
+	row = (char**)db_fetch_row(result);
+	sscanf(row[0],"%d",&m_ReportCount);
+	
+	//if(m_AlarmCount > 0)
+	//{
+		//m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
+		//m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_
+
+	//}
+
+	db_free_result(result);
+	return true;
+}
 
 void CSymbol::OnTick(void *db)
 {
@@ -300,9 +339,11 @@ void CSymbol::OnTick(void *db)
 		result = true;
 	if(CheckAlarm())
 		result = true;
-	
+	if(CheckReport())
+		result = true;
 	if(SetPositions())
 		result = true;
+
 	
 	CheckCollision();
 	
@@ -509,7 +550,7 @@ void CSymbol::RenderSymbol()
 		glVertex2f(m_RectWidth,0.0);
 		glVertex2f(-m_RectWidth,0.0);
 	glEnd();
-	nvDrawCircle(&c);
+	//nvDrawCircle(&c);
 
 	glPopMatrix();
 	
@@ -537,7 +578,7 @@ void CSymbol::RenderGPS()
 	glColor4f(1.0f,1.0f,1.0f,0.9f);
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 
-	glPointSize(10);
+	glPointSize(2);
 	nvDrawPoint(0.0,0.0);
 	glPopMatrix();
 
@@ -546,7 +587,7 @@ void CSymbol::RenderGPS()
 void CSymbol::RenderPositions()
 {
 	glEnable(GL_BLEND);
-	glPointSize(20);
+	glPointSize(2);
 	glColor3f(0.0f,1.0f,0.0f);
 	if(m_PosBuffer.Length() > 0)
 		RenderGeometry(GL_POINTS,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
@@ -690,6 +731,21 @@ void CSymbol::SetNvTime(nvtime_t dt)
 	m_nvTime = dt;
 }	
 
+void CSymbol::SetTimestamp(int v)
+{
+	m_Timestamp = v;
+}
+
+void CSymbol::SetAge(int v)
+{
+	m_Age = v;
+}
+
+void CSymbol::SetAge(wxString v)
+{
+	m_AgeString = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -756,10 +812,16 @@ bool CSymbol::GetLightOn()
 	return m_LightOn;
 }
 
-wxString CSymbol::GetCommandCount()
+wxString CSymbol::GetCommandCountAsString()
 {
 	return wxString::Format(_("%d"),m_CommandCount);
-	
+
+}
+
+wxString CSymbol::GetReportCountAsString()
+{
+	return wxString::Format(_("%d"),m_ReportCount);
+
 }
 
 int CSymbol::GetMMSI()
@@ -770,4 +832,9 @@ int CSymbol::GetMMSI()
 nvtime_t CSymbol::GetNvTime()
 {
 	return m_nvTime;
+}
+
+wxString CSymbol::GetAgeAsString()
+{
+	return m_AgeString;
 }

@@ -59,6 +59,7 @@ wxString GetDownChannels(int v);
 wxString RGBAToStr(nvRGBA *RGB);
 nvRGBA StrToRGBA(wxString str);
 void SetAutoManagement();
+time_t GetLocalTimestamp();
 
 //COMMANDS
 void _SetCommand(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool on);

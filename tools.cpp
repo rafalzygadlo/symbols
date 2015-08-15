@@ -1074,6 +1074,16 @@ void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, f
 wywo³anie:
 	GetOnOffLightTime(DatePtr->Year, DatePtr->Month, DatePtr->Day, cr->StaticLon, cr->StaticLat, cr->OnOffLightReq, &LightOnTime, &LightOffTime);
 */
+time_t GetLocalTimestamp()
+{
+    time_t t = time(0);   // get time now
+    struct tm * now = gmtime( & t );
+    
+	return t;
+	//return mktime(now);
+
+
+}
 
 
 #if 0
