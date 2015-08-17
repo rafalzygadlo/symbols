@@ -136,7 +136,8 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	wxListItem item;
 	
 	item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
-	item.SetWidth(250); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
+	item.SetWidth(80); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
+	item.SetWidth(250); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(2,item);
 
 	m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
 	Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);

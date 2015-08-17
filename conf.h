@@ -59,6 +59,7 @@
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1
+#define COLUMN_AGE		2
 
 #define DEFAULT_FONT "arial.ttf"
 

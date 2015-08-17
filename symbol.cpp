@@ -47,6 +47,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_MMSI = 0;
 	m_InMonitoring = false;
 	m_ReportCount = 0;
+	m_AgeString = "N/A";
 }
 
 CSymbol::~CSymbol()
