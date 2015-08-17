@@ -36,7 +36,6 @@ class CSymbol
 	//pozycja GPS
 	double m_Lon, m_Lat, m_LonMap, m_LatMap;
 	double m_Scale;
-	double m_Factor; 
 	double m_SmoothScaleFactor;
 	double m_RectWidth;
 	double m_RectHeight;

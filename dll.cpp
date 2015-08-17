@@ -54,7 +54,6 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_AnimMarkerSize = 5.0f;
 	m_Broker = NaviBroker;
 	m_FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
-	Factor = DEFAULT_FACTOR;
 	MouseX = 0;
 	MouseY = 0;
 	Type = -1;
@@ -177,6 +176,8 @@ void CMapPlugin::ReadConfig()
 
 	//FONT
 	float size;
+	bool show;
+	FileConfig->Read(_(KEY_FONT_SHOW),&show,DEFAULT_FONT_SHOW);				SetShowFontNames(show);			
 	FileConfig->Read(_(KEY_FONT_SIZE),&size,DEFAULT_FONT_SIZE);				SetFontSize(size*10);
 	FileConfig->Read(_(KEY_VIEW_FONT_SCALE),&size,DEFAULT_VIEW_FONT_SCALE);	SetViewFontScale(size);
 	
@@ -184,7 +185,11 @@ void CMapPlugin::ReadConfig()
 	float v;
 	FileConfig->Read(_(KEY_LOWER_THRESHOLD),&v,DEFAULT_LOWER_TRESHOLD);		SetLowerTreshold(v);
 	FileConfig->Read(_(KEY_UPPER_THRESHOLD),&v,DEFAULT_UPPER_TRESHOLD);		SetUpperTreshold(v);
-		
+	
+	int val;
+	FileConfig->Read(_(KEY_SCALE_FACTOR),&val,DEFAULT_SCALE_FACTOR);				SetScaleFactor(val);
+	FileConfig->Read(_(KEY_RESTRICTED_AREA),&val,DEFAULT_RESTRICTED_AREA_RADIUS);	SetRestrictedArea(val);
+
 	delete FileConfig;
 
 }
@@ -217,6 +222,7 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));
 
 	//FONT
+	FileConfig->Write(_(KEY_FONT_SHOW),GetShowFontNames());
 	FileConfig->Write(_(KEY_FONT_SIZE),GetFontSize());
 	FileConfig->Write(_(KEY_VIEW_FONT_SCALE),GetViewFontScale());
 
@@ -224,6 +230,10 @@ void CMapPlugin::WriteConfig()
 	float v;
 	FileConfig->Write(_(KEY_LOWER_THRESHOLD),GetLowerTreshold());
 	FileConfig->Write(_(KEY_UPPER_THRESHOLD),GetUpperTreshold());
+
+	FileConfig->Write(_(KEY_SCALE_FACTOR),GetScaleFactor());
+	FileConfig->Write(_(KEY_RESTRICTED_AREA),GetRestrictedArea());
+	
 
 	delete FileConfig;
 
@@ -335,10 +345,11 @@ void CMapPlugin::OnInitGL()
 
 void CMapPlugin::SetSmoothScaleFactor(double _Scale) 
 {
-	if( _Scale > Factor )
+	int factor = GetScaleFactor();
+	if( _Scale > factor )
 		m_SmoothScaleFactor = _Scale;
 	else
-		m_SmoothScaleFactor = Factor;
+		m_SmoothScaleFactor = factor;
 }
 
 void CMapPlugin::SetSql(wxString &sql)
@@ -1099,25 +1110,24 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::RenderNames()
 {
+	if(!GetShowFontNames())
+		return;
 	
-
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetName());
+		//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetName());
 		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetNumber());
+		/*
 		if(ptr->GetMMSI() > 0)
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
 		else
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
-		
+		*/
 		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,6.3f,ptr->GetAgeAsString());
-
-		GetLocalTimestamp();
-		//ptr->GetLocalTimestamp();
-
+		
 		if(ptr->GetBusy())
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 		

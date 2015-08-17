@@ -6,6 +6,7 @@
 #define DEFAULT_FG_COLOR wxColor(230,230,230)
 #define DEFAULT_BG_COLOR wxColor(50,50,50)
 
+//GET
 wxColor GetBGColor();
 wxColor GetFGColor();
 wxString GetDBHost();
@@ -29,11 +30,15 @@ int GetSelectedSymbolTypeId();
 int GetSelectedGroupId();
 int GetInMonitoring();
 int GetFilterChanged();
-
 float GetFontSize();
 int GetViewFontScale();
+bool GetShowFontNames();
 int GetCommTimeout();
+int GetRestrictedArea();
+int GetScaleFactor();
 
+
+//SET
 void SetFGColor(wxColor v);
 void SetBGColor(wxColor v);
 void SetDBHost(wxString v);
@@ -50,6 +55,11 @@ void SetSortColumnId(int v);
 void SetSortOrder(bool v);
 void SetSortColumn(wxString v);
 void SetSortChanged(bool v);
+void SetShowFontNames(bool v);
+void SetRectrictedArea(int v);
+void SetScaleFactor(int v);
+void SetRestrictedArea(int v);
+
 //filter
 void SetSelectedAreaId(int v);
 void SetSelectedSeawayId(int v);

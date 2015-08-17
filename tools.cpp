@@ -151,6 +151,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"SBMSID",L"SBMSID"},
 	{L"Light On",L"W³¹cz"},
 	{L"Light Off",L"Wy³¹cz"},
+	{L"Empty",L"Brak"},
+	{L"Show names",L"Poka¿ nazwy"},
+	{L"Scale Factor",L"Skalowanie obiektów"},
+	{L"Restricted Area Radius (meters)",L"Promieñ ochronny znaku (w metrach)"},
 
 };
 
@@ -822,16 +826,23 @@ wxComboBox *GetFilterCombo(void *db,wxWindow *Parent, int wid)
 }
 
 
-wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all)
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all, bool empty)
 {
-	int i = 0;
+	//int i = 0;
 	wxComboBox *ptr = new wxComboBox(Parent,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
 	
 	if(all)
 	{
 		ptr->Append(GetMsg(MSG_ALL));
 		ptr->SetClientData(0,(int*)-1);
-		i = 1;
+		//i = 1;
+	}
+
+	if(empty)
+	{
+		ptr->Append(GetMsg(MSG_EMPTY));
+		ptr->SetClientData(0,(int*)0);
+		//i = 1;
 	}
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
@@ -848,8 +859,9 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, in
 		int id = ptr->Append(name);
 		int row_id = atoi(row[field_id]);
 
-		long sid;
-		sel.ToLong(&sid);
+		long sid = 0;
+		if(!sel.empty())
+			sel.ToLong(&sid);
 
 		if(sid == row_id)
 			ptr->SetSelection(id);

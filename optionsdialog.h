@@ -10,11 +10,25 @@ class COptionsDialog: public wxDialog
 {
 	wxSpinCtrl *m_NumberOfTries;
 	wxSpinCtrl *m_SecondsBetweenTries;
-	wxColourPickerCtrl *m_SymbolNormalColor,*m_SymbolNoMonitorColor,*m_SymbolErrorColor,*m_SymbolLightOn;
-	wxSlider *m_SymbolNormalColorAlpha,*m_SymbolNoMonitorColorAlpha,*m_SymbolErrorAlpha,*m_SymbolLightOnAlpha;
-	wxSlider *m_FontSize,*m_ViewNameScale;
-	wxTextCtrl *m_LowerThreshold,*m_UpperThreshold;
-	//wxSpinCtrl *m_CommTimeout;
+	
+	wxColourPickerCtrl *m_SymbolNormalColor;
+	wxColourPickerCtrl *m_SymbolNoMonitorColor;
+	wxColourPickerCtrl *m_SymbolErrorColor;
+	wxColourPickerCtrl *m_SymbolLightOn;
+	
+	wxSlider *m_SymbolNormalColorAlpha;
+	wxSlider *m_SymbolNoMonitorColorAlpha;
+	wxSlider *m_SymbolErrorAlpha;
+	wxSlider *m_SymbolLightOnAlpha;
+	wxSlider *m_FontSize;
+	wxSlider *m_ViewNameScale;
+	wxSlider *m_ScaleFactor;
+	
+	wxTextCtrl *m_LowerThreshold;
+	wxTextCtrl *m_UpperThreshold;
+	wxTextCtrl *m_RestrictedArea;
+	wxCheckBox *m_ShowNames;
+	
 
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetColorPanel(wxWindow *parent);
@@ -29,7 +43,7 @@ class COptionsDialog: public wxDialog
 	void OnAlpha(wxCommandEvent &event);
 	void OnNameScale(wxCommandEvent &event);
 	void OnFontSize(wxCommandEvent &event);
-
+	void OnShowNames(wxCommandEvent &event);
 
 public:
 
@@ -47,6 +61,8 @@ public:
 		ID_SYMBOL_ERROR_ALPHA,
 		ID_SYMBOL_LIGHT_ON_COLOR,
 		ID_SYMBOL_LIGHT_ON_ALPHA,
+		ID_SHOW_NAMES,
+		ID_SCALE_FACTOR,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,

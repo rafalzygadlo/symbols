@@ -12,6 +12,7 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_SLIDER(wxID_ANY,OnAlpha)
 	EVT_SLIDER(ID_VIEW_NAME_SCALE, OnNameScale)
 	EVT_SLIDER(ID_FONT_SIZE,OnFontSize)
+	EVT_CHECKBOX(ID_SHOW_NAMES,OnShowNames)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
@@ -48,8 +49,8 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	
 	Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
 	return Panel;
@@ -145,10 +146,17 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_FONT));
 	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
 	Panel->SetSizer(Sizer);
-		
+	
+
+
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
 	
+	m_ShowNames = new wxCheckBox(Panel,ID_SHOW_NAMES,GetMsg(MSG_SHOW_NAMES));
+	m_ShowNames->SetValue(GetShowFontNames());
+	FlexSizer->Add(m_ShowNames,0,wxALL,1);
+	FlexSizer->AddSpacer(1);
+
 	wxStaticText *TextFontSize = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FONT_SIZE),wxDefaultPosition,wxDefaultSize);
 	FlexSizer->Add(TextFontSize,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	
@@ -178,17 +186,29 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_TIMEOUT));
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_OTHER));
 	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
 	Panel->SetSizer(Sizer);
 		
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
-		
-
-	wxStaticText *TextCommTimeout = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_COMM_TIMEOUT),wxDefaultPosition,wxDefaultSize);
-	FlexSizer->Add(TextCommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	
+	wxStaticText *TextScaleFactor = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SCALE_FACTOR),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextScaleFactor,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+		
+	m_ScaleFactor = new wxSlider(Panel,ID_SCALE_FACTOR,0,0,1,wxDefaultPosition,wxDefaultSize);
+	m_ScaleFactor->SetMin(1);
+	m_ScaleFactor->SetMax(10000);
+	m_ScaleFactor->SetValue(GetScaleFactor());
+	FlexSizer->Add(m_ScaleFactor,0,wxALL,5);
+	
+	wxStaticText *TextRestrictedArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+		
+	m_RestrictedArea = new wxTextCtrl(Panel,wxID_ANY);
+	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
+	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
+
 	/*
 	m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
 	FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
@@ -352,4 +372,9 @@ void COptionsDialog::OnNameScale(wxCommandEvent &event)
 void COptionsDialog::OnFontSize(wxCommandEvent &event)
 {
 	SetFontSize(event.GetInt());
+}
+
+void COptionsDialog::OnShowNames(wxCommandEvent &event)
+{
+	SetShowFontNames(event.IsChecked());
 }

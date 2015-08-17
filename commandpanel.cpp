@@ -282,7 +282,7 @@ void CCommandPanel::SetCommand(int id)
 	{
 		case COMMAND_LIGHT_ON:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
 		case COMMAND_LIGHT_OFF:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
-		case COMMAND_AUTO_MANAGEMENT:	_SetCommand(id,mmsi,SBMSID,id_base_station,m_AutoValue);		break;
+		case COMMAND_AUTO_MANAGEMENT:	_SetCommand(id,mmsi,SBMSID,id_base_station,!m_AutoValue);		break;
 		case COMMAND_GET_TIME:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_TimeValue);		break;
 		case COMMAND_GET_UPTIME:		_SetCommand(id,mmsi,SBMSID,id_base_station,m_UptimeValue);		break;
 

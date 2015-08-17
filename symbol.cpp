@@ -16,7 +16,6 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_Font = font;
 	m_Broker = broker;
 	m_Scale = 1;
-	m_Factor = DEFAULT_FACTOR;
 	m_SmoothScaleFactor = 1;
 	m_RectWidth = 0;
 	m_RectHeight = 0;
@@ -44,7 +43,7 @@ CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
 	m_AlarmCount = 0;
 	m_TickExit = false;
 	m_PhotoCellNightTime = false;
-	m_ForcedOff = false;
+	m_ForcedOff = true;
 	m_MMSI = 0;
 	m_InMonitoring = false;
 	m_ReportCount = 0;
@@ -152,7 +151,7 @@ bool CSymbol::CheckCollision()
 		nvCircle c1,c2;
 		c1.Center.x = m_RLonMap;
 		c1.Center.y = m_RLatMap;
-		c1.Radius = c1.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
+		c1.Radius = c1.Radius = (double)DEFAULT_RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
 		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
 		c2.Center.x =  to_x;
 		c2.Center.y = -to_y;
@@ -381,10 +380,11 @@ void CSymbol::CreateTextures(void)
 
 void CSymbol::SetSmoothScaleFactor(double v) 
 {
-	if( m_Scale > m_Factor )
+	int factor = GetScaleFactor();
+	if( m_Scale > factor )
 		m_SmoothScaleFactor = m_Scale;
 	else
-		m_SmoothScaleFactor = m_Factor;
+		m_SmoothScaleFactor = factor;
 }
 
 void CSymbol::SetValues()
@@ -568,7 +568,7 @@ void CSymbol::RenderRestricted()
 	nvCircle c;
 	c.Center.x = m_RLonMap;
 	c.Center.y = m_RLatMap;
-	c.Radius = (double)RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
+	c.Radius = (double)DEFAULT_RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
 	nvDrawCircleFilled(&c);
 }
 

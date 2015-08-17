@@ -26,6 +26,9 @@ int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 int m_CommTimeout = DEFAULT_COMM_TIMEOUT;
 int m_InMonitoring = DEFAULT_MONITORING_VALUE;
 int m_SelectedGroupId = 0;
+bool m_ShowFontNames = false;
+int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
+int m_ScaleFactor = DEFAULT_SCALE_FACTOR;
 nvRGBA SymbolNormalColor, SymbolNoMonitorColor, SymbolErrorColor, SymbolLightOnColor;
 
 //SET
@@ -45,6 +48,14 @@ void SetSortColumnId(int v)				{	m_SortColumnId = v;		}
 void SetSortOrder(bool v)				{	m_SortOrder = v;		}
 void SetSortChanged(bool v)				{	m_SortChanged = v;		}
 void SetSortColumn(wxString v)			{	m_SortColumn = v;		}
+void SetShowFontNames(bool v)			{	m_ShowFontNames = v;	}
+void SetFontSize( float size)			{	m_FontSize = size/10;	}
+void SetViewFontScale(int v)			{	m_ViewFontScale = v;	}
+void SetCommTimeout(int v)				{	m_CommTimeout = v;		}
+void SetScaleFactor(int v)				{	m_ScaleFactor = v;		}
+void SetRestrictedArea(int v)			{	m_RestrictedArea = v;	}
+
+
 //filter
 void SetSelectedAreaId(int v)			{	m_SelectedAreaId = v;		}
 void SetSelectedSeawayId(int v)			{	m_SelectedSeawayId = v;		}
@@ -53,9 +64,7 @@ void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
 void SetInMonitoring(int v)				{	m_InMonitoring = v;			}
 void SetSelectedGroupId(int v)			{	m_SelectedGroupId = v;		}
 
-void SetFontSize( float size)			{	m_FontSize = size/10;		}
-void SetViewFontScale(int v)			{	m_ViewFontScale = v;		}
-void SetCommTimeout(int v)				{	m_CommTimeout = v;			}
+
 
 //GET
 wxColor GetBGColor()			{	return m_BGColor;			}
@@ -77,6 +86,10 @@ bool GetSortChanged()			{	return m_SortChanged;		}
 float GetFontSize()				{	return m_FontSize;			}
 int GetViewFontScale()			{	return m_ViewFontScale;		}
 int GetCommTimeout()			{	return m_CommTimeout;		}
+bool GetShowFontNames()			{	return m_ShowFontNames;		}
+int GetRestrictedArea()			{	return m_RestrictedArea;	}
+int GetScaleFactor()			{	return m_ScaleFactor;		}
+int GetRestrictedArea(int v)	{	return m_RestrictedArea;	}
 
 
 //filter

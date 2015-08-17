@@ -35,7 +35,7 @@ int GetLanguageId();
 wxString Convert(char *v);
 wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
-wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel,int field_id, int field_name, bool all = false);
+wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel,int field_id, int field_name, bool all = false, bool empty = false);
 void ComboSetSelection(wxComboBox *combo, int id);
 wxString GetFontPath();
 const wchar_t *GetDegreeFormat(int id, int dir);

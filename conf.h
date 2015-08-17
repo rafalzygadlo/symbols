@@ -45,10 +45,15 @@
 #define KEY_LIGHT_ON_COLOR		"light_on_color"
 
 #define KEY_FONT_SIZE		"font_size"
-#define KEY_VIEW_FONT_SCALE "view_font_scale"
+#define KEY_VIEW_FONT_SCALE "font_view_scale"
+#define KEY_FONT_SHOW		"font_show"
 
 #define KEY_LOWER_THRESHOLD "lower_threshold"
 #define KEY_UPPER_THRESHOLD "upper_threshold"
+
+#define KEY_SCALE_FACTOR	"scale_factor"
+#define KEY_RESTRICTED_AREA	"restricted_area"
+
 
 #define PAGE_ALL 1
 
@@ -71,7 +76,7 @@
 #define INFO_WIDTH 128
 #define INFO_HEIGHT 32
 #define INFO_MARGIN 2
-#define DEFAULT_FACTOR 500.0
+#define DEFAULT_SCALE_FACTOR 5000.0
 #define FONT_SIZE 14
 #define PLUGIN_ID 4
 #define SYMBOL_NAME_SIZE 64
@@ -242,9 +247,14 @@
 #define MSG_SBMSID						131
 #define MSG_LIGHT_ON					132
 #define MSG_LIGHT_OFF					133
+#define MSG_EMPTY						134
+#define MSG_SHOW_NAMES					135
+#define MSG_SCALE_FACTOR				136
+#define MSG_RESTRICTED_AREA_RADIUS		137
+#define MSG_OTHER						138
 
 #define HTML_ANCHOR_LAST_REPORT	0
-
+#define DEFAULT_FONT_SHOW 0
 
 #define KEY_POSITION_DIALOG_X "Position_Dialog_X"
 #define KEY_POSITION_DIALOG_Y "Position_Dialog_Y"
@@ -709,7 +719,7 @@
 #define COMMAND_COUNT 19 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
-#define RESTRICTED_AREA_RADIUS 50 //m ?
+#define DEFAULT_RESTRICTED_AREA_RADIUS 50 //m ?
 
 //#define PAGE_MANAGEMENT 1	// index strony notebook management panel
 
