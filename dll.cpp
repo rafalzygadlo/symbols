@@ -418,7 +418,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		if(ptr == NULL)
 		{
 			add = true;
-			ptr = new CSymbol(m_Broker,m_NameFont);
+			ptr = new CSymbol(m_Broker);
 		}
 
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
@@ -471,7 +471,7 @@ void CMapPlugin::ReadGroup(void *db)
 		if(ptr == NULL)
 		{
 			add = true;
-			ptr = new CSymbol(m_Broker,m_NameFont);
+			ptr = new CSymbol(m_Broker);
 		}
 				
 		//ptr->SetRemove(true);		
@@ -1118,7 +1118,7 @@ void CMapPlugin::RenderNames()
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
 
-		//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetName());
+		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetSBMSName());
 		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetNumber());
 		/*
 		if(ptr->GetMMSI() > 0)
@@ -1163,7 +1163,6 @@ void CMapPlugin::Render(void)
 	
 	glDisable(GL_POINT_SMOOTH);
 	
-	//GetMutex()->Unlock();
 		
 }
 

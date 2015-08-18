@@ -175,39 +175,25 @@ void CSymbolPanel::SetHeader()
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
-	wxString sql = wxString::Format(_("SELECT *FROM `%s` WHERE id ='%d'"),TABLE_SYMBOL,ptr->GetId());
-	my_query(db,sql);
 	
-	void *result = db_result(db);
+	wxString str;
 		
-	char **row = NULL;
-	if(result == NULL)
-		return;
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetName()));
+	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
 		
-	row = (char**)db_fetch_row(result);
-	if(row)
-	{
-		wxString str;
-		//str.Append(_("<font size=2>symbol info</font>"));
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NAME]).wc_str()));
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),Convert(row[FI_SYMBOL_NUMBER])));
-		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
-		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
-	
-		if(atoi(row[FI_SYMBOL_IN_MONITORING]))
-			str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
+		
+	if(ptr->GetInMonitoring())
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
 			
-		if(m_IdSBMS == 0)
-			str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
-
-		//str.Append(wxString::Format(_("<tr><td>%s</td></tr>"),Convert(row[FI_SYMBOL_INFO])));
-		str.Append(_("</table>"));
-		m_Html->AppendToPage(str);
-	}
+	if(m_IdSBMS == 0)
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
+		
+	str.Append(_("</table>"));
+	m_Html->AppendToPage(str);
 	
-	db_free_result(result);
-
 }
 
 void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
@@ -248,9 +234,9 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_SBMS_ANALOG_PIN]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_SBMS_DIGITAL_VALUE]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
+		//str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_SBMS_ANALOG_PIN]));
+		//str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_SBMS_DIGITAL_VALUE]));
+		//str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetOnOff(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]))));

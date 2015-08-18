@@ -12,6 +12,7 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_SLIDER(wxID_ANY,OnAlpha)
 	EVT_SLIDER(ID_VIEW_NAME_SCALE, OnNameScale)
 	EVT_SLIDER(ID_FONT_SIZE,OnFontSize)
+	//EVT_SLIDER(ID_SCAL)
 	EVT_CHECKBOX(ID_SHOW_NAMES,OnShowNames)
 END_EVENT_TABLE()
 
@@ -23,12 +24,8 @@ COptionsDialog::COptionsDialog()
 	
 	wxNotebook *m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
-	
-	
-
 	Sizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
-
-
+	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
 	
 	SetSizer(Sizer);
@@ -182,7 +179,6 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 
 wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 {
-	
 	wxPanel *Panel = new wxPanel(Parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 

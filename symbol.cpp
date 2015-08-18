@@ -11,9 +11,8 @@
 #include "render.h"
 //#include "nvtime.h"
 
-CSymbol::CSymbol(CNaviBroker *broker,nvFastFont *font )
+CSymbol::CSymbol(CNaviBroker *broker)
 {
-	m_Font = font;
 	m_Broker = broker;
 	m_Scale = 1;
 	m_SmoothScaleFactor = 1;
@@ -85,14 +84,22 @@ void CSymbol::Read()
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
+		SetSBMSName(Convert(row[FI_SBMS_NAME]));
+		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		SetTimestamp(timestamp);
 		SetAge(GetLocalTimestamp() - timestamp);
-		
+				
 		int seconds = GetLocalTimestamp() - timestamp;
+		if(seconds < 0)
+			seconds = 0;
+
 		int minutes = seconds/60;
-		div_t _div = div(seconds,60);
-		SetAge(wxString::Format(_("%02d:%02d"), minutes,_div.rem));
+		int hours = minutes/60;
+		div_t _divs = div(seconds,60);
+		div_t _divm = div(minutes,60);
+				
+		SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 		
 		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
 		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
@@ -152,7 +159,7 @@ bool CSymbol::CheckCollision()
 		nvCircle c1,c2;
 		c1.Center.x = m_RLonMap;
 		c1.Center.y = m_RLatMap;
-		c1.Radius = c1.Radius = (double)DEFAULT_RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
+		c1.Radius = c1.Radius = (double)GetRestrictedArea()/1852/GetMilesPerDegree(m_RLon,m_RLat);
 		m_Broker->Unproject(ptr->lon,ptr->lat,&to_x,&to_y);
 		c2.Center.x =  to_x;
 		c2.Center.y = -to_y;
@@ -346,7 +353,8 @@ void CSymbol::OnTick(void *db)
 
 	
 	CheckCollision();
-	
+
+		
 }
 
 void CSymbol::OnTickExit()
@@ -420,7 +428,6 @@ void CSymbol::RenderSelected()
 	glPopMatrix();
 
 }
-#endif
 
 void CSymbol::RenderLightOn()
 {
@@ -464,6 +471,28 @@ void CSymbol::RenderAlarm()
 	glPopMatrix();
 		
 }
+#endif
+
+void CSymbol::SetSymbolColor()
+{
+	if(m_InMonitoring)
+	{
+		if(m_Alarm)
+		{
+			if(m_AlarmOn)
+				SetColor(SYMBOL_ERROR_COLOR);
+		}
+		
+		if(m_LightOn)
+			SetColor(SYMBOL_LIGHT_ON_COLOR);
+		else
+			SetColor(SYMBOL_NORMAL_COLOR);
+	
+	}else{
+		
+		SetColor(SYMBOL_NO_MONITOR_COLOR);
+	}
+}
 
 void CSymbol::RenderBusy()
 {
@@ -498,23 +527,6 @@ void CSymbol::RenderBusy()
 void CSymbol::RenderSymbol()
 {
 
-	SetColor(SYMBOL_NORMAL_COLOR);
-	if(m_LightOn)
-		SetColor(SYMBOL_LIGHT_ON_COLOR);
-	
-	if(m_InMonitoring)
-	{
-		if(m_Alarm)
-		{
-			if(m_AlarmOn)
-				SetColor(SYMBOL_ERROR_COLOR);
-		}
-	
-	}else{
-		
-		SetColor(SYMBOL_NO_MONITOR_COLOR);
-	}
-
 /*
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
@@ -532,8 +544,9 @@ void CSymbol::RenderSymbol()
 	glPopMatrix();
 	glDisable(GL_TEXTURE_2D);
 */
-		
+	SetSymbolColor();
 	glPushMatrix();
+		
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 	
 	nvCircle c;
@@ -543,7 +556,7 @@ void CSymbol::RenderSymbol()
 	
 	nvDrawCircleFilled(&c);
 	
-	glColor4f(0.0,0.0,0.0,0.5);
+	//glColor4f(0.0,0.0,0.0,0.5);
 	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex2f(0.0f,m_RectWidth);
@@ -560,17 +573,15 @@ void CSymbol::RenderSymbol()
 
 void CSymbol::RenderRestricted()
 {
-	
 	if(m_RenderRestricted)
+	{
 		glColor4f(1.0,0.0,0.0,0.1);
-	else
-		glColor4f(0.0,1.0,0.0,0.1);
-	
-	nvCircle c;
-	c.Center.x = m_RLonMap;
-	c.Center.y = m_RLatMap;
-	c.Radius = (double)DEFAULT_RESTRICTED_AREA_RADIUS/1852/GetMilesPerDegree(m_RLon,m_RLat);
-	nvDrawCircleFilled(&c);
+		nvCircle c;
+		c.Center.x = m_RLonMap;
+		c.Center.y = m_RLatMap;
+		c.Radius = (double)GetRestrictedArea()/1852/GetMilesPerDegree(m_RLon,m_RLat);
+		nvDrawCircleFilled(&c);
+	}
 }
 
 void CSymbol::RenderGPS()
@@ -600,12 +611,13 @@ void CSymbol::RenderPositions()
 
 void CSymbol::Render()
 {
+	/*
 	if(m_FirstTime)
 	{
 		CreateTextures();
 		m_FirstTime = false;
 	}
-	
+	*/
 	glEnable(GL_BLEND);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
@@ -694,6 +706,11 @@ void CSymbol::SetNumber(wxString v)
 void CSymbol::SetName(wxString v)
 {
 	m_Name = v;
+}
+
+void CSymbol::SetSBMSName(wxString v)
+{
+	m_SBMSName = v;
 }
 
 void CSymbol::SetRemove(bool v)
@@ -803,6 +820,11 @@ wxString CSymbol::GetNumber()
 	return m_Number;
 }
 
+wxString CSymbol::GetSBMSName()
+{
+	return m_SBMSName;
+}
+
 bool CSymbol::GetExists()
 {
 	return m_Exists;
@@ -822,7 +844,6 @@ wxString CSymbol::GetCommandCountAsString()
 wxString CSymbol::GetReportCountAsString()
 {
 	return wxString::Format(_("%d"),m_ReportCount);
-
 }
 
 int CSymbol::GetMMSI()
@@ -839,3 +860,10 @@ wxString CSymbol::GetAgeAsString()
 {
 	return m_AgeString;
 }
+
+bool CSymbol::GetInMonitoring()
+{
+	return m_InMonitoring;
+}
+
+

@@ -366,7 +366,7 @@
 #define CHECK_ALARM_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_ALARM_TICK_ON			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_COLLISION_TICK		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
-#define CHECK_READ_TICK				(1 *(1000/TICK_SYMBOL_TIME)) //co sekund
+#define CHECK_READ_TICK				(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 #define CHECK_POSITIONS_TICK_ON		(5 *(1000/TICK_SYMBOL_TIME)) //co sekund pozycje
 #define CHECK_REPORT_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //

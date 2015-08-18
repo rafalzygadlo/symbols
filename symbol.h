@@ -21,7 +21,6 @@ class CSymbol
 
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
-	nvFastFont *m_Font;
 	bool m_FirstTime;
 	int m_Step;
 	bool m_Begin;
@@ -59,6 +58,7 @@ class CSymbol
 	int m_ReportCount;
 	wxString m_Name;
 	wxString m_Number;
+	wxString m_SBMSName;
 	bool m_Exists;
 	bool m_ForcedOff;
 	bool m_PhotoCellNightTime;
@@ -70,7 +70,7 @@ class CSymbol
 	wxString m_AgeString;
 	bool m_InMonitoring;
 		
-	void CSymbol::SetColor(int id);
+	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
 	void CreateTextures(void);
@@ -82,8 +82,9 @@ class CSymbol
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
 	void Read();
+	void SetSymbolColor();
 	void RenderSymbol();
-	void RenderLightOn();
+	//void RenderLightOn();
 	void RenderBusy();
 	void RenderRestricted();
 	void RenderAlarm();
@@ -93,7 +94,7 @@ class CSymbol
 			
 public:
 
-	CSymbol(CNaviBroker *broker,nvFastFont *font);
+	CSymbol(CNaviBroker *broker);
 	~CSymbol();
 
 	void OnTick(void *db);
@@ -122,6 +123,7 @@ public:
 	void SetTimestamp(int v);
 	void SetAge(int v);
 	void SetAge(wxString v);
+	void SetSBMSName(wxString v);
 	
 	int GetId();
 	int GetIdSBMS();
@@ -133,11 +135,13 @@ public:
 	int GetAlarmCount();
 	wxString GetName();
 	wxString GetNumber();
+	wxString GetSBMSName();
 	bool GetExists();
 	bool GetLightOn();
 	int GetMMSI();
 	nvtime_t GetNvTime();
 	int GetAge();
+	bool GetInMonitoring();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();
