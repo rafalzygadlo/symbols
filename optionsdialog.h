@@ -43,6 +43,7 @@ class COptionsDialog: public wxDialog
 	void OnAlpha(wxCommandEvent &event);
 	void OnNameScale(wxCommandEvent &event);
 	void OnFontSize(wxCommandEvent &event);
+	void OnScaleFactor(wxCommandEvent &event);
 	void OnShowNames(wxCommandEvent &event);
 
 public:

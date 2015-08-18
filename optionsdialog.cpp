@@ -12,7 +12,7 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_SLIDER(wxID_ANY,OnAlpha)
 	EVT_SLIDER(ID_VIEW_NAME_SCALE, OnNameScale)
 	EVT_SLIDER(ID_FONT_SIZE,OnFontSize)
-	//EVT_SLIDER(ID_SCAL)
+	EVT_SLIDER(ID_SCALE_FACTOR,OnScaleFactor)
 	EVT_CHECKBOX(ID_SHOW_NAMES,OnShowNames)
 END_EVENT_TABLE()
 
@@ -368,6 +368,11 @@ void COptionsDialog::OnNameScale(wxCommandEvent &event)
 void COptionsDialog::OnFontSize(wxCommandEvent &event)
 {
 	SetFontSize(event.GetInt());
+}
+
+void COptionsDialog::OnScaleFactor(wxCommandEvent &event)
+{
+	SetScaleFactor(event.GetInt());
 }
 
 void COptionsDialog::OnShowNames(wxCommandEvent &event)

@@ -981,7 +981,7 @@ void CMapPlugin::RenderSelected()
 	c.Center.y = 0.0;
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
-
+	glLineWidth(1);
 	glPopMatrix();
 	
 	glDisable(GL_BLEND);
@@ -1024,6 +1024,7 @@ void CMapPlugin::RenderHighlighted()
 	c.Center.y = 0.0;
 	c.Radius = RectWidth/1.5;
 	nvDrawCircleFilled(&c);
+	glLineWidth(1);
 	glPopMatrix();
 
 	glDisable(GL_BLEND);

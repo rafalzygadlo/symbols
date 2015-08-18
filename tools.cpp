@@ -155,6 +155,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Show names",L"Poka¿ nazwy"},
 	{L"Scale Factor",L"Skalowanie obiektów"},
 	{L"Restricted Area Radius (meters)",L"Promieñ ochronny znaku (w metrach)"},
+	{L"Other",L"Inne"},
 
 };
 
