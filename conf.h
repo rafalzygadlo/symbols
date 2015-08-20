@@ -427,7 +427,7 @@
 #define TABLE_SBMS					"sbms"
 #define TABLE_STANDARD_REPORT		"standard_report"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
-
+#define TABLE_USER_OPTION			"user_option"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -693,7 +693,28 @@
 #define FI_STANDARD_REPORT_DATE_TIME_STAMP				19
 #define FI_STANDARD_REPORT_LOCAL_UTC_TIME				20
 
-
+//pola tabeli USER_OPTIONS
+#define FI_USER_OPTION_ID						0
+#define FI_USER_OPTION_ID_USER					1	
+#define FI_USER_OPTION_FILTER_AREA_ID			2
+#define FI_USER_OPTION_FILTER_SEAWAY_ID			3
+#define FI_USER_OPTION_FILTER_SYMBOL_TYPE_ID	4
+#define FI_USER_OPTION_FILTER_IN_MONITORING		5
+#define FI_USER_OPTION_FILTER_GROUP_ID			6
+#define FI_USER_OPTION_SORT_ORDER				7
+#define FI_USER_OPTION_SORT_COLUMN				8
+#define FI_USER_OPTION_SORT_COLUMN_ID			9
+#define FI_USER_OPTION_LIGHT_ON_COLOR			10
+#define FI_USER_OPTION_NORMAL_COLOR				11
+#define FI_USER_OPTION_ERROR_COLOR				12
+#define FI_USER_OPTION_NO_MONITOR_COLOR			13
+#define FI_USER_OPTION_FONT_SHOW				14
+#define FI_USER_OPTION_FONT_SIZE				15
+#define FI_USER_OPTION_VIEW_FONT_SCALE			16
+#define FI_USER_OPTION_LOWER_THRESHOLD			17
+#define FI_USER_OPTION_UPPER_THRESHOLD			18
+#define FI_USER_OPTION_SCALE_FACTOR				19
+#define FI_USER_OPTION_RESTRICTED_AREA			20
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

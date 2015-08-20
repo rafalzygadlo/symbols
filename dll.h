@@ -94,6 +94,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Clear();
 	void Remove();
 	void ReadConfig();
+	void ReadConfigDB();
 	void WriteConfig();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
