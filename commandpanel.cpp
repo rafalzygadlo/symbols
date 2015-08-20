@@ -192,7 +192,9 @@ void CCommandPanel::OnAuto(wxCommandEvent &event)
 
 void CCommandPanel::OnManual(wxCommandEvent &event)
 {
-	m_AutoValue = false;
+	//if(m_AutoValue)
+		//m_AutoValue = false;
+	
 	m_Changed[COMMAND_AUTO_MANAGEMENT] = false;
 	
 	m_LightPanel->Enable();
@@ -274,17 +276,18 @@ void CCommandPanel::SetValues()
 void CCommandPanel::SetCommand(int id)
 {
 	wxString sql;
+	int id_sbms = m_SelectedPtr->GetIdSBMS();
 	int SBMSID = m_SelectedPtr->GetSBMSID();
 	int id_base_station = m_SelectedPtr->GetBaseStationId();
 	int mmsi = m_SelectedPtr->GetMMSI();
 	
 	switch(id)
 	{
-		case COMMAND_LIGHT_ON:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
-		case COMMAND_LIGHT_OFF:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
-		case COMMAND_AUTO_MANAGEMENT:	_SetCommand(id,mmsi,SBMSID,id_base_station,!m_AutoValue);		break;
-		case COMMAND_GET_TIME:			_SetCommand(id,mmsi,SBMSID,id_base_station,m_TimeValue);		break;
-		case COMMAND_GET_UPTIME:		_SetCommand(id,mmsi,SBMSID,id_base_station,m_UptimeValue);		break;
+		case COMMAND_LIGHT_ON:			_SetCommand(id,id_sbms,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
+		case COMMAND_LIGHT_OFF:			_SetCommand(id,id_sbms,mmsi,SBMSID,id_base_station,m_LightOnValue);		break;
+		case COMMAND_AUTO_MANAGEMENT:	_SetCommand(id,id_sbms,mmsi,SBMSID,id_base_station,!m_AutoValue);		break;
+		case COMMAND_GET_TIME:			_SetCommand(id,id_sbms,mmsi,SBMSID,id_base_station,m_TimeValue);		break;
+		case COMMAND_GET_UPTIME:		_SetCommand(id,id_sbms,mmsi,SBMSID,id_base_station,m_UptimeValue);		break;
 
 		//case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(id,mmsi,SBMSID,id_base_station);	break;
 	}

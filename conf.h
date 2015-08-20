@@ -423,7 +423,7 @@
 #define TABLE_BASE_STATION			"base_station"
 #define TABLE_COMMAND				"command"
 #define TABLE_CHARACTERISTIC		"characteristic"
-#define TABLE_ALARM					"alarm_report"
+#define TABLE_SBMS_ALARM			"sbms_alarm"
 #define TABLE_SBMS					"sbms"
 #define TABLE_STANDARD_REPORT		"standard_report"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"

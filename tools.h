@@ -46,7 +46,6 @@ bool my_query(void *db,const char *sql, unsigned long length);
 void *DBConnect();
 void DBClose(void *db);
 double GetMilesPerDegree(double x, double y);
-//int SetDBCommand(wxString cmd);
 const char *GetCommand(int id);
 const wchar_t *GetCommandName(int id);
 wxString GetOnOff(int v);
@@ -62,7 +61,7 @@ void SetAutoManagement();
 time_t GetLocalTimestamp();
 
 //COMMANDS
-void _SetCommand(int cmd_id,int mmsi,int SBMSID, int id_base_station, bool on);
+void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
 
 #endif
 

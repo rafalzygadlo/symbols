@@ -189,6 +189,7 @@ void CPicturePanel::Read()
 			{
 				//m_Info->SetLabel(wxString::Format(GetMsg(MSG_PICTURE_INFO),img.GetWidth(),img.GetHeight()));	
 				wxBitmap bmp(img);
+				m_Picture = img;
 				m_StaticPicture->SetBitmap(bmp);
 			}
 		}
