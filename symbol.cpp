@@ -292,6 +292,8 @@ bool CSymbol::SetPositions()
 		m_Broker->Unproject(pt.x,pt.y,&to_x,&to_y);
 		pt.x = to_x;
 		pt.y = -to_y;
+		SetLonMap(pt.x);
+		SetLatMap(pt.y);
 		m_PosBuffer.Append(pt);
 		counter++;
 	}

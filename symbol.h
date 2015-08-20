@@ -33,7 +33,10 @@ class CSymbol
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
 	//pozycja GPS
+	double m_GpsLon, m_GpsLat, m_GpsLonMap, m_GpsLatMap;
+	//pozycja gps lub referencyjna
 	double m_Lon, m_Lat, m_LonMap, m_LatMap;
+
 	double m_Scale;
 	double m_SmoothScaleFactor;
 	double m_RectWidth;
