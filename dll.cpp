@@ -238,7 +238,7 @@ void CMapPlugin::WriteConfig()
 	delete FileConfig;
 
 }
-
+#if 0
 void CMapPlugin::ReadConfigDB()
 {
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_user='%d'"),TABLE_USER_OPTION,_GetUID());
@@ -263,6 +263,8 @@ void CMapPlugin::ReadConfigDB()
 
 		//SORT
 		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);					SetSortOrder(id);
+		str = Convert(row[FI_USER_OPTION_SORT_COLUMN]);
+		str
 		FileConfig->Read(_(KEY_SORT_COLUMN),&str,FN_SYMBOL_GROUP_NAME);	SetSortColumn(str);
 		FileConfig->Read(_(KEY_SORT_COLUMN_ID),&id);					SetSortColumnId(id);
 
@@ -338,7 +340,7 @@ void CMapPlugin::WriteConfig()
 	delete FileConfig;
 
 }
-
+#endif
 
 void CMapPlugin::ReadDBConfig()
 {

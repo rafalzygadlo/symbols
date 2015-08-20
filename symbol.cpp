@@ -556,7 +556,7 @@ void CSymbol::RenderSymbol()
 	
 	nvDrawCircleFilled(&c);
 	
-	//glColor4f(0.0,0.0,0.0,0.5);
+	glColor4f(0.0,0.0,0.0,0.5);
 	glLineWidth(1);
 	glBegin(GL_LINES);
 		glVertex2f(0.0f,m_RectWidth);
@@ -564,7 +564,7 @@ void CSymbol::RenderSymbol()
 		glVertex2f(m_RectWidth,0.0);
 		glVertex2f(-m_RectWidth,0.0);
 	glEnd();
-	//nvDrawCircle(&c);
+	nvDrawCircle(&c);
 
 	glPopMatrix();
 	
