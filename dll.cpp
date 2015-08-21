@@ -94,7 +94,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Reading = false;
 	m_Ticker = NULL;
 	
-	ReadConfig();
+	//ReadConfig();
 	//m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 	
 }
@@ -238,7 +238,7 @@ void CMapPlugin::WriteConfig()
 	delete FileConfig;
 
 }
-#if 0
+
 void CMapPlugin::ReadConfigDB()
 {
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_user='%d'"),TABLE_USER_OPTION,_GetUID());
@@ -262,34 +262,32 @@ void CMapPlugin::ReadConfigDB()
 		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);			SetSelectedGroupId(id);
 
 		//SORT
-		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);					SetSortOrder(id);
-		str = Convert(row[FI_USER_OPTION_SORT_COLUMN]);
-		str
-		FileConfig->Read(_(KEY_SORT_COLUMN),&str,FN_SYMBOL_GROUP_NAME);	SetSortColumn(str);
-		FileConfig->Read(_(KEY_SORT_COLUMN_ID),&id);					SetSortColumnId(id);
-
+		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);			SetSortOrder(id);
+		str = Convert(row[FI_USER_OPTION_SORT_COLUMN]);			SetSortColumn(str);
+		id = atoi(row[FI_USER_OPTION_SORT_COLUMN_ID]);			SetSortColumnId(id);
+		
 		//COLORS
 		wxString _color;
-		FileConfig->Read(_(KEY_NORMAL_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_NORMAL_COLOR)));			SetColor(SYMBOL_NORMAL_COLOR,StrToRGBA(_color));
-		FileConfig->Read(_(KEY_NO_MONITOR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_NO_MONITOR_COLOR)));	SetColor(SYMBOL_NO_MONITOR_COLOR,StrToRGBA(_color));
-		FileConfig->Read(_(KEY_ERROR_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_ERROR_COLOR)));			SetColor(SYMBOL_ERROR_COLOR,StrToRGBA(_color));
-		FileConfig->Read(_(KEY_LIGHT_ON_COLOR),&_color,RGBAToStr(&GetDefaultColor(SYMBOL_LIGHT_ON_COLOR)));		SetColor(SYMBOL_LIGHT_ON_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_NORMAL_COLOR]);		SetColor(SYMBOL_NORMAL_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_NO_MONITOR_COLOR]);	SetColor(FI_USER_OPTION_NO_MONITOR_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_ERROR_COLOR]);		SetColor(FI_USER_OPTION_ERROR_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_LIGHT_ON_COLOR]);	SetColor(FI_USER_OPTION_LIGHT_ON_COLOR,StrToRGBA(_color));
 
 		//FONT
 		float size;
 		bool show;
-		FileConfig->Read(_(KEY_FONT_SHOW),&show,DEFAULT_FONT_SHOW);				SetShowFontNames(show);			
-		FileConfig->Read(_(KEY_FONT_SIZE),&size,DEFAULT_FONT_SIZE);				SetFontSize(size*10);
-		FileConfig->Read(_(KEY_VIEW_FONT_SCALE),&size,DEFAULT_VIEW_FONT_SCALE);	SetViewFontScale(size);
-	
+		show = atoi(row[FI_USER_OPTION_FONT_SHOW]); 		SetShowFontNames(show);			
+		size = atof(row[FI_USER_OPTION_FONT_SIZE]);			SetFontSize(size*10);
+		size = atoi(row[FI_USER_OPTION_FONT_VIEW_SCALE]);	SetViewFontScale(size);
+			
 		//THRESHOLD
 		float v;
-		FileConfig->Read(_(KEY_LOWER_THRESHOLD),&v,DEFAULT_LOWER_TRESHOLD);		SetLowerTreshold(v);
-		FileConfig->Read(_(KEY_UPPER_THRESHOLD),&v,DEFAULT_UPPER_TRESHOLD);		SetUpperTreshold(v);
-	
+		v = atof(row[FI_USER_OPTION_LOWER_THRESHOLD]);	SetLowerTreshold(v);
+		v = atof(row[FI_USER_OPTION_UPPER_THRESHOLD]);	SetUpperTreshold(v);
+			
 		int val;
-		FileConfig->Read(_(KEY_SCALE_FACTOR),&val,DEFAULT_SCALE_FACTOR);				SetScaleFactor(val);
-		FileConfig->Read(_(KEY_RESTRICTED_AREA),&val,DEFAULT_RESTRICTED_AREA_RADIUS);	SetRestrictedArea(val);
+		val = atoi(row[FI_USER_OPTION_SCALE_FACTOR]);		SetScaleFactor(val);
+		val = atoi(row[FI_USER_OPTION_RESTRICTED_AREA]);	SetRestrictedArea(val);
 	}
 	
 	db_free_result(result);
@@ -297,50 +295,49 @@ void CMapPlugin::ReadConfigDB()
 }
 
 
-void CMapPlugin::WriteConfig()
+void CMapPlugin::WriteConfigDB()
 {
-	wxFileConfig *FileConfig = new wxFileConfig(GetProductName(),wxEmptyString,GetConfigFile(),wxEmptyString);
-	
-//	ShipList->GetColumn(0,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_0_WIDTH)),item.GetWidth());
-//	ShipList->GetColumn(1,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_1_WIDTH)),item.GetWidth());
-//	ShipList->GetColumn(2,item); FileConfig->Write(wxString::Format(_("%s/%s"),ControlName.wc_str(),_(KEY_COLUMN_2_WIDTH)),item.GetWidth());
-	
-	//FILTER
-	FileConfig->Write(_(KEY_FILTER_AREA_ID),GetSelectedAreaId());
-	FileConfig->Write(_(KEY_FILTER_SEAWAY_ID),GetSelectedSeawayId());
-	FileConfig->Write(_(KEY_FILTER_SYMBOL_TYPE_ID),GetSelectedSymbolTypeId());
-	FileConfig->Write(_(KEY_FILTER_IN_MONITORING),GetInMonitoring());
-	FileConfig->Write(_(KEY_FILTER_GROUP_ID),GetSelectedGroupId());
 
+	wxString sql = wxString::Format(_("DELETE FROM `%s` WHERE id_user='%d'"),TABLE_USER_OPTION,_GetUID());
+	my_query(m_DB,sql);
+	
+	sql = wxString::Format(_("INSERT INTO `%s` SET id_user='%d',"),TABLE_USER_OPTION,_GetUID());
+		
+	//FILTER
+	sql << sql.Format("filter_area_id='%d',",GetSelectedAreaId());
+	sql << sql.Format("filter_seaway_id='%d',",GetSelectedSeawayId());
+	sql << sql.Format("filter_symbol_type_id='%d',",GetSelectedSymbolTypeId());
+	sql << sql.Format("filter_in_monitoring='%d',",GetInMonitoring());
+	sql << sql.Format("filter_group_id='%d',",GetSelectedGroupId());
+	
 	//SORT
-	FileConfig->Write(_(KEY_SORT_ORDER),GetSortOrder());
-	FileConfig->Write(_(KEY_SORT_COLUMN),GetSortColumn());
-	FileConfig->Write(_(KEY_SORT_COLUMN_ID),GetSortColumnId());
+	sql << sql.Format("sort_order='%d',",GetSortOrder());
+	sql << sql.Format("sort_column='%s',",GetSortColumn());
+	sql << sql.Format("sort_column_id='%d',",GetSortColumnId());
 
 	//COLORS
-	FileConfig->Write(_(KEY_NORMAL_COLOR),RGBAToStr(&GetColor(SYMBOL_NORMAL_COLOR)));
-	FileConfig->Write(_(KEY_NO_MONITOR_COLOR),RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));
-	FileConfig->Write(_(KEY_ERROR_COLOR),RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));
-	FileConfig->Write(_(KEY_LIGHT_ON_COLOR),RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));
-
-	//FONT
-	FileConfig->Write(_(KEY_FONT_SHOW),GetShowFontNames());
-	FileConfig->Write(_(KEY_FONT_SIZE),GetFontSize());
-	FileConfig->Write(_(KEY_VIEW_FONT_SCALE),GetViewFontScale());
-
-	//THRESHOLD
-	float v;
-	FileConfig->Write(_(KEY_LOWER_THRESHOLD),GetLowerTreshold());
-	FileConfig->Write(_(KEY_UPPER_THRESHOLD),GetUpperTreshold());
-
-	FileConfig->Write(_(KEY_SCALE_FACTOR),GetScaleFactor());
-	FileConfig->Write(_(KEY_RESTRICTED_AREA),GetRestrictedArea());
+	sql << sql.Format("normal_color='%s',",RGBAToStr(&GetColor(SYMBOL_NORMAL_COLOR)));
+	sql << sql.Format("error_color='%s',",RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));
+	sql << sql.Format("no_monitor_color='%s',",RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));
+	sql << sql.Format("light_on_color='%s',",RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));
 	
-
-	delete FileConfig;
+	//FONT
+	sql << sql.Format("font_show='%d',",GetShowFontNames());
+	sql << sql.Format("font_size='%f',",GetFontSize());
+	sql << sql.Format("font_view_scale='%d',",GetViewFontScale());
+	
+	//THRESHOLD
+	sql << sql.Format("lower_threshold='%f',",GetLowerTreshold());
+	sql << sql.Format("upper_threshold='%f',",GetUpperTreshold());
+		
+	//OTHER
+	sql << sql.Format("scale_factor='%d',",GetScaleFactor());
+	sql << sql.Format("restricted_area='%d'",GetRestrictedArea());
+		
+	my_query(m_DB,sql);
 
 }
-#endif
+
 
 void CMapPlugin::ReadDBConfig()
 {
@@ -702,6 +699,7 @@ void CMapPlugin::Run(void *Params)
 	}	
 	
 	CreateApiMenu(); // jezyki
+	ReadConfigDB();
 
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);
@@ -716,7 +714,8 @@ void CMapPlugin::Kill(void)
 	SetExit(true);
 	while(m_Reading)
 		wxMilliSleep(100);
-	WriteConfig();
+	WriteConfigDB();
+	//WriteConfig();
 	
 }
 

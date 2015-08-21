@@ -528,7 +528,7 @@ wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
 
 void CListCtrl::SetSBMSAttr(long item, wxListItemAttr *v)
 {
-	wxString v1 = GetValue(_GetDataColumn(FI_SBMS_IN_USE),item);
+	wxString v1 = GetValue(_GetDataColumn(FI_SBMS_NEW),item);
 	long _v;
 	v1.ToLong(&_v);
 	

@@ -14,6 +14,7 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_SLIDER(ID_FONT_SIZE,OnFontSize)
 	EVT_SLIDER(ID_SCALE_FACTOR,OnScaleFactor)
 	EVT_CHECKBOX(ID_SHOW_NAMES,OnShowNames)
+	EVT_TEXT(ID_RESTRICTED_AREA,OnRestrictedArea)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
@@ -201,7 +202,7 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 	wxStaticText *TextRestrictedArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
 	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 		
-	m_RestrictedArea = new wxTextCtrl(Panel,wxID_ANY);
+	m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
 	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
 	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
 
@@ -378,4 +379,11 @@ void COptionsDialog::OnScaleFactor(wxCommandEvent &event)
 void COptionsDialog::OnShowNames(wxCommandEvent &event)
 {
 	SetShowFontNames(event.IsChecked());
+}
+
+void COptionsDialog::OnRestrictedArea(wxCommandEvent &event)
+{
+	long v;
+	m_RestrictedArea->GetValue().ToLong(&v);
+	SetRestrictedArea(v);
 }

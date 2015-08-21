@@ -72,7 +72,9 @@ class CSymbol
 	int m_Age;
 	wxString m_AgeString;
 	bool m_InMonitoring;
-		
+	bool m_NewReport;
+	bool m_GpsValid;
+	
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -94,6 +96,7 @@ class CSymbol
 	void RenderGPS();		//real position
 	void RenderPositions();
 	void RenderSelected();
+	void RenderNewReport();
 			
 public:
 
@@ -126,6 +129,7 @@ public:
 	void SetTimestamp(int v);
 	void SetAge(int v);
 	void SetAge(wxString v);
+	void SetNewReport(bool v);
 	void SetSBMSName(wxString v);
 	
 	int GetId();

@@ -46,6 +46,8 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_MMSI = 0;
 	m_InMonitoring = false;
 	m_ReportCount = 0;
+	m_NewReport = false;
+	m_GpsValid = false;
 	m_AgeString = "N/A";
 }
 
@@ -85,6 +87,7 @@ void CSymbol::Read()
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		SetSBMSName(Convert(row[FI_SBMS_NAME]));
+		SetNewReport(atoi(row[FI_SBMS_NEW]));
 		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		SetTimestamp(timestamp);
@@ -101,8 +104,8 @@ void CSymbol::Read()
 				
 		SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 		
-		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
-		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
+		sscanf(row[FI_SBMS_LON],"%lf",&lon);
+		sscanf(row[FI_SBMS_LAT],"%lf",&lat);
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
@@ -111,6 +114,7 @@ void CSymbol::Read()
 
 		SetLonMap(to_x);
 		SetLatMap(-to_y);
+		m_GpsValid = true;
 
 		nvtime_t dt;
 		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
@@ -292,8 +296,8 @@ bool CSymbol::SetPositions()
 		m_Broker->Unproject(pt.x,pt.y,&to_x,&to_y);
 		pt.x = to_x;
 		pt.y = -to_y;
-		SetLonMap(pt.x);
-		SetLatMap(pt.y);
+		//SetLonMap(pt.x);
+		//SetLatMap(pt.y);
 		m_PosBuffer.Append(pt);
 		counter++;
 	}
@@ -588,13 +592,20 @@ void CSymbol::RenderRestricted()
 
 void CSymbol::RenderGPS()
 {
-	glPushMatrix();
-	glColor4f(1.0f,1.0f,1.0f,0.9f);
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	if(!m_GpsValid)
+		return;
 
-	glPointSize(2);
-	nvDrawPoint(0.0,0.0);
-	glPopMatrix();
+	//glPushMatrix();
+	glColor4f(1.0f,1.0f,1.0f,0.6f);
+
+	glBegin(GL_LINES);
+		glVertex2f(m_LonMap, m_LatMap);
+		glVertex2f(m_RLonMap,m_RLatMap);
+	glEnd();
+	
+	//glPointSize(2);
+	//nvDrawPoint(0.0,0.0);
+	//glPopMatrix();
 
 }
 
@@ -611,30 +622,52 @@ void CSymbol::RenderPositions()
 	
 }
 
+void CSymbol::RenderNewReport()
+{
+	if(!m_NewReport)
+		return;
+	
+	glPushMatrix();
+		
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_RectWidth/2,m_RectWidth/2,0.0f);
+	
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth/4;
+	
+	nvDrawCircleFilled(&c);
+	
+	//glColor4f(0.0,0.0,0.0,0.5);
+	//glLineWidth(1);
+	glBegin(GL_LINES);
+		glVertex2f(0.0f,m_RectWidth);
+		glVertex2f(0.0f,-m_RectWidth);
+		glVertex2f(m_RectWidth,0.0);
+		glVertex2f(-m_RectWidth,0.0);
+	glEnd();
+	nvDrawCircle(&c);
+
+	glPopMatrix();
+	
+
+
+}
+
 void CSymbol::Render()
 {
-	/*
-	if(m_FirstTime)
-	{
-		CreateTextures();
-		m_FirstTime = false;
-	}
-	*/
 	glEnable(GL_BLEND);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
-#if 0
-	RenderSelected();
-#endif
+
 	RenderRestricted();
 	RenderBusy();
-#if 0
-	RenderAlarm();
-#endif
-	//RenderGPS();
-
+	RenderGPS();
+	
+	RenderNewReport();
 	RenderSymbol();
 	RenderPositions();
 		
@@ -764,6 +797,11 @@ void CSymbol::SetAge(int v)
 void CSymbol::SetAge(wxString v)
 {
 	m_AgeString = v;
+}
+
+void CSymbol::SetNewReport(bool v)
+{
+	m_NewReport = v;
 }
 
 //GET

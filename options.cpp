@@ -29,7 +29,10 @@ int m_SelectedGroupId = 0;
 bool m_ShowFontNames = false;
 int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
 int m_ScaleFactor = DEFAULT_SCALE_FACTOR;
-nvRGBA SymbolNormalColor, SymbolNoMonitorColor, SymbolErrorColor, SymbolLightOnColor;
+nvRGBA SymbolNormalColor = GetDefaultColor(SYMBOL_NORMAL_COLOR);
+nvRGBA SymbolNoMonitorColor = GetDefaultColor(SYMBOL_NO_MONITOR_COLOR);
+nvRGBA SymbolErrorColor = GetDefaultColor(SYMBOL_ERROR_COLOR);
+nvRGBA SymbolLightOnColor = GetDefaultColor(SYMBOL_LIGHT_ON_COLOR);
 
 //SET
 void SetFGColor(wxColor v)				{	m_FGColor = v;			}

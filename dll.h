@@ -94,13 +94,15 @@ class CMapPlugin :public CNaviMapIOApi
 	void Clear();
 	void Remove();
 	void ReadConfig();
-	void ReadConfigDB();
 	void WriteConfig();
+	void ReadConfigDB();
+	void WriteConfigDB();
+	void SetDefault();
+	
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
 	int GetType();
 	void SetMOM(double x, double y);
-	
 	void SendInsertSignal();
 	void SendSelectSignal();
 	void SendSynchroSignal();

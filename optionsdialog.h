@@ -45,6 +45,7 @@ class COptionsDialog: public wxDialog
 	void OnFontSize(wxCommandEvent &event);
 	void OnScaleFactor(wxCommandEvent &event);
 	void OnShowNames(wxCommandEvent &event);
+	void OnRestrictedArea(wxCommandEvent &event);
 
 public:
 
@@ -64,6 +65,7 @@ public:
 		ID_SYMBOL_LIGHT_ON_ALPHA,
 		ID_SHOW_NAMES,
 		ID_SCALE_FACTOR,
+		ID_RESTRICTED_AREA,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,
