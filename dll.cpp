@@ -269,9 +269,9 @@ void CMapPlugin::ReadConfigDB()
 		//COLORS
 		wxString _color;
 		_color = Convert(row[FI_USER_OPTION_NORMAL_COLOR]);		SetColor(SYMBOL_NORMAL_COLOR,StrToRGBA(_color));
-		_color = Convert(row[FI_USER_OPTION_NO_MONITOR_COLOR]);	SetColor(FI_USER_OPTION_NO_MONITOR_COLOR,StrToRGBA(_color));
-		_color = Convert(row[FI_USER_OPTION_ERROR_COLOR]);		SetColor(FI_USER_OPTION_ERROR_COLOR,StrToRGBA(_color));
-		_color = Convert(row[FI_USER_OPTION_LIGHT_ON_COLOR]);	SetColor(FI_USER_OPTION_LIGHT_ON_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_NO_MONITOR_COLOR]);	SetColor(SYMBOL_NO_MONITOR_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_ERROR_COLOR]);		SetColor(SYMBOL_ERROR_COLOR,StrToRGBA(_color));
+		_color = Convert(row[FI_USER_OPTION_LIGHT_ON_COLOR]);	SetColor(SYMBOL_LIGHT_ON_COLOR,StrToRGBA(_color));
 
 		//FONT
 		float size;
@@ -317,8 +317,8 @@ void CMapPlugin::WriteConfigDB()
 
 	//COLORS
 	sql << sql.Format("normal_color='%s',",RGBAToStr(&GetColor(SYMBOL_NORMAL_COLOR)));
-	sql << sql.Format("error_color='%s',",RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));
-	sql << sql.Format("no_monitor_color='%s',",RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));
+	sql << sql.Format("error_color='%s',",RGBAToStr(&GetColor(SYMBOL_ERROR_COLOR)));
+	sql << sql.Format("no_monitor_color='%s',",RGBAToStr(&GetColor(SYMBOL_NO_MONITOR_COLOR)));
 	sql << sql.Format("light_on_color='%s',",RGBAToStr(&GetColor(SYMBOL_LIGHT_ON_COLOR)));
 	
 	//FONT
@@ -789,7 +789,6 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 		_y = ptr->GetRLatMap();
 		if(IsPointInsideBox(x, y, _x - (RectWidth/d) + TranslationX, _y - (RectHeight/d) + TranslationY, _x + (RectWidth/d) + TranslationX , _y + (RectHeight/d) + TranslationY))
 			return ptr;
-		
 	}
 	
 	return NULL;
@@ -1134,13 +1133,13 @@ void CMapPlugin::RenderHighlighted()
 
 void CMapPlugin::RenderInfo(CSymbol *ptr)
 {
-	if(ptr->GetMMSI() > 0)
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
-	else
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
+//	if(ptr->GetMMSI() > 0)
+//		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
+//	else
+//		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
 	
-	nvtime_t t = ptr->GetNvTime();
-	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+//	nvtime_t t = ptr->GetNvTime();
+//	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
 }
 
 void CMapPlugin::RenderDistance()
@@ -1218,25 +1217,18 @@ void CMapPlugin::RenderNames()
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->Render();
-
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetSBMSName());
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetNumber());
-		/*
-		if(ptr->GetMMSI() > 0)
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
-		else
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.2f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
-		*/
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,6.3f,ptr->GetAgeAsString());
 		
-		if(ptr->GetBusy())
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
+		if(ptr->GetInit())
+		{
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetSBMSName());
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,6.3f,ptr->GetAgeAsString());
+			if(ptr->GetBusy())
+				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 		
-		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
-
+			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
+		}
 	}
-
 }
 
 void CMapPlugin::Render(void)

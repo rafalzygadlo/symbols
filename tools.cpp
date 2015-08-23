@@ -607,6 +607,8 @@ bool my_query(void *db,wxString sql)
 #endif
 	
 	bool result = true;
+	if(db == NULL)
+		return false;
 	
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{

@@ -588,7 +588,7 @@
 #define FI_COMMAND_ID				0
 #define FI_COMMAND_ID_COMMUNICATION	1
 #define FI_COMMAND_CMD				2
-#define FI_COMMAND_ID_COMMAND		5
+#define FI_COMMAND_ID_COMMAND		6
 #define FN_COMMAND_ID				"id"
 #define FN_COMMAND_ID_SYMBOL		"id_symbol"
 #define FN_COMMAND_ID_COMMAND		"id_command"
@@ -760,7 +760,7 @@
 
 #define MANUAL_MANAGEMENT	0
 #define AUTO_MANAGEMENT		1
-
+#define READED_REPORT_FLAG 0
 
 /*
 

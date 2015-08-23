@@ -124,6 +124,10 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
+		
+	wxString sql = wxString::Format(_("UPDATE `%s` SET new='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
+	my_query(db,sql);
+	ptr->SetNewReport(false);
 	
 	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
 		m_ButtonManagement->Enable();

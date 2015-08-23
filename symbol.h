@@ -74,6 +74,8 @@ class CSymbol
 	bool m_InMonitoring;
 	bool m_NewReport;
 	bool m_GpsValid;
+	bool m_NoSBMS;
+	bool m_Init;
 	
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -97,6 +99,7 @@ class CSymbol
 	void RenderPositions();
 	void RenderSelected();
 	void RenderNewReport();
+	void RenderNoSBMS();
 			
 public:
 
@@ -131,7 +134,8 @@ public:
 	void SetAge(wxString v);
 	void SetNewReport(bool v);
 	void SetSBMSName(wxString v);
-	
+	void SetNoSBMS(bool v);
+		
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
@@ -149,6 +153,7 @@ public:
 	nvtime_t GetNvTime();
 	int GetAge();
 	bool GetInMonitoring();
+	bool GetInit();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();

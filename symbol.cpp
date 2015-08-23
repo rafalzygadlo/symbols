@@ -48,7 +48,10 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_ReportCount = 0;
 	m_NewReport = false;
 	m_GpsValid = false;
+	m_NoSBMS = true;
+	m_Init = false;
 	m_AgeString = "N/A";
+	m_DB = NULL;
 }
 
 CSymbol::~CSymbol()
@@ -78,6 +81,7 @@ void CSymbol::Read()
 		return;
 	
 	double lon,lat,to_x,to_y;
+	bool exists = false;
 	
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -88,6 +92,7 @@ void CSymbol::Read()
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		SetSBMSName(Convert(row[FI_SBMS_NAME]));
 		SetNewReport(atoi(row[FI_SBMS_NEW]));
+		SetNoSBMS(false);
 		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		SetTimestamp(timestamp);
@@ -125,6 +130,7 @@ void CSymbol::Read()
 		SetLightOn(true);
 	else
 		SetLightOn(false);
+		
 	
 	db_free_result(result);
 	
@@ -340,6 +346,7 @@ bool CSymbol::CheckReport()
 
 void CSymbol::OnTick(void *db)
 {
+	fprintf(stderr,"Reading\n");
 	m_DB = db;
 	if(m_Broker == NULL)
 		return;
@@ -347,6 +354,10 @@ void CSymbol::OnTick(void *db)
 	bool result = false;
 
 	Read();
+	m_Init = true;
+	
+	if(!m_InMonitoring)
+		return;
 	
 	if(CheckCommand())
 		result = true;
@@ -357,8 +368,9 @@ void CSymbol::OnTick(void *db)
 	if(SetPositions())
 		result = true;
 
-	
+	fprintf(stderr,"Done\n");
 	CheckCollision();
+	
 
 		
 }
@@ -481,23 +493,23 @@ void CSymbol::RenderAlarm()
 
 void CSymbol::SetSymbolColor()
 {
-	if(m_InMonitoring)
+	if(!m_InMonitoring)
 	{
-		if(m_LightOn)
-			SetColor(SYMBOL_LIGHT_ON_COLOR);
-		else
-			SetColor(SYMBOL_NORMAL_COLOR);
-		
-		if(m_Alarm)
-		{
-			if(m_AlarmOn)
-				SetColor(SYMBOL_ERROR_COLOR);
-		}
-	
-	}else{
-		
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
+		return;
 	}
+	
+	if(m_LightOn)
+		SetColor(SYMBOL_LIGHT_ON_COLOR);
+	else
+		SetColor(SYMBOL_NORMAL_COLOR);
+		
+	if(m_Alarm)
+	{
+		if(m_AlarmOn)
+			SetColor(SYMBOL_ERROR_COLOR);
+	}
+	
 }
 
 void CSymbol::RenderBusy()
@@ -630,7 +642,7 @@ void CSymbol::RenderNewReport()
 	glPushMatrix();
 		
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
-	glTranslatef(m_RectWidth/2,m_RectWidth/2,0.0f);
+	glTranslatef(-m_RectWidth/1.5,-m_RectWidth/1.5,0.0f);
 	
 	nvCircle c;
 	c.Center.x = 0.0;
@@ -641,22 +653,43 @@ void CSymbol::RenderNewReport()
 	
 	//glColor4f(0.0,0.0,0.0,0.5);
 	//glLineWidth(1);
-	glBegin(GL_LINES);
-		glVertex2f(0.0f,m_RectWidth);
-		glVertex2f(0.0f,-m_RectWidth);
-		glVertex2f(m_RectWidth,0.0);
-		glVertex2f(-m_RectWidth,0.0);
-	glEnd();
-	nvDrawCircle(&c);
+	//glBegin(GL_LINES);
+		//glVertex2f(0.0f,m_RectWidth);
+		//glVertex2f(0.0f,-m_RectWidth);
+		//glVertex2f(m_RectWidth,0.0);
+		//glVertex2f(-m_RectWidth,0.0);
+	//glEnd();
+	//nvDrawCircle(&c);
 
 	glPopMatrix();
 	
+}
 
+void CSymbol::RenderNoSBMS()
+{
+	if(!m_NoSBMS)
+		return;
+	glPushMatrix();
+		
+	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glColor4f(1.0,0.0,0.0,0.5);
+	glLineWidth(5);
+	glBegin(GL_LINES);
+		glVertex2f(m_RectWidth,m_RectWidth);
+		glVertex2f(-m_RectWidth,-m_RectWidth);
+		glVertex2f(m_RectWidth,-m_RectWidth);
+		glVertex2f(-m_RectWidth,m_RectWidth);
+	glEnd();
+
+	glPopMatrix();
 
 }
 
 void CSymbol::Render()
 {
+	if(!m_Init)
+		return;
+
 	glEnable(GL_BLEND);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
@@ -666,6 +699,7 @@ void CSymbol::Render()
 	RenderRestricted();
 	RenderBusy();
 	RenderGPS();
+	RenderNoSBMS();
 	
 	RenderNewReport();
 	RenderSymbol();
@@ -804,6 +838,10 @@ void CSymbol::SetNewReport(bool v)
 	m_NewReport = v;
 }
 
+void CSymbol::SetNoSBMS(bool v)
+{
+	m_NoSBMS = v;
+}
 //GET
 int CSymbol::GetId()
 {
@@ -906,4 +944,7 @@ bool CSymbol::GetInMonitoring()
 	return m_InMonitoring;
 }
 
-
+bool CSymbol::GetInit()
+{
+	return m_Init;
+}
