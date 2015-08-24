@@ -96,7 +96,9 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadConfig();
 	void WriteConfig();
 	void ReadConfigDB();
+	void ReadGlobalConfigDB();
 	void WriteConfigDB();
+	void WriteGlobalConfigDB();
 	void SetDefault();
 	
 	void SetMouseXY(int x, int y);

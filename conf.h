@@ -428,6 +428,7 @@
 #define TABLE_STANDARD_REPORT		"standard_report"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 #define TABLE_USER_OPTION			"user_option"
+#define TABLE_GLOBAL_OPTION			"global_option"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -693,7 +694,7 @@
 #define FI_STANDARD_REPORT_DATE_TIME_STAMP				19
 #define FI_STANDARD_REPORT_LOCAL_UTC_TIME				20
 
-//pola tabeli USER_OPTIONS
+//pola tabeli USER_OPTION
 #define FI_USER_OPTION_ID_USER					0	
 #define FI_USER_OPTION_FILTER_AREA_ID			1
 #define FI_USER_OPTION_FILTER_SEAWAY_ID			2
@@ -710,10 +711,14 @@
 #define FI_USER_OPTION_FONT_SHOW				13
 #define FI_USER_OPTION_FONT_SIZE				14
 #define FI_USER_OPTION_FONT_VIEW_SCALE			15
-#define FI_USER_OPTION_LOWER_THRESHOLD			16
-#define FI_USER_OPTION_UPPER_THRESHOLD			17
-#define FI_USER_OPTION_SCALE_FACTOR				18
-#define FI_USER_OPTION_RESTRICTED_AREA			19
+#define FI_USER_OPTION_SCALE_FACTOR				16
+
+//pola tabeli GLOBAL_OPTION
+#define FI_GLOBAL_OPTION_LOWER_THRESHOLD			0
+#define FI_GLOBAL_OPTION_UPPER_THRESHOLD			1
+#define FI_GLOBAL_OPTION_RESTRICTED_AREA			2
+
+
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

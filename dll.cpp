@@ -280,20 +280,40 @@ void CMapPlugin::ReadConfigDB()
 		size = atof(row[FI_USER_OPTION_FONT_SIZE]);			SetFontSize(size*10);
 		size = atoi(row[FI_USER_OPTION_FONT_VIEW_SCALE]);	SetViewFontScale(size);
 			
-		//THRESHOLD
-		float v;
-		v = atof(row[FI_USER_OPTION_LOWER_THRESHOLD]);	SetLowerTreshold(v);
-		v = atof(row[FI_USER_OPTION_UPPER_THRESHOLD]);	SetUpperTreshold(v);
-			
 		int val;
 		val = atoi(row[FI_USER_OPTION_SCALE_FACTOR]);		SetScaleFactor(val);
-		val = atoi(row[FI_USER_OPTION_RESTRICTED_AREA]);	SetRestrictedArea(val);
+		
 	}
 	
 	db_free_result(result);
 
 }
 
+void CMapPlugin::ReadGlobalConfigDB()
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_GLOBAL_OPTION,_GetUID());
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		//THRESHOLD
+		float v;
+		v = atof(row[FI_GLOBAL_OPTION_LOWER_THRESHOLD]);	SetLowerTreshold(v);
+		v = atof(row[FI_GLOBAL_OPTION_UPPER_THRESHOLD]);	SetUpperTreshold(v);
+			
+		int val;
+		val = atoi(row[FI_GLOBAL_OPTION_RESTRICTED_AREA]);	SetRestrictedArea(val);
+	}
+	
+	db_free_result(result);
+
+}
 
 void CMapPlugin::WriteConfigDB()
 {
@@ -327,11 +347,26 @@ void CMapPlugin::WriteConfigDB()
 	sql << sql.Format("font_view_scale='%d',",GetViewFontScale());
 	
 	//THRESHOLD
+	//sql << sql.Format("lower_threshold='%f',",GetLowerTreshold());
+	//sql << sql.Format("upper_threshold='%f',",GetUpperTreshold());
+		
+	//OTHER
+	sql << sql.Format("scale_factor='%d'",GetScaleFactor());
+	//sql << sql.Format("restricted_area='%d'",GetRestrictedArea());
+		
+	my_query(m_DB,sql);
+
+}
+void CMapPlugin::WriteGlobalConfigDB()
+{
+	
+	wxString sql = wxString::Format(_("UPDATE `%s` SET "),TABLE_GLOBAL_OPTION);
+		
+	//THRESHOLD
 	sql << sql.Format("lower_threshold='%f',",GetLowerTreshold());
 	sql << sql.Format("upper_threshold='%f',",GetUpperTreshold());
 		
 	//OTHER
-	sql << sql.Format("scale_factor='%d',",GetScaleFactor());
 	sql << sql.Format("restricted_area='%d'",GetRestrictedArea());
 		
 	my_query(m_DB,sql);
@@ -700,6 +735,7 @@ void CMapPlugin::Run(void *Params)
 	
 	CreateApiMenu(); // jezyki
 	ReadConfigDB();
+	ReadGlobalConfigDB();
 
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);

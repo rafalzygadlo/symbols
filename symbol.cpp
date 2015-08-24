@@ -644,24 +644,42 @@ void CSymbol::RenderNewReport()
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
 	glTranslatef(-m_RectWidth/1.5,-m_RectWidth/1.5,0.0f);
 	
-	nvCircle c;
-	c.Center.x = 0.0;
-	c.Center.y = 0.0;
-	c.Radius = m_RectWidth/4;
+	//nvCircle c;
+	//c.Center.x = 0.0;
+	//c.Center.y = 0.0;
+	//c.Radius = m_RectWidth/4;
 	
-	nvDrawCircleFilled(&c);
+	//nvDrawCircleFilled(&c);
 	
-	//glColor4f(0.0,0.0,0.0,0.5);
-	//glLineWidth(1);
-	//glBegin(GL_LINES);
-		//glVertex2f(0.0f,m_RectWidth);
-		//glVertex2f(0.0f,-m_RectWidth);
-		//glVertex2f(m_RectWidth,0.0);
-		//glVertex2f(-m_RectWidth,0.0);
-	//glEnd();
-	//nvDrawCircle(&c);
+	glColor4f(1.0,1.0,1.0,0.8);
+	glLineWidth(1);
+	double x1 = m_RectWidth/3;
+	double x2 = m_RectWidth/4;
+	glBegin(GL_LINES);
+		glVertex2f(-x1,x2);
+		glVertex2f(x1,x2);
 
+		glVertex2f(x1,x2);
+		glVertex2f(x1,-x2);
+		
+		glVertex2f(x1,-x2);
+		glVertex2f(-x1,-x2);
+		
+		glVertex2f(-x1,-x2);
+		glVertex2f(-x1,x2);
+			
+		
+		glVertex2f(-x1,-x2);
+		glVertex2f(0,0);
+
+		glVertex2f(x1,-x2);
+		glVertex2f(0,0);
+
+		
+	glEnd();
+	
 	glPopMatrix();
+	glLineWidth(1);
 	
 }
 
