@@ -85,6 +85,7 @@ void CSymbol::Read()
 	
 	while(row = (char**)db_fetch_row(result))
 	{
+		exists = true;
 		m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
 		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
 		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
@@ -92,8 +93,7 @@ void CSymbol::Read()
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		SetSBMSName(Convert(row[FI_SBMS_NAME]));
 		SetNewReport(atoi(row[FI_SBMS_NEW]));
-		SetNoSBMS(false);
-		
+				
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		SetTimestamp(timestamp);
 		SetAge(GetLocalTimestamp() - timestamp);
@@ -126,6 +126,11 @@ void CSymbol::Read()
 		SetNvTime(dt);
 	}
 
+	if(exists)
+		SetNoSBMS(true);
+	else
+		SetNoSBMS(false);
+
 	if(!m_ForcedOff & m_PhotoCellNightTime)
 		SetLightOn(true);
 	else
@@ -142,7 +147,6 @@ bool CSymbol::GetBusy()
 {
 	return m_Busy;
 }
-
 
 
 bool CSymbol::CheckCollision()
@@ -346,7 +350,6 @@ bool CSymbol::CheckReport()
 
 void CSymbol::OnTick(void *db)
 {
-	fprintf(stderr,"Reading\n");
 	m_DB = db;
 	if(m_Broker == NULL)
 		return;
@@ -368,11 +371,8 @@ void CSymbol::OnTick(void *db)
 	if(SetPositions())
 		result = true;
 
-	fprintf(stderr,"Done\n");
 	CheckCollision();
-	
-
-		
+			
 }
 
 void CSymbol::OnTickExit()

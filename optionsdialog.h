@@ -36,8 +36,8 @@ class COptionsDialog: public wxDialog
 	wxPanel *GetOtherPanel(wxWindow *Parent);
 	wxPanel *GetThresholdPanel(wxWindow *Parent);
 
-
 	wxPanel *GetPage1(wxWindow *Parent);
+	wxPanel *GetPage2(wxWindow *Parent);
 
 	void OnColorPicker(wxColourPickerEvent &event);
 	void OnAlpha(wxCommandEvent &event);

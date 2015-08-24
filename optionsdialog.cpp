@@ -25,6 +25,8 @@ COptionsDialog::COptionsDialog()
 	
 	wxNotebook *m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
+	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_GLOBAL_OPTIONS));
+	
 	Sizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 	
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,10);
@@ -47,8 +49,23 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	
 	Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
+	//Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
+
+
+	return Panel;
+}
+
+wxPanel *COptionsDialog::GetPage2(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	
+	//Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
+	//Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
+	//Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
 	return Panel;
