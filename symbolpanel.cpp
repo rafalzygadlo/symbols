@@ -112,14 +112,6 @@ void CSymbolPanel::SetPageEmpty()
 
 void CSymbolPanel::SetPage1(CSymbol *ptr)
 {
-	//m_Calibrated->Disable();
-	//m_ForcedOff->Disable();
-	//m_PhotoCellNightTime->Disable();
-	//m_FaultOutput->Disable();
-	//m_SolarCharger->Disable();
-	//m_SyncMaster->Disable();
-	//m_SeasonControl->Disable();
-
 	m_Symbol = ptr;
 	void *db = DBConnect();
 	if(db == NULL)
@@ -160,7 +152,8 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	PictureInfo(db,ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
-	SBMSInfo(db,m_IdSBMS);
+	if(ptr->GetInMonitoring())
+		SBMSInfo(db,m_IdSBMS);
 	
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
@@ -181,21 +174,29 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-		
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	
+	if(m_IdSBMS == 0)
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
+	
+	if(ptr->GetInMonitoring())
+	{
+		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
+	}else{
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+	}
+	
 	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetName()));
 	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
-		
-		
-	if(ptr->GetInMonitoring())
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
-			
-	if(m_IdSBMS == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=3>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
+				
+	
 		
 	str.Append(_("</table>"));
+	str.Append(_("<hr>"));
 	m_Html->AppendToPage(str);
 	
 }
@@ -226,11 +227,10 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		if(mmsi)
 			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),mmsi));
 		
-				
-		nvtime_t dt;
-		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
+		//nvtime_t dt;
+		//nvdatetime(atoi(row[FI_SBMS_LOCAL_UTC_TIME]),&dt);
 		
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),GetNvDateTime(dt)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),Convert(row[FI_SBMS_LOCAL_UTC_TIME])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LATITUDE),FormatLatitude(atof(row[FI_SBMS_LAT]),DEFAULT_DEGREE_FORMAT)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LONGITUDE),FormatLongitude(atof(row[FI_SBMS_LON]),DEFAULT_DEGREE_FORMAT)));
 	
@@ -494,7 +494,7 @@ void CSymbolPanel::OnGraph(wxCommandEvent &event)
 		pt.z = 0;
 		
 		seconds_to = time  + _time;
-		if(value <= GetLowerTreshold() || value  >= GetUpperTreshold())
+		if(value <= GetLowerThreshold() || value  >= GetUpperThreshold())
 		{
 			c.A = 200; c.R = 255; c.G = 0; c.B = 0;
 		}else{

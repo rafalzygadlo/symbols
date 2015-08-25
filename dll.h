@@ -34,9 +34,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
 	CDialog *m_SBMSDialog;
-	COptionsDialog *m_OptionsDialog;
-
-
+	
 	bool m_On;
 	bool m_Reading;
 	CTicker *m_Ticker;

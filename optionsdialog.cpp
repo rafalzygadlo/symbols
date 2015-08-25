@@ -15,6 +15,9 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_SLIDER(ID_SCALE_FACTOR,OnScaleFactor)
 	EVT_CHECKBOX(ID_SHOW_NAMES,OnShowNames)
 	EVT_TEXT(ID_RESTRICTED_AREA,OnRestrictedArea)
+	EVT_TEXT(ID_LOWER_THRESHOLD,OnLowerThreshold)
+	EVT_TEXT(ID_UPPER_THRESHOLD,OnUpperThreshold)
+	EVT_TEXT(ID_OFF_POSITION_AREA,OnOffPositionArea)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
@@ -64,8 +67,8 @@ wxPanel *COptionsDialog::GetPage2(wxWindow *Parent)
 	
 	//Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	//Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
-	//Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetGlobalThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetGlobalOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
 	return Panel;
@@ -216,12 +219,12 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 	m_ScaleFactor->SetValue(GetScaleFactor());
 	FlexSizer->Add(m_ScaleFactor,0,wxALL,5);
 	
-	wxStaticText *TextRestrictedArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
-	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	//wxStaticText *TextRestrictedArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
+	//FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 		
-	m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
-	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
-	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
+	//m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
+	//m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
+	//FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
 
 	/*
 	m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
@@ -244,7 +247,55 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 
 }
 
-wxPanel *COptionsDialog::GetThresholdPanel(wxWindow *Parent)
+wxPanel *COptionsDialog::GetGlobalOtherPanel(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_OTHER));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+		
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+	
+	wxStaticText *TextOffPositionArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_OFF_POSITION_RADIUS),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextOffPositionArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+		
+	m_OffPositionArea = new wxTextCtrl(Panel,ID_OFF_POSITION_AREA);
+	m_OffPositionArea->SetValue(wxString::Format(_("%d"),GetOffPositionArea()));
+	FlexSizer->Add(m_OffPositionArea,0,wxALL,5);
+
+	wxStaticText *TextRestrictedArea = new wxStaticText(Panel,ID_RESTRICTED_AREA,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+		
+	m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
+	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
+	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
+
+	
+	//m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	//FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	//m_CommTimeout->SetMin(0);
+	//m_CommTimeout->SetMax(60*24);
+	//m_CommTimeout->SetValue(GetCommTimeout());
+	
+
+	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	//FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	//m_CommTimeout->SetValue(GetCommTimeout());
+
+
+	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	//m_CommTimeout->SetValue(GetViewFontScale());
+
+
+	return Panel;
+
+}
+
+
+wxPanel *COptionsDialog::GetGlobalThresholdPanel(wxWindow *Parent)
 {
 	
 	wxPanel *Panel = new wxPanel(Parent);
@@ -259,14 +310,14 @@ wxPanel *COptionsDialog::GetThresholdPanel(wxWindow *Parent)
 
 	wxStaticText *TextLowerThreshold = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LOWER_THRESHOLD));
 	FlexSizer->Add(TextLowerThreshold,0,wxALL,5);
-	m_LowerThreshold = new wxTextCtrl(Panel,wxID_ANY);
-	m_LowerThreshold->SetValue(wxString::Format(_("%4.2f"),GetLowerTreshold()));
+	m_LowerThreshold = new wxTextCtrl(Panel,ID_LOWER_THRESHOLD);
+	m_LowerThreshold->SetValue(wxString::Format(_("%4.2f"),GetLowerThreshold()));
 	FlexSizer->Add(m_LowerThreshold,0,wxALL,5);
 
 	wxStaticText *TextUpperThreshold = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_UPPER_THRESHOLD));
 	FlexSizer->Add(TextUpperThreshold,0,wxALL,5);
-	m_UpperThreshold = new wxTextCtrl(Panel,wxID_ANY);
-	m_UpperThreshold->SetValue(wxString::Format(_("%4.2f"),GetUpperTreshold()));
+	m_UpperThreshold = new wxTextCtrl(Panel,ID_UPPER_THRESHOLD);
+	m_UpperThreshold->SetValue(wxString::Format(_("%4.2f"),GetUpperThreshold()));
 	FlexSizer->Add(m_UpperThreshold,0,wxALL,5);
 
 	Panel->SetSizer(Sizer);
@@ -403,4 +454,25 @@ void COptionsDialog::OnRestrictedArea(wxCommandEvent &event)
 	long v;
 	m_RestrictedArea->GetValue().ToLong(&v);
 	SetRestrictedArea(v);
+}
+
+void COptionsDialog::OnUpperThreshold(wxCommandEvent &event)
+{
+	long v;
+	m_UpperThreshold->GetValue().ToLong(&v);
+	SetUpperThreshold(v);
+}
+
+void COptionsDialog::OnLowerThreshold(wxCommandEvent &event)
+{
+	long v;
+	m_LowerThreshold->GetValue().ToLong(&v);
+	SetLowerThreshold(v);
+}
+
+void COptionsDialog::OnOffPositionArea(wxCommandEvent &event)
+{
+	long v;
+	m_OffPositionArea->GetValue().ToLong(&v);
+	SetOffPositionArea(v);
 }

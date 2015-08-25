@@ -47,7 +47,6 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolGroup = NULL;
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
-	m_OptionsDialog = NULL;
 	m_SBMSDialog = NULL;
 
 	m_On = false;
@@ -118,7 +117,6 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolGroup;
 	delete m_BaseStation;
 	delete m_Characteristic;
-	delete m_OptionsDialog;
 	delete m_SBMSDialog;
 	delete m_FileConfig;
 	delete m_Frame;
@@ -183,8 +181,8 @@ void CMapPlugin::ReadConfig()
 	
 	//THRESHOLD
 	float v;
-	FileConfig->Read(_(KEY_LOWER_THRESHOLD),&v,DEFAULT_LOWER_TRESHOLD);		SetLowerTreshold(v);
-	FileConfig->Read(_(KEY_UPPER_THRESHOLD),&v,DEFAULT_UPPER_TRESHOLD);		SetUpperTreshold(v);
+	FileConfig->Read(_(KEY_LOWER_THRESHOLD),&v,DEFAULT_LOWER_THRESHOLD);		SetLowerThreshold(v);
+	FileConfig->Read(_(KEY_UPPER_THRESHOLD),&v,DEFAULT_UPPER_THRESHOLD);		SetUpperThreshold(v);
 	
 	int val;
 	FileConfig->Read(_(KEY_SCALE_FACTOR),&val,DEFAULT_SCALE_FACTOR);				SetScaleFactor(val);
@@ -228,8 +226,8 @@ void CMapPlugin::WriteConfig()
 
 	//THRESHOLD
 	float v;
-	FileConfig->Write(_(KEY_LOWER_THRESHOLD),GetLowerTreshold());
-	FileConfig->Write(_(KEY_UPPER_THRESHOLD),GetUpperTreshold());
+	FileConfig->Write(_(KEY_LOWER_THRESHOLD),GetLowerThreshold());
+	FileConfig->Write(_(KEY_UPPER_THRESHOLD),GetUpperThreshold());
 
 	FileConfig->Write(_(KEY_SCALE_FACTOR),GetScaleFactor());
 	FileConfig->Write(_(KEY_RESTRICTED_AREA),GetRestrictedArea());
@@ -276,7 +274,7 @@ void CMapPlugin::ReadConfigDB()
 		//FONT
 		float size;
 		bool show;
-		show = atoi(row[FI_USER_OPTION_FONT_SHOW]); 		SetShowFontNames(show);			
+		show = atoi(row[FI_USER_OPTION_FONT_SHOW]); 		SetShowFontNames(show);
 		size = atof(row[FI_USER_OPTION_FONT_SIZE]);			SetFontSize(size*10);
 		size = atoi(row[FI_USER_OPTION_FONT_VIEW_SCALE]);	SetViewFontScale(size);
 			
@@ -291,24 +289,25 @@ void CMapPlugin::ReadConfigDB()
 
 void CMapPlugin::ReadGlobalConfigDB()
 {
-	wxString sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_GLOBAL_OPTION,_GetUID());
+	wxString sql = wxString::Format(_("SELECT * FROM `%s`"),TABLE_GLOBAL_OPTION);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 		
     char **row = NULL;
 	if(result == NULL)
 		return;
-		
+
 	row = (char**)db_fetch_row(result);
 	if(row)
 	{
 		//THRESHOLD
 		float v;
-		v = atof(row[FI_GLOBAL_OPTION_LOWER_THRESHOLD]);	SetLowerTreshold(v);
-		v = atof(row[FI_GLOBAL_OPTION_UPPER_THRESHOLD]);	SetUpperTreshold(v);
+		v = atof(row[FI_GLOBAL_OPTION_LOWER_THRESHOLD]);		SetLowerThreshold(v);
+		v = atof(row[FI_GLOBAL_OPTION_UPPER_THRESHOLD]);		SetUpperThreshold(v);
 			
 		int val;
-		val = atoi(row[FI_GLOBAL_OPTION_RESTRICTED_AREA]);	SetRestrictedArea(val);
+		val = atoi(row[FI_GLOBAL_OPTION_RESTRICTED_AREA]);		SetRestrictedArea(val);
+		val = atoi(row[Fi_GLOBAL_OPTION_OFF_POSITION_AREA]);	SetOffPositionArea(val);
 	}
 	
 	db_free_result(result);
@@ -363,11 +362,12 @@ void CMapPlugin::WriteGlobalConfigDB()
 	wxString sql = wxString::Format(_("UPDATE `%s` SET "),TABLE_GLOBAL_OPTION);
 		
 	//THRESHOLD
-	sql << sql.Format("lower_threshold='%f',",GetLowerTreshold());
-	sql << sql.Format("upper_threshold='%f',",GetUpperTreshold());
+	sql << sql.Format("lower_threshold='%f',",GetLowerThreshold());
+	sql << sql.Format("upper_threshold='%f',",GetUpperThreshold());
 		
 	//OTHER
-	sql << sql.Format("restricted_area='%d'",GetRestrictedArea());
+	sql << sql.Format("restricted_area='%d',",GetRestrictedArea());
+	sql << sql.Format("off_position_area='%d'",GetOffPositionArea());
 		
 	my_query(m_DB,sql);
 
@@ -519,7 +519,6 @@ void CMapPlugin::SetSql(wxString &sql)
 		else
 			sql << _("DESC");
 	}
-	
 	
 }
 
@@ -915,9 +914,12 @@ void CMapPlugin::SymbolGroup()
 
 void CMapPlugin::Options()
 {
-	if(m_OptionsDialog == NULL)
-		m_OptionsDialog = new COptionsDialog();
-	m_OptionsDialog->Show();
+	COptionsDialog *OptionsDialog = new COptionsDialog();
+	OptionsDialog->ShowModal();
+	delete OptionsDialog;
+	
+	WriteGlobalConfigDB();
+
 }
 
 void CMapPlugin::SBMS()
@@ -1258,11 +1260,15 @@ void CMapPlugin::RenderNames()
 		{
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
 			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetSBMSName());
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,6.3f,ptr->GetAgeAsString());
+			if(ptr->GetInMonitoring())
+				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
+			else
+				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.3f,GetMsg(MSG_NOT_IN_MONITORING));
+
 			if(ptr->GetBusy())
 				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 		
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
+			//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
 		}
 	}
 }

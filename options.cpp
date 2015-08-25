@@ -10,8 +10,8 @@ wxString m_DBName;
 wxString m_SearchText;
 wxString m_SortColumn = FN_SYMBOL_NAME;
 int m_DBPort = DEFAULT_MYSQL_PORT;
-float m_UpperTreshold = DEFAULT_UPPER_TRESHOLD;
-float m_LowerTreshold = DEFAULT_LOWER_TRESHOLD;
+float m_UpperThreshold = DEFAULT_UPPER_THRESHOLD;
+float m_LowerThreshold = DEFAULT_LOWER_THRESHOLD;
 bool m_Exit = false;
 bool m_SearchTextChanged = false;
 bool m_SortOrder = false;
@@ -28,7 +28,9 @@ int m_InMonitoring = DEFAULT_MONITORING_VALUE;
 int m_SelectedGroupId = 0;
 bool m_ShowFontNames = false;
 int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
+int m_OffPositionArea = DEFAULT_OFF_POSITION_AREA;
 int m_ScaleFactor = DEFAULT_SCALE_FACTOR;
+
 nvRGBA SymbolNormalColor = GetDefaultColor(SYMBOL_NORMAL_COLOR);
 nvRGBA SymbolNoMonitorColor = GetDefaultColor(SYMBOL_NO_MONITOR_COLOR);
 nvRGBA SymbolErrorColor = GetDefaultColor(SYMBOL_ERROR_COLOR);
@@ -42,8 +44,8 @@ void SetDBUser(wxString v)				{	m_DBUser = v;			}
 void SetDBPassword(wxString v)			{	m_DBPassword = v;		}
 void SetDBName(wxString v)				{	m_DBName = v;			}
 void SetDBPort(int v)					{	m_DBPort = v;			}
-void SetUpperTreshold(float v)			{	m_UpperTreshold = v;	}
-void SetLowerTreshold(float v)			{	m_LowerTreshold = v;	}
+void SetUpperThreshold(float v)			{	m_UpperThreshold = v;	}
+void SetLowerThreshold(float v)			{	m_LowerThreshold = v;	}
 void SetExit(bool v)					{	m_Exit = v;				}
 void SetSearchTextChanged(bool v)		{	m_SearchTextChanged = v;}
 void SetSearchText(wxString v)			{	m_SearchText = v;		}
@@ -57,6 +59,7 @@ void SetViewFontScale(int v)			{	m_ViewFontScale = v;	}
 void SetCommTimeout(int v)				{	m_CommTimeout = v;		}
 void SetScaleFactor(int v)				{	m_ScaleFactor = v;		}
 void SetRestrictedArea(int v)			{	m_RestrictedArea = v;	}
+void SetOffPositionArea(int v)			{	m_OffPositionArea = v;	}
 
 
 //filter
@@ -79,8 +82,8 @@ wxString GetDBName()			{	return m_DBName;			}
 wxString GetSearchText()		{	return m_SearchText;		}
 wxString GetSortColumn()		{	return m_SortColumn;		}
 int GetDBPort()					{	return m_DBPort;			}
-float GetUpperTreshold()		{	return m_UpperTreshold;		}
-float GetLowerTreshold()		{	return m_LowerTreshold;		}
+float GetUpperThreshold()		{	return m_UpperThreshold;	}
+float GetLowerThreshold()		{	return m_LowerThreshold;	}
 bool GetExit()					{	return m_Exit;				}
 bool GetSearchTextChanged()		{	return m_SearchTextChanged;	}
 int GetSortColumnId()			{	return m_SortColumnId;		}
@@ -92,7 +95,7 @@ int GetCommTimeout()			{	return m_CommTimeout;		}
 bool GetShowFontNames()			{	return m_ShowFontNames;		}
 int GetRestrictedArea()			{	return m_RestrictedArea;	}
 int GetScaleFactor()			{	return m_ScaleFactor;		}
-int GetRestrictedArea(int v)	{	return m_RestrictedArea;	}
+int GetOffPositionArea()		{	return m_OffPositionArea;	}
 
 
 //filter

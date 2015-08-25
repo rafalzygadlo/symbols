@@ -66,11 +66,6 @@ void CSymbol::SetDB(void *db)
 
 void CSymbol::Read()
 {
-	//m_ReadTick++;
-	
-	//if(m_ReadTick <= CHECK_READ_TICK)
-		//return;
-			
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
 
 	my_query(m_DB,sql);
@@ -92,8 +87,14 @@ void CSymbol::Read()
 		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		SetSBMSName(Convert(row[FI_SBMS_NAME]));
-		SetNewReport(atoi(row[FI_SBMS_NEW]));
-				
+		SetAuto(atoi(row[FI_SBMS_AUTO]));
+		
+		if(m_InMonitoring)
+		{
+			SetNewReport(atoi(row[FI_SBMS_NEW]));
+			SetLightOn(!m_ForcedOff);
+		}
+			
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		SetTimestamp(timestamp);
 		SetAge(GetLocalTimestamp() - timestamp);
@@ -127,15 +128,10 @@ void CSymbol::Read()
 	}
 
 	if(exists)
-		SetNoSBMS(true);
-	else
 		SetNoSBMS(false);
-
-	if(!m_ForcedOff & m_PhotoCellNightTime)
-		SetLightOn(true);
 	else
-		SetLightOn(false);
-		
+		SetNoSBMS(true);
+			
 	
 	db_free_result(result);
 	
@@ -286,7 +282,7 @@ bool CSymbol::SetPositions()
 	}
 	
 	m_PosBuffer.Clear();
-	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp LIMIT 50"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 50"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
 		
 	my_query(m_DB,sql);
 
@@ -306,6 +302,7 @@ bool CSymbol::SetPositions()
 		m_Broker->Unproject(pt.x,pt.y,&to_x,&to_y);
 		pt.x = to_x;
 		pt.y = -to_y;
+		pt.z = 0.0;
 		//SetLonMap(pt.x);
 		//SetLatMap(pt.y);
 		m_PosBuffer.Append(pt);
@@ -800,6 +797,11 @@ void CSymbol::SetSBMSName(wxString v)
 	m_SBMSName = v;
 }
 
+void CSymbol::SetAuto(bool v)
+{
+	m_Auto = v;
+}
+
 void CSymbol::SetRemove(bool v)
 {
 	m_Exists = v;
@@ -965,4 +967,9 @@ bool CSymbol::GetInMonitoring()
 bool CSymbol::GetInit()
 {
 	return m_Init;
+}
+
+bool CSymbol::GetAuto()
+{
+	return m_Auto;
 }

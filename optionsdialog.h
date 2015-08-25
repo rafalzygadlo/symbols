@@ -27,6 +27,7 @@ class COptionsDialog: public wxDialog
 	wxTextCtrl *m_LowerThreshold;
 	wxTextCtrl *m_UpperThreshold;
 	wxTextCtrl *m_RestrictedArea;
+	wxTextCtrl *m_OffPositionArea;
 	wxCheckBox *m_ShowNames;
 	
 
@@ -34,7 +35,8 @@ class COptionsDialog: public wxDialog
 	wxPanel *GetColorPanel(wxWindow *parent);
 	wxPanel *GetFontPanel(wxWindow *Parent);
 	wxPanel *GetOtherPanel(wxWindow *Parent);
-	wxPanel *GetThresholdPanel(wxWindow *Parent);
+	wxPanel *GetGlobalOtherPanel(wxWindow *Parent);
+	wxPanel *GetGlobalThresholdPanel(wxWindow *Parent);
 
 	wxPanel *GetPage1(wxWindow *Parent);
 	wxPanel *GetPage2(wxWindow *Parent);
@@ -46,6 +48,10 @@ class COptionsDialog: public wxDialog
 	void OnScaleFactor(wxCommandEvent &event);
 	void OnShowNames(wxCommandEvent &event);
 	void OnRestrictedArea(wxCommandEvent &event);
+	void OnLowerThreshold(wxCommandEvent &event);
+	void OnUpperThreshold(wxCommandEvent &event);
+	void OnOffPositionArea(wxCommandEvent &event);
+
 
 public:
 
@@ -66,6 +72,9 @@ public:
 		ID_SHOW_NAMES,
 		ID_SCALE_FACTOR,
 		ID_RESTRICTED_AREA,
+		ID_LOWER_THRESHOLD,
+		ID_UPPER_THRESHOLD,
+		ID_OFF_POSITION_AREA,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,

@@ -16,8 +16,8 @@ wxString GetDBName();
 wxString GetSearchText();
 wxString GetSortColumn();
 int GetDBPort();
-float GetUpperTreshold();
-float GetLowerTreshold();
+float GetUpperThreshold();
+float GetLowerThreshold();
 bool GetExit();
 bool GetSearchTextChanged();
 int GetSortColumnId();
@@ -28,6 +28,7 @@ int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
 int GetSelectedGroupId();
+//
 int GetInMonitoring();
 int GetFilterChanged();
 float GetFontSize();
@@ -36,7 +37,7 @@ bool GetShowFontNames();
 int GetCommTimeout();
 int GetRestrictedArea();
 int GetScaleFactor();
-
+int GetOffPositionArea();
 
 //SET
 void SetFGColor(wxColor v);
@@ -46,8 +47,8 @@ void SetDBUser(wxString v);
 void SetDBPassword(wxString v);
 void SetDBName(wxString v);
 void SetDBPort(int v);
-void SetUpperTreshold(float v);
-void SetLowerTreshold(float v);
+void SetUpperThreshold(float v);
+void SetLowerThreshold(float v);
 void SetExit(bool v);
 void SetSearchTextChanged(bool v);
 void SetSearchText(wxString v);
@@ -59,6 +60,11 @@ void SetShowFontNames(bool v);
 void SetRectrictedArea(int v);
 void SetScaleFactor(int v);
 void SetRestrictedArea(int v);
+void SetFontSize(float v);
+void SetViewFontScale(int v);
+void SetCommTimeout(int v);
+void SetOffPositionArea(int v);
+
 
 //filter
 void SetSelectedAreaId(int v);
@@ -68,9 +74,6 @@ void SetInMonitoring(int v);
 void SetFilterChanged(bool v);
 void SetSelectedGroupId(int v);
 
-void SetFontSize(float v);
-void SetViewFontScale(int v);
-void SetCommTimeout(int v);
 
 
 //COLORS

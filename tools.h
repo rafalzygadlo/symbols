@@ -59,6 +59,8 @@ wxString RGBAToStr(nvRGBA *RGB);
 nvRGBA StrToRGBA(wxString str);
 void SetAutoManagement();
 time_t GetLocalTimestamp();
+wxString GetLightOnAsString(bool v);
+wxString GetAutoAsString(bool v);
 
 //COMMANDS
 void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);

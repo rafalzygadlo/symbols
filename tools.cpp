@@ -157,6 +157,9 @@ const wchar_t *nvLanguage[][2] =
 	{L"Restricted Area Radius (meters)",L"Promieñ ochronny znaku (w metrach)"},
 	{L"Other",L"Inne"},
 	{L"Global Options",L"Opcje globalne"},
+	{L"ON",L"ON"},
+	{L"OFF",L"OFF"},
+	{L"Off Position Radius(meters)",L"Promieñ (OFF POSITION)(w metrach)"},
 
 };
 
@@ -1061,6 +1064,23 @@ nvRGBA StrToRGBA(wxString str)
 	str1 = str.substr(9,3);	RGB.A = atoi(str1.char_str());
 
 	return RGB;
+}
+
+wxString GetLightOnAsString(bool v)
+{
+	if(v)
+		return GetMsg(MSG_LIGHT_IS_ON);
+	else
+		return GetMsg(MSG_LIGHT_IS_OFF);
+
+}
+
+wxString GetAutoAsString(bool v)
+{
+	if(v)
+		return GetMsg(MSG_AUTO_MANAGEMENT);
+	else
+		return GetMsg(MSG_MANUAL_MANAGEMENT);
 }
 
 

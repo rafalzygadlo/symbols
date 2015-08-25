@@ -76,6 +76,7 @@ class CSymbol
 	bool m_GpsValid;
 	bool m_NoSBMS;
 	bool m_Init;
+	bool m_Auto;
 	
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -135,6 +136,7 @@ public:
 	void SetNewReport(bool v);
 	void SetSBMSName(wxString v);
 	void SetNoSBMS(bool v);
+	void SetAuto(bool v);
 		
 	int GetId();
 	int GetIdSBMS();
@@ -154,6 +156,7 @@ public:
 	int GetAge();
 	bool GetInMonitoring();
 	bool GetInit();
+	bool GetAuto();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();
