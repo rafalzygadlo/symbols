@@ -119,7 +119,7 @@ wxString CHtmlCtrl::OnGetItemText(long item, long column) const
 	{
 		case COLUMN_NUMBER:			str = ptr->GetNumber();			break;
 		case COLUMN_NAME:			str = ptr->GetName();			break;
-		case COLUMN_AGE:			str = ptr->GetAgeAsString();	break;
+		//case COLUMN_AGE:			str = ptr->GetAgeAsString();	break;
 	}
 	
 	return str;

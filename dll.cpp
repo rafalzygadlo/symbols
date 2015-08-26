@@ -307,7 +307,7 @@ void CMapPlugin::ReadGlobalConfigDB()
 			
 		int val;
 		val = atoi(row[FI_GLOBAL_OPTION_RESTRICTED_AREA]);		SetRestrictedArea(val);
-		val = atoi(row[Fi_GLOBAL_OPTION_OFF_POSITION_AREA]);	SetOffPositionArea(val);
+		val = atoi(row[FI_GLOBAL_OPTION_OFF_POSITION_AREA]);	SetOffPositionArea(val);
 	}
 	
 	db_free_result(result);

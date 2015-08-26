@@ -319,7 +319,7 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_STANDARD_REPORT_MONITORED_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_STANDARD_REPORT_OVERLOAD_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_STANDARD_REPORT_DOWN_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_STANDARD_REPORT_ANALOG_PIN]));
+		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_STANDARD_REPORT_ANALOG_MASK]));
 		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_STANDARD_REPORT_DIGITAL_VALUE]));
 		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_STANDARD_REPORT_ANALOG_VALUE]));
 		str.Append(_("<tr><td><br></td></tr>"));
