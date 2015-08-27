@@ -1317,6 +1317,7 @@ void CMapPlugin::OnTick()
 	if(db == NULL)
 		return;
 
+	GetMutex()->Lock();
 	SetRemove();
 	SetSql(sql);
 	
@@ -1330,6 +1331,8 @@ void CMapPlugin::OnTick()
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
 	SetFilterChanged(false);
+
+	GetMutex()->Unlock();
 
 	DBClose(db);
 	

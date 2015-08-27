@@ -132,15 +132,20 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	hSizer->Add(BFilter,0,wxALL,0);
 	
 
-	m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
+	//m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
 	wxListItem item;
 	
-	item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
-	item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
+	//item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
+	//item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
 	
-	m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
-	Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
+	//m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
+	//Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
+
+	m_HtmlList = new  CHtmlList(Panel,NULL);
+	Sizer->Add(m_HtmlList,1,wxALL|wxEXPAND,0);
+	
+
 	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());
 
 	//m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
@@ -301,13 +306,14 @@ void CDisplayPlugin::SignalInsert()
 
 	wxArrayPtrVoid *ptr = m_MapPlugin->GetSymbolListPtr();
 
-	m_HtmlCtrl->SetList(ptr);
+	//m_HtmlCtrl->SetList(ptr);
 	int count = ptr->size();
 
 	if(m_OldCount != count)
 			m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
 		m_OldCount = count;
 
+	m_HtmlList->SetList(ptr);
 
 //	ShipList->SetList(MapPlugin->GetShipList());
 //	ShipList->Refresh();
@@ -327,8 +333,8 @@ void CDisplayPlugin::SignalSelect()
 
 	m_OldSelected = m_Selected;
 
-	m_HtmlCtrl->SetSelection(m_Selected);
-		
+	//m_HtmlCtrl->SetSelection(m_Selected);
+	m_HtmlList->_SetSelection(m_Selected);	
 	if(m_Selected)
 	{	
 		//m_Notebook->Show();

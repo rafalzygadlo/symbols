@@ -13,6 +13,7 @@
 #include <wx/hyperlink.h>
 #include "symbolpanel.h"
 #include "htmlctrl.h"
+#include "htmllist.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -25,6 +26,7 @@ extern "C" {
 
 class CMapPlugin;
 class CHtmlCtrl;
+class CHtmlList;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
@@ -36,6 +38,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
 	CHtmlCtrl *m_HtmlCtrl;
+	CHtmlList *m_HtmlList;
 	wxSearchCtrl *m_SearchText;
 	int m_OldCount;
 

@@ -59,6 +59,7 @@ void CSymbolPanel::GetPage1()
 	
 	m_Html = new wxHtmlWindow(this,ID_HTML);
 	m_Html->SetMinSize(wxSize(200,150));
+
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
 	//m_Calibrated->Disable();
 	//m_ForcedOff->Disable();
