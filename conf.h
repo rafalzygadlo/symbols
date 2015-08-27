@@ -70,6 +70,9 @@
 #define ALARM_NOT_CONFIRMED	0
 #define ALARM_CONFIRMED		1
 
+#define ALARM_NOT_ACTIVE	0
+#define ALARM_ACTIVE		1
+
 #define DEFAULT_FRAME_HEIGHT 400
 #define DEFAULT_FRAME_WIDTH	 280
 #define RECT_WIDTH 24
@@ -663,7 +666,7 @@
 #define FI_SBMS_ANALOG_VALUE				22
 #define FI_SBMS_LON							23
 #define FI_SBMS_LAT							24
-#define FI_SBMS_NEW							25 //new report has arived
+#define FI_SBMS_NEW_REPORT					25 //new report has arived
 #define FI_SBMS_INFO						26
 #define FI_SBMS_DATE_TIME_STAMP				27
 #define FI_SBMS_LOCAL_UTC_TIME_STAMP		28
@@ -728,6 +731,10 @@
 #define FI_GLOBAL_OPTION_UPPER_THRESHOLD			2
 #define FI_GLOBAL_OPTION_RESTRICTED_AREA			3
 #define FI_GLOBAL_OPTION_OFF_POSITION_AREA			4
+
+//pola tabeli SBMS_ALARM
+#define FI_SBMS_ALARM_ID_ALARM	2
+
 
 
 // . . . . . . . . . . . . . . . . . . . .

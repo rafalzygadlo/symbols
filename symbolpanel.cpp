@@ -20,6 +20,7 @@ BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_ALARM,OnAlarm)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
+	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
 END_EVENT_TABLE()
 
 
@@ -56,7 +57,7 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
 	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
-	m_Html = new wxHtmlWindow(this,wxID_ANY);
+	m_Html = new wxHtmlWindow(this,ID_HTML);
 	m_Html->SetMinSize(wxSize(200,150));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
 	//m_Calibrated->Disable();
@@ -105,6 +106,10 @@ void CSymbolPanel::OnShowMenu(wxCommandEvent &event)
 	this->Layout();
 }
 
+void CSymbolPanel::OnHtml(wxHtmlLinkEvent &event)
+{
+	//event.GetLinkInfo().GetHtmlCell()
+}
 
 void CSymbolPanel::SetPageEmpty()
 {
@@ -117,7 +122,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	if(db == NULL)
 		return;
 		
-	wxString sql = wxString::Format(_("UPDATE `%s` SET new='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
+	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
 	ptr->SetNewReport(false);
 	
@@ -149,7 +154,9 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	m_SBMSID = ptr->GetSBMSID();
 	m_Html->SetPage(wxEmptyString);
 
+	SetHeader();
 	PictureInfo(db,ptr);
+	AlarmInfo(db,m_IdSBMS);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
 	if(ptr->GetInMonitoring())
@@ -164,20 +171,51 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 void CSymbolPanel::SetHeader()
 {
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%%>"));
 	str.Append(wxString::Format(_("<tr><td colspan=3><b><a href=\"#%d\">%s</a></b></td></tr>"),HTML_ANCHOR_LAST_REPORT,GetMsg(MSG_LAST_REPORT) ));
 	str.Append(_("</table>"));
 	m_Html->AppendToPage(str);
+	
+}
+
+void CSymbolPanel::AlarmInfo(void *db,int id_sbms)
+{
+	if(id_sbms == 0)
+		return;
+	
+	wxString str;
+	
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms ='%d' AND active='%d'"),TABLE_SBMS_ALARM,id_sbms,ALARM_ACTIVE);
+	my_query(db,sql);
+			
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),row[FI_SBMS_ALARM_ID_ALARM]));	
+	
+		str.Append(_("</table>"));
+		str.Append(_("<hr>"));
+		m_Html->AppendToPage(str);
+
+	}
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
 	
 	if(m_IdSBMS == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
 	
 	if(ptr->GetInMonitoring())
 	{
@@ -216,7 +254,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	if(row)
 	{
 		wxString str;
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
 		int phone = atoi(row[Fi_SBMS_PHONE]);
@@ -283,7 +321,7 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 	if(row)
 	{
 		wxString str;
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
 		m_Html->AppendToPage(str);

@@ -91,7 +91,7 @@ void CSymbol::Read()
 		
 		if(m_InMonitoring)
 		{
-			SetNewReport(atoi(row[FI_SBMS_NEW]));
+			SetNewReport(atoi(row[FI_SBMS_NEW_REPORT]));
 			SetLightOn(!m_ForcedOff);
 		}
 			
