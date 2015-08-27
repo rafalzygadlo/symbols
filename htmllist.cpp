@@ -19,6 +19,7 @@ CHtmlList::CHtmlList( wxWindow *Parent,CDisplayPlugin *DspPlugin )
 {
 	//Plugin = DspPlugin;
 	//SetDoubleBuffered(true);
+	m_List = NULL;
 	SetSelectionBackground(wxColor(200,200,200));
 }
 
@@ -82,15 +83,15 @@ void CHtmlList::_SetSelection(CSymbol *ptr)
 
 void CHtmlList::OnSelect(wxCommandEvent &event)
 {
-	if(GetSelection() < 0)
-		return;
-	if(GetMutex()->TryLock())
-			return;
+	//if(GetSelection() < 0)
+		//return;
+	//if(GetMutex()->TryLock())
+		//	return;
 	
-	int a = GetSelection();
+	//int a = GetSelection();
 	//SMarker *Ship = (SMarker*)ShipList->Item(GetSelection());
 	//Plugin->SetSelectedShip(Ship);
-	GetMutex()->Unlock();
+	//GetMutex()->Unlock();
 	
 }
 
@@ -106,11 +107,11 @@ void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 }
 wxString CHtmlList::OnGetItem(size_t item) const
 {
-	if(GetMutex()->TryLock() == wxMUTEX_BUSY)
-		return wxEmptyString;
-	
+			
 	if(m_List->size() <= item)
 		return wxEmptyString;
+
+	GetMutex()->Lock();
 
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;

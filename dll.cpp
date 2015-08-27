@@ -1322,9 +1322,11 @@ void CMapPlugin::OnTick()
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);			//przeczytaj symbole
+	SendInsertSignal();
+
 	//fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
-	ReadSymbolValues(db);	// wczytaj inne opcje
+	//ReadSymbolValues(db);	// wczytaj inne opcje
 	//fprintf(stderr,"%d\n",GetTickCount() - t);
 	SendInsertSignal();
 
