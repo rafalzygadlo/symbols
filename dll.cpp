@@ -139,7 +139,6 @@ CMapPlugin::~CMapPlugin()
 	
 	delete m_NameFont;
 
-	FreeMutex();
 	DBClose(m_DB);
 
 }
@@ -722,7 +721,6 @@ CNaviBroker *CMapPlugin::GetBroker()
 
 void CMapPlugin::Run(void *Params)
 {
-
 	ReadDBConfig();
 	m_DB = DBConnect();
 	if(m_DB == NULL)
@@ -1275,7 +1273,7 @@ void CMapPlugin::RenderNames()
 
 void CMapPlugin::Render(void)
 {
-	
+
 	m_NameFont->Clear();
 	
 	glEnable(GL_POINT_SMOOTH);
@@ -1298,7 +1296,6 @@ void CMapPlugin::Render(void)
 	}
 	
 	glDisable(GL_POINT_SMOOTH);
-	
 		
 }
 
@@ -1317,24 +1314,19 @@ void CMapPlugin::OnTick()
 	if(db == NULL)
 		return;
 
-	GetMutex()->Lock();
 	SetRemove();
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);			//przeczytaj symbole
-	SendInsertSignal();
-
-	//fprintf(stderr,"%d\n",GetTickCount() - t);
+	fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
-	//ReadSymbolValues(db);	// wczytaj inne opcje
-	//fprintf(stderr,"%d\n",GetTickCount() - t);
+	ReadSymbolValues(db);	// wczytaj inne opcje
+	fprintf(stderr,"%d\n",GetTickCount() - t);
 	SendInsertSignal();
 
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
 	SetFilterChanged(false);
-
-	GetMutex()->Unlock();
 
 	DBClose(db);
 	

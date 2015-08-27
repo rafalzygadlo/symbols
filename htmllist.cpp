@@ -11,6 +11,7 @@ DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
+	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 END_EVENT_TABLE()
 
  
@@ -20,12 +21,19 @@ CHtmlList::CHtmlList( wxWindow *Parent,CDisplayPlugin *DspPlugin )
 	//Plugin = DspPlugin;
 	//SetDoubleBuffered(true);
 	m_List = NULL;
-	SetSelectionBackground(wxColor(200,200,200));
+	SetItemCount(0);
+	SetSelectionBackground(wxColor(150,150,150));
 }
 
 CHtmlList::~CHtmlList()
 {
 
+}
+
+void CHtmlList::OnSetItem(wxCommandEvent &event)
+{
+	SetItemCount(m_List->size());
+	Refresh();
 }
 
 void CHtmlList::ClearList()
@@ -35,15 +43,16 @@ void CHtmlList::ClearList()
 
 void CHtmlList::SetList(wxArrayPtrVoid *ships)
 {
+	fprintf(stderr,"SetItemCount\n");
 	if(ships == NULL)
 		return;
 
 	m_List = ships;
-	GetMutex()->Lock();
-	SetItemCount(ships->size());
-	GetMutex()->Unlock();
-	Refresh();
-	//wxMutexGuiLeave();
+	
+	wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
+	wxPostEvent(this,evt);
+	
+	//Refresh();
 
 }
 
@@ -92,7 +101,7 @@ void CHtmlList::OnSelect(wxCommandEvent &event)
 	//SMarker *Ship = (SMarker*)ShipList->Item(GetSelection());
 	//Plugin->SetSelectedShip(Ship);
 	//GetMutex()->Unlock();
-	
+	//RefreshAll();
 }
 
 void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
@@ -105,13 +114,11 @@ void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
         dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
     //}
 }
+
 wxString CHtmlList::OnGetItem(size_t item) const
 {
-			
 	if(m_List->size() <= item)
 		return wxEmptyString;
-
-	GetMutex()->Lock();
 
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
@@ -120,31 +127,43 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	//Plugin->GetBroker()->Project(Ship->x,Ship->y,&to_x,&to_y);
 	
 	//if(Plugin->GetS ShipIsSelected(Ship))
-	str << wxString::Format(_("<h2>%s</h2>"),ptr->GetNumber());
-	str << _("<table celpadding=4 border=1 cellspacing=0>");
 	if(ptr->GetAlarmCount() > 0)
-		str << wxString::Format(_("<tr><td><font size='4' color=red><b>ALARM</b></td></tr>"));
+		str << wxString::Format(_("<font size=5>Alarm</font><br>"));
+	str << wxString::Format(_("<font size=6><b>%s</b></font><br>"),ptr->GetNumber());
+	str << wxString::Format(_("<font size=3>%s</font><br>"),ptr->GetName());
+	if(IsSelected(item))
+	{
+		str << _("<a href='1'>Link1..</a> <a href='2'>Link2..</a>");
+	}else{
+		str << _("");
+	}
+	//str << _("<table celpadding=2 border=1 cellspacing=0>");
 	
-	str << wxString::Format(_("<tr><td><font size='4'><b>%s</b></td></tr>"),ptr->GetName());
-
-	str <<_("</table>");
+		//str << wxString::Format(_("<tr><td><font size='4' color=red><b>ALARM</b></td></tr>"));
+	
+	//str << wxString::Format(_("<tr><td><font size='4'><b>%s</b></td></tr>"),ptr->GetName());
+	//str <<_("</table>");
 		
-		//ptr->GetName(),ptr->GetNumber(),ptr->GetAgeAsString());
+	//ptr->GetName(),ptr->GetNumber(),ptr->GetAgeAsString());
 
 	//else
 	
 	//	str = wxString::Format(_("<table celpadding=4><td><font size='4'>%s</font></td></table>"),Ship->name,Ship->description);
 
-	GetMutex()->Unlock();
-
 	return str;
 
 }
-
-
+/*
+wxString CHtmlList::OnGetItemMarkup(size_t  n) const
+{
+	//CSymbol *ptr = (CSymbol*)m_List->Item(n);
+	//if(ptr->GetAlarmCount() > 0)
+		//return wxString::Format(_("<font color=red>%s"),ptr->GetAgeAsString());
+}
+*/
 wxColour CHtmlList::GetSelectedTextColour(const wxColour& colFg) const
 {
-    return wxColor(0,0,0);
+    return wxColor(255,255,255);
 }
 /*
 void CHtmlList::_SetSelection(SMarker *ship)

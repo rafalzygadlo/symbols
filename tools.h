@@ -5,8 +5,7 @@
 #include "nvtime.h"
 #include "geometryconfig.h"
 
-wxMutex *GetMutex();
-void FreeMutex();
+
 const wchar_t *GetMsg(int id);
 void SetLangId(int id);
 wxString ConvertDegree(double degree,int type);

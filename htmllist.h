@@ -12,11 +12,12 @@ class CHtmlList: public wxHtmlListBox
 {	
 
 	wxArrayPtrVoid *m_List;
-		
+	void OnSetItem(wxCommandEvent &event);
 	void OnSelect(wxCommandEvent &event);
 	virtual wxString OnGetItem(size_t item) const;
 	virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
 	virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
+	//virtual wxString OnGetItemMarkup(size_t  n) const; 
 	//virtual wxColour GetSelectedTextBgColour(const wxColour& colBg) const;
 
 public:

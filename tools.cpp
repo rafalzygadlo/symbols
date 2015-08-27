@@ -247,23 +247,6 @@ const wchar_t *GetCommandName(int id)
 	return GetMsg(nvCommandMSG[id]);
 }
 
-wxMutex *GetMutex()
-{
-	if(mutex == NULL)
-		mutex = new wxMutex;
-	
-	return mutex;
-}
-
-
-void FreeMutex()
-{
-	if(mutex != NULL)
-		delete mutex;
-	
-	mutex = NULL;
-}
-
 wxString GetConfigFile()
 {
 	return wxString::Format(wxT("%s%s%s"),GetWorkDir().wc_str(),wxT(DIR_SEPARATOR),_(CONFIG_FILE));
@@ -279,7 +262,7 @@ wxString GetWorkDir()
 
 
 wxString GetProductInfo()
-{
+{	
 	return wxString::Format(_("%s %s\n%s"),_(PRODUCT_NAME),_(PRODUCT_VERSION),_(PRODUCT_COPYRIGHT));
 }
 wxString GetProductName()
