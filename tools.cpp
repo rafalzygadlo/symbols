@@ -163,6 +163,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Off Position",L"Off Position"},
 	{L"High Voltage",L"Wysokie napiêcie"},
 	{L"Low Voltage",L"Niskie napiêcie"},
+	{L"Communication timeout",L"B³¹d komunikacji"},
 
 };
 
