@@ -827,6 +827,12 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	return NULL;
 }
 
+void CMapPlugin::SetSelectedPtr(CSymbol *v)
+{
+	SelectedPtr = v;
+	SendSelectSignal();
+}
+
 void CMapPlugin::ShowFrameWindow(bool show)
 {
 	if(m_Frame == NULL)

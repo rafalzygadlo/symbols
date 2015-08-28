@@ -60,6 +60,7 @@ void SetAutoManagement();
 time_t GetLocalTimestamp();
 wxString GetLightOnAsString(bool v);
 wxString GetAutoAsString(bool v);
+wxString GetAlarmAsString(int id);
 
 //COMMANDS
 void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);

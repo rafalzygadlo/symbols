@@ -142,7 +142,7 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	//Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
 
-	m_HtmlList = new  CHtmlList(Panel,NULL);
+	m_HtmlList = new  CHtmlList(Panel);
 	Sizer->Add(m_HtmlList,1,wxALL|wxEXPAND,0);
 	
 
@@ -314,6 +314,7 @@ void CDisplayPlugin::SignalInsert()
 		m_OldCount = count;
 
 	m_HtmlList->SetList(ptr);
+	m_HtmlList->SetMapPlugin(m_MapPlugin);
 
 //	ShipList->SetList(MapPlugin->GetShipList());
 //	ShipList->Refresh();

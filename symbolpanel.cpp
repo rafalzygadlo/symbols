@@ -41,12 +41,19 @@ CSymbolPanel::~CSymbolPanel()
 void CSymbolPanel::GetPage1()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-		
-	m_PicturePanel = new CPicturePanel(NULL,this);
-	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+
+	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	wxScrolledWindow *Scroll = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
+	Scroll->SetFocusIgnoringChildren();
+	Scroll->SetSizer(ScrollSizer);
+	
+
+	m_PicturePanel = new CPicturePanel(NULL,Scroll);
+	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 	
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	Sizer->Add(hSizer,0,wxALL|wxEXPAND,5);
+	ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
 	
 
 	//m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxCENTER,2);
@@ -57,10 +64,10 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
 	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
-	m_Html = new wxHtmlWindow(this,ID_HTML);
-	m_Html->SetMinSize(wxSize(200,150));
-
-	Sizer->Add(m_Html,1,wxALL|wxEXPAND,2);
+	m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+	//m_Html->SetMinSize(wxSize(200,450));
+	
+	ScrollSizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 	//m_Calibrated->Disable();
 	//m_ForcedOff->Disable();
 	//m_PhotoCellNightTime->Disable();
@@ -70,22 +77,22 @@ void CSymbolPanel::GetPage1()
 	//m_SeasonControl->Disable();
 
 	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
-	Sizer->Add(WrapSizer,0,wxALL|wxEXPAND,5);
+	ScrollSizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
 
-	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
+	m_ButtonManagement = new wxButton(Scroll,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
 	m_ButtonManagement->Disable();
 
-	m_ButtonGraph = new wxButton(this,ID_GRAPH,GetMsg(MSG_GRAPH));
+	m_ButtonGraph = new wxButton(Scroll,ID_GRAPH,GetMsg(MSG_GRAPH));
 	WrapSizer->Add(m_ButtonGraph,0,wxALL,2);
 	m_ButtonGraph->Disable();
 	
-	m_ButtonAlarm = new wxButton(this,ID_ALARM,GetMsg(MSG_ALARM));
+	m_ButtonAlarm = new wxButton(Scroll,ID_ALARM,GetMsg(MSG_ALARM));
 	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
 	m_ButtonAlarm->Disable();
 		
-	
-	this->SetSizer(Sizer);
+	Scroll->SetScrollbars(20, 20, 20, 20);
+	SetSizer(Sizer);
 			
 }
 
@@ -155,7 +162,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	m_SBMSID = ptr->GetSBMSID();
 	m_Html->SetPage(wxEmptyString);
 
-	SetHeader();
+	//SetHeader();
 	PictureInfo(db,ptr);
 	AlarmInfo(db,m_IdSBMS);
 	SymbolInfo(db,ptr);
@@ -165,14 +172,13 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
-	
 	DBClose(db);
 }
 
 void CSymbolPanel::SetHeader()
 {
 	wxString str;
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
 	str.Append(wxString::Format(_("<tr><td colspan=3><b><a href=\"#%d\">%s</a></b></td></tr>"),HTML_ANCHOR_LAST_REPORT,GetMsg(MSG_LAST_REPORT) ));
 	str.Append(_("</table>"));
 	m_Html->AppendToPage(str);
@@ -199,13 +205,10 @@ void CSymbolPanel::AlarmInfo(void *db,int id_sbms)
 	if(row)
 	{
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-	
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),row[FI_SBMS_ALARM_ID_ALARM]));	
-	
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),GetAlarmAsString(atoi(row[FI_SBMS_ALARM_ID_ALARM]))));
 		str.Append(_("</table>"));
 		str.Append(_("<hr>"));
 		m_Html->AppendToPage(str);
-
 	}
 }
 
@@ -213,7 +216,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 	
 	if(m_IdSBMS == 0)
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
@@ -231,11 +234,9 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
-				
-	
-		
 	str.Append(_("</table>"));
 	str.Append(_("<hr>"));
+	
 	m_Html->AppendToPage(str);
 	
 }
@@ -255,7 +256,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 	if(row)
 	{
 		wxString str;
-		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
 		int phone = atoi(row[Fi_SBMS_PHONE]);
@@ -322,7 +323,7 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 	if(row)
 	{
 		wxString str;
-		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
 		m_Html->AppendToPage(str);

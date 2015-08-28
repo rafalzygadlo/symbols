@@ -77,6 +77,7 @@ class CSymbol
 	bool m_NoSBMS;
 	bool m_Init;
 	bool m_Auto;
+	float m_InputVolt;
 	
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
@@ -137,6 +138,7 @@ public:
 	void SetSBMSName(wxString v);
 	void SetNoSBMS(bool v);
 	void SetAuto(bool v);
+	void SetInputVolt(float v);
 		
 	int GetId();
 	int GetIdSBMS();
@@ -157,6 +159,7 @@ public:
 	bool GetInMonitoring();
 	bool GetInit();
 	bool GetAuto();
+	float GetInputVolt();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();

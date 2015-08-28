@@ -175,6 +175,7 @@ public:
 	int GetDisplaySignal();
 	void OnTick();
 	void OnTickExit();
+	void SetSelectedPtr(CSymbol *v);
 
 	virtual void Run(void *Params); 
 	virtual void Kill(void);

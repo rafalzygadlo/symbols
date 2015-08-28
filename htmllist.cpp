@@ -2,6 +2,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "info.h"
+#include "options.h"
 #include <wx/strconv.h>
 #include <algorithm>
 #include <wx/mstream.h>
@@ -14,15 +15,18 @@ BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 END_EVENT_TABLE()
 
- 
-CHtmlList::CHtmlList( wxWindow *Parent,CDisplayPlugin *DspPlugin )
+CHtmlList *HtmlListPtr = NULL;
+CHtmlList::CHtmlList( wxWindow *Parent)
 :wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
 {
 	//Plugin = DspPlugin;
 	//SetDoubleBuffered(true);
+	HtmlListPtr = this;
+	m_MapPlugin = NULL;
 	m_List = NULL;
 	SetItemCount(0);
-	SetSelectionBackground(wxColor(150,150,150));
+	SetMargins(10,10);
+	//SetSelectionBackground(wxColor(200,200,200));
 }
 
 CHtmlList::~CHtmlList()
@@ -41,29 +45,38 @@ void CHtmlList::ClearList()
 	SetItemCount(0);
 }
 
+void CHtmlList::SetMapPlugin(CMapPlugin *v)
+{
+	m_MapPlugin = v;
+}
+
 void CHtmlList::SetList(wxArrayPtrVoid *ships)
 {
-	fprintf(stderr,"SetItemCount\n");
 	if(ships == NULL)
 		return;
 
 	m_List = ships;
 	
-	wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
-	wxPostEvent(this,evt);
+	int count = m_List->size();
+
+	if(m_Count != count || GetSortChanged())
+	{
+		
+		m_Count = count;
+		wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
+		wxPostEvent(this,evt);
+		Refresh();
+	}
+		
 	
-	//Refresh();
 
 }
 
 void CHtmlList::_SetSelection(CSymbol *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
-	{
-		//this->SetS (-1);
 		return;
-	}
-	
+		
 	if(this->GetItemCount() != m_List->size())
 		return;
 	
@@ -76,13 +89,6 @@ void CHtmlList::_SetSelection(CSymbol *ptr)
 			if(Symbol == ptr)
 			{
 				this->SetSelection(i);
-				//EnsureVisible(i);
-				//SetItemState(i,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-				//Refresh();
-				
-			//}else{
-				//SetItemState(i,0, wxLIST_STATE_SELECTED| wxLIST_STATE_SELECTED);
-
 			}
 		}
 	}
@@ -92,27 +98,27 @@ void CHtmlList::_SetSelection(CSymbol *ptr)
 
 void CHtmlList::OnSelect(wxCommandEvent &event)
 {
-	//if(GetSelection() < 0)
-		//return;
+	if(GetSelection() < 0)
+		return;
 	//if(GetMutex()->TryLock())
 		//	return;
 	
-	//int a = GetSelection();
-	//SMarker *Ship = (SMarker*)ShipList->Item(GetSelection());
-	//Plugin->SetSelectedShip(Ship);
-	//GetMutex()->Unlock();
-	//RefreshAll();
+	int a = GetSelection();
+	CSymbol *ptr = (CSymbol*)m_List->Item(GetSelection());
+	m_MapPlugin->SetSelectedPtr(ptr);
+	
 }
 
 void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-    //if ( ((MyFrame *)GetParent())->
-      //      GetMenuBar()->IsChecked(HtmlLbox_DrawSeparator) )
-    //{
-        dc.SetPen(*wxBLACK_DASHED_PEN);
-        dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
-        dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
-    //}
+	dc.SetPen(*wxBLACK_DASHED_PEN);
+    dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
+    dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
+}
+
+void CHtmlList::OnDrawItem(wxDC& dc, wxRect& rect, size_t) const
+{
+	dc.DrawText(_("TEST"),10,10);
 }
 
 wxString CHtmlList::OnGetItem(size_t item) const
@@ -123,20 +129,46 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
 	
-	//double to_x, to_y;
-	//Plugin->GetBroker()->Project(Ship->x,Ship->y,&to_x,&to_y);
-	
-	//if(Plugin->GetS ShipIsSelected(Ship))
 	if(ptr->GetAlarmCount() > 0)
-		str << wxString::Format(_("<font size=5>Alarm</font><br>"));
-	str << wxString::Format(_("<font size=6><b>%s</b></font><br>"),ptr->GetNumber());
-	str << wxString::Format(_("<font size=3>%s</font><br>"),ptr->GetName());
-	if(IsSelected(item))
+		str << wxString::Format(_("<font size=4 color=red>Alarm</font><br>"));
+	
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	if(ptr->GetIdSBMS() == 0)
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
+	
+	if(ptr->GetInMonitoring())
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
+	else
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+
+	if(ptr->GetInMonitoring() & (ptr->GetIdSBMS() > 0))
 	{
-		str << _("<a href='1'>Link1..</a> <a href='2'>Link2..</a>");
-	}else{
-		str << _("");
+		
+		if(ptr->GetLightOn())
+		{
+			nvRGBA rgba = GetColor(SYMBOL_LIGHT_ON_COLOR);
+			str.Append(wxString::Format(_("<tr><td><font size=5 color='#%02X%02X%02X'><b>%s</b></font></td>"),rgba.R,rgba.G,rgba.B,GetLightOnAsString(ptr->GetLightOn())));
+		}else{
+			//nvRGBA rgba = GetColor(SYMBOL_NORMAL_COLOR);
+			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
+		}
+
+		if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
+			str.Append(wxString::Format(_("<td rowspan=3 align=right width=80><font size=7 color=red>%4.2fV</font></td></tr>"),ptr->GetInputVolt()));
+		else
+			str.Append(wxString::Format(_("<a href='1'><td rowspan=3 align=right width=80><font size=7>%4.2fV</font></td></a></tr>"),ptr->GetInputVolt()));
+
+		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
+
 	}
+	
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
+	str.Append(_("</table>"));
+	
+	//str << wxString::Format(_("<a href='1'>%s</a><br>"),GetMsg(MSG_MANAGEMENT));
+	//str << wxString::Format(_("<a href='2'>%s</a>"),GetMsg(MSG_GRAPH));
+	
 	//str << _("<table celpadding=2 border=1 cellspacing=0>");
 	
 		//str << wxString::Format(_("<tr><td><font size='4' color=red><b>ALARM</b></td></tr>"));
@@ -156,16 +188,19 @@ wxString CHtmlList::OnGetItem(size_t item) const
 /*
 wxString CHtmlList::OnGetItemMarkup(size_t  n) const
 {
-	//CSymbol *ptr = (CSymbol*)m_List->Item(n);
+	CSymbol *ptr = (CSymbol*)m_List->Item(n);
+	
+	//wxString str = HtmlListPtr->geti
 	//if(ptr->GetAlarmCount() > 0)
-		//return wxString::Format(_("<font color=red>%s"),ptr->GetAgeAsString());
+	return wxString::Format(_("ABCDEF"),ptr->GetAgeAsString());
 }
 */
+/*
 wxColour CHtmlList::GetSelectedTextColour(const wxColour& colFg) const
 {
     return wxColor(255,255,255);
 }
-/*
+
 void CHtmlList::_SetSelection(SMarker *ship)
 {
 	if(ship == NULL)

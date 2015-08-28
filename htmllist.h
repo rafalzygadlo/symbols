@@ -7,30 +7,34 @@
 #include "display.h"
 #include "frame.h"
 
-class CDisplayPlugin;
+class CMapPlugin;
 class CHtmlList: public wxHtmlListBox
 {	
-
+	CMapPlugin *m_MapPlugin;
+	int m_Count;
 	wxArrayPtrVoid *m_List;
 	void OnSetItem(wxCommandEvent &event);
 	void OnSelect(wxCommandEvent &event);
 	virtual wxString OnGetItem(size_t item) const;
-	virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
+	//virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
 	virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
+	virtual void OnDrawItem(wxDC &dc, wxRect & 	rect,size_t n)	const;
+
 	//virtual wxString OnGetItemMarkup(size_t  n) const; 
 	//virtual wxColour GetSelectedTextBgColour(const wxColour& colBg) const;
 
 public:
 	
-	CHtmlList(wxWindow *Parent, CDisplayPlugin *DspPlugin);
+	CHtmlList(wxWindow *Parent);
 	~CHtmlList();
 		
 	void SetList(wxArrayPtrVoid *ships);
 	void ClearList();
-	wxString GetItemValue(long item, long column);
+	//wxString GetItemValue(long item, long column);
 	const char *GetSelectedColumn();
 	bool GetSortOrder();
 	void _SetSelection(CSymbol *ptr);
+	void SetMapPlugin(CMapPlugin *v);
 	
 
 	DECLARE_EVENT_TABLE();

@@ -260,6 +260,10 @@
 #define MSG_LIGHT_IS_ON					140
 #define MSG_LIGHT_IS_OFF				141
 #define MSG_OFF_POSITION_RADIUS			142
+#define MSG_OFF_POSITION				143
+#define MSG_HIGH_VOLTAGE				144
+#define MSG_LOW_VOLTAGE					145
+#define MSG_COMMUNICATION_TIMEOUT		146
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -784,6 +788,21 @@
 #define MANUAL_MANAGEMENT	0
 #define AUTO_MANAGEMENT		1
 #define READED_REPORT_FLAG 0
+
+
+//definicja ALARMÓW
+#define ALARM_OFFSET                            128     //dla alarmów z serwera
+//Alarmy SBMS
+#define ALARM_OPENING_MAIN_FLAP			0
+#define ALARM_POWER_SUPPLY_FAULT		1
+#define ALARM_IMPACT_DETECTED			2
+
+//alarmy tylko z SBMSA beda
+//ALarmy Serwer
+#define ALARM_OFF_POSITION                      ALARM_OFFSET + 1
+#define ALARM_COMMUNICATION_TIMEOUT             ALARM_OFFSET + 2
+#define ALARM_LOW_VOLTAGE                       ALARM_OFFSET + 3
+#define ALARM_HIGH_VOLTAGE                      ALARM_OFFSET + 4
 
 /*
 

@@ -160,6 +160,9 @@ const wchar_t *nvLanguage[][2] =
 	{L"ON",L"ON"},
 	{L"OFF",L"OFF"},
 	{L"Off Position Radius(meters)",L"Promieñ (OFF POSITION)(w metrach)"},
+	{L"Off Position",L"Off Position"},
+	{L"High Voltage",L"Wysokie napiêcie"},
+	{L"Low Voltage",L"Niskie napiêcie"},
 
 };
 
@@ -1101,6 +1104,18 @@ time_t GetLocalTimestamp()
 	return t;
 	//return mktime(now);
 
+
+}
+
+wxString GetAlarmAsString(int id)
+{
+	switch(id)
+	{
+		case ALARM_OFF_POSITION:			return GetMsg(MSG_OFF_POSITION);
+		case ALARM_HIGH_VOLTAGE:			return GetMsg(MSG_HIGH_VOLTAGE);
+		case ALARM_LOW_VOLTAGE:				return GetMsg(MSG_LOW_VOLTAGE);
+		case ALARM_COMMUNICATION_TIMEOUT:	return GetMsg(MSG_COMMUNICATION_TIMEOUT);
+	}
 
 }
 

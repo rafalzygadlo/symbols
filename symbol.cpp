@@ -88,6 +88,7 @@ void CSymbol::Read()
 		SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		SetSBMSName(Convert(row[FI_SBMS_NAME]));
 		SetAuto(atoi(row[FI_SBMS_AUTO]));
+		SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		
 		if(m_InMonitoring)
 		{
@@ -207,7 +208,7 @@ bool CSymbol::CheckAlarm()
 	if(m_AlarmTick <= CHECK_ALARM_TICK)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_SBMS_ALARM,m_IdSBMS,ALARM_NOT_CONFIRMED);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND active='%d'"),TABLE_SBMS_ALARM,m_IdSBMS,ALARM_ACTIVE);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -802,6 +803,11 @@ void CSymbol::SetAuto(bool v)
 	m_Auto = v;
 }
 
+void CSymbol::SetInputVolt(float v)
+{
+	m_InputVolt = v;
+}
+
 void CSymbol::SetRemove(bool v)
 {
 	m_Exists = v;
@@ -972,4 +978,9 @@ bool CSymbol::GetInit()
 bool CSymbol::GetAuto()
 {
 	return m_Auto;
+}
+
+float CSymbol::GetInputVolt()
+{
+	return m_InputVolt;
 }
