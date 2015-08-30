@@ -4,6 +4,7 @@
 #include <wx/wx.h>
 #include <wx/fileconf.h>
 #include <wx/notebook.h>
+#include <sapi.h>
 #include "tgamem.h"
 #include <gl/gl.h>
 #include "navidisplayapi.h"
@@ -80,6 +81,7 @@ class CMapPlugin :public CNaviMapIOApi
 	wxArrayPtrVoid *m_SymbolList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
+	ISpVoice * m_Voice;
 
 	void ReadDBConfig();
 	void CreateApiMenu(void);

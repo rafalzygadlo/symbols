@@ -1,4 +1,4 @@
-#include "conf.h"
+﻿#include "conf.h"
 #include "dll.h"
 #include "frame.h"
 #include "tools.h"
@@ -733,6 +733,21 @@ void CMapPlugin::Run(void *Params)
 	CreateApiMenu(); // jezyki
 	ReadConfigDB();
 	ReadGlobalConfigDB();
+	
+     if (CoInitialize(NULL))
+	 {
+         //return FALSE;
+		HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_Voice);
+		if( SUCCEEDED( hr ) )
+		{
+			m_Voice->Speak(L"Cześć. Testowanie syntezatora mowy.", 0, NULL);
+			//m_Voice->Release();
+			//m_Voice = NULL;
+		}
+	 }
+     
+ //CoUninitialize();
+
 
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);
@@ -797,7 +812,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		SendSelectSignal();
-
+		m_Voice->Speak(ptr->GetName(),0,NULL);
 	}else{
 	
 		FromLMB = false;

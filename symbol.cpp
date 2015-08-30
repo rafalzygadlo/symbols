@@ -467,27 +467,27 @@ void CSymbol::RenderLightOn()
 	glPopMatrix();
 		
 }
-
+#endif
 void CSymbol::RenderAlarm()
 {
 	if(!m_Alarm)
 		return;
 		
 	glPushMatrix();
-	glColor4f(1.0f,0.0f,0.0f,0.9f);
+	SetColor(SYMBOL_ERROR_COLOR);
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
-	glTranslatef(0.0,-m_RectWidth/2,0.0f);
+	//glTranslatef(0.0,th/2,0.0f);
 
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
 	c.Radius = m_RectWidth;
-	nvDrawCircle(&c);
+	nvDrawCircleArcFilled(&c,270,0);
 		
 	glPopMatrix();
 		
 }
-#endif
+
 
 void CSymbol::SetSymbolColor()
 {
@@ -502,11 +502,11 @@ void CSymbol::SetSymbolColor()
 	else
 		SetColor(SYMBOL_NORMAL_COLOR);
 		
-	if(m_Alarm)
-	{
-		if(m_AlarmOn)
-			SetColor(SYMBOL_ERROR_COLOR);
-	}
+	//if(m_Alarm)
+	//{
+		//if(m_AlarmOn)
+			//SetColor(SYMBOL_ERROR_COLOR);
+	//}
 	
 }
 
@@ -691,10 +691,10 @@ void CSymbol::RenderNoSBMS()
 	glColor4f(1.0,0.0,0.0,0.5);
 	glLineWidth(5);
 	glBegin(GL_LINES);
-		glVertex2f(m_RectWidth,m_RectWidth);
-		glVertex2f(-m_RectWidth,-m_RectWidth);
-		glVertex2f(m_RectWidth,-m_RectWidth);
-		glVertex2f(-m_RectWidth,m_RectWidth);
+		glVertex2f(m_RectWidth/2,m_RectWidth/2);
+		glVertex2f(-m_RectWidth/2,-m_RectWidth/2);
+		glVertex2f(m_RectWidth/2,-m_RectWidth/2);
+		glVertex2f(-m_RectWidth/2,m_RectWidth/2);
 	glEnd();
 
 	glPopMatrix();
@@ -719,6 +719,7 @@ void CSymbol::Render()
 	
 	RenderNewReport();
 	RenderSymbol();
+	RenderAlarm();
 	RenderPositions();
 		
 	glDisable(GL_BLEND);
