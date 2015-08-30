@@ -601,6 +601,9 @@ bool my_query(void *db,wxString sql)
 	if(db == NULL)
 		return false;
 	
+	db_query(db,"SET NAMES utf8  COLLATE utf_polish_ci");
+    db_query(db,"SET CHARACTER SET utf8");
+
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32

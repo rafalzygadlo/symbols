@@ -219,15 +219,18 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 	
 	if(m_IdSBMS == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
-	
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
+
 	if(ptr->GetInMonitoring())
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
+	else
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+	
+	if(ptr->GetInMonitoring() & ptr->GetIdSBMS() > 0)
 	{
+
 		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
 		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	}else{
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
 	}
 	
 	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetName()));
@@ -259,7 +262,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
-		int phone = atoi(row[Fi_SBMS_PHONE]);
+		int phone = atoi(row[FI_SBMS_PHONE]);
 		if(phone)
 			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),phone));
 

@@ -44,6 +44,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 
 	wxString m_ControlName;
 	int m_ControlType;
+
+	
 	void WriteConfig();
 	void ReadConfig();
 	void ShowControls();
@@ -52,6 +54,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void SignalClear();
 	bool EnableControls();
 	void SwitchAction();
+	void Signal();
+	void SignalSynchro();
 	void RemoveControl(int type);
 	wxPanel *GetPage1(wxWindow *parent);
 	wxPanel *GetPage2(wxWindow *parent);
@@ -62,9 +66,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnSearchText(wxCommandEvent &event);
 	void OnFilter(wxCommandEvent &event);
-	void Signal();
-	void SignalSynchro();
-
+		
 public:
 	
 	CDisplayPlugin(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString& name = wxT("DisplayApiPanel") );

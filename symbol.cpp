@@ -491,7 +491,7 @@ void CSymbol::RenderAlarm()
 
 void CSymbol::SetSymbolColor()
 {
-	if(!m_InMonitoring)
+	if(!m_InMonitoring || m_IdSBMS == 0)
 	{
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 		return;

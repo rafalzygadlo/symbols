@@ -13,6 +13,7 @@ class CHtmlList: public wxHtmlListBox
 	CMapPlugin *m_MapPlugin;
 	int m_Count;
 	wxArrayPtrVoid *m_List;
+	void OnCellHover(wxHtmlCellEvent &event);
 	void OnSetItem(wxCommandEvent &event);
 	void OnSelect(wxCommandEvent &event);
 	virtual wxString OnGetItem(size_t item) const;

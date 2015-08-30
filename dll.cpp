@@ -740,7 +740,8 @@ void CMapPlugin::Run(void *Params)
 		HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_Voice);
 		if( SUCCEEDED( hr ) )
 		{
-			m_Voice->Speak(L"Cześć. Testowanie syntezatora mowy.", 0, NULL);
+			//m_Voice->Speak(L"Starting system.", 0, NULL);
+			m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
 			//m_Voice->Release();
 			//m_Voice = NULL;
 		}

@@ -648,7 +648,7 @@
 #define FI_SBMS_ID							0
 #define FI_SBMS_SBMSID						1
 #define FI_SBMS_ID_BASE_STATION				2
-#define Fi_SBMS_PHONE						3
+#define FI_SBMS_PHONE						3
 #define FI_SBMS_MMSI						4
 #define FI_SBMS_NAME						5
 #define FI_SBMS_AUTO						6

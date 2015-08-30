@@ -13,6 +13,7 @@ BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
+	EVT_HTML_CELL_HOVER(ID_HTML, OnCellHover)
 END_EVENT_TABLE()
 
 CHtmlList *HtmlListPtr = NULL;
@@ -32,6 +33,15 @@ CHtmlList::CHtmlList( wxWindow *Parent)
 CHtmlList::~CHtmlList()
 {
 
+}
+
+void CHtmlList::OnCellHover(wxHtmlCellEvent &event)
+{
+	wxHtmlCell *cell =  event.GetCell();
+
+	wxHtmlLinkInfo *link = cell->GetLink();
+	if(link)
+		wxMessageBox(link->GetHref());
 }
 
 void CHtmlList::OnSetItem(wxCommandEvent &event)
