@@ -30,16 +30,26 @@ class COptionsDialog: public wxDialog
 	wxTextCtrl *m_OffPositionArea;
 	wxCheckBox *m_ShowNames;
 	
-
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetColorPanel(wxWindow *parent);
 	wxPanel *GetFontPanel(wxWindow *Parent);
 	wxPanel *GetOtherPanel(wxWindow *Parent);
 	wxPanel *GetGlobalOtherPanel(wxWindow *Parent);
 	wxPanel *GetGlobalThresholdPanel(wxWindow *Parent);
+	wxPanel *GetGlobalSunPanel(wxWindow *Parent);
 
 	wxPanel *GetPage1(wxWindow *Parent);
 	wxPanel *GetPage2(wxWindow *Parent);
+
+	wxTextCtrl *m_TextLat;
+	wxTextCtrl *m_TextLon;
+
+	int m_DegreeFormat;
+	bool m_LonValid;
+	bool m_LatValid;
+	double m_Lon;
+	double m_Lat;
+	
 
 	void OnColorPicker(wxColourPickerEvent &event);
 	void OnAlpha(wxCommandEvent &event);
@@ -51,6 +61,8 @@ class COptionsDialog: public wxDialog
 	void OnLowerThreshold(wxCommandEvent &event);
 	void OnUpperThreshold(wxCommandEvent &event);
 	void OnOffPositionArea(wxCommandEvent &event);
+	void OnLon(wxCommandEvent &event);
+	void OnLat(wxCommandEvent &event);
 
 
 public:
@@ -75,6 +87,8 @@ public:
 		ID_LOWER_THRESHOLD,
 		ID_UPPER_THRESHOLD,
 		ID_OFF_POSITION_AREA,
+		ID_SUN_LON,
+		ID_SUN_LAT,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,

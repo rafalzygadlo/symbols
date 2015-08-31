@@ -307,6 +307,12 @@ void CMapPlugin::ReadGlobalConfigDB()
 		int val;
 		val = atoi(row[FI_GLOBAL_OPTION_RESTRICTED_AREA]);		SetRestrictedArea(val);
 		val = atoi(row[FI_GLOBAL_OPTION_OFF_POSITION_AREA]);	SetOffPositionArea(val);
+
+		double lon,lat;
+		sscanf(row[FI_GLOBAL_OPTION_SUN_LON],"%lf",&lon);
+		sscanf(row[FI_GLOBAL_OPTION_SUN_LAT],"%lf",&lat);
+		SetSunLon(lon);
+		SetSunLat(lat);
 	}
 	
 	db_free_result(result);
@@ -357,8 +363,10 @@ void CMapPlugin::WriteConfigDB()
 }
 void CMapPlugin::WriteGlobalConfigDB()
 {
-	
-	wxString sql = wxString::Format(_("UPDATE `%s` SET "),TABLE_GLOBAL_OPTION);
+	wxString sql = wxString::Format(_("DELETE FROM `%s`"),TABLE_GLOBAL_OPTION);
+	my_query(m_DB,sql);
+
+	sql = wxString::Format(_("INSERT INTO `%s` SET "),TABLE_GLOBAL_OPTION);
 		
 	//THRESHOLD
 	sql << sql.Format("lower_threshold='%f',",GetLowerThreshold());
@@ -366,8 +374,12 @@ void CMapPlugin::WriteGlobalConfigDB()
 		
 	//OTHER
 	sql << sql.Format("restricted_area='%d',",GetRestrictedArea());
-	sql << sql.Format("off_position_area='%d'",GetOffPositionArea());
-		
+	sql << sql.Format("off_position_area='%d',",GetOffPositionArea());
+	
+	//SUN
+	sql << sql.Format("sun_lon='%4.13f',",GetSunLon());
+	sql << sql.Format("sun_lat='%4.13f'",GetSunLat());
+
 	my_query(m_DB,sql);
 
 }
@@ -741,7 +753,7 @@ void CMapPlugin::Run(void *Params)
 		if( SUCCEEDED( hr ) )
 		{
 			//m_Voice->Speak(L"Starting system.", 0, NULL);
-			m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
+			//m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
 			//m_Voice->Release();
 			//m_Voice = NULL;
 		}
@@ -813,7 +825,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		SendSelectSignal();
-		m_Voice->Speak(ptr->GetName(),0,NULL);
+		//m_Voice->Speak(ptr->GetName(),0,NULL);
 	}else{
 	
 		FromLMB = false;
@@ -1340,17 +1352,22 @@ void CMapPlugin::OnTick()
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);			//przeczytaj symbole
-	fprintf(stderr,"%d\n",GetTickCount() - t);
+	//fprintf(stderr,"%d\n",GetTickCount() - t);
 	Remove();				//usuń
 	ReadSymbolValues(db);	// wczytaj inne opcje
-	fprintf(stderr,"%d\n",GetTickCount() - t);
-	SendInsertSignal();
-
+	//fprintf(stderr,"%d\n",GetTickCount() - t);
+	
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
 	SetFilterChanged(false);
 
+	SetNightTime();
+	
+	SendInsertSignal();
+
 	DBClose(db);
+	
+	
 	
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 

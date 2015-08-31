@@ -1,7 +1,9 @@
 #ifndef __OPTIONS
 #define __OPTIONS
 #include <wx/wx.h>
+#include <stdint.h>
 #include "geometryconfig.h"
+#include "nvtime.h"
 
 #define DEFAULT_FG_COLOR wxColor(230,230,230)
 #define DEFAULT_BG_COLOR wxColor(50,50,50)
@@ -38,6 +40,12 @@ int GetCommTimeout();
 int GetRestrictedArea();
 int GetScaleFactor();
 int GetOffPositionArea();
+double GetSunLon();
+double GetSunLat();
+uint32_t GetNightTimeOn();
+uint32_t GetNightTimeOff();
+nvtime_t GetNightNvTimeOn();
+nvtime_t GetNightNvTimeOff();
 
 //SET
 void SetFGColor(wxColor v);
@@ -64,7 +72,14 @@ void SetFontSize(float v);
 void SetViewFontScale(int v);
 void SetCommTimeout(int v);
 void SetOffPositionArea(int v);
-
+void SetSunLat(double v);
+void SetSunLon(double v);
+void SetNightTimeOn(uint32_t v);
+void SetNightTimeOff(uint32_t v);
+void SetNightNvTimeOn(nvtime_t v);
+void SetNightNvTimeOff(nvtime_t v);
+//void SetNightTimeOnAsString(nvtime_t v);
+//void SetNightTimeOffAsString(nvtime_t v);
 
 //filter
 void SetSelectedAreaId(int v);
@@ -73,8 +88,6 @@ void SetSelectedSymbolTypeId(int v);
 void SetInMonitoring(int v);
 void SetFilterChanged(bool v);
 void SetSelectedGroupId(int v);
-
-
 
 //COLORS
 nvRGBA GetDefaultColor(int type);

@@ -1,5 +1,6 @@
 #include <wx/statline.h>
 #include <wx/notebook.h>
+#include "geometrytools.h"
 #include "options.h"
 #include "optionsdialog.h"
 #include "conf.h"
@@ -18,11 +19,16 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_TEXT(ID_LOWER_THRESHOLD,OnLowerThreshold)
 	EVT_TEXT(ID_UPPER_THRESHOLD,OnUpperThreshold)
 	EVT_TEXT(ID_OFF_POSITION_AREA,OnOffPositionArea)
+	EVT_TEXT(ID_SUN_LON,OnLon)
+	EVT_TEXT(ID_SUN_LAT,OnLat)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
 	:wxDialog(NULL,wxID_ANY,wxEmptyString)
 {
+	m_DegreeFormat = DEFAULT_DEGREE_FORMAT;
+	m_LonValid = false;
+	m_LatValid = false;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);		
 	
@@ -69,6 +75,7 @@ wxPanel *COptionsDialog::GetPage2(wxWindow *Parent)
 	//Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetGlobalThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetGlobalOtherPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetGlobalSunPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
 	return Panel;
@@ -218,6 +225,8 @@ wxPanel *COptionsDialog::GetOtherPanel(wxWindow *Parent)
 	m_ScaleFactor->SetMax(10000);
 	m_ScaleFactor->SetValue(GetScaleFactor());
 	FlexSizer->Add(m_ScaleFactor,0,wxALL,5);
+
+
 	
 	//wxStaticText *TextRestrictedArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
 	//FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
@@ -319,6 +328,38 @@ wxPanel *COptionsDialog::GetGlobalThresholdPanel(wxWindow *Parent)
 	m_UpperThreshold = new wxTextCtrl(Panel,ID_UPPER_THRESHOLD);
 	m_UpperThreshold->SetValue(wxString::Format(_("%4.2f"),GetUpperThreshold()));
 	FlexSizer->Add(m_UpperThreshold,0,wxALL,5);
+
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+wxPanel *COptionsDialog::GetGlobalSunPanel(wxWindow *Parent)
+{
+	
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SUNRISE_SUNSET));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
+
+	wxStaticText *LabelLat = new wxStaticText(Panel,wxID_ANY,wxString::Format(_("%s\n(%s)"),GetMsg(MSG_LATITUDE),GetDegreeFormat(DEGREE_FORMAT_DDMMSS,DIR_LAT)),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(LabelLat,0,wxALL,5);
+	m_TextLat = new wxTextCtrl(Panel,ID_SUN_LAT,wxEmptyString,wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(m_TextLat,0,wxALL,5);
+	
+	wxStaticText *LabelLon = new wxStaticText(Panel,wxID_ANY,wxString::Format(_("%s\n(%s)"),GetMsg(MSG_LONGITUDE),GetDegreeFormat(DEGREE_FORMAT_DDMMSS,DIR_LON)),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(LabelLon,0,wxALL,5);
+	m_TextLon = new wxTextCtrl(Panel,ID_SUN_LON,wxEmptyString, wxDefaultPosition, wxDefaultSize);
+	FlexSizer->Add(m_TextLon,0,wxALL,5);
+	
+	if(!UNDEFINED_VAL(GetSunLon()))
+		m_TextLon->SetValue(FormatLongitude(GetSunLon(),m_DegreeFormat));
+	if(!UNDEFINED_VAL(GetSunLat()))
+		m_TextLat->SetValue(FormatLatitude(GetSunLat(),m_DegreeFormat));
 
 	Panel->SetSizer(Sizer);
 
@@ -475,4 +516,53 @@ void COptionsDialog::OnOffPositionArea(wxCommandEvent &event)
 	long v;
 	m_OffPositionArea->GetValue().ToLong(&v);
 	SetOffPositionArea(v);
+}
+
+void COptionsDialog::OnLon(wxCommandEvent &event)
+{	
+	if(m_TextLon->GetValue().empty())
+	{
+		m_LonValid = false;
+		return;
+	}
+		
+	if(_SetLon(m_TextLon->GetValue().char_str(),&m_Lon,m_DegreeFormat))
+	{
+		m_LonValid = true;
+		SetSunLon(m_Lon);
+		m_TextLon->SetForegroundColour(wxSYS_COLOUR_WINDOWTEXT);
+		m_TextLon->Refresh();
+
+	}else{
+		
+		m_LonValid = false;
+		m_TextLon->SetForegroundColour(*wxRED);
+		m_TextLon->Refresh();
+	
+	}
+
+}
+
+void COptionsDialog::OnLat(wxCommandEvent &event)
+{
+	if(m_TextLat->GetValue().empty())
+	{
+		m_LatValid = false;
+		return;
+	}
+			
+	if(_SetLat(m_TextLat->GetValue().char_str(),&m_Lat,m_DegreeFormat))
+	{
+		m_LatValid = true;
+		SetSunLat(m_Lat);
+		m_TextLat->SetForegroundColour(wxSYS_COLOUR_WINDOWTEXT);
+		m_TextLat->Refresh();
+
+	}else{
+		
+		m_LatValid = false;
+		m_TextLat->SetForegroundColour(*wxRED);
+		m_TextLat->Refresh();
+	}
+
 }

@@ -40,12 +40,15 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CHtmlCtrl *m_HtmlCtrl;
 	CHtmlList *m_HtmlList;
 	wxSearchCtrl *m_SearchText;
+	wxStaticText *m_NightTime;
 	int m_OldCount;
+	nvtime_t m_OldNightOn;
+	nvtime_t m_OldNightOff;
+	wxPanel *m_Page3;
 
 	wxString m_ControlName;
 	int m_ControlType;
-
-	
+		
 	void WriteConfig();
 	void ReadConfig();
 	void ShowControls();
@@ -65,6 +68,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void OnMenu(wxContextMenuEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnSearchText(wxCommandEvent &event);
+	void OnSetNightTime(wxCommandEvent &event);
 	void OnFilter(wxCommandEvent &event);
 		
 public:
@@ -84,6 +88,7 @@ public:
 	{
 		ID_SEARCH = 1200,
 		ID_FILTER,
+		ID_NIGHT_TIME,
 	};
 
 	DECLARE_EVENT_TABLE();
