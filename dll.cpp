@@ -578,7 +578,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 	db_free_result(result);
 
 }
-
+/*
 void CMapPlugin::ReadGroup(void *db)
 {
 	int group_id = 1;
@@ -614,7 +614,7 @@ void CMapPlugin::ReadGroup(void *db)
 	}
 	
 }
-
+*/
 void CMapPlugin::ReadSymbolValues(void *db)
 {  
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
