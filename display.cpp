@@ -6,6 +6,8 @@
 #include <wx/wx.h>
 #include <wx/tglbtn.h>
 
+DEFINE_EVENT_TYPE(EVT_SET_NIGHT_TIME)
+
 BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 //	EVT_HYPERLINK(ID_REPORT,CDisplayPlugin::OnReport)
 //	EVT_HYPERLINK(ID_DATA,CDisplayPlugin::OnData)
@@ -15,8 +17,8 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 	EVT_TEXT(ID_SEARCH,OnSearchText)
 	EVT_TEXT_ENTER(ID_SEARCH,OnSearchEnter)
 	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
-	
 	EVT_CONTEXT_MENU(OnMenu)
+	EVT_COMMAND(ID_NIGHT_TIME,EVT_SET_NIGHT_TIME,OnSetNightTime)
 END_EVENT_TABLE()
 
 
@@ -109,6 +111,21 @@ void CDisplayPlugin::OnSearchText(wxCommandEvent &event)
 	SetSearchTextChanged(true);
 }
 
+void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
+{
+	nvtime_t on = GetNightNvTimeOn();
+	nvtime_t off = GetNightNvTimeOff();
+		
+	if(memcmp(&on,&m_OldNightOn,sizeof(nvtime_t)) !=0 ||  memcmp(&off,&m_OldNightOff,sizeof(nvtime_t)) !=0)
+	{
+		m_NightTime->SetLabel(wxString::Format(_("%s %02d:%02d - %02d:%02d"),GetMsg(MSG_NIGHT_TIME), on.h,on.m,off.h,off.m));
+		m_Page3->Layout();
+	}
+	
+	m_OldNightOn = on;
+	m_OldNightOff = off;
+}
+
 void CDisplayPlugin::Signal()
 {
 	if(m_Broker != NULL)
@@ -172,17 +189,41 @@ wxPanel *CDisplayPlugin::GetPage2(wxWindow *parent)
 wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	
-	Panel->SetSizer(Sizer);
+	m_Page3 = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 
-	return Panel;
+	//wxHyperlinkCtrl *Href1 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_GRAPH),wxEmptyString);
+	//Sizer->Add(Href1,0,wxALL,2);
+	
+	//wxHyperlinkCtrl *Scan1 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_MANAGEMENT),wxEmptyString);
+	//Sizer->Add(Scan1,0,wxALL,2);
+
+	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
+	//Sizer->Add(Scan2,0,wxALL,2);
+
+	m_NightTime = new wxStaticText(m_Page3,wxID_ANY,wxEmptyString);
+	m_NightTime->SetLabel(_("Night time\n"));
+	Sizer->Add(m_NightTime,0,wxALL|wxALIGN_RIGHT,5);
+	
+	m_Page3->SetSizer(Sizer);
+
+	return m_Page3;
 }
 
 void CDisplayPlugin::ShowControls()
 {
-	wxBoxSizer *Main = new wxBoxSizer(wxHORIZONTAL);
-			
+	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
+	
+		
+	//wxHyperlinkCtrl *m_LogText = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_GRAPH),wxEmptyString);
+	//Main->Add(Scan,0,wxALL,5);
+	
+	//wxHyperlinkCtrl *Scan1 = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_MANAGEMENT),wxEmptyString);
+	//Main->Add(Scan1,0,wxALL,5);
+
+	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
+	//Main->Add(Scan2,0,wxALL,5);
+
+
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
@@ -190,6 +231,9 @@ void CDisplayPlugin::ShowControls()
 	//m_Notebook->AddPage(GetPage3(m_Notebook),GetMsg(MSG_OPTIONS));
 	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
+
+	Main->Add(GetPage3(this),0,wxALL|wxEXPAND,0);
+
 	SetSizer(Main);
 
 }
@@ -302,12 +346,7 @@ void CDisplayPlugin::SignalInsert()
 	if(m_MapPlugin == NULL)
 		return;
 
-	//fprintf(stderr,"Update\n");
-	//m_HtmlCtrl->ClearList();
-
 	wxArrayPtrVoid *ptr = m_MapPlugin->GetSymbolListPtr();
-
-	//m_HtmlCtrl->SetList(ptr);
 	int count = ptr->size();
 
 	if(m_OldCount != count)
@@ -317,9 +356,10 @@ void CDisplayPlugin::SignalInsert()
 	m_HtmlList->SetList(ptr);
 	m_HtmlList->SetMapPlugin(m_MapPlugin);
 
-//	ShipList->SetList(MapPlugin->GetShipList());
-//	ShipList->Refresh();
-}
+	wxCommandEvent evt(EVT_SET_NIGHT_TIME,ID_NIGHT_TIME);
+	wxPostEvent(this,evt);
+}	
+
 
 void CDisplayPlugin::SignalSynchro()
 {

@@ -164,6 +164,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"High Voltage",L"Wysokie napiêcie"},
 	{L"Low Voltage",L"Niskie napiêcie"},
 	{L"Communication timeout",L"B³¹d komunikacji"},
+	{L"Sunrise/Sunset Position",L"Pozycja Wschód/Zachód S³oñca"},
+	{L"Night time (UTC)",L"Czas nocny (UTC)"},
 
 };
 
@@ -1073,6 +1075,27 @@ wxString GetAutoAsString(bool v)
 		return GetMsg(MSG_MANUAL_MANAGEMENT);
 }
 
+int GetUTCDay()
+{
+    time_t t = time(0);   // get time now
+    struct tm * now = gmtime( & t );
+    return now->tm_mday;
+}
+
+int GetUTCMonth()
+{
+    time_t t = time(0);   // get time now
+    struct tm * now = gmtime( & t );
+    return now->tm_mon + 1;
+}
+
+int GetUTCYear()
+{
+    time_t t = time(0);   // get time now
+    struct tm * now = gmtime( & t );
+    return now->tm_year + 1900;
+}
+
 
 void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, float req, uint32_t *TimeOnLight, uint32_t *TimeOffLight) 
 {
@@ -1109,6 +1132,28 @@ time_t GetLocalTimestamp()
 	//return mktime(now);
 
 
+}
+
+void SetNightTime()
+{
+	uint32_t on;
+	uint32_t off;
+	GetOnOffLightTime(GetUTCYear(),GetUTCMonth(),GetUTCDay(),GetSunLon(),GetSunLat(),ONOFFLIGHT_REQ,&on,&off);
+
+	nvtime_t t_on;
+	nvdatetime(on,&t_on);
+
+	nvtime_t t_off;
+	nvdatetime(off,&t_off);
+
+	SetNightTimeOn(on);
+	SetNightTimeOff(off);
+	SetNightNvTimeOn(t_on);
+	SetNightNvTimeOff(t_off);
+//	SetNightTimeOnAsString(t_on);
+//	SetNightTimeOffAsString(t_off);
+	//fprintf(stderr,"ON:%02d:%02d:%02d\n",t_on.h,t_on.m,t_on.s);
+	//fprintf(stderr,"OFF:%02d:%02d:%02d\n",t_off.h,t_off.m,t_off.s);
 }
 
 wxString GetAlarmAsString(int id)
