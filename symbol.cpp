@@ -793,6 +793,9 @@ void CSymbol::ShowGraph()
 		Graph->AddColor(c);
 	}
 	
+	if(min == max)
+		max = max + 0.1;
+
 	Graph->SetTimeFrom(seconds_from);
 	Graph->SetTimeTo(seconds_to);
 	Graph->SetMin(min);
