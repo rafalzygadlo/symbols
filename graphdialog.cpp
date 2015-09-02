@@ -5,9 +5,8 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "options.h"
 
-//BEGIN_EVENT_TABLE(CCommandDialog, wxDialog)
-//END_EVENT_TABLE()
 
 CGraphDialog::CGraphDialog(wxWindow *parent, CSymbol *ptr)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
@@ -24,6 +23,11 @@ CGraphDialog::CGraphDialog(wxWindow *parent, CSymbol *ptr)
 CGraphDialog::~CGraphDialog()
 {
 	
+}
+
+void CGraphDialog::OnClose(wxCloseEvent &event)
+{
+	//Destroy();
 }
 
 CGraph *CGraphDialog::GetGraph()
@@ -48,3 +52,4 @@ wxPanel *CGraphDialog::GetButtonPanel(wxWindow *parent)
 	
 	return Panel;
 }
+

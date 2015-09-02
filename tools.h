@@ -68,6 +68,7 @@ int GetUTCYear();
 void SetNightTime();
 
 
+
 //COMMANDS
 void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
 

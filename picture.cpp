@@ -27,6 +27,7 @@ CPicturePanel::CPicturePanel(void *db,wxWindow *parent, int type)
 	m_StaticPicture = new wxStaticBitmap(this,wxID_ANY,wxNullBitmap);
 	m_StaticPicture->SetMinSize(wxSize(PICTURE_MAX_WIDTH,PICTURE_MAX_HEIGHT));
 	Sizer->Add(m_StaticPicture,0,wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL,0);
+	m_Type = type;
 	
 	if(type == PICTURE_PANEL_NEW)
 	{
@@ -173,6 +174,7 @@ void CPicturePanel::Read()
 	m_StaticPicture->ClearBackground();
 	m_StaticPicture->SetBitmap(wxNullBitmap);
 
+	bool show = false;
 	if(row && len)
 	{
 		int size = len[FI_PICTURE_DATA];
@@ -192,14 +194,17 @@ void CPicturePanel::Read()
 				m_Picture = img;
 				m_StaticPicture->SetBitmap(bmp);
 			}
+			
+			show = true;
 		}
-				
-	}else{
 		
-		//m_Info->SetLabel(GetMsg(MSG_NO_PICTURE));	
-	
 	}
-	
+
+	if(m_Type > 0)
+		this->Show(true);
+	else
+		this->Show(show);
+
 	this->Refresh();
 	this->Layout();
 	this->GetParent()->Layout();

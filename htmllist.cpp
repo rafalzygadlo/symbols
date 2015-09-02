@@ -13,7 +13,7 @@ BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
-	EVT_HTML_CELL_HOVER(ID_HTML, OnCellHover)
+	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)
 END_EVENT_TABLE()
 
 CHtmlList *HtmlListPtr = NULL;
@@ -35,13 +35,23 @@ CHtmlList::~CHtmlList()
 
 }
 
-void CHtmlList::OnCellHover(wxHtmlCellEvent &event)
+void CHtmlList::OnLinkClicked(wxHtmlLinkEvent &event)
 {
-	wxHtmlCell *cell =  event.GetCell();
+	int id =  event.GetSelection();
+	id = event.GetId();
 
-	wxHtmlLinkInfo *link = cell->GetLink();
-	if(link)
-		wxMessageBox(link->GetHref());
+	wxHtmlLinkInfo link = event.GetLinkInfo();
+
+	long item;
+	link.GetHref().ToLong(&item);
+	
+	CSymbol *Symbol = (CSymbol*)m_List->Item(item);
+	Symbol->ShowGraph();
+	
+	//switch(action)
+	//{
+		//case 1: ShowGraph(Symbol); break;
+	//}
 }
 
 void CHtmlList::OnSetItem(wxCommandEvent &event)
@@ -129,6 +139,8 @@ void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 void CHtmlList::OnDrawItem(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.DrawText(_("TEST"),10,10);
+
+	//dc.DrawBitmap
 }
 
 wxString CHtmlList::OnGetItem(size_t item) const
@@ -166,7 +178,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 		if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
 			str.Append(wxString::Format(_("<td rowspan=3 align=right width=80><font size=7 color=red>%4.2fV</font></td></tr>"),ptr->GetInputVolt()));
 		else
-			str.Append(wxString::Format(_("<a href='1'><td rowspan=3 align=right width=80><font size=7>%4.2fV</font></td></a></tr>"),ptr->GetInputVolt()));
+			str.Append(wxString::Format(_("<a href='%d'><td rowspan=3 align=right width=80><font size=7>%4.2fV</font></td></a></tr>"),item, ptr->GetInputVolt()));
 
 		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
 

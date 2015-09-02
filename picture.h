@@ -14,6 +14,7 @@ class CPicturePanel: public wxPanel
 	wxStaticBitmap *m_StaticPicture;
 	wxImage m_Picture;
 	int m_ID;
+	int m_Type;
 	wxStaticText *m_Info;
 		
 	void OnNew(wxHyperlinkEvent &event);

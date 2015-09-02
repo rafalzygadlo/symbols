@@ -9,6 +9,7 @@
 #include "ais.h"
 #include "options.h"
 #include "render.h"
+
 //#include "nvtime.h"
 
 CSymbol::CSymbol(CNaviBroker *broker)
@@ -52,11 +53,13 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Init = false;
 	m_AgeString = "N/A";
 	m_DB = NULL;
+	m_GraphDialog = NULL;
 }
 
 CSymbol::~CSymbol()
 {
-
+	if(m_GraphDialog)
+		delete m_GraphDialog;
 }
 
 void CSymbol::SetDB(void *db)
@@ -622,10 +625,13 @@ void CSymbol::RenderGPS()
 void CSymbol::RenderPositions()
 {
 	glEnable(GL_BLEND);
-	glPointSize(2);
-	glColor3f(0.0f,1.0f,0.0f);
+	glPointSize(3);
+	glColor4f(0.0f,0.0f,1.0f,0.5f);
 	if(m_PosBuffer.Length() > 0)
+	{
+		RenderGeometry(GL_LINE_LOOP,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
 		RenderGeometry(GL_POINTS,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
+	}
 	
 	glPointSize(1);
 	glDisable(GL_BLEND);
@@ -727,6 +733,82 @@ void CSymbol::Render()
 	glDisable(GL_LINE_SMOOTH);
 
 }
+
+void CSymbol::ShowGraph()
+{
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	if(m_GraphDialog == NULL)
+		m_GraphDialog = new CGraphDialog(NULL,this);
+	CGraph *Graph = m_GraphDialog->GetGraph();
+
+	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,GetIdSBMS());
+	my_query(db,sql);
+			
+	void *result = db_result(db);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	Graph->Clear();
+	int count = 0;
+	float value = 0;
+	int time = 0;
+	int _time = 0;
+	int seconds_to = 0;
+	int seconds_from = 0;
+	float min,max;
+	min = max = 0;
+	bool set = true;
+	while(row = (char**)db_fetch_row(result))
+	{
+		nvPoint3f pt;
+		
+		value = atof(row[0]);
+		time = atoi(row[1]);
+		
+		nvRGBA c;
+
+		if(set)			{ min = value;	max = value; _time = time; seconds_from = time; set = false;}
+		if(max < value)	{ max = value;}
+		if(min > value)	{ min = value;}
+		time = abs(time - _time);
+		
+		pt.x = time;
+		pt.y = value;
+		pt.z = 0;
+		
+		seconds_to = time  + _time;
+		if(value <= GetLowerThreshold() || value  >= GetUpperThreshold())
+		{
+			c.A = 200; c.R = 255; c.G = 0; c.B = 0;
+		}else{
+			c.A = 200; c.R = 0; c.G = 255; c.B = 0;
+		}
+		
+		Graph->AddPoint(pt);
+		Graph->AddColor(c);
+	}
+	
+	Graph->SetTimeFrom(seconds_from);
+	Graph->SetTimeTo(seconds_to);
+	Graph->SetMin(min);
+	Graph->SetMax(max);
+	Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
+	Graph->Refresh();
+	db_free_result(result);
+	
+	DBClose(db);
+	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
+	m_GraphDialog->Show();
+
+}
+
+
+
 
 void CSymbol::SetColor(int id)
 {

@@ -7,10 +7,13 @@
 #include "symbol.h"
 #include "graph.h"
 
+class CSymbol;
 class CGraphDialog: public wxDialog
 {
 	CGraph *m_Graph;
 	wxPanel *GetButtonPanel(wxWindow *parent);
+	void OnClose(wxCloseEvent &event);
+
 
 public:
 
@@ -18,6 +21,7 @@ public:
 	~CGraphDialog();
 	CGraph *GetGraph();
 
+	
 };
 
 

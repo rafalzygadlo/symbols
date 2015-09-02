@@ -10,7 +10,9 @@
 #include "geometrytools.h"
 #include "nvfastfont.h"
 #include "nvtime.h"
+#include "graphdialog.h"
 
+class CGraphDialog;
 class CSymbol
 {
 	void *m_DB;
@@ -18,7 +20,7 @@ class CSymbol
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	CNaviArray <nvPoint3f> m_PosBuffer;
-
+	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
 	bool m_FirstTime;
@@ -160,6 +162,7 @@ public:
 	bool GetInit();
 	bool GetAuto();
 	float GetInputVolt();
+	void ShowGraph();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();

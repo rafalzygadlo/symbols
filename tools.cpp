@@ -166,6 +166,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Communication timeout",L"B³¹d komunikacji"},
 	{L"Sunrise/Sunset Position",L"Pozycja Wschód/Zachód S³oñca"},
 	{L"Night time (UTC)",L"Czas nocny (UTC)"},
+	{L"Pin To Symbol",L"Przypnij do znaku"},
 
 };
 
@@ -1167,6 +1168,8 @@ wxString GetAlarmAsString(int id)
 	}
 
 }
+
+
 
 
 #if 0

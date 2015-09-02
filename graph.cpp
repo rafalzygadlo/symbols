@@ -343,7 +343,7 @@ void CGraph::RenderData()
 	glScalef(m_Scale,1.0,1.0);
 
 	glEnable(GL_BLEND);
-	glPointSize(2);
+	glPointSize(4);
 	if(m_Buffer.Length() > 0)
 	{
 		RenderGeometry(GL_POINTS,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());

@@ -269,7 +269,7 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 		case CONTROL_SYMBOL_GROUP:	_Menu = Menu(m_SelectedItem,MODULE_SYMBOL_GROUP);				break;
 		case CONTROL_BASE_STATION:	_Menu = MenuBaseStation(m_SelectedItem,MODULE_BASE_STATION);	break;
 		case CONTROL_CHARACTERISTIC:_Menu = Menu(m_SelectedItem,MODULE_CHARACTERISTIC);				break;
-		case CONTROL_SBMS:			_Menu = Menu(m_SelectedItem,MODULE_SBMS);						break;
+		case CONTROL_SBMS:			_Menu = MenuSBMS(m_SelectedItem,MODULE_SBMS);					break;
 	}
 	
 	if(_Menu)
@@ -335,6 +335,45 @@ wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 
 		Menu->AppendSeparator();
 	}
+
+
+	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(ID_NEW)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
+		if(!db_check_right(module,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(ID_EDIT)->Enable(false);
+		
+		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
+		if(!db_check_right(module,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(ID_DELETE)->Enable(false);
+#if 0		
+		Menu->AppendSeparator();
+		Menu->Append(ID_PROPERTIES,GetMsg(MSG_PROPERTIES));
+		if(!db_check_right(module,ACTION_PROPERTIES,_GetUID()))
+			Menu->FindItem(ID_PROPERTIES)->Enable(false);
+#endif
+	}
+		
+	return Menu;
+	
+}
+
+wxMenu *CListCtrl::MenuSBMS(int id, const char *module)
+{
+	wxMenu *Menu = new wxMenu();
+	
+//	if(id > -1)
+//	{
+		//Menu->Append(ID_ADD_TO_SYMBOL,GetMsg(MSG_ADD_TO_SYMBOL));
+		//if(!db_check_right(module ,ACTION_ADD_TO_SYMBOL,_GetUID()))
+		//Menu->FindItem(ID_NEW)->Enable(false);
+
+		//Menu->AppendSeparator();
+	//}
 
 
 	Menu->Append(ID_NEW,GetMsg(MSG_NEW));

@@ -1514,6 +1514,8 @@ void CDialogPanel::OnSelect(int id)
 	{
 		m_PicturePanel->_SetId(m_ID);
 		m_PicturePanel->Read();
+		//m_PicturePanel->Show();
+		//m_PicturePanel->Layout();
 	}
 	
 }

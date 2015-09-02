@@ -403,14 +403,20 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 		return;
 		
 	row = (char**)db_fetch_row(result);
+	m_PicturePanel->SetDB(db);
 	
 	if(row)
 	{
-		m_PicturePanel->SetDB(db);
 		m_PicturePanel->SetPictureId(atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]));
-		this->Layout();
-	}
+		//m_PicturePanel->Show();
 		
+	}else{
+		
+		m_PicturePanel->SetPictureId(-1);
+		//m_PicturePanel->Hide();
+	}
+	
+	this->Layout();
 	db_free_result(result);
 
 }

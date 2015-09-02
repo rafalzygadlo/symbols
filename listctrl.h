@@ -33,6 +33,7 @@ class CListCtrl: public wxListCtrl
 	
 	wxMenu *Menu(int id, const char *module);
 	wxMenu *MenuSymbol(int id, const char *module);
+	wxMenu *MenuSBMS(int id, const char *module);
 	wxMenu *MenuSymbolItem(int id, const char *module);
 	wxMenu *MenuBaseStation(int id, const char *module);
 
@@ -103,7 +104,7 @@ public:
 		ID_GROUP,
 		ID_RIGHT,
 		ID_ADD_TO_GROUP,
-		
+		ID_ADD_TO_SYMBOL,
 	};
 
 };
