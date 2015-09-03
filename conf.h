@@ -413,6 +413,7 @@
 #define ACTION_MANAGEMENT	"management"
 #define ACTION_ADD_TO_GROUP "add_to_group"
 
+//TABELE
 #define TABLE_AREA					"area"
 #define TABLE_SEAWAY				"seaway"
 #define TABLE_RIGHT					"right"
@@ -443,6 +444,10 @@
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 #define TABLE_USER_OPTION			"user_option"
 #define TABLE_GLOBAL_OPTION			"global_option"
+
+
+//WIDOKI
+#define VIEW_SYMBOL	"_view_symbol"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -745,6 +750,31 @@
 #define FI_SBMS_ALARM_ID_ALARM	2
 
 
+// pola widoku _VIEW_SYMBOL
+#define FI_VIEW_SYMBOL_ID					0
+#define FI_VIEW_SYMBOL_ID_SBMS				1
+#define FI_VIEW_SYMBOL_ID_AREA				2
+#define FI_VIEW_SYMBOL_ID_SEAWAY			3
+#define FI_VIEW_SYMBOL_ID_SYMBOL_TYPE		4
+#define FI_VIEW_SYMBOL_ID_BASE_STATION		5
+#define FI_VIEW_SYMBOL_NAME					6
+#define FI_VIEW_SYMBOL_NUMBER				7
+#define FI_VIEW_SYMBOL_SBMS_NAME			8
+#define FI_VIEW_SYMBOL_BASE_STATION_NAME	9
+#define FI_VIEW_SYMBOL_RLON					10
+#define FI_VIEW_SYMBOL_RLAT					11
+#define FI_VIEW_SYMBOL_LON					12
+#define FI_VIEW_SYMBOL_LAT					13
+#define FI_VIEW_SYMBOL_INPUT_VOLT			14
+#define FI_VIEW_SYMBOL_IN_MONITORING		15
+#define FI_VIEW_SYMBOL_AUTO					16
+#define FI_VIEW_SYMBOL_FORCED_OFF			17
+#define FI_VIEW_SBMS_NEW_REPORT				18
+#define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	19
+
+
+#define FN_VIEW_SYMBOL_NAME					"name"
+#define FN_VIEW_SYMBOL_NUMBER				"number"
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

@@ -85,7 +85,9 @@ void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 	FilterDialog->SetSeawayId(GetSelectedSeawayId());
 	FilterDialog->SetSymbolTypeId(GetSelectedSymbolTypeId());
 	FilterDialog->SetInMonitoring(GetInMonitoring());
+	FilterDialog->SetLight(GetLight());
 	FilterDialog->SetGroupId(GetSelectedGroupId());
+	FilterDialog->SetBaseStationId(GetSelectedBaseStationId());
 
 	if(FilterDialog->ShowModal()== wxID_OK)
 	{
@@ -94,6 +96,8 @@ void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 		SetSelectedSymbolTypeId(FilterDialog->GetSymbolTypeId());
 		SetInMonitoring(FilterDialog->GetInMonitoring());
 		SetSelectedGroupId(FilterDialog->GetGroupId());
+		SetLight(FilterDialog->GetLight());
+		SetSelectedBaseStationId(FilterDialog->GetBaseStationId());
 		SetFilterChanged(true);
 	}
 	

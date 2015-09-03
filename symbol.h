@@ -64,6 +64,7 @@ class CSymbol
 	wxString m_Name;
 	wxString m_Number;
 	wxString m_SBMSName;
+	wxString m_BaseStationName;
 	bool m_Exists;
 	bool m_ForcedOff;
 	bool m_PhotoCellNightTime;
@@ -75,7 +76,7 @@ class CSymbol
 	wxString m_AgeString;
 	bool m_InMonitoring;
 	bool m_NewReport;
-	bool m_GpsValid;
+	bool m_ValidGPS;
 	bool m_NoSBMS;
 	bool m_Init;
 	bool m_Auto;
@@ -92,7 +93,7 @@ class CSymbol
 	bool SetPositions();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
-	void Read();
+	//void Read();
 	void SetSymbolColor();
 	void RenderSymbol();
 	//void RenderLightOn();
@@ -112,10 +113,13 @@ public:
 
 	void OnTick(void *db);
 	void OnTickExit();
+	void ShowGraph();
+
+
+	//SET
 	void SetId(int v);
 	//pozycja referencyjna
 	void SetRLon(double v);	void SetRLat(double v);	void SetRLonMap(double v);	void SetRLatMap(double v);
-	
 	void SetIdSBMS(int v);
 	void SetSBMSID(int v);
 	//void SetBaseStationId();
@@ -141,7 +145,12 @@ public:
 	void SetNoSBMS(bool v);
 	void SetAuto(bool v);
 	void SetInputVolt(float v);
-		
+	void SetIdBaseStation(int v);
+	void SetBaseStationName(wxString v);
+	void SetValidGPS(bool v);
+	void SetInit(bool v);
+	
+	//GET
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
@@ -153,6 +162,7 @@ public:
 	wxString GetName();
 	wxString GetNumber();
 	wxString GetSBMSName();
+	wxString GetBaseStationName();
 	bool GetExists();
 	bool GetLightOn();
 	int GetMMSI();
@@ -162,7 +172,7 @@ public:
 	bool GetInit();
 	bool GetAuto();
 	float GetInputVolt();
-	void ShowGraph();
+	bool GetForcedOff();
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();

@@ -21,11 +21,13 @@ int m_SortColumnId = 0;
 int m_SelectedAreaId = 0;
 int	m_SelectedSeawayId = 0;
 int m_SelectedSymbolTypeId = 0;
+int m_SelectedBaseStationId = 0;
 double m_FontSize = DEFAULT_FONT_SIZE;
 int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 int m_CommTimeout = DEFAULT_COMM_TIMEOUT;
 int m_InMonitoring = DEFAULT_MONITORING_VALUE;
 int m_SelectedGroupId = 0;
+int m_Light = 0;
 bool m_ShowFontNames = false;
 int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
 int m_OffPositionArea = DEFAULT_OFF_POSITION_AREA;
@@ -80,9 +82,11 @@ void SetNightNvTimeOff(nvtime_t v)		{	m_NightNvTimeOff = v;	}
 void SetSelectedAreaId(int v)			{	m_SelectedAreaId = v;		}
 void SetSelectedSeawayId(int v)			{	m_SelectedSeawayId = v;		}
 void SetSelectedSymbolTypeId(int v)		{	m_SelectedSymbolTypeId = v;	}
+void SetSelectedBaseStationId(int v)	{	m_SelectedBaseStationId = v;}
 void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
 void SetInMonitoring(int v)				{	m_InMonitoring = v;			}
 void SetSelectedGroupId(int v)			{	m_SelectedGroupId = v;		}
+void SetLight(int v)					{	m_Light = v;				}
 
 
 //GET
@@ -121,9 +125,11 @@ nvtime_t GetNightNvTimeOff()	{	return m_NightNvTimeOff;	}
 int GetSelectedAreaId()			{	return m_SelectedAreaId;		}
 int GetSelectedSeawayId()		{	return m_SelectedSeawayId;		}
 int GetSelectedSymbolTypeId()	{	return m_SelectedSymbolTypeId;	}
+int GetSelectedBaseStationId()	{	return m_SelectedBaseStationId;	}
 int GetFilterChanged()			{	return m_FilterChanged;			}
 int GetInMonitoring()			{	return m_InMonitoring;			}
 int GetSelectedGroupId()		{	return m_SelectedGroupId;		}
+int GetLight()					{	return m_Light;					}
 
 
 nvRGBA GetDefaultColor(int type)

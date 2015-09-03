@@ -81,6 +81,15 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboGroup->SetSelection(0);
 	FlexSizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,5);
 
+	wxStaticText *LabelLight = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LIGHT));
+	FlexSizer->Add(LabelLight,0,wxALL,5);
+	m_ComboLight = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
+	m_ComboLight->Append(GetMsg(MSG_ALL));
+	m_ComboLight->Append(GetMsg(MSG_LIGHT_OFF));
+	m_ComboLight->Append(GetMsg(MSG_LIGHT_ON));
+	m_ComboLight->SetSelection(0);
+	FlexSizer->Add(m_ComboLight,0,wxALL|wxEXPAND,5);
+
 	wxStaticText *LabelInMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	FlexSizer->Add(LabelInMonitoring,0,wxALL,5);
 	m_ComboInMonitoring = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
@@ -90,6 +99,12 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboInMonitoring->SetSelection(0);
 	FlexSizer->Add(m_ComboInMonitoring,0,wxALL|wxEXPAND,5);
 	
+	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
+	FlexSizer->Add(LabelBaseStation,0,wxALL,5);
+	m_ComboBaseStation = GetCombo(db,Panel,TABLE_BASE_STATION,wxEmptyString,FI_BASE_STATION_ID,FI_BASE_STATION_NAME, true);
+	m_ComboBaseStation->SetSelection(0);
+	FlexSizer->Add(m_ComboBaseStation,0,wxALL|wxEXPAND,5);
+
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexSizer->Add(LabelArea,0,wxALL,5);
 	m_ComboArea = GetCombo(db,Panel,TABLE_AREA,wxEmptyString,FI_AREA_ID,FI_AREA_NAME, true);
@@ -129,9 +144,20 @@ int CFilterDialog::GetSeawayId()
 	return (int)m_ComboSeaway->GetClientData(m_ComboSeaway->GetSelection());
 }
 
+int CFilterDialog::GetBaseStationId()
+{
+	return (int)m_ComboBaseStation->GetClientData(m_ComboBaseStation->GetSelection());
+}
+
+
 int CFilterDialog::GetInMonitoring()
 {
 	return m_ComboInMonitoring->GetSelection() - 1; 
+}
+
+int CFilterDialog::GetLight()
+{
+	return m_ComboLight->GetSelection() - 1; 
 }
 
 int CFilterDialog::GetGroupId()
@@ -140,19 +166,24 @@ int CFilterDialog::GetGroupId()
 }
 
 //SET
-void CFilterDialog::SetAreaId(int id)
+void CFilterDialog::SetAreaId(int v)
 {
-	ComboSetSelection(m_ComboArea,id);
+	ComboSetSelection(m_ComboArea,v);
 }
 
-void CFilterDialog::SetSymbolTypeId(int id)
+void CFilterDialog::SetSymbolTypeId(int v)
 {
-	ComboSetSelection(m_ComboSymbolType,id);
+	ComboSetSelection(m_ComboSymbolType,v);
 }
 
-void CFilterDialog::SetSeawayId(int id)
+void CFilterDialog::SetBaseStationId(int v)
 {
-	ComboSetSelection(m_ComboSeaway,id);
+	ComboSetSelection(m_ComboBaseStation,v);
+}
+
+void CFilterDialog::SetSeawayId(int v)
+{
+	ComboSetSelection(m_ComboSeaway,v);
 }
 
 void CFilterDialog::SetInMonitoring(int v)
@@ -160,7 +191,12 @@ void CFilterDialog::SetInMonitoring(int v)
 	m_ComboInMonitoring->SetSelection(v + 1);
 }
 
-void CFilterDialog::SetGroupId(int id)
+void CFilterDialog::SetLight(int v)
 {
-	ComboSetSelection(m_ComboGroup,id);
+	m_ComboLight->SetSelection(v + 1);
+}
+
+void CFilterDialog::SetGroupId(int v)
+{
+	ComboSetSelection(m_ComboGroup,v);
 }

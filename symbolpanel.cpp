@@ -16,7 +16,6 @@
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
-	EVT_BUTTON(ID_GRAPH,OnGraph)
 	EVT_BUTTON(ID_ALARM,OnAlarm)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
@@ -82,11 +81,7 @@ void CSymbolPanel::GetPage1()
 	m_ButtonManagement = new wxButton(Scroll,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
 	m_ButtonManagement->Disable();
-
-	m_ButtonGraph = new wxButton(Scroll,ID_GRAPH,GetMsg(MSG_GRAPH));
-	WrapSizer->Add(m_ButtonGraph,0,wxALL,2);
-	m_ButtonGraph->Disable();
-	
+		
 	m_ButtonAlarm = new wxButton(Scroll,ID_ALARM,GetMsg(MSG_ALARM));
 	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
 	m_ButtonAlarm->Disable();
@@ -129,11 +124,14 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
-		
+	
+	m_IdSBMS = ptr->GetIdSBMS();
+	m_IdBaseStation = ptr->GetBaseStationId();
+	m_SBMSID = ptr->GetSBMSID();
+
 	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
-	ptr->SetNewReport(false);
-	
+		
 	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
 		m_ButtonManagement->Enable();
 	else
@@ -156,10 +154,8 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonAlarm->SetLabel(GetMsg(MSG_ALARM));
 	}
 
-	m_ButtonGraph->Enable();
-	m_IdSBMS = ptr->GetIdSBMS();
-	m_IdBaseStation = ptr->GetBaseStationId();
-	m_SBMSID = ptr->GetSBMSID();
+	//m_ButtonGraph->Enable();
+	
 	m_Html->SetPage(wxEmptyString);
 
 	//SetHeader();
@@ -497,85 +493,12 @@ void CSymbolPanel::OnManagement(wxCommandEvent &event)
 	DBClose(db);
 }
 
-void CSymbolPanel::OnGraph(wxCommandEvent &event)
-{
-	void *db = DBConnect();
-	if(db == NULL)
-		return;
-	
-	if(m_GraphDialog == NULL)
-		m_GraphDialog = new CGraphDialog(this,m_Symbol);
-	CGraph *Graph = m_GraphDialog->GetGraph();
-	
-	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,m_IdSBMS);
-	my_query(db,sql);
-			
-	void *result = db_result(db);
-		
-	char **row = NULL;
-	if(result == NULL)
-		return;
-	
-	Graph->Clear();
-	int count = 0;
-	float value = 0;
-	int time = 0;
-	int _time = 0;
-	int seconds_to = 0;
-	int seconds_from = 0;
-	float min,max;
-	min = max = 0;
-	bool set = true;
-	while(row = (char**)db_fetch_row(result))
-	{
-		nvPoint3f pt;
-		
-		value = atof(row[0]);
-		time = atoi(row[1]);
-		
-		nvRGBA c;
-
-		if(set)			{ min = value;	max = value; _time = time; seconds_from = time; set = false;}
-		if(max < value)	{ max = value;}
-		if(min > value)	{ min = value;}
-		time = abs(time - _time);
-		
-		pt.x = time;
-		pt.y = value;
-		pt.z = 0;
-		
-		seconds_to = time  + _time;
-		if(value <= GetLowerThreshold() || value  >= GetUpperThreshold())
-		{
-			c.A = 200; c.R = 255; c.G = 0; c.B = 0;
-		}else{
-			c.A = 200; c.R = 0; c.G = 255; c.B = 0;
-		}
-		
-		Graph->AddPoint(pt);
-		Graph->AddColor(c);
-	}
-	
-	Graph->SetTimeFrom(seconds_from);
-	Graph->SetTimeTo(seconds_to);
-	Graph->SetMin(min);
-	Graph->SetMax(max);
-	Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
-	Graph->Refresh();
-	db_free_result(result);
-	
-	DBClose(db);
-	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
-	m_GraphDialog->ShowModal();
-
-}
 void CSymbolPanel::OnAlarm(wxCommandEvent &event)
 {
 	CAlarmDialog *AlarmDialog = new CAlarmDialog(NULL,_("test"));
 	AlarmDialog->ShowModal();
 	delete AlarmDialog;
 }
-
 
 void CSymbolPanel::SetCalibrated(bool v)
 {

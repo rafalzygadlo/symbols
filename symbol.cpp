@@ -48,7 +48,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_InMonitoring = false;
 	m_ReportCount = 0;
 	m_NewReport = false;
-	m_GpsValid = false;
+	m_ValidGPS = false;
 	m_NoSBMS = true;
 	m_Init = false;
 	m_AgeString = "N/A";
@@ -57,7 +57,8 @@ CSymbol::CSymbol(CNaviBroker *broker)
 }
 
 CSymbol::~CSymbol()
-{
+{	
+	m_Broker = NULL;
 	if(m_GraphDialog)
 		delete m_GraphDialog;
 }
@@ -66,7 +67,7 @@ void CSymbol::SetDB(void *db)
 {
 	m_DB = db;
 }
-
+/*
 void CSymbol::Read()
 {
 	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
@@ -142,6 +143,7 @@ void CSymbol::Read()
 	m_ReadTick = 0;
 
 }
+*/
 
 bool CSymbol::GetBusy()
 {
@@ -357,8 +359,8 @@ void CSymbol::OnTick(void *db)
 	
 	bool result = false;
 
-	Read();
-	m_Init = true;
+	//Read();
+	//m_Init = true;
 	
 	if(!m_InMonitoring)
 		return;
@@ -417,6 +419,9 @@ void CSymbol::SetSmoothScaleFactor(double v)
 
 void CSymbol::SetValues()
 {
+	if(m_Broker == NULL)
+		return;
+	
 	m_Scale  = m_Broker->GetMapScale();
 	SetSmoothScaleFactor( m_Scale );
 	
@@ -605,7 +610,7 @@ void CSymbol::RenderRestricted()
 
 void CSymbol::RenderGPS()
 {
-	if(!m_GpsValid)
+	if(!m_ValidGPS)
 		return;
 
 	//glPushMatrix();
@@ -689,8 +694,9 @@ void CSymbol::RenderNewReport()
 
 void CSymbol::RenderNoSBMS()
 {
-	if(!m_NoSBMS)
+	if(m_IdSBMS > 0)
 		return;
+	
 	glPushMatrix();
 		
 	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
@@ -794,31 +800,32 @@ void CSymbol::ShowGraph()
 	}
 	
 	if(min == max)
-		max = max + 0.1;
+		max += 0.1;
+
+	if(seconds_from == seconds_to)
+		seconds_to +=1;
 
 	Graph->SetTimeFrom(seconds_from);
 	Graph->SetTimeTo(seconds_to);
 	Graph->SetMin(min);
 	Graph->SetMax(max);
-	Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
+	
 	Graph->Refresh();
 	db_free_result(result);
 	
-	DBClose(db);
-	m_GraphDialog->SetTitle(GetMsg(MSG_INPUT_VOLT));
+	m_GraphDialog->SetTitle(wxString::Format(_("%s"),GetName()));
+	m_GraphDialog->Layout();
 	m_GraphDialog->Show();
 
+	DBClose(db);
 }
 
-
-
-
+//SET
 void CSymbol::SetColor(int id)
 {
 	glColor4ub(GetColor(id).R,GetColor(id).G,GetColor(id).B,GetColor(id).A);
 }
 
-//SET
 void CSymbol::SetId(int v)
 {
 	m_Id = v;
@@ -954,6 +961,27 @@ void CSymbol::SetNoSBMS(bool v)
 {
 	m_NoSBMS = v;
 }
+
+void CSymbol::SetIdBaseStation(int v)
+{
+	m_IdBaseStation = v;
+}
+
+void CSymbol::SetBaseStationName(wxString v)
+{
+	m_BaseStationName = v;
+}
+
+void CSymbol::SetValidGPS(bool v)
+{
+	m_ValidGPS = v;
+}
+
+void CSymbol::SetInit(bool v)
+{
+	m_Init = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -1069,4 +1097,14 @@ bool CSymbol::GetAuto()
 float CSymbol::GetInputVolt()
 {
 	return m_InputVolt;
+}
+
+bool CSymbol::GetForcedOff()
+{
+	return m_ForcedOff;
+}
+
+wxString CSymbol::GetBaseStationName()
+{
+	return m_BaseStationName;
 }

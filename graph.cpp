@@ -325,10 +325,10 @@ void CGraph::RenderGrid()
 	}
 	
 	
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
-	RenderText(1,m_GridTop,txt);
-	sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
-	RenderText(1,m_GridBottom,txt);
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MAX),m_GridTop);
+	//RenderText(1,m_GridTop,txt);
+	//sprintf(txt,"%ls: %4.2f",GetMsg(MSG_MIN),m_GridBottom);
+	//RenderText(1,m_GridBottom,txt);
 
 	//glColor4ub(GetFGColor().Red() ,GetFGColor().Green(),GetFGColor().Blue(),GetFGColor().Alpha());
 		

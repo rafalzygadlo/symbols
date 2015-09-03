@@ -79,14 +79,14 @@ void CHtmlList::SetList(wxArrayPtrVoid *ships)
 	
 	int count = m_List->size();
 
-	if(m_Count != count || GetSortChanged())
-	{
+	//if(m_Count != count || GetSortChanged())
+	//{
 		
 		m_Count = count;
 		wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
 		wxPostEvent(this,evt);
 		Refresh();
-	}
+	//}
 		
 	
 
@@ -154,7 +154,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	if(ptr->GetAlarmCount() > 0)
 		str << wxString::Format(_("<font size=4 color=red>Alarm</font><br>"));
 	
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetIdSBMS() == 0)
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
 	
@@ -190,6 +190,8 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	
 	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
 	str.Append(_("</table>"));
 	
 	//str << wxString::Format(_("<a href='1'>%s</a><br>"),GetMsg(MSG_MANAGEMENT));

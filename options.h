@@ -30,9 +30,13 @@ int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
 int GetSelectedGroupId();
-//
 int GetInMonitoring();
 int GetFilterChanged();
+int GetLight();
+int GetSelectedBaseStationId();
+
+//
+
 float GetFontSize();
 int GetViewFontScale();
 bool GetShowFontNames();
@@ -88,6 +92,8 @@ void SetSelectedSymbolTypeId(int v);
 void SetInMonitoring(int v);
 void SetFilterChanged(bool v);
 void SetSelectedGroupId(int v);
+void SetSelectedBaseStationId(int v);
+void SetLight(int v);
 
 //COLORS
 nvRGBA GetDefaultColor(int type);

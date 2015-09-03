@@ -496,7 +496,7 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 	else
 		m_SmoothScaleFactor = factor;
 }
-
+/*
 void CMapPlugin::SetSql(wxString &sql)
 {
 	int id_group = GetSelectedGroupId();
@@ -532,6 +532,49 @@ void CMapPlugin::SetSql(wxString &sql)
 	}
 	
 }
+*/
+void CMapPlugin::SetSql(wxString &sql)
+{
+	int id_group = GetSelectedGroupId();
+	
+	if(id_group > 0)
+		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),VIEW_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
+	else
+		sql = wxString::Format(_("SELECT * FROM %s WHERE "),VIEW_SYMBOL);
+				
+	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
+	m_OldSearchText = GetSearchText();
+	
+	int in_monitoring = GetInMonitoring();
+	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
+	
+	int light = GetLight();
+	if(light > -1)	sql << wxString::Format(_(" AND forced_off = '%d'"),!light);
+
+	int base_station_id = GetSelectedBaseStationId();
+	if(base_station_id > 0)	sql << wxString::Format(_(" AND id_base_station = '%d'"),base_station_id);
+
+	int area_id = GetSelectedAreaId();
+	if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
+	
+	int symbol_type_id = GetSelectedSymbolTypeId();
+	if(symbol_type_id > 0) sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
+
+	int seaway_id = GetSelectedSeawayId();
+	if(seaway_id > 0) sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
+		
+	if(GetSortColumn() != wxEmptyString)
+	{
+		sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
+	
+		if(GetSortOrder())
+			sql << _("ASC");
+		else
+			sql << _("DESC");
+	}
+	
+}
+
 
 void CMapPlugin::ReadSymbol(void *db, wxString sql)
 {	
@@ -554,7 +597,8 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		double lat;
 		int id;
 		int id_sbms;
-		sscanf(row[FI_SYMBOL_ID],"%d",&id);
+		sscanf(row[FI_VIEW_SYMBOL_ID],"%d",&id);
+		sscanf(row[FI_VIEW_SYMBOL_ID_SBMS],"%d",&id_sbms);
 		CSymbol *ptr = NULL;
 		ptr = Exists(id);
 		bool add = false;
@@ -565,28 +609,76 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr = new CSymbol(m_Broker);
 		}
 
-		sscanf(row[FI_SYMBOL_LON],"%lf",&lon);
-		sscanf(row[FI_SYMBOL_LAT],"%lf",&lat);
-		sscanf(row[FI_SYMBOL_ID_SBMS],"%d",&id_sbms);
+		sscanf(row[FI_VIEW_SYMBOL_RLON],"%lf",&lon);
+		sscanf(row[FI_VIEW_SYMBOL_RLAT],"%lf",&lat);
+		//reference
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
-		ptr->SetId(id);
 		ptr->SetRLon(lon);
 		ptr->SetRLat(lat);
 		ptr->SetRLonMap(to_x);
 		ptr->SetRLatMap(-to_y);
+				
+		ptr->SetId(id);
 		ptr->SetIdSBMS(id_sbms);
-		ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
-		ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
-		ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
+		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
+		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
+		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
+		
+		if(id_sbms > 0)
+		{
+			ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
+			ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
+			ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
+			ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
+			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
+			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
+			
+			int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
+			ptr->SetTimestamp(timestamp);
+			ptr->SetAge(GetLocalTimestamp() - timestamp);
+				
+			int seconds = GetLocalTimestamp() - timestamp;
+			if(seconds < 0)
+				seconds = 0;
+
+			int minutes = seconds/60;
+			int hours = minutes/60;
+			div_t _divs = div(seconds,60);
+			div_t _divm = div(minutes,60);
+				
+			ptr->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
+
+
+			//gps
+			sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
+			sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
+			to_x,to_y;
+			m_Broker->Unproject(lon,lat,&to_x,&to_y);
+
+			ptr->SetLon(lon);
+			ptr->SetLat(lat);
+			ptr->SetLonMap(to_x);
+			ptr->SetLatMap(-to_y);
+			ptr->SetValidGPS(true);
+		}
+		
+		ptr->SetInit(true);
+		
+		if(ptr->GetInMonitoring())
+		{
+			ptr->SetNewReport(atoi(row[FI_VIEW_SBMS_NEW_REPORT]));
+			ptr->SetLightOn(!ptr->GetForcedOff());
+		}
+		
 		ptr->SetRemove(true);		
 		
 		if(add)
 			m_SymbolList->Add(ptr);
 
 	}
-		
+	
 	db_free_result(result);
 
 }
@@ -655,8 +747,10 @@ void CMapPlugin::Remove()
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		
 		if(!ptr->GetExists())
 		{
+			ptr->SetInit(false);
 			m_SymbolList->Remove(ptr);
 			delete ptr;
 			i = 0;
@@ -1365,10 +1459,10 @@ void CMapPlugin::OnTick()
 	
 	SendInsertSignal();
 
+	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+
 	DBClose(db);
-	
-	
-	
+		
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

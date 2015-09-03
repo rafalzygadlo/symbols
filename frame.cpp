@@ -9,12 +9,13 @@
 #include "GeometryTools.h"
 
 BEGIN_EVENT_TABLE(CMyFrame,wxDialog)
-	EVT_BUTTON(ID_CLOSE,CMyFrame::OnCloseButton)
-	EVT_BUTTON(ID_COMMAND,CMyFrame::OnCommandButton)
-	EVT_TEXT(ID_NAME,CMyFrame::OnTextChanged)
-	EVT_TEXT(ID_DESCRIPTION,CMyFrame::OnTextChanged)
-	EVT_TEXT(ID_LON,CMyFrame::OnLon)
-	EVT_TEXT(ID_LAT,CMyFrame::OnLat)
+	EVT_BUTTON(ID_CLOSE,OnCloseButton)
+	EVT_BUTTON(ID_COMMAND,OnCommandButton)
+	EVT_TEXT(ID_NAME,OnTextChanged)
+	EVT_TEXT(ID_DESCRIPTION,OnTextChanged)
+	EVT_TEXT(ID_LON,OnLon)
+	EVT_TEXT(ID_LAT,OnLat)
+	//EVT_MOTION(OnMouseMove)
 END_EVENT_TABLE()
 
 //extern CNaviMapIOApi *ThisPtr;
@@ -22,7 +23,7 @@ END_EVENT_TABLE()
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
-	:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,  wxRESIZE_BORDER)
+:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,wxNO_BORDER| wxRESIZE_BORDER)
 {
 	m_SymbolPanel = NULL;
 	m_DLL = (CMapPlugin*)Parent;
@@ -96,6 +97,17 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	return Panel;
 }
 
+
+void CMyFrame::OnMouseMove(wxMouseEvent& event)
+{
+    wxPoint pt = event.GetPosition();
+    if (event.Dragging() && event.LeftIsDown())
+    {
+        wxPoint pos = ClientToScreen(pt);
+		Move(wxPoint(pos.x , pos.y ));
+        //Move(wxPoint(pos.x - m_delta.x, pos.y - m_delta.y));
+    }
+}
 
 void CMyFrame::OnLon(wxCommandEvent &event)
 {

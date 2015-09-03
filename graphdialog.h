@@ -11,16 +11,19 @@ class CSymbol;
 class CGraphDialog: public wxDialog
 {
 	CGraph *m_Graph;
+	wxStaticText *m_Title;
+	//wxStaticText *m_Min;
 	wxPanel *GetButtonPanel(wxWindow *parent);
-	void OnClose(wxCloseEvent &event);
-
+	wxPanel *GetGraphPanel(wxWindow *parent);
+	wxPanel *GetTopPanel(wxWindow *parent);
 
 public:
 
 	CGraphDialog(wxWindow *parent,CSymbol *ptr);
 	~CGraphDialog();
 	CGraph *GetGraph();
-
+	void SetTitle(wxString v);
+	void SetMin(wxString v);
 	
 };
 

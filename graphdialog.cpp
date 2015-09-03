@@ -12,12 +12,12 @@ CGraphDialog::CGraphDialog(wxWindow *parent, CSymbol *ptr)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	m_Graph = new CGraph(this);
-	m_Graph->SetMinSize(wxSize(800,250));
-	Sizer->Add(m_Graph,1,wxALL|wxEXPAND,5);
-	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
+	Sizer->Add(GetTopPanel(this),0,wxALL|wxEXPAND,2);
+	Sizer->Add(GetGraphPanel(this),1,wxALL|wxEXPAND,2);
+	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,2);
 	SetSizer(Sizer);
-	Fit();	
+	Fit();
+	Center();
 }
 
 CGraphDialog::~CGraphDialog()
@@ -25,14 +25,36 @@ CGraphDialog::~CGraphDialog()
 	
 }
 
-void CGraphDialog::OnClose(wxCloseEvent &event)
+wxPanel *CGraphDialog::GetTopPanel(wxWindow *parent)
 {
-	//Destroy();
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	wxFont font;
+	font.SetPointSize(12);
+	font.SetWeight(wxBOLD);
+	m_Title = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
+	m_Title->SetFont(font);
+	Sizer->Add(m_Title,0,wxALL|wxEXPAND,2);
+	
+	//m_Min = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
+	//Sizer->Add(m_Min,0,wxALL|wxEXPAND,5);
+	
+	return Panel;
 }
 
-CGraph *CGraphDialog::GetGraph()
+
+wxPanel *CGraphDialog::GetGraphPanel(wxWindow *parent)
 {
-	return m_Graph;
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	Panel->SetSizer(Sizer);
+	
+	m_Graph = new CGraph(Panel);
+	m_Graph->SetMinSize(wxSize(600,250));
+	Sizer->Add(m_Graph,1,wxALL|wxEXPAND,5);
+
+	return Panel;
 }
 
 wxPanel *CGraphDialog::GetButtonPanel(wxWindow *parent)
@@ -53,3 +75,12 @@ wxPanel *CGraphDialog::GetButtonPanel(wxWindow *parent)
 	return Panel;
 }
 
+CGraph *CGraphDialog::GetGraph()
+{
+	return m_Graph;
+}
+
+void CGraphDialog::SetTitle(wxString v)
+{
+	m_Title->SetLabel(v);
+}

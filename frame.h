@@ -38,6 +38,7 @@ class CMyFrame: public wxDialog
 	void OnPaint(wxPaintEvent &event);
 	void OnLon(wxCommandEvent &event);
 	void OnLat(wxCommandEvent &event);
+	void OnMouseMove(wxMouseEvent& event);
 	bool IsOnScreen(int x, int y);
 
 					

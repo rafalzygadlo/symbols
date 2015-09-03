@@ -8,9 +8,11 @@ class CFilterDialog: public wxDialog
 	wxButton *m_ButtonSelect;
 	//wxCheckBox *m_CheckInMonitoring;
 	wxComboBox *m_ComboGroup;
+	wxComboBox *m_ComboLight;
 	wxComboBox *m_ComboArea;
 	wxComboBox *m_ComboSeaway;
 	wxComboBox *m_ComboInMonitoring;
+	wxComboBox *m_ComboBaseStation;
 	wxComboBox *m_ComboSymbolType;
 	
 	void Set(int id, bool checked);
@@ -27,14 +29,17 @@ public:
 	int GetSeawayId();
 	int GetInMonitoring();
 	int GetGroupId();
-
-	void SetAreaId(int id);
-	void SetSymbolTypeId(int id);
-	void SetSeawayId(int id);
+	int GetLight();
+	int GetBaseStationId();
+	
+	void SetAreaId(int v);
+	void SetSymbolTypeId(int v);
+	void SetSeawayId(int v);
+	void SetBaseStationId(int v);
 	void SetInMonitoring(int v);
-	void SetGroupId(int id);
-
-
+	void SetLight(int v);
+	void SetGroupId(int v);
+	
 	DECLARE_EVENT_TABLE();
 
 	enum
