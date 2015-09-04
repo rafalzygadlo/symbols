@@ -14,6 +14,7 @@ BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)
+	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
 CHtmlList *HtmlListPtr = NULL;
@@ -58,6 +59,34 @@ void CHtmlList::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
+}
+
+void CHtmlList::OnContextMenu(wxContextMenuEvent &event)
+{
+	//this->GetItemForCell()
+	//this->getr
+	
+	int id = event.GetSelection();
+	
+	wxMenu *Menu = new wxMenu();
+	
+	Menu->Append(wxID_ANY,GetMsg(MSG_NEW));
+	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
+		Menu->FindItem(wxID_ANY)->Enable(false);
+			
+	if(id > -1)
+	{
+		Menu->Append(wxID_ANY,GetMsg(MSG_EDIT));
+		if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
+			Menu->FindItem(wxID_ANY)->Enable(false);
+		
+		Menu->Append(wxID_ANY,GetMsg(MSG_DELETE));
+		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
+			Menu->FindItem(wxID_ANY)->Enable(false);
+	}
+		
+	PopupMenu(Menu);
+	delete Menu;
 }
 
 void CHtmlList::ClearList()
@@ -151,8 +180,10 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
 	
-	if(ptr->GetAlarmCount() > 0)
-		str << wxString::Format(_("<font size=4 color=red>Alarm</font><br>"));
+	for(int i = 0; i < ptr->GetAlarmCount();i++)
+	{
+		str << wxString::Format(_("<font size=4 color=red>%s</font><br>"),ptr->GetAlarmName(i));
+	}
 	
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetIdSBMS() == 0)

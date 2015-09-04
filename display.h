@@ -42,9 +42,11 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldCount;
-	nvtime_t m_OldNightOn;
-	nvtime_t m_OldNightOff;
+	bool m_OldNight;
 	wxPanel *m_Page3;
+	wxButton *m_ButtonManagement;
+	//wxButton *m_ButtonGraph;
+	wxButton *m_ButtonAlarm;
 
 	wxString m_ControlName;
 	int m_ControlType;
@@ -89,6 +91,8 @@ public:
 		ID_SEARCH = 1200,
 		ID_FILTER,
 		ID_NIGHT_TIME,
+		ID_MANAGEMENT,
+		ID_ALARM,
 	};
 
 	DECLARE_EVENT_TABLE();

@@ -34,12 +34,9 @@ int m_OffPositionArea = DEFAULT_OFF_POSITION_AREA;
 int m_ScaleFactor = DEFAULT_SCALE_FACTOR;
 double m_SunLon = DEFAULT_SUN_LON;
 double m_SunLat = DEFAULT_SUN_LAT;
-uint32_t m_NightTimeOn;
-uint32_t m_NightTimeOff;
-nvtime_t m_NightNvTimeOn;
-nvtime_t m_NightNvTimeOff;
-wxString m_NightTimeOnStr;
-wxString m_NightTimeOffStr;
+bool m_Night = false;
+time_t m_NightTimeOn;
+time_t m_NightTimeOff;
 
 nvRGBA SymbolNormalColor = GetDefaultColor(SYMBOL_NORMAL_COLOR);
 nvRGBA SymbolNoMonitorColor = GetDefaultColor(SYMBOL_NO_MONITOR_COLOR);
@@ -72,10 +69,9 @@ void SetRestrictedArea(int v)			{	m_RestrictedArea = v;	}
 void SetOffPositionArea(int v)			{	m_OffPositionArea = v;	}
 void SetSunLon(double v)				{	m_SunLon = v;			}
 void SetSunLat(double v)				{	m_SunLat = v;			}
-void SetNightTimeOn(uint32_t v)			{	m_NightTimeOn = v;		}
-void SetNightTimeOff(uint32_t v)		{	m_NightTimeOff = v;		}
-void SetNightNvTimeOn(nvtime_t v)		{	m_NightNvTimeOn = v;	}
-void SetNightNvTimeOff(nvtime_t v)		{	m_NightNvTimeOff = v;	}
+void SetNightTimeOn(time_t v)			{	m_NightTimeOn = v;		}
+void SetNightTimeOff(time_t v)			{	m_NightTimeOff = v;		}
+void SetNight(bool v)					{	m_Night = v;			}
 
 
 //filter
@@ -115,10 +111,9 @@ int GetScaleFactor()			{	return m_ScaleFactor;		}
 int GetOffPositionArea()		{	return m_OffPositionArea;	}
 double GetSunLon()				{	return m_SunLon;			}
 double GetSunLat()				{	return m_SunLat;			}
-uint32_t GetNightTimeOn()		{	return m_NightTimeOn;		}
-uint32_t GetNightTimeOff()		{	return m_NightTimeOff;		}
-nvtime_t GetNightNvTimeOn()		{	return m_NightNvTimeOn;		}
-nvtime_t GetNightNvTimeOff()	{	return m_NightNvTimeOff;	}
+bool GetNight()					{	return m_Night;				}
+time_t GetNightTimeOn()			{	return m_NightTimeOn;		}
+time_t GetNightTimeOff()		{	return m_NightTimeOff;		}
 
 
 //filter

@@ -117,17 +117,29 @@ void CDisplayPlugin::OnSearchText(wxCommandEvent &event)
 
 void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
 {
-	nvtime_t on = GetNightNvTimeOn();
-	nvtime_t off = GetNightNvTimeOff();
-		
-	if(memcmp(&on,&m_OldNightOn,sizeof(nvtime_t)) !=0 ||  memcmp(&off,&m_OldNightOff,sizeof(nvtime_t)) !=0)
+	time_t on = GetNightTimeOn();
+	time_t off = GetNightTimeOff();
+	time_t local = GetLocalTimestamp();
+
+	tm _on = *gmtime(&on);
+	tm _off = *gmtime(&off);
+	tm _local = *gmtime(&local);
+	
+	if(m_OldNight != GetNight())
 	{
-		m_NightTime->SetLabel(wxString::Format(_("%s %02d:%02d - %02d:%02d"),GetMsg(MSG_NIGHT_TIME), on.h,on.m,off.h,off.m));
-		m_Page3->Layout();
+		wxString str;
+		if(GetNight())
+			str << GetMsg(MSG_NIGHT_TIME);
+		else
+			str << GetMsg(MSG_DAY_TIME);
+		
+		str << wxString::Format(_("(%02d:%02d)(%02d:%02d %02d:%02d)"),_local.tm_hour,_local.tm_min,_on.tm_hour,_on.tm_min, _off.tm_hour,_off.tm_min);
+		m_NightTime->SetLabel(str);
+		this->Layout();
 	}
 	
-	m_OldNightOn = on;
-	m_OldNightOff = off;
+	m_OldNight = GetNight();
+	
 }
 
 void CDisplayPlugin::Signal()
@@ -203,9 +215,18 @@ wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 
 	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
 	//Sizer->Add(Scan2,0,wxALL,2);
+	
+	m_ButtonManagement = new wxButton(m_Page3,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
+	Sizer->Add(m_ButtonManagement,0,wxALL|wxALIGN_RIGHT,2);
+	m_ButtonManagement->Disable();
+		
+	m_ButtonAlarm = new wxButton(m_Page3,ID_ALARM,GetMsg(MSG_ALARM));
+	Sizer->Add(m_ButtonAlarm,0,wxALL|wxALIGN_RIGHT,2);
+	m_ButtonAlarm->Disable();
+
 
 	m_NightTime = new wxStaticText(m_Page3,wxID_ANY,wxEmptyString);
-	m_NightTime->SetLabel(_("Night time\n"));
+	m_NightTime->SetLabel(wxEmptyString);
 	Sizer->Add(m_NightTime,0,wxALL|wxALIGN_RIGHT,5);
 	
 	m_Page3->SetSizer(Sizer);
@@ -239,7 +260,7 @@ void CDisplayPlugin::ShowControls()
 	Main->Add(GetPage3(this),0,wxALL|wxEXPAND,0);
 
 	SetSizer(Main);
-
+	Layout();
 }
 
 

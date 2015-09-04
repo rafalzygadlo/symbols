@@ -553,11 +553,11 @@ void CListCtrl::SetChecked(long id, bool checked)
 
 wxListItemAttr *CListCtrl::OnGetItemAttr(long item) const
 {	
-	return NULL;
+	//return NULL;
 	
 	switch(m_ControlType)
 	{
-		case CONTROL_SBMS:			m_ThisPtr->SetSBMSAttr(item,m_ListAttr); break;
+		//case CONTROL_SBMS:			m_ThisPtr->SetSBMSAttr(item,m_ListAttr); break;
 		case CONTROL_SYMBOL:		m_ThisPtr->SetSymbolAttr(item,m_ListAttr); break;
 		default: 
 			return NULL;
@@ -583,15 +583,18 @@ void CListCtrl::SetSymbolAttr(long item, wxListItemAttr *v)
 	v1.ToLong(&_v);
 	
 	SetFontBold(_v);
-	v->SetFont(m_Font);
+	if(_v)
+		v->SetTextColour(*wxBLACK);
+	else
+		v->SetTextColour(*wxRED);
 }
 
 void CListCtrl::SetFontBold(bool v)
 {
 	if(v)
-		m_Font.SetWeight(wxFONTWEIGHT_NORMAL);
-	else
 		m_Font.SetWeight(wxFONTWEIGHT_BOLD);
+	else
+		m_Font.SetWeight(wxFONTWEIGHT_NORMAL);
 }
 
 int wxCALLBACK

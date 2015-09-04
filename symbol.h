@@ -11,6 +11,7 @@
 #include "nvfastfont.h"
 #include "nvtime.h"
 #include "graphdialog.h"
+#include "alarm.h"
 
 class CGraphDialog;
 class CSymbol
@@ -20,6 +21,8 @@ class CSymbol
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	CNaviArray <nvPoint3f> m_PosBuffer;
+	CNaviArray <CAlarm*> m_AlarmList;
+
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
@@ -82,6 +85,8 @@ class CSymbol
 	bool m_Auto;
 	float m_InputVolt;
 	
+
+	void ClearAlarms();
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -122,7 +127,6 @@ public:
 	void SetRLon(double v);	void SetRLat(double v);	void SetRLonMap(double v);	void SetRLatMap(double v);
 	void SetIdSBMS(int v);
 	void SetSBMSID(int v);
-	//void SetBaseStationId();
 	void SetNumber(wxString v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
@@ -149,7 +153,7 @@ public:
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
 	void SetInit(bool v);
-	
+		
 	//GET
 	int GetId();
 	int GetIdSBMS();
@@ -173,6 +177,8 @@ public:
 	bool GetAuto();
 	float GetInputVolt();
 	bool GetForcedOff();
+	int GetAlarmId(int v);
+	wxString GetAlarmName(int v);
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();

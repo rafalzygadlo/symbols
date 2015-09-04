@@ -61,6 +61,8 @@ CSymbol::~CSymbol()
 	m_Broker = NULL;
 	if(m_GraphDialog)
 		delete m_GraphDialog;
+	
+	ClearAlarms();
 }
 
 void CSymbol::SetDB(void *db)
@@ -150,6 +152,16 @@ bool CSymbol::GetBusy()
 	return m_Busy;
 }
 
+void CSymbol::ClearAlarms()
+{
+	for(size_t i = 0; i < m_AlarmList.Length(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		delete ptr;
+		m_AlarmList.Remove(i);
+	}
+
+}
 
 bool CSymbol::CheckCollision()
 {
@@ -213,7 +225,7 @@ bool CSymbol::CheckAlarm()
 	if(m_AlarmTick <= CHECK_ALARM_TICK)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND active='%d'"),TABLE_SBMS_ALARM,m_IdSBMS,ALARM_ACTIVE);
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d' AND active='%d'"),TABLE_SBMS_ALARM,m_IdSBMS,ALARM_ACTIVE);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -221,10 +233,19 @@ bool CSymbol::CheckAlarm()
 	if(result == NULL)
 		return false;
 	
+	m_AlarmCount = 0;
 	m_Alarm = false;
-	row = (char**)db_fetch_row(result);
-	sscanf(row[0],"%d",&m_AlarmCount);
+	ClearAlarms();
 	
+	while(row = (char**)db_fetch_row(result))
+	{
+		CAlarm *Alarm = new CAlarm();
+		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
+		Alarm->SetName(GetAlarmAsString(atoi(row[FI_SBMS_ALARM_ID_ALARM])));
+		m_AlarmList.Append(Alarm);
+		m_AlarmCount++;
+	}	
+		
 	if(m_AlarmCount > 0)
 	{
 		m_Alarm = true;
@@ -982,6 +1003,11 @@ void CSymbol::SetInit(bool v)
 	m_Init = v;
 }
 
+void CSymbol::SetSBMSID(int v)
+{
+	m_SBMSID = v;
+}
+
 //GET
 int CSymbol::GetId()
 {
@@ -1026,6 +1052,16 @@ double CSymbol::GetRLatMap()
 int CSymbol::GetAlarmCount()
 {
 	return m_AlarmCount;
+}
+
+int CSymbol::GetAlarmId(int v)
+{
+	return m_AlarmList.Get(v)->GetId();
+}
+
+wxString CSymbol::GetAlarmName(int v)
+{
+	return m_AlarmList.Get(v)->GetName();
 }
 
 wxString CSymbol::GetName()

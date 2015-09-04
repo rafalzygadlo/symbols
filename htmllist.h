@@ -16,6 +16,7 @@ class CHtmlList: public wxHtmlListBox
 	void OnLinkClicked(wxHtmlLinkEvent &event);
 	void OnSetItem(wxCommandEvent &event);
 	void OnSelect(wxCommandEvent &event);
+	void OnContextMenu(wxContextMenuEvent &event);
 	virtual wxString OnGetItem(size_t item) const;
 	//virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
 	virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;

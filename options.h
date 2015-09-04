@@ -25,6 +25,21 @@ bool GetSearchTextChanged();
 int GetSortColumnId();
 bool GetSortOrder();
 bool GetSortChanged();
+float GetFontSize();
+int GetViewFontScale();
+bool GetShowFontNames();
+int GetCommTimeout();
+int GetRestrictedArea();
+int GetScaleFactor();
+int GetOffPositionArea();
+double GetSunLon();
+double GetSunLat();
+time_t GetNightTimeOn();
+time_t GetNightTimeOff();
+nvtime_t GetNightNvTimeOn();
+nvtime_t GetNightNvTimeOff();
+void SetNight(bool v);
+
 //filter
 int GetSelectedAreaId();
 int GetSelectedSeawayId();
@@ -37,19 +52,6 @@ int GetSelectedBaseStationId();
 
 //
 
-float GetFontSize();
-int GetViewFontScale();
-bool GetShowFontNames();
-int GetCommTimeout();
-int GetRestrictedArea();
-int GetScaleFactor();
-int GetOffPositionArea();
-double GetSunLon();
-double GetSunLat();
-uint32_t GetNightTimeOn();
-uint32_t GetNightTimeOff();
-nvtime_t GetNightNvTimeOn();
-nvtime_t GetNightNvTimeOff();
 
 //SET
 void SetFGColor(wxColor v);
@@ -78,12 +80,11 @@ void SetCommTimeout(int v);
 void SetOffPositionArea(int v);
 void SetSunLat(double v);
 void SetSunLon(double v);
-void SetNightTimeOn(uint32_t v);
-void SetNightTimeOff(uint32_t v);
+void SetNightTimeOn(time_t v);
+void SetNightTimeOff(time_t v);
 void SetNightNvTimeOn(nvtime_t v);
 void SetNightNvTimeOff(nvtime_t v);
-//void SetNightTimeOnAsString(nvtime_t v);
-//void SetNightTimeOffAsString(nvtime_t v);
+bool GetNight();
 
 //filter
 void SetSelectedAreaId(int v);

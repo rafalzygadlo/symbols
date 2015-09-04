@@ -257,6 +257,8 @@ void CMapPlugin::ReadConfigDB()
 		id = atoi(row[FI_USER_OPTION_FILTER_SYMBOL_TYPE_ID]);	SetSelectedSymbolTypeId(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_IN_MONITORING]);	SetInMonitoring(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);			SetSelectedGroupId(id);
+		id = atoi(row[FI_USER_OPTION_FILTER_BASE_STATION_ID]);	SetSelectedBaseStationId(id);
+		id = atoi(row[FI_USER_OPTION_FILTER_LIGHT]);			SetLight(id);
 
 		//SORT
 		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);			SetSortOrder(id);
@@ -333,7 +335,9 @@ void CMapPlugin::WriteConfigDB()
 	sql << sql.Format("filter_symbol_type_id='%d',",GetSelectedSymbolTypeId());
 	sql << sql.Format("filter_in_monitoring='%d',",GetInMonitoring());
 	sql << sql.Format("filter_group_id='%d',",GetSelectedGroupId());
-	
+	sql << sql.Format("filter_base_station_id='%d',",GetSelectedBaseStationId());
+	sql << sql.Format("filter_light='%d',",GetLight());
+
 	//SORT
 	sql << sql.Format("sort_order='%d',",GetSortOrder());
 	sql << sql.Format("sort_column='%s',",GetSortColumn());
@@ -626,6 +630,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
 		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
 		
+		
 		if(id_sbms > 0)
 		{
 			ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
@@ -634,6 +639,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
 			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
 			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
+			ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
 			
 			int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
 			ptr->SetTimestamp(timestamp);

@@ -75,6 +75,7 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster->Disable();
 	//m_SeasonControl->Disable();
 
+	/*
 	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
 	ScrollSizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
 
@@ -85,7 +86,7 @@ void CSymbolPanel::GetPage1()
 	m_ButtonAlarm = new wxButton(Scroll,ID_ALARM,GetMsg(MSG_ALARM));
 	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
 	m_ButtonAlarm->Disable();
-		
+	*/
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	SetSizer(Sizer);
 			
@@ -132,16 +133,16 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
 		
-	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-		m_ButtonManagement->Enable();
-	else
-		m_ButtonManagement->Disable();
+	//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+		//m_ButtonManagement->Enable();
+	//else
+		//m_ButtonManagement->Disable();
 
 	//if(ptr->GetBusy())
 		//m_ButtonManagement->Disable();
 	//else
 		//m_ButtonManagement->Enable();
-
+	/*
 	int count = ptr->GetAlarmCount();
 	if(count > 0)
 	{
@@ -153,7 +154,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonAlarm->Disable();
 		m_ButtonAlarm->SetLabel(GetMsg(MSG_ALARM));
 	}
-
+	*/
 	//m_ButtonGraph->Enable();
 	
 	m_Html->SetPage(wxEmptyString);
