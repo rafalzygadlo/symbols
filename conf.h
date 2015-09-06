@@ -295,6 +295,10 @@
 #define CONTROL_SYMBOL_LIST		13
 #define CONTROL_OPTIONS			14
 #define CONTROL_SBMS			15
+#define CONTROL_ALARM			16
+#define CONTROL_VIEW_SYMBOL		17
+#define CONTROL_SBMS_ALARM		18
+#define CONTROL_SYMBOL_ALARM	19
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -752,6 +756,7 @@
 
 //pola tabeli SBMS_ALARM
 #define FI_SBMS_ALARM_ID_ALARM	2
+#define FN_SBMS_ALARM_ID_ALARM "id_alarm"
 
 
 // pola widoku _VIEW_SYMBOL

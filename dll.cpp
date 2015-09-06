@@ -48,6 +48,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
 	m_SBMSDialog = NULL;
+	m_AlarmDialog = NULL;
 
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;
@@ -121,6 +122,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_FileConfig;
 	delete m_Frame;
 	delete DisplaySignal;
+	delete m_AlarmDialog;
 	
 	
 	//if(PositionDialog != NULL)
@@ -1061,10 +1063,18 @@ void CMapPlugin::SBMS()
 	m_SBMSDialog->Show();
 }
 
+void CMapPlugin::Alarm()
+{
+	if(m_AlarmDialog == NULL)
+		m_AlarmDialog = new CDialog(m_DB,CONTROL_SYMBOL_ALARM,CONTROL_SBMS_ALARM);
+	m_AlarmDialog->Show();
+}
+
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
-	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_NEW_OBJECT),this, MenuNew );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_ALARM),this, MenuAlarm );
 	//NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
@@ -1169,6 +1179,14 @@ void *CMapPlugin::MenuSeaway(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuAlarm(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_ALARM);
+	
+	return NULL;	
+}
+
 void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -1192,6 +1210,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_CHARACTERISTIC:	Characteristic();	break;
 		case CONTROL_OPTIONS:			Options();			break;
 		case CONTROL_SBMS:				SBMS();				break;
+		case CONTROL_ALARM:				Alarm();			break;
 	}
 
 }

@@ -35,6 +35,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
 	CDialog *m_SBMSDialog;
+	CDialog *m_AlarmDialog;
 	
 	bool m_On;
 	bool m_Reading;
@@ -149,6 +150,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Options();
 	void Synchro();
 	void SBMS();
+	void Alarm();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -162,6 +164,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuPicture(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuOptions(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSBMS(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuAlarm(void *NaviMapIOApiPtr, void *Input);
 
 
 public:

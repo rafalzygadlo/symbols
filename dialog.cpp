@@ -53,9 +53,15 @@ SHeader Header[] =
 	{CONTROL_SBMS,80,  {FI_SBMS_MMSI  , FN_SBMS_MMSI, MSG_MMSI} },
 	{CONTROL_SBMS,180, {FI_SBMS_NAME  , FN_SBMS_NAME, MSG_NAME} },
 	{CONTROL_SBMS,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
+	
 
-	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_SBMSID  , FN_SBMS_SBMSID, MSG_SBMSID} },
-	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_MMSI  , FN_SBMS_MMSI, MSG_MMSI} },
+	//alarm master/slave
+	{CONTROL_SYMBOL_ALARM,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
+	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_INFO , FN_SYMBOL_INFO, MSG_INFO} },
+
+	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ID_ALARM  , FN_SBMS_ALARM_ID_ALARM, MSG_SBMSID} },
+	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ID_ALARM  , FN_SBMS_ALARM_ID_ALARM, MSG_MMSI} },
 	//{CONTROL_SBMS_ALARM,180, {FI_SBMS_NAME  , FN_SBMS_NAME, MSG_NAME} },
 	//{CONTROL_SBMS_ALARM,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
 
@@ -74,6 +80,8 @@ SIds Id[] =
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
+	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
+	//{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
 
 CDialog::CDialog(void *db,int control_type, bool picker)
@@ -113,10 +121,10 @@ CDialog::CDialog(void *db,int control_master, int control_slave,bool picker)
 	m_DialogPanel = new CDialogPanel(db,control_master,this);
 	Sizer->Add(m_DialogPanel,1,wxALL|wxEXPAND,0);
 	
-	//m_DialogSlave = new CDialogPanel(control_slave,this,true);
-	//Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
+	m_DialogSlave = new CDialogPanel(db,control_slave,this,true);
+	Sizer->Add(m_DialogSlave,1,wxALL|wxEXPAND,0);
 		
-	//m_DialogPanel->SetSlave(m_DialogSlave);
+	m_DialogPanel->SetSlave(m_DialogSlave);
 	
 	//wxStaticLine *Line = new wxStaticLine(this);
 	//Sizer->Add(Line,0,wxALL|wxEXPAND,5);
@@ -223,8 +231,8 @@ CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slav
 
 	//m_TopLabel = new wxStaticText(TopPanel,wxID_ANY,wxEmptyString);
 	//TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
-	
-	Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,5);
+	if(!slave)
+		Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,5);
 	//Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0); // taki myk bo READ() wpisuje ilosc rekodów
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
 	
@@ -373,6 +381,8 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_BASE_STATION:
 		case CONTROL_CHARACTERISTIC:
 		case CONTROL_SBMS:
+		case CONTROL_SBMS_ALARM:
+		case CONTROL_SYMBOL_ALARM:
 				return GetPanelList(Parent);
 	}
 	
@@ -625,7 +635,8 @@ void CDialogPanel::SetTable()
 		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
 		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
 		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
-	
+		case CONTROL_SBMS_ALARM:		m_Table = TABLE_SBMS_ALARM;		break;
+		case CONTROL_SYMBOL_ALARM:		m_Table = TABLE_SYMBOL;			break;
 	}
 }
 
@@ -652,6 +663,12 @@ void CDialogPanel::ReadData()
 		case CONTROL_ITEM:
 			sql = ReadItems();
 		break;
+		case CONTROL_SBMS_ALARM:
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms='%d' AND"),m_Table,m_IDMaster);
+		break;
+		case CONTROL_SYMBOL_ALARM:
+			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM);
+		break;
 		case CONTROL_SYMBOL:
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
@@ -660,7 +677,7 @@ void CDialogPanel::ReadData()
 		case CONTROL_BASE_STATION:
 		case CONTROL_CHARACTERISTIC:
 		case CONTROL_SBMS:
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table,m_IDMaster);
 		break;
 	}
 
