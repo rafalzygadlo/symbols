@@ -602,12 +602,14 @@
 #define FI_BASE_STATION_NAME				1
 #define FI_BASE_STATION_IP					2
 #define FI_BASE_STATION_INFO				5
+#define FI_BASE_STATION_LOCAL_UTC_TIME		6
 
 #define FN_BASE_STATION_ID					"id"
 #define FN_BASE_STATION_HID					"hid"
 #define FN_BASE_STATION_NAME				"name"
 #define FN_BASE_STATION_IP					"ip"
 #define FN_BASE_STATION_INFO				"info"
+#define FN_BASE_STATION_LOCAL_UTC_TIME		"local_utc_time"
 
 //pola tabeli COMMAND
 #define FI_COMMAND_ID				0
