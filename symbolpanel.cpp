@@ -15,8 +15,6 @@
 
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
-	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
-	EVT_BUTTON(ID_ALARM,OnAlarm)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
 	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
@@ -94,11 +92,11 @@ void CSymbolPanel::GetPage1()
 
 void CSymbolPanel::OnMenu(wxContextMenuEvent &event)
 {
-	wxMenu *Menu = new wxMenu();
-	Menu->AppendCheckItem(ID_SHOW_PICTURE,_("Show picture"));
+	//wxMenu *Menu = new wxMenu();
+	//Menu->AppendCheckItem(ID_SHOW_PICTURE,_("Show picture"));
 
-	PopupMenu(Menu);
-	delete Menu;
+	//PopupMenu(Menu);
+	//delete Menu;
 
 }
 
@@ -457,41 +455,6 @@ void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
 void CSymbolPanel::SetSBMS()
 {
 
-}
-
-void CSymbolPanel::OnManagement(wxCommandEvent &event)
-{
-	void *db = DBConnect();
-	if(db == NULL)
-		return;
-	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,m_IdSBMS);
-	my_query(db,sql);
-
-	void *result = db_result(db);
-		
-	char **row = NULL;
-	if(result)
-	{
-	
-		if(row = (char**)db_fetch_row(result))
-		{
-
-			CCommandDialog *CommandDialog = new CCommandDialog(this,m_Symbol);
-			CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
-
-			ptr->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-			ptr->SetAuto(atoi(row[FI_SBMS_AUTO]));
-			
-			CommandDialog->ShowModal();
-			delete CommandDialog;
-	
-		}else{
-			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
-		}
-	}
-	
-	DBClose(db);
 }
 
 void CSymbolPanel::OnAlarm(wxCommandEvent &event)

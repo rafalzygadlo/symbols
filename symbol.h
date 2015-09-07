@@ -153,7 +153,7 @@ public:
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
 	void SetInit(bool v);
-		
+			
 	//GET
 	int GetId();
 	int GetIdSBMS();
@@ -178,6 +178,7 @@ public:
 	float GetInputVolt();
 	bool GetForcedOff();
 	int GetAlarmId(int v);
+	bool GetNoSBMS();
 	wxString GetAlarmName(int v);
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();

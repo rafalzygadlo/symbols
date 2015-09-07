@@ -632,13 +632,15 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
 		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
 		
+		bool exists = false;
 		
 		if(id_sbms > 0)
 		{
+			exists = true;
 			ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
 			ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 			ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
-			ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
+			ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
 			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
 			ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
@@ -672,6 +674,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr->SetValidGPS(true);
 		}
 		
+		ptr->SetNoSBMS(!exists);
 		ptr->SetInit(true);
 		
 		if(ptr->GetInMonitoring())

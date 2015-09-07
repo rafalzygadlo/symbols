@@ -1,10 +1,13 @@
+#include <wx/wx.h>
+#include <wx/tglbtn.h>
 #include "conf.h"
 #include "tools.h"
 #include "display.h"
 #include "options.h"
 #include "filterdialog.h"
-#include <wx/wx.h>
-#include <wx/tglbtn.h>
+#include "commanddialog.h"
+#include "db.h"
+
 
 DEFINE_EVENT_TYPE(EVT_SET_NIGHT_TIME)
 
@@ -19,6 +22,7 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_COMMAND(ID_NIGHT_TIME,EVT_SET_NIGHT_TIME,OnSetNightTime)
+	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 END_EVENT_TABLE()
 
 
@@ -142,6 +146,26 @@ void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
 	
 }
 
+void CDisplayPlugin::OnManagement(wxCommandEvent &event)
+{
+	if(!m_Selected->GetNoSBMS())
+	{
+		CCommandDialog *CommandDialog = new CCommandDialog(this,m_Selected);
+		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+
+		ptr->SetForcedOff(m_Selected->GetForcedOff());
+		ptr->SetAuto(m_Selected->GetAuto());
+			
+		CommandDialog->ShowModal();
+		delete CommandDialog;
+	
+	}else{
+			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
+	}
+	
+}
+
+
 void CDisplayPlugin::Signal()
 {
 	if(m_Broker != NULL)
@@ -220,9 +244,9 @@ wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 	Sizer->Add(m_ButtonManagement,0,wxALL|wxALIGN_RIGHT,2);
 	m_ButtonManagement->Disable();
 		
-	m_ButtonAlarm = new wxButton(m_Page3,ID_ALARM,GetMsg(MSG_ALARM));
-	Sizer->Add(m_ButtonAlarm,0,wxALL|wxALIGN_RIGHT,2);
-	m_ButtonAlarm->Disable();
+	//m_ButtonAlarm = new wxButton(m_Page3,ID_ALARM,GetMsg(MSG_ALARM));
+	//Sizer->Add(m_ButtonAlarm,0,wxALL|wxALIGN_RIGHT,2);
+	//m_ButtonAlarm->Disable();
 
 
 	m_NightTime = new wxStaticText(m_Page3,wxID_ANY,wxEmptyString);
@@ -399,16 +423,16 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;
-
-	//m_HtmlCtrl->SetSelection(m_Selected);
+		
 	m_HtmlList->_SetSelection(m_Selected);	
+	
 	if(m_Selected)
 	{	
-		//m_Notebook->Show();
-		//m_Notebook->Enable();
+		m_ButtonManagement->Enable();
 		m_SymbolPanel->SetPage1(m_Selected);
 	}else{
-		//m_Notebook->Hide();
+		m_ButtonManagement->Disable();
+		
 	}
 
 }

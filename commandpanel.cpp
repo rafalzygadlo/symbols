@@ -328,7 +328,7 @@ void CCommandPanel::ReadCommands()
 
 void CCommandPanel::Set()
 {
-	if((m_SelectedPtr->GetSBMSID() == 0) && (m_SelectedPtr->GetMMSI() == 0))
+	if(m_SelectedPtr->GetNoSBMS())
 	{
 		Disable();
 		SetNoSBMS(true);
