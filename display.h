@@ -72,6 +72,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void OnSearchText(wxCommandEvent &event);
 	void OnSetNightTime(wxCommandEvent &event);
 	void OnFilter(wxCommandEvent &event);
+	void OnManagement(wxCommandEvent &event);
 		
 public:
 	

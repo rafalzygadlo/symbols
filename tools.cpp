@@ -168,6 +168,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Night",L"Noc"},
 	{L"Pin To Symbol",L"Przypnij do znaku"},
 	{L"Day",L"Dzieñ"},
+	{L"Active",L"Aktywny"},
+	{L"Confirmed",L"Potwierdzony"},
+	{L"Set Time",L"Czas aktywacji"},
+	{L"Unset Time",L"Czas dezaktywacji"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

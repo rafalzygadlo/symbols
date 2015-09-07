@@ -105,7 +105,6 @@ void CHtmlCtrl::OnManagement(wxCommandEvent &event)
 
 }
 
-
 wxString CHtmlCtrl::OnGetItemText(long item, long column) const
 {
 		

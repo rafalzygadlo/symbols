@@ -268,6 +268,10 @@
 #define MSG_NIGHT_TIME					148
 #define MSG_ADD_TO_SYMBOL				149
 #define MSG_DAY_TIME					150
+#define MSG_ACTIVE						151
+#define MSG_CONFIRMED					152
+#define MSG_SET_TIME					153
+#define MSG_UNSET_TIME					154
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -757,8 +761,17 @@
 #define FI_GLOBAL_OPTION_SUN_LAT					6
 
 //pola tabeli SBMS_ALARM
-#define FI_SBMS_ALARM_ID_ALARM	2
-#define FN_SBMS_ALARM_ID_ALARM "id_alarm"
+#define FI_SBMS_ALARM_ID_ALARM				2
+#define FI_SBMS_ALARM_ACTIVE				3
+#define FI_SBMS_ALARM_CONFIRMED				4
+#define FI_SBMS_ALARM_SET_LOCAL_UTC_TIME	5
+#define FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	6
+
+#define FN_SBMS_ALARM_ID_ALARM				"id_alarm"
+#define FN_SBMS_ALARM_ACTIVE				"active"
+#define FN_SBMS_ALARM_CONFIRMED				"confirmed"
+#define FN_SBMS_ALARM_SET_LOCAL_UTC_TIME	"set_local_utc_time"
+#define FN_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	"unset_local_utc_time"
 
 
 // pola widoku _VIEW_SYMBOL

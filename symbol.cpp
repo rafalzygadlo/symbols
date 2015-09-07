@@ -1140,6 +1140,11 @@ bool CSymbol::GetForcedOff()
 	return m_ForcedOff;
 }
 
+bool CSymbol::GetNoSBMS()
+{
+	return m_NoSBMS;
+}
+
 wxString CSymbol::GetBaseStationName()
 {
 	return m_BaseStationName;
