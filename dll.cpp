@@ -644,6 +644,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
 			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
 			ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
+			ptr->SetLoading(atoi(row[FI_VIEW_SYMBOL_LOADING]));
 			
 			int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
 			ptr->SetTimestamp(timestamp);
@@ -679,7 +680,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		
 		if(ptr->GetInMonitoring())
 		{
-			ptr->SetNewReport(atoi(row[FI_VIEW_SBMS_NEW_REPORT]));
+			ptr->SetNewReport(atoi(row[FI_VIEW_SYMBOL_NEW_REPORT]));
 			ptr->SetLightOn(!ptr->GetForcedOff());
 		}
 		

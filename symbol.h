@@ -84,6 +84,7 @@ class CSymbol
 	bool m_Init;
 	bool m_Auto;
 	float m_InputVolt;
+	bool m_Loading;
 	
 
 	void ClearAlarms();
@@ -153,6 +154,7 @@ public:
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
 	void SetInit(bool v);
+	void SetLoading(bool v);
 			
 	//GET
 	int GetId();
@@ -179,6 +181,7 @@ public:
 	bool GetForcedOff();
 	int GetAlarmId(int v);
 	bool GetNoSBMS();
+	bool GetLoading();
 	wxString GetAlarmName(int v);
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();

@@ -54,6 +54,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_AgeString = "N/A";
 	m_DB = NULL;
 	m_GraphDialog = NULL;
+	m_Loading = false;
 }
 
 CSymbol::~CSymbol()
@@ -1007,6 +1008,10 @@ void CSymbol::SetSBMSID(int v)
 {
 	m_SBMSID = v;
 }
+void CSymbol::SetLoading(bool v)
+{
+	m_Loading = v;
+}
 
 //GET
 int CSymbol::GetId()
@@ -1143,6 +1148,11 @@ bool CSymbol::GetForcedOff()
 bool CSymbol::GetNoSBMS()
 {
 	return m_NoSBMS;
+}
+
+bool CSymbol::GetLoading()
+{
+	return m_Loading;
 }
 
 wxString CSymbol::GetBaseStationName()

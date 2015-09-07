@@ -690,10 +690,11 @@
 #define FI_SBMS_LON							23
 #define FI_SBMS_LAT							24
 #define FI_SBMS_NEW_REPORT					25 //new report has arived
-#define FI_SBMS_INFO						26
-#define FI_SBMS_DATE_TIME_STAMP				27
-#define FI_SBMS_LOCAL_UTC_TIME_STAMP		28
-#define FI_SBMS_LOCAL_UTC_TIME				29
+#define FI_SBMS_LOADING						26
+#define FI_SBMS_INFO						27
+#define FI_SBMS_DATE_TIME_STAMP				28
+#define FI_SBMS_LOCAL_UTC_TIME_STAMP		29
+#define FI_SBMS_LOCAL_UTC_TIME				30
 
 #define FN_SBMS_NAME			"name"
 #define FN_SBMS_MMSI			"mmsi"
@@ -794,8 +795,9 @@
 #define FI_VIEW_SYMBOL_IN_MONITORING		16
 #define FI_VIEW_SYMBOL_AUTO					17
 #define FI_VIEW_SYMBOL_FORCED_OFF			18
-#define FI_VIEW_SBMS_NEW_REPORT				19
-#define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	20
+#define FI_VIEW_SYMBOL_NEW_REPORT			19
+#define FI_VIEW_SYMBOL_LOADING				20
+#define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	21
 
 
 #define FN_VIEW_SYMBOL_NAME					"name"

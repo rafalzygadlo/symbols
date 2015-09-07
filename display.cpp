@@ -428,11 +428,13 @@ void CDisplayPlugin::SignalSelect()
 	
 	if(m_Selected)
 	{	
-		m_ButtonManagement->Enable();
+		if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+			m_ButtonManagement->Enable();
+		else
+			m_ButtonManagement->Disable();
+
 		m_SymbolPanel->SetPage1(m_Selected);
-	}else{
-		m_ButtonManagement->Disable();
-		
+	
 	}
 
 }
