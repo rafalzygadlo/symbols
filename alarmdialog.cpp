@@ -5,16 +5,17 @@
 #include "tools.h"
 #include "options.h"
 
+DEFINE_EVENT_TYPE(EVT_SET_ALARM)
+
 BEGIN_EVENT_TABLE(CAlarmDialog, wxDialog)
-	//EVT_BUTTON(ID_EDIT,OnEdit)
+	EVT_BUTTON(ID_OK,OnOk)
 	//EVT_LISTBOX(ID_LIST,OnListBox)
+	EVT_COMMAND(ID_ALARM,EVT_SET_ALARM,OnSetAlarm)
 END_EVENT_TABLE()
-CAlarmDialog::CAlarmDialog(void *db, wxString station)
-	:wxDialog(NULL,wxID_ANY,_(PRODUCT_NAME),wxDefaultPosition,wxDefaultSize)
+CAlarmDialog::CAlarmDialog()
+	:wxDialog(NULL,wxID_ANY,GetMsg(MSG_ALARM),wxDefaultPosition,wxSize(500,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX| wxSTAY_ON_TOP)
 {
-	m_DB = db;
-	m_StationName = station;
-	m_Validate = false;
+	m_Counter = 0;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	
 	//Sizer->Add(GetTitlePanel(this,station),0,wxALL|wxEXPAND,0);
@@ -26,13 +27,14 @@ CAlarmDialog::CAlarmDialog(void *db, wxString station)
 	ButtonSizer->Add(LabelProductInfo,0,wxALL,5);
 	ButtonSizer->AddStretchSpacer(1);
 		
-	wxButton *ButtonOk = new wxButton(this,wxID_OK,GetMsg(MSG_OK),wxDefaultPosition,wxDefaultSize);
+	wxButton *ButtonOk = new wxButton(this,ID_OK,GetMsg(MSG_OK),wxDefaultPosition,wxDefaultSize);
 	ButtonSizer->Add(ButtonOk,0,wxALL|wxALIGN_RIGHT,5);
 
 	//wxButton *ButtonCancel = new wxButton(this,wxID_CANCEL,GetMsg(MSG_CANCEL),wxDefaultPosition,wxDefaultSize);
 	//ButtonSizer->Add(ButtonCancel,0,wxALL|wxALIGN_RIGHT,5);
 
 	SetSizer(Sizer);
+	Center();
 	
 	
 }
@@ -42,115 +44,81 @@ CAlarmDialog::~CAlarmDialog()
 	
 }
 
+void CAlarmDialog::OnOk(wxCommandEvent &event)
+{
+	ConfirmAlarms();
+	Hide();
+	m_TextAlarm->SetPage(wxEmptyString);
+}
+
+void CAlarmDialog::OnSetAlarm(wxCommandEvent &event)
+{
+	m_TextAlarm->SetPage(m_Html);
+}
+
 bool CAlarmDialog::Validate()
 {
-	return true;
-	m_Validate = true;
-
-	for(size_t i = 0; i < m_Panels.size(); i++)
-	{
-		CAlarmPanel *ptr =  (CAlarmPanel*)m_Panels.Item(i);
-		ptr->Confirm();
-	}
-	
-	m_Panels.Clear();
-	m_Validate = false;
 	return true;
 }
 
 wxPanel *CAlarmDialog::GetPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(parent);
-	//Panel->SetBackgroundColour(*wxWHITE);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	Panel->SetSizer(Sizer);
-	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
-	m_Scroll = new wxScrolledWindow(Panel, wxID_ANY, wxDefaultPosition, wxSize(-1,200));
-	Sizer->Add(m_Scroll,1,wxALL|wxEXPAND,5);
-	m_Scroll->SetFocusIgnoringChildren();
-	m_Scroll->SetSizer(ScrollSizer);
-	m_Scroll->SetScrollbars(20, 20, 20, 20);
+	m_TextAlarm = new wxHtmlWindow(Panel,wxID_ANY);
+	Sizer->Add(m_TextAlarm,1,wxALL|wxEXPAND,5);
 
+	Panel->SetSizer(Sizer);
+	
 	return Panel;
 
 }
 
-bool CAlarmDialog::IsValidating()
-{
-	return m_Validate;
-}
 
-/*
-void CAlarmDialog::Set(CData *v)
+void CAlarmDialog::Set(CSymbol *v)
 {
-	m_Scroll->DestroyChildren();
-	for(int i = 0; i < v->GetLength(); i++)
+	if(v->GetNewAlarmCount() == 0)
+		return;
+	
+	v->SetNewAlarmCount(0);
+
+	
+	bool first = true;
+	
+	for(int i = 0 ; i < v->GetAlarmCount();i++)
 	{
-		CAlertPanel *p = new CAlertPanel(m_DB,m_Scroll,(SAlert*)v->GetValue(i));
-		m_Panels.Add(p);
-		m_Scroll->GetSizer()->Add(p,0,wxALL|wxEXPAND,2);
-		m_Scroll->Layout();
-		m_Scroll->FitInside();
+		CAlarm *ptr = v->GetAlarm(i);
+		if(ptr->GetNew() && !ptr->GetConfirmed())
+		{
+			if(first)
+				m_Html << wxString::Format(_("<font size=3>%s</font>"),v->GetName());
+			m_Html << wxString::Format(_("<br><font color=red>%s</font>"),ptr->GetName());
+			m_Counter++;
+			first = false;
+		}
+		ptr->SetNew(false);
 	}
-		
-	v->SetNewAlert(false);
-	m_Scroll->SetFocusIgnoringChildren();
-	Layout();
-	Center();
-	Show();
+	
+	if(!first)
+	{
+		m_Html << "<hr>";
+	}
+	
+	wxCommandEvent evt(EVT_SET_ALARM,ID_ALARM);
+	wxPostEvent(this,evt);
 	
 }
-*/
+
+void CAlarmDialog::ShowWindow()
+{
+	if(m_Counter)
+		Show();
+
+	m_Counter = 0;
+}
+
 void CAlarmDialog::ClearAlert()
 {
-	m_TextAlert->Clear();
+	//m_TextAlert->Clear();
 }
 
-
-BEGIN_EVENT_TABLE(CAlarmPanel, wxPanel)
-	EVT_BUTTON(ID_CONFIRM,OnConfirm)
-	//EVT_BUTTON(ID_EDIT,OnEdit)
-	//EVT_LISTBOX(ID_LIST,OnListBox)
-END_EVENT_TABLE()
-
-CAlarmPanel::CAlarmPanel(void *db,wxWindow *parent, SAlert *v)
-	:wxPanel(parent)
-{
-	m_DB = db;
-	m_Alert = v;
-			
-	if(v->error > 0)
-		SetForegroundColour(*wxRED);
-	
-	SetBackgroundColour(*wxWHITE);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	SetSizer(Sizer);
-	
-	time_t t = v->gpstimestamp;
-	wxDateTime time(t);
-	time = time.ToUTC();
-	wxFont font;
-	font.SetPointSize(12);
-	
-	wxStaticText *TextLabel = new wxStaticText(this,wxID_ANY,wxEmptyString, wxDefaultPosition, wxDefaultSize);
-	//TextLabel->SetFont(font);
-//	TextLabel->SetLabel(wxString::Format(_("%s %s\n%s"),time.FormatISODate().wc_str(),time.FormatISOTime().wc_str(),GetStatusText(v->error)));
-	Sizer->Add(TextLabel,1,wxALL|wxEXPAND,2);
-	
-	wxButton *Button = new wxButton(this,ID_CONFIRM ,GetMsg(MSG_CONFIRM));
-	Sizer->Add(Button,0,wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL,2);
-
-}
-
-void CAlarmPanel::OnConfirm(wxCommandEvent &event)
-{
-	Confirm();
-}
-
-void CAlarmPanel::Confirm()
-{
-	//GetMutex()->Lock();
-	//wxString sql = wxString::Format(_("UPDATE `%s` SET confirmed='%d',id_user='%d',confirmdate=utc_timestamp() WHERE gpstimestamp='%d'"),TABLE_ALERT,ALERT_CONFIRMED,_GetUID(),m_Alert->gpstimestamp);
-	//my_query(m_DB,sql);
-	//GetMutex()->Unlock();
-}

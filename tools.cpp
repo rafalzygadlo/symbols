@@ -8,6 +8,7 @@
 #include <wx/msw/wrapshl.h>
 #include "NaviToolsLib.h"
 #include "options.h"
+#include "alarm.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -160,10 +161,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"ON",L"ON"},
 	{L"OFF",L"OFF"},
 	{L"Off Position Radius(meters)",L"Promieñ (OFF POSITION)(w metrach)"},
-	{L"Off Position",L"Off Position"},
-	{L"High Voltage",L"Wysokie napiêcie"},
-	{L"Low Voltage",L"Niskie napiêcie"},
-	{L"Communication timeout",L"B³¹d komunikacji"},
+	
 	{L"Sunrise/Sunset Position",L"Pozycja Wschód/Zachód S³oñca"},
 	{L"Night",L"Noc"},
 	{L"Pin To Symbol",L"Przypnij do znaku"},
@@ -172,6 +170,12 @@ const wchar_t *nvLanguage[][2] =
 	{L"Confirmed",L"Potwierdzony"},
 	{L"Set Time",L"Czas aktywacji"},
 	{L"Unset Time",L"Czas dezaktywacji"},
+	{L"Charging",L"£adowanie"},
+	{L"Discharging",L"Roz³adowywanie"},
+	{L"N/A",L"Brak Danych"},
+	{L"GPS",L"GPS"},
+	{L"Position From",L"Pozycja z.."},
+
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -242,7 +246,7 @@ int nvCommandMSG[COMMAND_COUNT] =
 	{MSG_MMSI},				//reset
 	{MSG_MMSI},				//save
 	{MSG_AUTO_MANAGEMENT},	//human management tylko OFF (0,0)
-	{MSG_MMSI},				//ais power 1W itd.
+	{MSG_MMSI},				//ais mmsi
 	{MSG_NO_SBMS},			//akcelarator próg
 
 		
@@ -1008,6 +1012,14 @@ wxString GetNvTime(nvtime_t v)
 	return wxString::Format(_("%02d:%02d:%02d"),v.h,v.m,v.s);
 }
 
+void ConfirmAlarms()
+{
+	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE active='%d' "),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,ALARM_ACTIVE);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
 //COMMANDS . . . . . . . . . . . . . . . .
 int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
 {
@@ -1191,20 +1203,6 @@ void SetNightTime()
 	//fprintf(stderr,"ON:%02d:%02d:%02d\n",t_on.h,t_on.m,t_on.s);
 	//fprintf(stderr,"OFF:%02d:%02d:%02d\n",t_off.h,t_off.m,t_off.s);
 }
-
-wxString GetAlarmAsString(int id)
-{
-	switch(id)
-	{
-		case ALARM_OFF_POSITION:			return GetMsg(MSG_OFF_POSITION);
-		case ALARM_HIGH_VOLTAGE:			return GetMsg(MSG_HIGH_VOLTAGE);
-		case ALARM_LOW_VOLTAGE:				return GetMsg(MSG_LOW_VOLTAGE);
-		case ALARM_COMMUNICATION_TIMEOUT:	return GetMsg(MSG_COMMUNICATION_TIMEOUT);
-	}
-
-}
-
-
 
 
 #if 0

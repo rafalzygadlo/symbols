@@ -3,57 +3,41 @@
 
 #include <wx/wx.h>
 #include "conf.h"
+#include "symbol.h"
 
+class CSymbol;
 class CAlarmDialog: public wxDialog
 {
-	void *m_DB;
-	wxPanel *m_Panel;
-	wxTextCtrl *m_TextAlert;
-	wxScrolledWindow *m_Scroll;
-	bool m_Validate;
-	wxString m_StationName;
+	wxHtmlWindow *m_TextAlarm;
+	wxString m_Html;
+	int m_Counter;
 
 	wxPanel *GetPanel(wxWindow *parent);
-	wxArrayPtrVoid m_Panels;
+	void OnSetAlarm(wxCommandEvent &event);
+	void OnOk(wxCommandEvent &event);
 	bool Validate();
 	
 public:
 
-	CAlarmDialog(void *db,wxString station);
+	CAlarmDialog();
 	~CAlarmDialog();
-	//void Set(CData *v);
+	void Set(CSymbol *v);
 	void ClearAlert();
 	bool IsNewAlert();
 	bool IsValidating();
+	void ShowWindow();
 	
 	DECLARE_EVENT_TABLE();
 		
 	enum
 	{
 		ID_CONFIRM = 3412,
+		ID_ALARM,
+		ID_OK,
 	};
 
 };
 
-class CAlarmPanel: public wxPanel
-{
-	void *m_DB;
-	SAlert *m_Alert;
-	void OnConfirm(wxCommandEvent &event);
-	
-public:
-
-	CAlarmPanel(void *db,wxWindow *parent, SAlert *v);
-	void Confirm();
-		
-	DECLARE_EVENT_TABLE();
-		
-	enum
-	{
-		ID_CONFIRM = 3412,
-	};
-
-};
 
 
 #endif

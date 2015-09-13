@@ -30,7 +30,7 @@ class CSymbolPanel : public wxPanel
 	CMyIcon *m_Calibrated,*m_ForcedOff,*m_PhotoCellNightTime,*m_FaultOutput,*m_SolarCharger,*m_SyncMaster,*m_SeasonControl;
 
 	void SetHeader();
-	void AlarmInfo(void *db,int id_sbms);
+	void AlarmInfo(CSymbol *ptr);
 	void SymbolInfo(void *db,CSymbol *ptr);
 	void SBMSInfo(void *db,int id_sbms);
 	void PictureInfo(void *db,CSymbol *ptr);

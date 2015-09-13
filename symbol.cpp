@@ -54,16 +54,20 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_AgeString = "N/A";
 	m_DB = NULL;
 	m_GraphDialog = NULL;
-	m_Loading = false;
+	m_Charging = false;
+	m_NewAlarmCount = 0;
+	
 }
 
 CSymbol::~CSymbol()
 {	
+	ClearAlarms();
 	m_Broker = NULL;
+	
 	if(m_GraphDialog)
 		delete m_GraphDialog;
 	
-	ClearAlarms();
+	
 }
 
 void CSymbol::SetDB(void *db)
@@ -160,9 +164,40 @@ void CSymbol::ClearAlarms()
 		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
 		delete ptr;
 		m_AlarmList.Remove(i);
+		i = 0;
 	}
 
 }
+
+CAlarm *CSymbol::AlarmExists(int id)
+{
+	for(size_t i = 0; i < m_AlarmList.Length(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
+}
+
+void CSymbol::AlarmRemove()
+{
+	for(size_t i = 0; i < m_AlarmList.Length(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		
+		if(!ptr->GetExists())
+		{
+			m_AlarmList.Remove(i);
+			delete ptr;
+			i = 0;
+		}
+	}
+
+	//fprintf(stderr,"Size:%d\n",m_SymbolList->size());
+}
+
 
 bool CSymbol::CheckCollision()
 {
@@ -226,7 +261,7 @@ bool CSymbol::CheckAlarm()
 	if(m_AlarmTick <= CHECK_ALARM_TICK)
 		return false;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_sbms='%d' AND active='%d'"),TABLE_SBMS_ALARM,m_IdSBMS,ALARM_ACTIVE);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id"),TABLE_SBMS_ALARM,TABLE_ALARM, m_IdSBMS,ALARM_ACTIVE,TABLE_ALARM);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -235,15 +270,34 @@ bool CSymbol::CheckAlarm()
 		return false;
 	
 	m_AlarmCount = 0;
+	m_NewAlarmCount = 0;
 	m_Alarm = false;
-	ClearAlarms();
 	
+	int offset = 9;
 	while(row = (char**)db_fetch_row(result))
 	{
-		CAlarm *Alarm = new CAlarm();
+		int id = atoi(row[FI_SBMS_ALARM_ID_ALARM]);
+		CAlarm *Alarm = NULL;
+		Alarm = AlarmExists(id);
+		
+		bool add = false;
+		
+		if(Alarm == NULL)
+		{
+			add = true;
+			Alarm = new CAlarm();
+			Alarm->SetNew(true);
+			m_NewAlarmCount++;
+		}
+				
 		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
-		Alarm->SetName(GetAlarmAsString(atoi(row[FI_SBMS_ALARM_ID_ALARM])));
-		m_AlarmList.Append(Alarm);
+		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
+		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
+		
+		if(add)
+			m_AlarmList.Append(Alarm);
+		
+		Alarm->SetExists(true);
 		m_AlarmCount++;
 	}	
 		
@@ -276,7 +330,7 @@ bool  CSymbol::CheckCommand()
 		return false;
 	
 	wxString sql;
-	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE SBMSID='%d' AND mmsi='%d' AND id_base_station='%d' AND status='%d'"),TABLE_COMMAND,m_SBMSID,m_MMSI,m_IdBaseStation,COMMAND_STATUS_NEW);
+	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d'"),TABLE_COMMAND,m_IdSBMS,COMMAND_STATUS_NEW);
 	
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -310,7 +364,7 @@ bool CSymbol::SetPositions()
 	}
 	
 	m_PosBuffer.Clear();
-	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 50"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 10"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
 		
 	my_query(m_DB,sql);
 
@@ -373,6 +427,7 @@ bool CSymbol::CheckReport()
 	return true;
 }
 
+
 void CSymbol::OnTick(void *db)
 {
 	m_DB = db;
@@ -391,11 +446,12 @@ void CSymbol::OnTick(void *db)
 		result = true;
 	if(CheckAlarm())
 		result = true;
-	if(CheckReport())
-		result = true;
+	//if(CheckReport())
+		//result = true;
 	if(SetPositions())
 		result = true;
-
+		
+	AlarmRemove();
 	CheckCollision();
 			
 }
@@ -505,7 +561,7 @@ void CSymbol::RenderAlarm()
 		
 	glPushMatrix();
 	SetColor(SYMBOL_ERROR_COLOR);
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	//glTranslatef(0.0,th/2,0.0f);
 
 	nvCircle c;
@@ -547,7 +603,7 @@ void CSymbol::RenderBusy()
 		
 	glPushMatrix();
 	
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	//glTranslatef(m_RectWidth/3,- m_RectWidth/3,0.0f);
 
 	//glPointSize(10);
@@ -593,7 +649,7 @@ void CSymbol::RenderSymbol()
 	SetSymbolColor();
 	glPushMatrix();
 		
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	
 	nvCircle c;
 	c.Center.x = 0.0;
@@ -623,8 +679,8 @@ void CSymbol::RenderRestricted()
 	{
 		glColor4f(1.0,0.0,0.0,0.1);
 		nvCircle c;
-		c.Center.x = m_RLonMap;
-		c.Center.y = m_RLatMap;
+		c.Center.x = m_LonMap;
+		c.Center.y = m_LatMap;
 		c.Radius = (double)GetRestrictedArea()/1852/GetMilesPerDegree(m_RLon,m_RLat);
 		nvDrawCircleFilled(&c);
 	}
@@ -635,18 +691,21 @@ void CSymbol::RenderGPS()
 	if(!m_ValidGPS)
 		return;
 
-	//glPushMatrix();
 	glColor4f(1.0f,1.0f,1.0f,0.6f);
 
+	glPointSize(2);
 	glBegin(GL_LINES);
-		glVertex2f(m_LonMap, m_LatMap);
+		glVertex2f(m_GpsLonMap, m_GpsLatMap);
 		glVertex2f(m_RLonMap,m_RLatMap);
 	glEnd();
 	
-	//glPointSize(2);
-	//nvDrawPoint(0.0,0.0);
-	//glPopMatrix();
+	glBegin(GL_POINTS);
+		glVertex2f(m_GpsLonMap, m_GpsLatMap);
+		glVertex2f(m_RLonMap,m_RLatMap);
+	glEnd();
 
+	glPointSize(1);
+	
 }
 
 void CSymbol::RenderPositions()
@@ -672,7 +731,7 @@ void CSymbol::RenderNewReport()
 	
 	glPushMatrix();
 		
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	glTranslatef(-m_RectWidth/1.5,-m_RectWidth/1.5,0.0f);
 	
 	//nvCircle c;
@@ -721,7 +780,7 @@ void CSymbol::RenderNoSBMS()
 	
 	glPushMatrix();
 		
-	glTranslatef(m_RLonMap,m_RLatMap,0.0f);
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	glColor4f(1.0,0.0,0.0,0.5);
 	glLineWidth(5);
 	glBegin(GL_LINES);
@@ -853,58 +912,33 @@ void CSymbol::SetId(int v)
 	m_Id = v;
 }
 
-void CSymbol::SetRLon(double v)
-{
-	m_RLon = v;
-}
+void CSymbol::SetRLon(double v)		{	m_RLon = v;}
+void CSymbol::SetRLat(double v)		{	m_RLat = v;}
+void CSymbol::SetRLonMap(double v)	{	m_RLonMap = v;}
+void CSymbol::SetRLatMap(double v)	{	m_RLatMap = v;}
 
-void CSymbol::SetRLat(double v)
-{
-	m_RLat = v;
-}
+void CSymbol::SetGpsLon(double v)	{	m_GpsLon = v;}
+void CSymbol::SetGpsLat(double v)	{	m_GpsLat = v;}
+void CSymbol::SetGpsLonMap(double v){	m_GpsLonMap = v;}
+void CSymbol::SetGpsLatMap(double v){	m_GpsLatMap = v;}
 
-void CSymbol::SetRLonMap(double v)
-{
-	m_RLonMap = v;
-}
-
-void CSymbol::SetRLatMap(double v)
-{
-	m_RLatMap = v;
-}
-
-void CSymbol::SetLon(double v)
-{
-	m_Lon = v;
-}
-
-void CSymbol::SetLat(double v)
-{
-	m_Lat = v;
-}
-
-void CSymbol::SetLonMap(double v)
-{
-	m_LonMap = v;
-}
-
-void CSymbol::SetLatMap(double v)
-{
-	m_LatMap = v;
-}
+void CSymbol::SetLon(double v)		{	m_Lon = v;}
+void CSymbol::SetLat(double v)		{	m_Lat = v;}
+void CSymbol::SetLonMap(double v)	{	m_LonMap = v;}
+void CSymbol::SetLatMap(double v)	{	m_LatMap = v;}
 
 void CSymbol::SetIdSBMS(int v)
-{
+{	
 	m_IdSBMS = v;
 }
 
 void CSymbol::SetNumber(wxString v)
-{
+{	
 	m_Number = v;
 }
 
 void CSymbol::SetName(wxString v)
-{
+{	
 	m_Name = v;
 }
 
@@ -1008,9 +1042,19 @@ void CSymbol::SetSBMSID(int v)
 {
 	m_SBMSID = v;
 }
-void CSymbol::SetLoading(bool v)
+void CSymbol::SetCharging(int v)
 {
-	m_Loading = v;
+	m_Charging = v;
+}
+
+void CSymbol::SetChargingAsString(wxString v)
+{
+	m_ChargingString = v;
+}
+
+void CSymbol::SetNewAlarmCount(int v)
+{
+	m_NewAlarmCount = v;
 }
 
 //GET
@@ -1034,29 +1078,30 @@ int CSymbol::GetBaseStationId()
 	return m_IdBaseStation;
 }
 
-double CSymbol::GetRLon()
-{
-	return m_RLon;
-}
+double CSymbol::GetRLon(){		return m_RLon;}
+double CSymbol::GetRLat(){		return m_RLat;}
+double CSymbol::GetRLonMap(){	return m_RLonMap;}
+double CSymbol::GetRLatMap(){	return m_RLatMap;}
 
-double CSymbol::GetRLat()
-{
-	return m_RLat;
-}
+double CSymbol::GetGpsLon(){	return m_GpsLon;}
+double CSymbol::GetGpsLat(){	return m_GpsLat;}
+double CSymbol::GetGpsLonMap(){	return m_GpsLonMap;}
+double CSymbol::GetGpsLatMap(){	return m_GpsLatMap;}
 
-double CSymbol::GetRLonMap()
-{
-	return m_RLonMap;
-}
+double CSymbol::GetLon(){		return m_Lon;}
+double CSymbol::GetLat(){		return m_Lat;}
+double CSymbol::GetLonMap(){	return m_LonMap;}
+double CSymbol::GetLatMap(){	return m_LatMap;}
 
-double CSymbol::GetRLatMap()
-{
-	return m_RLatMap;
-}
+
 
 int CSymbol::GetAlarmCount()
 {
 	return m_AlarmCount;
+}
+CAlarm *CSymbol::GetAlarm(int v)
+{
+	return m_AlarmList.Get(v);
 }
 
 int CSymbol::GetAlarmId(int v)
@@ -1150,12 +1195,23 @@ bool CSymbol::GetNoSBMS()
 	return m_NoSBMS;
 }
 
-bool CSymbol::GetLoading()
+int CSymbol::GetCharging()
 {
-	return m_Loading;
+	return m_Charging;
 }
 
 wxString CSymbol::GetBaseStationName()
 {
 	return m_BaseStationName;
 }
+
+wxString CSymbol::GetChargingAsString()
+{
+	return m_ChargingString;
+}
+
+int CSymbol::GetNewAlarmCount()
+{
+	return m_NewAlarmCount;
+}
+

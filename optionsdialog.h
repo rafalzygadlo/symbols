@@ -29,10 +29,15 @@ class COptionsDialog: public wxDialog
 	wxTextCtrl *m_RestrictedArea;
 	wxTextCtrl *m_OffPositionArea;
 	wxCheckBox *m_ShowNames;
+
+	wxRadioButton *m_PositionFromGps;
+	wxRadioButton *m_PositionFromSymbol;
 	
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetColorPanel(wxWindow *parent);
 	wxPanel *GetFontPanel(wxWindow *Parent);
+	wxPanel *GetPositionFromPanel(wxWindow *Parent);
+
 	wxPanel *GetOtherPanel(wxWindow *Parent);
 	wxPanel *GetGlobalOtherPanel(wxWindow *Parent);
 	wxPanel *GetGlobalThresholdPanel(wxWindow *Parent);
@@ -63,6 +68,8 @@ class COptionsDialog: public wxDialog
 	void OnOffPositionArea(wxCommandEvent &event);
 	void OnLon(wxCommandEvent &event);
 	void OnLat(wxCommandEvent &event);
+	void OnPositionFromGps(wxCommandEvent &event);
+	void OnPositionFromSymbol(wxCommandEvent &event);
 
 
 public:
@@ -89,6 +96,8 @@ public:
 		ID_OFF_POSITION_AREA,
 		ID_SUN_LON,
 		ID_SUN_LAT,
+		ID_GPS,
+		ID_SYMBOL,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,

@@ -92,6 +92,7 @@ void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 	FilterDialog->SetLight(GetLight());
 	FilterDialog->SetGroupId(GetSelectedGroupId());
 	FilterDialog->SetBaseStationId(GetSelectedBaseStationId());
+	FilterDialog->SetAlarmId(GetSelectedAlarmId());
 
 	if(FilterDialog->ShowModal()== wxID_OK)
 	{
@@ -102,6 +103,7 @@ void CDisplayPlugin::OnFilter(wxCommandEvent &event)
 		SetSelectedGroupId(FilterDialog->GetGroupId());
 		SetLight(FilterDialog->GetLight());
 		SetSelectedBaseStationId(FilterDialog->GetBaseStationId());
+		SetSelectedAlarmId(FilterDialog->GetAlarmId());
 		SetFilterChanged(true);
 	}
 	
@@ -148,6 +150,9 @@ void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
 
 void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 {
+	if(m_Selected == NULL)
+		return;
+	
 	if(!m_Selected->GetNoSBMS())
 	{
 		CCommandDialog *CommandDialog = new CCommandDialog(this,m_Selected);
@@ -435,6 +440,8 @@ void CDisplayPlugin::SignalSelect()
 
 		m_SymbolPanel->SetPage1(m_Selected);
 	
+	}else{
+		m_ButtonManagement->Disable();
 	}
 
 }

@@ -15,6 +15,7 @@
 #include "ticker.h"
 #include "symbol.h"
 #include "optionsdialog.h"
+#include "alarmdialog.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -34,8 +35,10 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_SymbolGroup;
 	CDialog *m_BaseStation;
 	CDialog *m_Characteristic;
-	CDialog *m_SBMSDialog;
-	CDialog *m_AlarmDialog;
+	CDialog *m_SBMS;
+	CDialog *m_Alarm;
+	CDialog *m_Command;
+	CAlarmDialog *m_AlarmDialog;
 	
 	bool m_On;
 	bool m_Reading;
@@ -102,6 +105,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void WriteGlobalConfigDB();
 	void SetDefault();
 	
+	void ShowAlarm();
 	void SetMouseXY(int x, int y);
 	void SetMapScale(double scale);
 	int GetType();
@@ -151,6 +155,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Synchro();
 	void SBMS();
 	void Alarm();
+	void Command();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -165,7 +170,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuOptions(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSBMS(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuAlarm(void *NaviMapIOApiPtr, void *Input);
-
+	static void *MenuCommand(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	

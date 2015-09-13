@@ -499,9 +499,23 @@ wxString CListCtrl::OnGetItemText(long item, long column) const
 {	
 	if(column >= m_ColumnArray.size())
 		return wxEmptyString;
-
+	wxString str;
 	wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(column);
-	return ptr->Item(item);
+	str = ptr->Item(item);
+
+	if(m_ControlType == CONTROL_COMMAND)
+	{
+		if(m_ColumnIds.Item(column) == FI_COMMAND_ID_COMMAND)
+		{
+			long id;
+			str.ToLong(&id);
+			str = GetCommandName(id); 
+		}
+	}
+
+	
+	return str;
+
 }
 
  void CListCtrl::OnMouseEvent(wxMouseEvent& event)

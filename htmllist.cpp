@@ -124,8 +124,12 @@ void CHtmlList::SetList(wxArrayPtrVoid *ships)
 void CHtmlList::_SetSelection(CSymbol *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
+	{
+		Refresh();
+		this->SetSelection(-1);
 		return;
-		
+	}
+			
 	if(this->GetItemCount() != m_List->size())
 		return;
 	
@@ -167,7 +171,7 @@ void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 
 void CHtmlList::OnDrawItem(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.DrawText(_("TEST"),10,10);
+	//dc.DrawText(_("TEST"),10,10);
 
 	//dc.DrawBitmap
 }
@@ -223,6 +227,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetChargingAsString());
 	str.Append(_("</table>"));
 	
 	//str << wxString::Format(_("<a href='1'>%s</a><br>"),GetMsg(MSG_MANAGEMENT));

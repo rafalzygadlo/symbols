@@ -60,12 +60,12 @@ void SetAutoManagement();
 time_t GetLocalTimestamp();
 wxString GetLightOnAsString(bool v);
 wxString GetAutoAsString(bool v);
-wxString GetAlarmAsString(int id);
 void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, float req, uint32_t *TimeOnLight, uint32_t *TimeOffLight);
 int GetUTCDay();
 int GetUTCMonth();
 int GetUTCYear();
 void SetNightTime();
+void ConfirmAlarms();
 
 
 

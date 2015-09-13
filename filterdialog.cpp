@@ -74,6 +74,12 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	//m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	//FlexSizer->AddSpacer(1);
 	//FlexSizer->Add(m_CheckInMonitoring,0,wxALL,5);
+
+	wxStaticText *LabelAlarm = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
+	FlexSizer->Add(LabelAlarm,0,wxALL,5);
+	m_ComboAlarm = GetCombo(db,Panel,TABLE_ALARM,wxEmptyString,FI_ALARM_ID,FI_ALARM_NAME, true);
+	m_ComboAlarm->SetSelection(0);
+	FlexSizer->Add(m_ComboAlarm,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelGroup = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_GROUP));
 	FlexSizer->Add(LabelGroup,0,wxALL,5);
@@ -129,6 +135,12 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 }
 
 //GET
+
+int CFilterDialog::GetAlarmId()
+{
+	return (int)m_ComboAlarm->GetClientData(m_ComboAlarm->GetSelection());
+}
+
 int CFilterDialog::GetAreaId()
 {
 	return (int)m_ComboArea->GetClientData(m_ComboArea->GetSelection());
@@ -166,6 +178,12 @@ int CFilterDialog::GetGroupId()
 }
 
 //SET
+
+void CFilterDialog::SetAlarmId(int v)
+{
+	ComboSetSelection(m_ComboAlarm,v);
+}
+
 void CFilterDialog::SetAreaId(int v)
 {
 	ComboSetSelection(m_ComboArea,v);

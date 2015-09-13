@@ -159,7 +159,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 
 	//SetHeader();
 	PictureInfo(db,ptr);
-	AlarmInfo(db,m_IdSBMS);
+	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
 	if(ptr->GetInMonitoring())
@@ -180,27 +180,14 @@ void CSymbolPanel::SetHeader()
 	
 }
 
-void CSymbolPanel::AlarmInfo(void *db,int id_sbms)
-{
-	if(id_sbms == 0)
-		return;
-	
+void CSymbolPanel::AlarmInfo(CSymbol *ptr)
+{	
 	wxString str;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms ='%d' AND active='%d'"),TABLE_SBMS_ALARM,id_sbms,ALARM_ACTIVE);
-	my_query(db,sql);
-			
-	void *result = db_result(db);
-		
-	char **row = NULL;
-	if(result == NULL)
-		return;
-		
-	row = (char**)db_fetch_row(result);
-	if(row)
-	{
+	for(int i = 0; i < ptr->GetAlarmCount();i++)
+	{	
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),GetAlarmAsString(atoi(row[FI_SBMS_ALARM_ID_ALARM]))));
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),ptr->GetAlarm(i)->GetName()));
 		str.Append(_("</table>"));
 		str.Append(_("<hr>"));
 		m_Html->AppendToPage(str);
@@ -459,9 +446,9 @@ void CSymbolPanel::SetSBMS()
 
 void CSymbolPanel::OnAlarm(wxCommandEvent &event)
 {
-	CAlarmDialog *AlarmDialog = new CAlarmDialog(NULL,_("test"));
-	AlarmDialog->ShowModal();
-	delete AlarmDialog;
+	//CAlarmDialog *AlarmDialog = new CAlarmDialog(NULL,_("test"));
+	//AlarmDialog->ShowModal();
+	//delete AlarmDialog;
 }
 
 void CSymbolPanel::SetCalibrated(bool v)

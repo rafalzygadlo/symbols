@@ -18,16 +18,18 @@ bool m_SortOrder = false;
 bool m_SortChanged = false;
 bool m_FilterChanged = false;
 int m_SortColumnId = 0;
-int m_SelectedAreaId = 0;
-int	m_SelectedSeawayId = 0;
-int m_SelectedSymbolTypeId = 0;
-int m_SelectedBaseStationId = 0;
+int m_SelectedAreaId = -1;
+int	m_SelectedSeawayId = -1;
+int m_SelectedSymbolTypeId = -1;
+int m_SelectedBaseStationId = -1;
 double m_FontSize = DEFAULT_FONT_SIZE;
 int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 int m_CommTimeout = DEFAULT_COMM_TIMEOUT;
-int m_InMonitoring = DEFAULT_MONITORING_VALUE;
-int m_SelectedGroupId = 0;
-int m_Light = 0;
+int m_InMonitoring = -1;
+int m_SelectedGroupId = -1;
+int m_Light = -1;
+int m_AlarmId = -1;
+
 bool m_ShowFontNames = false;
 int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
 int m_OffPositionArea = DEFAULT_OFF_POSITION_AREA;
@@ -35,8 +37,10 @@ int m_ScaleFactor = DEFAULT_SCALE_FACTOR;
 double m_SunLon = DEFAULT_SUN_LON;
 double m_SunLat = DEFAULT_SUN_LAT;
 bool m_Night = false;
+bool m_PositionFromGps = false;
 time_t m_NightTimeOn;
 time_t m_NightTimeOff;
+ISpVoice *m_Voice;
 
 nvRGBA SymbolNormalColor = GetDefaultColor(SYMBOL_NORMAL_COLOR);
 nvRGBA SymbolNoMonitorColor = GetDefaultColor(SYMBOL_NO_MONITOR_COLOR);
@@ -72,6 +76,8 @@ void SetSunLat(double v)				{	m_SunLat = v;			}
 void SetNightTimeOn(time_t v)			{	m_NightTimeOn = v;		}
 void SetNightTimeOff(time_t v)			{	m_NightTimeOff = v;		}
 void SetNight(bool v)					{	m_Night = v;			}
+void SetVoice(ISpVoice *v)				{	m_Voice = v;			}
+void SetPositionFromGps(bool v)			{	m_PositionFromGps = v;	}
 
 
 //filter
@@ -83,6 +89,7 @@ void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
 void SetInMonitoring(int v)				{	m_InMonitoring = v;			}
 void SetSelectedGroupId(int v)			{	m_SelectedGroupId = v;		}
 void SetLight(int v)					{	m_Light = v;				}
+void SetSelectedAlarmId(int v)			{	m_AlarmId = v;				}
 
 
 //GET
@@ -114,6 +121,8 @@ double GetSunLat()				{	return m_SunLat;			}
 bool GetNight()					{	return m_Night;				}
 time_t GetNightTimeOn()			{	return m_NightTimeOn;		}
 time_t GetNightTimeOff()		{	return m_NightTimeOff;		}
+ISpVoice *GetVoice()			{	return m_Voice;				}
+bool GetPositionFromGps()		{	return m_PositionFromGps;	}
 
 
 //filter
@@ -125,6 +134,7 @@ int GetFilterChanged()			{	return m_FilterChanged;			}
 int GetInMonitoring()			{	return m_InMonitoring;			}
 int GetSelectedGroupId()		{	return m_SelectedGroupId;		}
 int GetLight()					{	return m_Light;					}
+int GetSelectedAlarmId()		{	return m_AlarmId;				}
 
 
 nvRGBA GetDefaultColor(int type)
@@ -133,7 +143,7 @@ nvRGBA GetDefaultColor(int type)
 	switch(type)
 	{
 		case SYMBOL_NORMAL_COLOR:			rgba.R = 0;		rgba.G = 0;		rgba.B = 255;	rgba.A = 200;	break;
-		case SYMBOL_NO_MONITOR_COLOR:		rgba.R = 0;		rgba.G = 0;		rgba.B = 255;	rgba.A = 50;	break;
+		case SYMBOL_NO_MONITOR_COLOR:		rgba.R = 150;	rgba.G = 150;	rgba.B = 150;	rgba.A = 50;	break;
 		case SYMBOL_ERROR_COLOR:			rgba.R = 255;	rgba.G = 0;		rgba.B = 0;		rgba.A = 100;	break;
 		case SYMBOL_LIGHT_ON_COLOR:			rgba.R = 0;		rgba.G = 255;	rgba.B = 0;		rgba.A = 200;	break;
 	}

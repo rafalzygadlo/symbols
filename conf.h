@@ -114,7 +114,6 @@
 #define DEFAULT_VIEW_FONT_SCALE 1000
 
 #define DEFAULT_COMM_TIMEOUT	60*6	
-#define DEFAULT_MONITORING_VALUE	1
 
 // Languages
 #define MSG_MANAGER						0
@@ -260,18 +259,19 @@
 #define MSG_LIGHT_IS_ON					140
 #define MSG_LIGHT_IS_OFF				141
 #define MSG_OFF_POSITION_RADIUS			142
-#define MSG_OFF_POSITION				143
-#define MSG_HIGH_VOLTAGE				144
-#define MSG_LOW_VOLTAGE					145
-#define MSG_COMMUNICATION_TIMEOUT		146
-#define MSG_SUNRISE_SUNSET				147
-#define MSG_NIGHT_TIME					148
-#define MSG_ADD_TO_SYMBOL				149
-#define MSG_DAY_TIME					150
-#define MSG_ACTIVE						151
-#define MSG_CONFIRMED					152
-#define MSG_SET_TIME					153
-#define MSG_UNSET_TIME					154
+#define MSG_SUNRISE_SUNSET				143
+#define MSG_NIGHT_TIME					144
+#define MSG_ADD_TO_SYMBOL				145
+#define MSG_DAY_TIME					146
+#define MSG_ACTIVE						147
+#define MSG_CONFIRMED					148
+#define MSG_SET_TIME					149
+#define MSG_UNSET_TIME					150
+#define MSG_CHARGING					151
+#define MSG_DISCHARGING					152
+#define MSG_NA							153
+#define MSG_GPS							154
+#define MSG_SYMBOL_POSITION				155
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -303,6 +303,8 @@
 #define CONTROL_VIEW_SYMBOL		17
 #define CONTROL_SBMS_ALARM		18
 #define CONTROL_SYMBOL_ALARM	19
+#define CONTROL_SYMBOL_COMMAND	20
+#define CONTROL_COMMAND			21
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -453,6 +455,7 @@
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 #define TABLE_USER_OPTION			"user_option"
 #define TABLE_GLOBAL_OPTION			"global_option"
+#define TABLE_ALARM					"alarm"
 
 
 //WIDOKI
@@ -617,12 +620,13 @@
 
 //pola tabeli COMMAND
 #define FI_COMMAND_ID				0
-#define FI_COMMAND_ID_COMMUNICATION	1
-#define FI_COMMAND_CMD				2
 #define FI_COMMAND_ID_COMMAND		6
+#define FI_COMMAND_COMMAND			7
+
 #define FN_COMMAND_ID				"id"
 #define FN_COMMAND_ID_SYMBOL		"id_symbol"
 #define FN_COMMAND_ID_COMMAND		"id_command"
+#define FN_COMMAND_COMMAND			"command"
 #define FN_COMMAND_STATUS			"status"
 
 // pola tabeli CHARACTERISTIC
@@ -752,6 +756,7 @@
 #define FI_USER_OPTION_FONT_SIZE				16
 #define FI_USER_OPTION_FONT_VIEW_SCALE			17
 #define FI_USER_OPTION_SCALE_FACTOR				18
+#define FI_USER_OPTION_POSITION_FROM_GPS		19
 
 //pola tabeli GLOBAL_OPTION
 #define FI_GLOBAL_OPTION_LOWER_THRESHOLD			1
@@ -763,16 +768,26 @@
 
 //pola tabeli SBMS_ALARM
 #define FI_SBMS_ALARM_ID_ALARM				2
-#define FI_SBMS_ALARM_ACTIVE				3
-#define FI_SBMS_ALARM_CONFIRMED				4
-#define FI_SBMS_ALARM_SET_LOCAL_UTC_TIME	5
-#define FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	6
+#define FI_SBMS_ALARM_ACTIVE				4
+#define FI_SBMS_ALARM_CONFIRMED				5
+#define FI_SBMS_ALARM_SET_LOCAL_UTC_TIME	6
+#define FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	7
 
 #define FN_SBMS_ALARM_ID_ALARM				"id_alarm"
 #define FN_SBMS_ALARM_ACTIVE				"active"
 #define FN_SBMS_ALARM_CONFIRMED				"confirmed"
 #define FN_SBMS_ALARM_SET_LOCAL_UTC_TIME	"set_local_utc_time"
 #define FN_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	"unset_local_utc_time"
+
+//pola tabeli ALARM
+
+#define FI_ALARM_ID			0
+#define	FI_ALARM_NAME		1
+#define FI_ALARM_TYPE		2
+
+#define FN_ALARM_ID			"id"
+#define	FN_ALARM_NAME		"name"
+#define FN_ALARM_TYPE		"type"
 
 
 // pola widoku _VIEW_SYMBOL
@@ -796,9 +811,8 @@
 #define FI_VIEW_SYMBOL_AUTO					17
 #define FI_VIEW_SYMBOL_FORCED_OFF			18
 #define FI_VIEW_SYMBOL_NEW_REPORT			19
-#define FI_VIEW_SYMBOL_LOADING				20
+#define FI_VIEW_SYMBOL_CHARGING				20
 #define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	21
-
 
 #define FN_VIEW_SYMBOL_NAME					"name"
 #define FN_VIEW_SYMBOL_NUMBER				"number"
@@ -851,20 +865,9 @@
 #define AUTO_MANAGEMENT		1
 #define READED_REPORT_FLAG 0
 
-
-//definicja ALARMÓW
-#define ALARM_OFFSET                            128     //dla alarmów z serwera
-//Alarmy SBMS
-#define ALARM_OPENING_MAIN_FLAP			0
-#define ALARM_POWER_SUPPLY_FAULT		1
-#define ALARM_IMPACT_DETECTED			2
-
-//alarmy tylko z SBMSA beda
-//ALarmy Serwer
-#define ALARM_OFF_POSITION                      ALARM_OFFSET + 1
-#define ALARM_COMMUNICATION_TIMEOUT             ALARM_OFFSET + 2
-#define ALARM_LOW_VOLTAGE                       ALARM_OFFSET + 3
-#define ALARM_HIGH_VOLTAGE                      ALARM_OFFSET + 4
+#define CHARGING_NOT_AVAILABLE -1
+#define CHARGING_TRUE           1
+#define CHARGING_FALSE          0
 
 /*
 

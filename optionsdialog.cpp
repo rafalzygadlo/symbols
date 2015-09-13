@@ -21,6 +21,8 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_TEXT(ID_OFF_POSITION_AREA,OnOffPositionArea)
 	EVT_TEXT(ID_SUN_LON,OnLon)
 	EVT_TEXT(ID_SUN_LAT,OnLat)
+	EVT_RADIOBUTTON(ID_GPS,OnPositionFromGps)
+	EVT_RADIOBUTTON(ID_SYMBOL,OnPositionFromSymbol)
 END_EVENT_TABLE()
 
 COptionsDialog::COptionsDialog()
@@ -58,7 +60,7 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	
 	Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
-	//Sizer->Add(GetThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetPositionFromPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 
 
@@ -202,6 +204,27 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 	FlexSizer->Add(m_ViewNameScale,0,wxALL,2);
 	
 
+	return Panel;
+}
+
+wxPanel *COptionsDialog::GetPositionFromPanel(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticBoxSizer *Box = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SYMBOL_POSITION));
+	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
+	Panel->SetSizer(Sizer);
+		
+	m_PositionFromGps = new wxRadioButton(Panel,ID_GPS,GetMsg(MSG_GPS));
+	Box->Add(m_PositionFromGps,0,wxALL,5);
+
+	m_PositionFromSymbol = new wxRadioButton(Panel,ID_SYMBOL,GetMsg(MSG_SYMBOL));
+	Box->Add(m_PositionFromSymbol,0,wxALL,5);
+	
+	m_PositionFromGps->SetValue(GetPositionFromGps());
+	m_PositionFromSymbol->SetValue(!GetPositionFromGps());
+	
 	return Panel;
 }
 
@@ -467,7 +490,19 @@ void COptionsDialog::OnAlpha(wxCommandEvent &event)
 	event.Skip();
 	///Signal();
 	
+
 }
+
+void COptionsDialog::OnPositionFromGps(wxCommandEvent &event)
+{
+	SetPositionFromGps(true);
+}
+
+void COptionsDialog::OnPositionFromSymbol(wxCommandEvent &event)
+{
+	SetPositionFromGps(false);
+}
+
 
 void COptionsDialog::OnNameScale(wxCommandEvent &event)
 {

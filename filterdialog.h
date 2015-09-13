@@ -14,6 +14,7 @@ class CFilterDialog: public wxDialog
 	wxComboBox *m_ComboInMonitoring;
 	wxComboBox *m_ComboBaseStation;
 	wxComboBox *m_ComboSymbolType;
+	wxComboBox *m_ComboAlarm;
 	
 	void Set(int id, bool checked);
 	wxPanel *GetPanel(wxWindow *Parent);
@@ -31,6 +32,7 @@ public:
 	int GetGroupId();
 	int GetLight();
 	int GetBaseStationId();
+	int GetAlarmId();
 	
 	void SetAreaId(int v);
 	void SetSymbolTypeId(int v);
@@ -39,6 +41,7 @@ public:
 	void SetInMonitoring(int v);
 	void SetLight(int v);
 	void SetGroupId(int v);
+	void SetAlarmId(int v);
 	
 	DECLARE_EVENT_TABLE();
 

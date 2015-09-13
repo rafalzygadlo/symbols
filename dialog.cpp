@@ -59,15 +59,25 @@ SHeader Header[] =
 	//alarm master/slave
 	{CONTROL_SYMBOL_ALARM,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
 	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
-	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_INFO , FN_SYMBOL_INFO, MSG_INFO} },
-
+	
 	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ID_ALARM  , FN_SBMS_ALARM_ID_ALARM, MSG_ALARM} },
-	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ACTIVE  , FN_SBMS_ALARM_ACTIVE, MSG_ACTIVE} },
-	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_CONFIRMED  , FN_SBMS_ALARM_CONFIRMED, MSG_CONFIRMED} },
+	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ACTIVE  , FN_SBMS_ALARM_ACTIVE, MSG_ACTIVE} },
+	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_CONFIRMED  , FN_SBMS_ALARM_CONFIRMED, MSG_CONFIRMED} },
 	{CONTROL_SBMS_ALARM,180, {FI_SBMS_ALARM_SET_LOCAL_UTC_TIME  , FN_SBMS_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
 	{CONTROL_SBMS_ALARM,180, {FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME  , FN_SBMS_ALARM_UNSET_LOCAL_UTC_TIME, MSG_UNSET_TIME} },
 	//{CONTROL_SBMS_ALARM,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
 
+	//komendy master/slave
+	{CONTROL_SYMBOL_COMMAND,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
+	{CONTROL_SYMBOL_COMMAND,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
+	
+	{CONTROL_COMMAND,80,  {FI_COMMAND_ID  , FN_COMMAND_ID, MSG_ID} },
+	{CONTROL_COMMAND,80,  {FI_COMMAND_COMMAND  , FN_COMMAND_COMMAND, MSG_COMMAND} },
+	{CONTROL_COMMAND,80,  {FI_COMMAND_ID_COMMAND  , FN_COMMAND_ID_COMMAND, MSG_CONFIRMED} },
+	
+
+
+	
 	{-1},
 
 };
@@ -84,7 +94,7 @@ SIds Id[] =
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
 	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
-	//{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
+	{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
 
 CDialog::CDialog(void *db,int control_type, bool picker)
@@ -110,7 +120,7 @@ CDialog::CDialog(void *db,int control_type, bool picker)
 }
 
 CDialog::CDialog(void *db,int control_master, int control_slave,bool picker)
-:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX)
+:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,  wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX)
 {
 	m_ControlType = control_master;
 	m_ButtonOk = NULL;
@@ -377,16 +387,8 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_ITEM:			return GetItemPanel(Parent);
 		case CONTROL_SYMBOL:		return GetSymbolPanel(Parent);
 		case CONTROL_PICTURE:		return GetPicturePanel(Parent);
-		case CONTROL_AREA:
-		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_TYPE:
-		case CONTROL_SYMBOL_GROUP:
-		case CONTROL_BASE_STATION:
-		case CONTROL_CHARACTERISTIC:
-		case CONTROL_SBMS:
-		case CONTROL_SBMS_ALARM:
-		case CONTROL_SYMBOL_ALARM:
-				return GetPanelList(Parent);
+		default:
+			return GetPanelList(Parent);
 	}
 	
 	return NULL;
@@ -640,6 +642,8 @@ void CDialogPanel::SetTable()
 		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
 		case CONTROL_SBMS_ALARM:		m_Table = TABLE_SBMS_ALARM;		break;
 		case CONTROL_SYMBOL_ALARM:		m_Table = TABLE_SYMBOL;			break;
+		case CONTROL_SYMBOL_COMMAND:	m_Table = TABLE_SYMBOL;			break;
+		case CONTROL_COMMAND:			m_Table = TABLE_COMMAND;		break;
 	}
 }
 
@@ -666,21 +670,21 @@ void CDialogPanel::ReadData()
 		case CONTROL_ITEM:
 			sql = ReadItems();
 		break;
+		
+		case CONTROL_COMMAND:
 		case CONTROL_SBMS_ALARM:
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms='%d' AND"),m_Table,m_IDMaster);
 		break;
 		case CONTROL_SYMBOL_ALARM:
 			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM);
 		break;
-		case CONTROL_SYMBOL:
-		case CONTROL_AREA:
-		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_GROUP:
-		case CONTROL_SYMBOL_TYPE:
-		case CONTROL_BASE_STATION:
-		case CONTROL_CHARACTERISTIC:
-		case CONTROL_SBMS:
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table,m_IDMaster);
+
+		case CONTROL_SYMBOL_COMMAND:
+			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND);
+		break;
+
+		default :
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table);
 		break;
 	}
 
@@ -723,6 +727,7 @@ void CDialogPanel::ReadData()
 	switch(m_ControlType)
 	{
 		case CONTROL_SYMBOL_ALARM:
+		case CONTROL_SYMBOL_COMMAND:
 			sql << wxString::Format(_(" GROUP BY `%s`.name"),TABLE_SYMBOL);
 		break;
 	}

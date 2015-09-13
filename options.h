@@ -2,8 +2,10 @@
 #define __OPTIONS
 #include <wx/wx.h>
 #include <stdint.h>
+#include <sapi.h>
 #include "geometryconfig.h"
 #include "nvtime.h"
+
 
 #define DEFAULT_FG_COLOR wxColor(230,230,230)
 #define DEFAULT_BG_COLOR wxColor(50,50,50)
@@ -38,9 +40,11 @@ time_t GetNightTimeOn();
 time_t GetNightTimeOff();
 nvtime_t GetNightNvTimeOn();
 nvtime_t GetNightNvTimeOff();
-void SetNight(bool v);
+bool GetNight();
+bool GetPositionFromGps();
+ISpVoice *GetVoice();
 
-//filter
+//filter............................
 int GetSelectedAreaId();
 int GetSelectedSeawayId();
 int GetSelectedSymbolTypeId();
@@ -49,8 +53,8 @@ int GetInMonitoring();
 int GetFilterChanged();
 int GetLight();
 int GetSelectedBaseStationId();
-
-//
+int GetSelectedAlarmId();
+//..................................
 
 
 //SET
@@ -84,9 +88,12 @@ void SetNightTimeOn(time_t v);
 void SetNightTimeOff(time_t v);
 void SetNightNvTimeOn(nvtime_t v);
 void SetNightNvTimeOff(nvtime_t v);
-bool GetNight();
+void SetNight(bool v);
+void SetPositionFromGps(bool v);
+void SetVoice(ISpVoice *v);
 
-//filter
+
+//filter.................................
 void SetSelectedAreaId(int v);
 void SetSelectedSeawayId(int v);
 void SetSelectedSymbolTypeId(int v);
@@ -95,6 +102,8 @@ void SetFilterChanged(bool v);
 void SetSelectedGroupId(int v);
 void SetSelectedBaseStationId(int v);
 void SetLight(int v);
+void SetSelectedAlarmId(int v);
+//........................................
 
 //COLORS
 nvRGBA GetDefaultColor(int type);

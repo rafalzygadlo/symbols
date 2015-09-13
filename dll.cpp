@@ -31,12 +31,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 {
 	SetBGColor(DEFAULT_BG_COLOR);
 	SetFGColor(DEFAULT_FG_COLOR);
-// pamietaj usuń
-//......................
 	
-	SetUID(4);
-	
-//.......................
 	m_DB = NULL;
 	m_Symbol = NULL;
 	m_Items = NULL;
@@ -47,9 +42,10 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolGroup = NULL;
 	m_BaseStation = NULL;
 	m_Characteristic = NULL;
-	m_SBMSDialog = NULL;
-	m_AlarmDialog = NULL;
-
+	m_SBMS = NULL;
+	m_Alarm = NULL;
+	m_Command = NULL;
+	
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;
 	m_Broker = NaviBroker;
@@ -93,10 +89,11 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	FromLMB = false;
 	m_Reading = false;
 	m_Ticker = NULL;
-	
+	m_AlarmDialog = new CAlarmDialog();
+
 	//ReadConfig();
 	//m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
-	
+		
 }
 
 CMapPlugin::~CMapPlugin()
@@ -118,12 +115,13 @@ CMapPlugin::~CMapPlugin()
 	delete m_SymbolGroup;
 	delete m_BaseStation;
 	delete m_Characteristic;
-	delete m_SBMSDialog;
+	delete m_SBMS;
+	delete m_Alarm;
 	delete m_FileConfig;
 	delete m_Frame;
 	delete DisplaySignal;
 	delete m_AlarmDialog;
-	
+	delete m_Command;
 	
 	//if(PositionDialog != NULL)
 		//delete PositionDialog;
@@ -283,6 +281,8 @@ void CMapPlugin::ReadConfigDB()
 			
 		int val;
 		val = atoi(row[FI_USER_OPTION_SCALE_FACTOR]);		SetScaleFactor(val);
+		bool _val;
+		_val = atoi(row[FI_USER_OPTION_POSITION_FROM_GPS]);	SetPositionFromGps(_val);
 		
 	}
 	
@@ -361,8 +361,8 @@ void CMapPlugin::WriteConfigDB()
 	//sql << sql.Format("upper_threshold='%f',",GetUpperTreshold());
 		
 	//OTHER
-	sql << sql.Format("scale_factor='%d'",GetScaleFactor());
-	//sql << sql.Format("restricted_area='%d'",GetRestrictedArea());
+	sql << sql.Format("scale_factor='%d',",GetScaleFactor());
+	sql << sql.Format("position_from_gps='%d'",GetPositionFromGps());
 		
 	my_query(m_DB,sql);
 
@@ -452,6 +452,7 @@ void CMapPlugin::Synchro()
 void CMapPlugin::SetUID(int uid)
 {
 	_SetUID(uid);
+	ReadConfigDB();
 }
 
 void CMapPlugin::WritePasswordConfig(char *v)
@@ -541,13 +542,19 @@ void CMapPlugin::SetSql(wxString &sql)
 */
 void CMapPlugin::SetSql(wxString &sql)
 {
+	
+	int id_alarm = GetSelectedAlarmId();
 	int id_group = GetSelectedGroupId();
 	
+	sql = wxString::Format(_("SELECT * FROM %s WHERE "),VIEW_SYMBOL);
+
 	if(id_group > 0)
 		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),VIEW_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
-	else
-		sql = wxString::Format(_("SELECT * FROM %s WHERE "),VIEW_SYMBOL);
-				
+	
+	if(id_alarm > 0)
+		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm);
+
+
 	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
@@ -625,7 +632,12 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetRLat(lat);
 		ptr->SetRLonMap(to_x);
 		ptr->SetRLatMap(-to_y);
-				
+		
+		ptr->SetLon(lon);
+		ptr->SetLat(lat);
+		ptr->SetLonMap(to_x);
+		ptr->SetLatMap(-to_y);
+		
 		ptr->SetId(id);
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
@@ -644,8 +656,11 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
 			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
 			ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
-			ptr->SetLoading(atoi(row[FI_VIEW_SYMBOL_LOADING]));
-			
+			ptr->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
+			if(ptr->GetCharging() == CHARGING_TRUE)				ptr->SetChargingAsString(GetMsg(MSG_CHARGING));
+			if(ptr->GetCharging() == CHARGING_FALSE)			ptr->SetChargingAsString(GetMsg(MSG_DISCHARGING));
+			if(ptr->GetCharging() == CHARGING_NOT_AVAILABLE)	ptr->SetChargingAsString(GetMsg(MSG_NA));
+
 			int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
 			ptr->SetTimestamp(timestamp);
 			ptr->SetAge(GetLocalTimestamp() - timestamp);
@@ -661,17 +676,25 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 				
 			ptr->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 
-
 			//gps
 			sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
 			sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
 			to_x,to_y;
 			m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
-			ptr->SetLon(lon);
-			ptr->SetLat(lat);
-			ptr->SetLonMap(to_x);
-			ptr->SetLatMap(-to_y);
+			ptr->SetGpsLon(lon);
+			ptr->SetGpsLat(lat);
+			ptr->SetGpsLonMap(to_x);
+			ptr->SetGpsLatMap(-to_y);
+
+			if(GetPositionFromGps())
+			{
+				ptr->SetLon(lon);
+				ptr->SetLat(lat);
+				ptr->SetLonMap(to_x);
+				ptr->SetLatMap(-to_y);
+			}
+
 			ptr->SetValidGPS(true);
 		}
 		
@@ -849,25 +872,34 @@ void CMapPlugin::Run(void *Params)
 	}	
 	
 	CreateApiMenu(); // jezyki
-	ReadConfigDB();
+	//ReadConfigDB();
 	ReadGlobalConfigDB();
 	
      if (CoInitialize(NULL))
 	 {
          //return FALSE;
 		HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_Voice);
+
 		if( SUCCEEDED( hr ) )
 		{
+			SetVoice(m_Voice);
 			//m_Voice->Speak(L"Starting system.", 0, NULL);
 			//m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
 			//m_Voice->Release();
 			//m_Voice = NULL;
 		}
-	 }
+
+		ISpRecognizer* recognizer;
+		hr = CoCreateInstance(CLSID_SpSharedRecognizer,NULL, CLSCTX_ALL, IID_ISpRecognizer,reinterpret_cast<void**>(&recognizer));
+		if( SUCCEEDED( hr ) )
+		{
+			bool a = true;
+			//recognizer->GetStatus();
+		
+		}
+	}
      
- //CoUninitialize();
-
-
+ 
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);
 
@@ -931,7 +963,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		SendSelectSignal();
-		//m_Voice->Speak(ptr->GetName(),0,NULL);
+		GetVoice()->Speak(ptr->GetName(),0,NULL);
 	}else{
 	
 		FromLMB = false;
@@ -952,8 +984,8 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		_x = ptr->GetRLonMap();
-		_y = ptr->GetRLatMap();
+		_x = ptr->GetLonMap();
+		_y = ptr->GetLatMap();
 		if(IsPointInsideBox(x, y, _x - (RectWidth/d) + TranslationX, _y - (RectHeight/d) + TranslationY, _x + (RectWidth/d) + TranslationX , _y + (RectHeight/d) + TranslationY))
 			return ptr;
 	}
@@ -1062,23 +1094,31 @@ void CMapPlugin::Options()
 
 void CMapPlugin::SBMS()
 {
-	if(m_SBMSDialog == NULL)
-		m_SBMSDialog = new CDialog(m_DB,CONTROL_SBMS);
-	m_SBMSDialog->Show();
+	if(m_SBMS == NULL)
+		m_SBMS = new CDialog(m_DB,CONTROL_SBMS);
+	m_SBMS->Show();
 }
 
 void CMapPlugin::Alarm()
 {
-	if(m_AlarmDialog == NULL)
-		m_AlarmDialog = new CDialog(m_DB,CONTROL_SYMBOL_ALARM,CONTROL_SBMS_ALARM);
-	m_AlarmDialog->Show();
+	if(m_Alarm == NULL)
+		m_Alarm = new CDialog(m_DB,CONTROL_SYMBOL_ALARM,CONTROL_SBMS_ALARM);
+	m_Alarm->Show();
 }
 
+void CMapPlugin::Command()
+{
+	if(m_Command == NULL)
+		m_Command = new CDialog(m_DB,CONTROL_SYMBOL_COMMAND,CONTROL_COMMAND);
+	m_Command->Show();
+}
 
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_ALARM),this, MenuAlarm );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMAND),this, MenuCommand );
+	NaviApiMenu->AddItem(L"-",this, NULL );
 	//NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SEAWAY),this, MenuSeaway);
@@ -1191,6 +1231,14 @@ void *CMapPlugin::MenuAlarm(void *NaviMapIOApiPtr, void *Input)
 	return NULL;	
 }
 
+void *CMapPlugin::MenuCommand(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_COMMAND);
+	
+	return NULL;	
+}
+
 void *CMapPlugin::MenuSymbolType(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
@@ -1215,6 +1263,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_OPTIONS:			Options();			break;
 		case CONTROL_SBMS:				SBMS();				break;
 		case CONTROL_ALARM:				Alarm();			break;
+		case CONTROL_COMMAND:			Command();			break;
 	}
 
 }
@@ -1259,8 +1308,8 @@ void CMapPlugin::RenderSelected()
 	double x,y;
 	//SelectedPtr->RenderSelected();
 #if 1
-	x = SelectedPtr->GetRLonMap(); 
-	y = SelectedPtr->GetRLatMap();
+	x = SelectedPtr->GetLonMap(); 
+	y = SelectedPtr->GetLatMap();
 		
 	glEnable(GL_BLEND);
 	glPushMatrix();
@@ -1302,8 +1351,8 @@ void CMapPlugin::RenderHighlighted()
 {
 			
 	double x,y;
-	x = HighlightedPtr->GetRLonMap(); 
-	y = HighlightedPtr->GetRLatMap();
+	x = HighlightedPtr->GetLonMap(); 
+	y = HighlightedPtr->GetLatMap();
 	
 	glEnable(GL_BLEND);
 	glPushMatrix();
@@ -1344,7 +1393,7 @@ void CMapPlugin::RenderDistance()
 	{
 		glBegin(GL_LINES);
 			glColor4f(1.0f,0.0f,0.0f,0.8f);
-			glVertex2f(SelectedPtr->GetRLonMap(),SelectedPtr->GetRLatMap());
+			glVertex2f(SelectedPtr->GetLonMap(),SelectedPtr->GetLatMap());
 			glVertex2f(MapX,MapY);
 		glEnd();
 		
@@ -1413,15 +1462,15 @@ void CMapPlugin::RenderNames()
 		
 		if(ptr->GetInit())
 		{
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,3.0f,ptr->GetNumber());
-			RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.1f,ptr->GetSBMSName());
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetNumber());
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
 			if(ptr->GetInMonitoring())
-				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
+				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
 			else
-				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.3f,GetMsg(MSG_NOT_IN_MONITORING));
+				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,GetMsg(MSG_NOT_IN_MONITORING));
 
 			if(ptr->GetBusy())
-				RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
+				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 		
 			//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
 		}
@@ -1462,6 +1511,17 @@ void CMapPlugin::SetMouseXY(int x, int y)
 	MouseY = y;
 }
 
+void CMapPlugin::ShowAlarm()
+{
+	for(int i = 0; i < m_SymbolList->size();i++)
+	{
+		m_AlarmDialog->Set((CSymbol*)m_SymbolList->Item(i));
+	}
+	
+	m_AlarmDialog->ShowWindow();
+
+}
+
 void CMapPlugin::OnTick()
 {
 	wxString sql;
@@ -1487,6 +1547,8 @@ void CMapPlugin::OnTick()
 	SetNightTime();
 	
 	SendInsertSignal();
+	ShowAlarm();
+
 
 	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 
