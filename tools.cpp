@@ -161,7 +161,6 @@ const wchar_t *nvLanguage[][2] =
 	{L"ON",L"ON"},
 	{L"OFF",L"OFF"},
 	{L"Off Position Radius(meters)",L"Promieñ (OFF POSITION)(w metrach)"},
-	
 	{L"Sunrise/Sunset Position",L"Pozycja Wschód/Zachód S³oñca"},
 	{L"Night",L"Noc"},
 	{L"Pin To Symbol",L"Przypnij do znaku"},
@@ -175,6 +174,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"N/A",L"Brak Danych"},
 	{L"GPS",L"GPS"},
 	{L"Position From",L"Pozycja z.."},
+	{L"Report Timeout",L"Timeout Raportu"},
 
 };
 

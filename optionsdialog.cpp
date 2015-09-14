@@ -58,12 +58,11 @@ wxPanel *COptionsDialog::GetPage1(wxWindow *Parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	
+	Sizer->Add(GetPositionFromPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetPositionFromPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetOtherPanel(Panel),0,wxALL|wxEXPAND,0);
-
-
+	
 	return Panel;
 }
 
@@ -76,9 +75,8 @@ wxPanel *COptionsDialog::GetPage2(wxWindow *Parent)
 	//Sizer->Add(GetFontPanel(Panel),0,wxALL|wxEXPAND,0);
 	//Sizer->Add(GetColorPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetGlobalThresholdPanel(Panel),0,wxALL|wxEXPAND,0);
-	Sizer->Add(GetGlobalOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 	Sizer->Add(GetGlobalSunPanel(Panel),0,wxALL|wxEXPAND,0);
-
+	Sizer->Add(GetGlobalOtherPanel(Panel),0,wxALL|wxEXPAND,0);
 
 	return Panel;
 }
@@ -174,8 +172,6 @@ wxPanel *COptionsDialog::GetFontPanel(wxWindow *Parent)
 	Sizer->Add(Box,0,wxALL|wxEXPAND,5);
 	Panel->SetSizer(Sizer);
 	
-
-
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
 	
@@ -304,13 +300,13 @@ wxPanel *COptionsDialog::GetGlobalOtherPanel(wxWindow *Parent)
 	m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
 	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
 	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
-
 	
-	//m_CommTimeout = new wxSpinCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
-	//FlexSizer->Add(m_CommTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
-	//m_CommTimeout->SetMin(0);
-	//m_CommTimeout->SetMax(60*24);
-	//m_CommTimeout->SetValue(GetCommTimeout());
+	wxStaticText *TextReportTimeout = new wxStaticText(Panel,ID_REPORT_TIMEOUT,GetMsg(MSG_REPORT_TIMEOUT),wxDefaultPosition,wxDefaultSize);
+	FlexSizer->Add(TextReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+
+	m_ReportTimeout = new wxTextCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	FlexSizer->Add(m_ReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	m_ReportTimeout->SetValue(wxString::Format(_("%d"),GetReportTimeout()));
 	
 
 	//m_CommTimeout = new wxSpinCtrlDouble(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);

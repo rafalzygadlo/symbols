@@ -75,7 +75,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	//FlexSizer->AddSpacer(1);
 	//FlexSizer->Add(m_CheckInMonitoring,0,wxALL,5);
 
-	wxStaticText *LabelAlarm = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
+	wxStaticText *LabelAlarm = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_ALARM));
 	FlexSizer->Add(LabelAlarm,0,wxALL,5);
 	m_ComboAlarm = GetCombo(db,Panel,TABLE_ALARM,wxEmptyString,FI_ALARM_ID,FI_ALARM_NAME, true);
 	m_ComboAlarm->SetSelection(0);

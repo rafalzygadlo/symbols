@@ -284,6 +284,8 @@ void CMapPlugin::ReadConfigDB()
 		bool _val;
 		_val = atoi(row[FI_USER_OPTION_POSITION_FROM_GPS]);	SetPositionFromGps(_val);
 		
+		val = atoi(row[FI_USER_OPTION_REPORT_TIMEOUT]);	SetReportTimeout(val);
+		
 	}
 	
 	db_free_result(result);
@@ -362,8 +364,9 @@ void CMapPlugin::WriteConfigDB()
 		
 	//OTHER
 	sql << sql.Format("scale_factor='%d',",GetScaleFactor());
-	sql << sql.Format("position_from_gps='%d'",GetPositionFromGps());
-		
+	sql << sql.Format("position_from_gps='%d',",GetPositionFromGps());
+	sql << sql.Format("report_timeout='%d'",GetReportTimeout());
+
 	my_query(m_DB,sql);
 
 }
@@ -703,7 +706,12 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		
 		if(ptr->GetInMonitoring())
 		{
-			ptr->SetNewReport(atoi(row[FI_VIEW_SYMBOL_NEW_REPORT]));
+			char *symbol_new_report = row[FI_VIEW_SYMBOL_NEW_REPORT];
+			ptr->SetNewReport(false);
+			
+			if(symbol_new_report != NULL)
+				ptr->SetNewReport(atoi(row[FI_VIEW_SYMBOL_NEW_REPORT]));
+			
 			ptr->SetLightOn(!ptr->GetForcedOff());
 		}
 		
@@ -963,7 +971,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		SendSelectSignal();
-		GetVoice()->Speak(ptr->GetName(),0,NULL);
+		//GetVoice()->Speak(ptr->GetName(),0,NULL);
 	}else{
 	
 		FromLMB = false;

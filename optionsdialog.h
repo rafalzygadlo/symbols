@@ -28,6 +28,7 @@ class COptionsDialog: public wxDialog
 	wxTextCtrl *m_UpperThreshold;
 	wxTextCtrl *m_RestrictedArea;
 	wxTextCtrl *m_OffPositionArea;
+	wxTextCtrl *m_ReportTimeout;
 	wxCheckBox *m_ShowNames;
 
 	wxRadioButton *m_PositionFromGps;
@@ -98,6 +99,7 @@ public:
 		ID_SUN_LAT,
 		ID_GPS,
 		ID_SYMBOL,
+		ID_REPORT_TIMEOUT,
 
 		ID_FONT_SIZE,
 		ID_VIEW_NAME_SCALE,

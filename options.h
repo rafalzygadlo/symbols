@@ -42,6 +42,7 @@ nvtime_t GetNightNvTimeOn();
 nvtime_t GetNightNvTimeOff();
 bool GetNight();
 bool GetPositionFromGps();
+int GetReportTimeout();
 ISpVoice *GetVoice();
 
 //filter............................
@@ -90,6 +91,7 @@ void SetNightNvTimeOn(nvtime_t v);
 void SetNightNvTimeOff(nvtime_t v);
 void SetNight(bool v);
 void SetPositionFromGps(bool v);
+void SetReportTimeout(int v);
 void SetVoice(ISpVoice *v);
 
 

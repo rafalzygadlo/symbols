@@ -29,6 +29,7 @@ int m_InMonitoring = -1;
 int m_SelectedGroupId = -1;
 int m_Light = -1;
 int m_AlarmId = -1;
+int m_ReportTimeout = DEFAULT_REPORT_TIMEOUT;
 
 bool m_ShowFontNames = false;
 int m_RestrictedArea = DEFAULT_RESTRICTED_AREA_RADIUS;
@@ -78,6 +79,7 @@ void SetNightTimeOff(time_t v)			{	m_NightTimeOff = v;		}
 void SetNight(bool v)					{	m_Night = v;			}
 void SetVoice(ISpVoice *v)				{	m_Voice = v;			}
 void SetPositionFromGps(bool v)			{	m_PositionFromGps = v;	}
+void SetReportTimeout(int v)			{	m_ReportTimeout = v;	}
 
 
 //filter
@@ -123,6 +125,7 @@ time_t GetNightTimeOn()			{	return m_NightTimeOn;		}
 time_t GetNightTimeOff()		{	return m_NightTimeOff;		}
 ISpVoice *GetVoice()			{	return m_Voice;				}
 bool GetPositionFromGps()		{	return m_PositionFromGps;	}
+int GetReportTimeout()			{	return m_ReportTimeout;		}
 
 
 //filter
