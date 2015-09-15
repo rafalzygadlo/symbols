@@ -769,6 +769,7 @@
 #define FI_GLOBAL_OPTION_SUN_LAT					6
 
 //pola tabeli SBMS_ALARM
+#define FI_SBMS_ALARM_ID					0
 #define FI_SBMS_ALARM_ID_ALARM				2
 #define FI_SBMS_ALARM_ACTIVE				4
 #define FI_SBMS_ALARM_CONFIRMED				5

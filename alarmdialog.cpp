@@ -48,7 +48,8 @@ void CAlarmDialog::OnOk(wxCommandEvent &event)
 {
 	ConfirmAlarms();
 	Hide();
-	m_TextAlarm->SetPage(wxEmptyString);
+	m_Html = wxEmptyString;
+	
 }
 
 void CAlarmDialog::OnSetAlarm(wxCommandEvent &event)
@@ -81,29 +82,21 @@ void CAlarmDialog::Set(CSymbol *v)
 		return;
 	
 	v->SetNewAlarmCount(0);
-
-	
-	bool first = true;
 	
 	for(int i = 0 ; i < v->GetAlarmCount();i++)
 	{
 		CAlarm *ptr = v->GetAlarm(i);
 		if(ptr->GetNew() && !ptr->GetConfirmed())
 		{
-			if(first)
-				m_Html << wxString::Format(_("<font size=3>%s</font>"),v->GetName());
+		
+			m_Html << wxString::Format(_("<font size=3>%s</font>"),v->GetName());
 			m_Html << wxString::Format(_("<br><font color=red>%s</font>"),ptr->GetName());
+			m_Html << "<hr>";
 			m_Counter++;
-			first = false;
 		}
 		ptr->SetNew(false);
 	}
-	
-	if(!first)
-	{
-		m_Html << "<hr>";
-	}
-	
+		
 	wxCommandEvent evt(EVT_SET_ALARM,ID_ALARM);
 	wxPostEvent(this,evt);
 	

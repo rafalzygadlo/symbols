@@ -276,7 +276,7 @@ bool CSymbol::CheckAlarm()
 	int offset = 9;
 	while(row = (char**)db_fetch_row(result))
 	{
-		int id = atoi(row[FI_SBMS_ALARM_ID_ALARM]);
+		int id = atoi(row[FI_SBMS_ALARM_ID]);
 		CAlarm *Alarm = NULL;
 		Alarm = AlarmExists(id);
 		
@@ -295,10 +295,13 @@ bool CSymbol::CheckAlarm()
 		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
 		
 		if(add)
+		{
 			m_AlarmList.Append(Alarm);
+			m_AlarmCount++;
+		}
 		
 		Alarm->SetExists(true);
-		m_AlarmCount++;
+		
 	}	
 		
 	if(m_AlarmCount > 0)

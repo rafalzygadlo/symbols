@@ -71,6 +71,7 @@ class COptionsDialog: public wxDialog
 	void OnLat(wxCommandEvent &event);
 	void OnPositionFromGps(wxCommandEvent &event);
 	void OnPositionFromSymbol(wxCommandEvent &event);
+	void OnReportTimeout(wxCommandEvent &event);
 
 
 public:

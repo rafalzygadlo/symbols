@@ -6,6 +6,7 @@
 #include "conf.h"
 #include "tools.h"
 #include "db.h"
+#include "options.h"
 
 BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_SLIDER(ID_DRIVE_CURRENT,OnDriveCurrent)
@@ -344,6 +345,13 @@ void CCommandPanel::Set()
 		EnableControls(false);
 	else
 		EnableControls(true);
+	
+	if(GetNight())
+	{
+		m_AutoPanel->Disable();
+		m_LightPanel->Disable();
+	}
+
 			
 }
 
@@ -609,7 +617,7 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	BoxSizer->Add(m_AutoPanel,0,wxALL|wxEXPAND,2);
 	m_LightPanel = LightPanel(Panel);
 	BoxSizer->Add(m_LightPanel,0,wxALL|wxEXPAND,2);
-		
+				
 	//sezonowa praca
 	wxStaticBoxSizer *BoxSizer1 = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_SEASON_CONTROL));
 	Sizer->Add(BoxSizer1,0,wxALL|wxEXPAND,5);

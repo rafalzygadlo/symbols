@@ -21,6 +21,7 @@ BEGIN_EVENT_TABLE(COptionsDialog,wxDialog)
 	EVT_TEXT(ID_OFF_POSITION_AREA,OnOffPositionArea)
 	EVT_TEXT(ID_SUN_LON,OnLon)
 	EVT_TEXT(ID_SUN_LAT,OnLat)
+	EVT_TEXT(ID_REPORT_TIMEOUT,OnReportTimeout)
 	EVT_RADIOBUTTON(ID_GPS,OnPositionFromGps)
 	EVT_RADIOBUTTON(ID_SYMBOL,OnPositionFromSymbol)
 END_EVENT_TABLE()
@@ -301,10 +302,10 @@ wxPanel *COptionsDialog::GetGlobalOtherPanel(wxWindow *Parent)
 	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
 	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
 	
-	wxStaticText *TextReportTimeout = new wxStaticText(Panel,ID_REPORT_TIMEOUT,GetMsg(MSG_REPORT_TIMEOUT),wxDefaultPosition,wxDefaultSize);
+	wxStaticText *TextReportTimeout = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_REPORT_TIMEOUT),wxDefaultPosition,wxDefaultSize);
 	FlexSizer->Add(TextReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 
-	m_ReportTimeout = new wxTextCtrl(Panel,ID_VIEW_NAME_SCALE,wxEmptyString);
+	m_ReportTimeout = new wxTextCtrl(Panel,ID_REPORT_TIMEOUT,wxEmptyString);
 	FlexSizer->Add(m_ReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
 	m_ReportTimeout->SetValue(wxString::Format(_("%d"),GetReportTimeout()));
 	
@@ -549,6 +550,13 @@ void COptionsDialog::OnOffPositionArea(wxCommandEvent &event)
 	SetOffPositionArea(v);
 }
 
+void COptionsDialog::OnReportTimeout(wxCommandEvent &event)
+{
+	long v;
+	m_ReportTimeout->GetValue().ToLong(&v);
+	SetReportTimeout(v);
+}
+
 void COptionsDialog::OnLon(wxCommandEvent &event)
 {	
 	if(m_TextLon->GetValue().empty())
@@ -597,3 +605,4 @@ void COptionsDialog::OnLat(wxCommandEvent &event)
 	}
 
 }
+

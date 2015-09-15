@@ -376,9 +376,9 @@ wxMenu *CListCtrl::MenuSBMS(int id, const char *module)
 	//}
 
 
-	Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	if(!db_check_right(module ,ACTION_NEW,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
+	//Menu->Append(ID_NEW,GetMsg(MSG_NEW));
+	//if(!db_check_right(module ,ACTION_NEW,_GetUID()))
+		//Menu->FindItem(ID_NEW)->Enable(false);
 			
 	if(id > -1)
 	{
