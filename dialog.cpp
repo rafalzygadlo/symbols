@@ -1395,6 +1395,7 @@ void CDialogPanel::EditSBMS(int id)
 	char **row = (char**)db_fetch_row(result);
 	
 	ptr->SetName(Convert(row[FI_SBMS_NAME]));
+	//ptr->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 	ptr->SetInfo(Convert(row[FI_SBMS_INFO]));
 	db_free_result(result);	
 	

@@ -23,6 +23,8 @@
 
 class CMyFrame;
 class CPositionDialog;
+class CAlarmDialog;
+class CDialog;
 class CMapPlugin :public CNaviMapIOApi
 {	
 
@@ -83,6 +85,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
 	wxArrayPtrVoid *m_SymbolList;
+	wxArrayPtrVoid *m_AlarmList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
 	ISpVoice * m_Voice;
@@ -92,6 +95,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void Menu(int type);
 	void WritecConfig();
 	void ReadSymbol(void *db,wxString sql);
+	void ReadSBMS(CSymbol *ptr, char **row);
+	void ReadAlarm(void *db);
 	//void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);

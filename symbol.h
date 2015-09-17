@@ -32,7 +32,7 @@ class CSymbol
 	int m_Step;
 	bool m_Begin;
 	int m_Id;
-	bool m_LightOn;
+	int m_LightOn;
 	bool m_BusyOn;
 	bool m_Busy;
 	bool m_Alarm;
@@ -74,7 +74,7 @@ class CSymbol
 	wxString m_AgeString;
 	wxString m_ChargingString;
 	bool m_Exists;
-	bool m_ForcedOff;
+	int m_ForcedOff;
 	bool m_PhotoCellNightTime;
 	int m_CommandCount;
 	int m_MMSI;
@@ -126,6 +126,7 @@ public:
 	void OnTick(void *db);
 	void OnTickExit();
 	void ShowGraph();
+	void ShowManagement(CSymbol *v);
 
 	//SET
 	void SetId(int v);
@@ -143,13 +144,12 @@ public:
 	void SetName(wxString v);
 	void SetRemove(bool v);
 	void SetDB(void *db);
-	void SetForcedOff(bool v);
+	void SetForcedOff(int v);
+	void SetLightOn(int v);
 	void SetPhotoCellNightTime(bool v);
-	void SetLightOn(bool v);
 	void SetMMSI(int v);
 	void SetNvTime(nvtime_t dt);
-	
-	
+		
 	void SetTimestamp(int v);
 	void SetAge(int v);
 	void SetAge(wxString v);
@@ -185,7 +185,7 @@ public:
 	wxString GetSBMSName();
 	wxString GetBaseStationName();
 	bool GetExists();
-	bool GetLightOn();
+	int GetLightOn();
 	int GetMMSI();
 	nvtime_t GetNvTime();
 	int GetAge();
@@ -193,7 +193,7 @@ public:
 	bool GetInit();
 	bool GetAuto();
 	float GetInputVolt();
-	bool GetForcedOff();
+	int GetForcedOff();
 	int GetAlarmId(int v);
 	bool GetNoSBMS();
 	int GetCharging();

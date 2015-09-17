@@ -58,7 +58,7 @@ wxString RGBAToStr(nvRGBA *RGB);
 nvRGBA StrToRGBA(wxString str);
 void SetAutoManagement();
 time_t GetLocalTimestamp();
-wxString GetLightOnAsString(bool v);
+wxString GetLightOnAsString(int v);
 wxString GetAutoAsString(bool v);
 void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, float req, uint32_t *TimeOnLight, uint32_t *TimeOffLight);
 int GetUTCDay();
@@ -66,7 +66,7 @@ int GetUTCMonth();
 int GetUTCYear();
 void SetNightTime();
 void ConfirmAlarms();
-
+bool GetSBMSExists(void *db,int id);
 
 
 //COMMANDS

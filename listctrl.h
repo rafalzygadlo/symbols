@@ -9,6 +9,7 @@
 class CDisplayPlugin;
 class CDialog;
 class CDialogPanel;
+class CSymbol;
 class CListCtrl: public wxListCtrl
 {
 	CListCtrl *m_ThisPtr;

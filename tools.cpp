@@ -1075,13 +1075,14 @@ nvRGBA StrToRGBA(wxString str)
 	return RGB;
 }
 
-wxString GetLightOnAsString(bool v)
+wxString GetLightOnAsString(int v)
 {
-	if(v)
-		return GetMsg(MSG_LIGHT_IS_ON);
-	else
-		return GetMsg(MSG_LIGHT_IS_OFF);
-
+	switch(v)
+	{
+		case LIGHT_ON:				return GetMsg(MSG_LIGHT_IS_ON);
+		case LIGHT_OFF:				return GetMsg(MSG_LIGHT_IS_OFF);
+		case LIGHT_NOT_AVAILABLE:	return GetMsg(MSG_NA);
+	}
 }
 
 wxString GetAutoAsString(bool v)
@@ -1202,6 +1203,31 @@ void SetNightTime()
 //	SetNightTimeOffAsString(t_off);
 	//fprintf(stderr,"ON:%02d:%02d:%02d\n",t_on.h,t_on.m,t_on.s);
 	//fprintf(stderr,"OFF:%02d:%02d:%02d\n",t_off.h,t_off.m,t_off.s);
+}
+
+bool GetSBMSExists(void *db,int id)
+{
+    wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id = '%d'"),TABLE_SBMS,id);
+    if(db == NULL)
+		return false;
+    
+    my_query(db,sql);
+    
+    void *result = db_result(db);
+    bool _result = true;
+    
+    if(result)
+    {
+		_result = false;
+		int count = db_num_rows(result);
+		if(count > 0)
+			_result = true;
+    
+		db_free_result(result);
+    }
+        
+    return _result;
+
 }
 
 

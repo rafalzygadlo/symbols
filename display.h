@@ -1,6 +1,7 @@
 #ifndef __DISPLAY
 #define __DISPLAY
 
+#include <wx/srchctrl.h>
 #include "dll.h"
 #include "listctrl.h"
 #include "navimapioapi.h"
@@ -12,7 +13,6 @@
 #include <wx/listctrl.h>
 #include <wx/hyperlink.h>
 #include "symbolpanel.h"
-#include "htmlctrl.h"
 #include "htmllist.h"
 
 #ifdef _WIN32
@@ -25,8 +25,8 @@ extern "C" {
 #endif
 
 class CMapPlugin;
-class CHtmlCtrl;
 class CHtmlList;
+class CSymbolPanel;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
@@ -37,14 +37,14 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *m_ControlPanel;
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
-	CHtmlCtrl *m_HtmlCtrl;
 	CHtmlList *m_HtmlList;
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldCount;
 	bool m_OldNight;
 	wxPanel *m_Page3;
-	wxButton *m_ButtonManagement;
+	wxPanel *m_Page4;
+	//wxButton *m_ButtonManagement;
 	//wxButton *m_ButtonGraph;
 	wxButton *m_ButtonAlarm;
 
@@ -65,6 +65,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *GetPage1(wxWindow *parent);
 	wxPanel *GetPage2(wxWindow *parent);
 	wxPanel *GetPage3(wxWindow *parent);
+	wxPanel *GetPage4(wxWindow *parent);
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);
 	void OnMenu(wxContextMenuEvent &event);

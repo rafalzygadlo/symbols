@@ -331,7 +331,7 @@ wxMenu *CListCtrl::MenuSymbol(int id, const char *module)
 	{
 		Menu->Append(ID_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP));
 		if(!db_check_right(module ,ACTION_ADD_TO_GROUP,_GetUID()))
-		Menu->FindItem(ID_NEW)->Enable(false);
+		Menu->FindItem(ID_ADD_TO_GROUP)->Enable(false);
 
 		Menu->AppendSeparator();
 	}

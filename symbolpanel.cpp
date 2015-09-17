@@ -187,11 +187,11 @@ void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 	for(int i = 0; i < ptr->GetAlarmCount();i++)
 	{	
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s %s</b></font></td></tr>"),GetMsg(MSG_ALARM),ptr->GetAlarm(i)->GetName()));
+		str.Append(wxString::Format(_("<tr><td><font color=red size=3><b>%s</b></font></td></tr>"),ptr->GetAlarm(i)->GetName()));
 		str.Append(_("</table>"));
-		str.Append(_("<hr>"));
-		m_Html->AppendToPage(str);
 	}
+
+	m_Html->AppendToPage(str);
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)

@@ -46,14 +46,32 @@ void CHtmlList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long item;
 	link.GetHref().ToLong(&item);
 	
+	wxString t = link.GetTarget();
+
+	long action = -1;
+	t.ToLong(&action);
+
 	CSymbol *Symbol = (CSymbol*)m_List->Item(item);
-	Symbol->ShowGraph();
-	
-	//switch(action)
-	//{
-		//case 1: ShowGraph(Symbol); break;
-	//}
+
+	switch(action)
+	{
+		case HREF_ACTION_GRAPH:			ShowGraph(Symbol);			break;
+		case HREF_ACTION_MANAGEMENT:	ShowManagement(Symbol);		break;
+		break;
+	}
+
 }
+
+void CHtmlList::ShowGraph(CSymbol *v)
+{
+	v->ShowGraph();
+}
+
+void CHtmlList::ShowManagement(CSymbol *v)
+{
+	v->ShowManagement(v);
+}
+
 
 void CHtmlList::OnSetItem(wxCommandEvent &event)
 {
@@ -151,15 +169,14 @@ void CHtmlList::_SetSelection(CSymbol *ptr)
 
 void CHtmlList::OnSelect(wxCommandEvent &event)
 {
+	RefreshAll();
 	if(GetSelection() < 0)
 		return;
-	//if(GetMutex()->TryLock())
-		//	return;
 	
 	int a = GetSelection();
 	CSymbol *ptr = (CSymbol*)m_List->Item(GetSelection());
 	m_MapPlugin->SetSelectedPtr(ptr);
-	
+
 }
 
 void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
@@ -183,68 +200,51 @@ wxString CHtmlList::OnGetItem(size_t item) const
 
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
-	
-	for(int i = 0; i < ptr->GetAlarmCount();i++)
-	{
-		str << wxString::Format(_("<font size=4 color=red>%s</font><br>"),ptr->GetAlarmName(i));
-	}
-	
+		
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	if(ptr->GetIdSBMS() == 0)
+	if(ptr->GetNoSBMS())
+	{
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
 	
-	if(ptr->GetInMonitoring())
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	else
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
-
-	if(ptr->GetInMonitoring() & (ptr->GetIdSBMS() > 0))
-	{
+	}else{
 		
-		if(ptr->GetLightOn())
-		{
-			nvRGBA rgba = GetColor(SYMBOL_LIGHT_ON_COLOR);
-			str.Append(wxString::Format(_("<tr><td><font size=5 color='#%02X%02X%02X'><b>%s</b></font></td>"),rgba.R,rgba.G,rgba.B,GetLightOnAsString(ptr->GetLightOn())));
-		}else{
-			//nvRGBA rgba = GetColor(SYMBOL_NORMAL_COLOR);
-			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
-		}
-
-		//str.Append(_("<tr>"));
-		str.Append(_("<td rowspan=3 align=right width=80>"));
-		if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
-			str.Append(wxString::Format(_("<a href='%d'><font size=7 color=red>%4.2fV</font></a>"),item,ptr->GetInputVolt()));
+		for(int i = 0; i < ptr->GetAlarmCount();i++)
+			str << wxString::Format(_("<tr><td><font size=4 color=red>%s</font></td></tr>"),ptr->GetAlarmName(i));
+	
+		if(ptr->GetInMonitoring())
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
 		else
-			str.Append(wxString::Format(_("<a href='%d'><font size=7>%4.2fV</font></a>"),item, ptr->GetInputVolt()));
+			str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+
+		if(ptr->GetInMonitoring())
+		{
+			if(GetSelection() == item)
+			{
+				if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+					str << wxString::Format(_("<hr><a target=1 href='%d'>%s</a><hr>"),item,GetMsg(MSG_MANAGEMENT));
+			}
 		
-		str.Append(_("</td>"));
+			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
+			str.Append(_("<td rowspan=3 align=right width=80>"));
+			if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
+				str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7 color=red>%4.2fV</font></a>"),item,ptr->GetInputVolt()));
+			else
+				str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7>%4.2fV</font></a>"),item, ptr->GetInputVolt()));
+		
+			str.Append(_("</td>"));
 
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
-
+			str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
+			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
+			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
+			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetChargingAsString());
+		}
+	
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetChargingAsString());
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str.Append(_("</table>"));
-	
-	//str << wxString::Format(_("<a href='1'>%s</a><br>"),GetMsg(MSG_MANAGEMENT));
-	//str << wxString::Format(_("<a href='2'>%s</a>"),GetMsg(MSG_GRAPH));
-	
-	//str << _("<table celpadding=2 border=1 cellspacing=0>");
-	
-		//str << wxString::Format(_("<tr><td><font size='4' color=red><b>ALARM</b></td></tr>"));
-	
-	//str << wxString::Format(_("<tr><td><font size='4'><b>%s</b></td></tr>"),ptr->GetName());
-	//str <<_("</table>");
-		
-	//ptr->GetName(),ptr->GetNumber(),ptr->GetAgeAsString());
 
-	//else
-	
-	//	str = wxString::Format(_("<table celpadding=4><td><font size='4'>%s</font></td></table>"),Ship->name,Ship->description);
 
 	return str;
 

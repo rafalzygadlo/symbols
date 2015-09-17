@@ -13,7 +13,7 @@
 #include "graphdialog.h"
 #include "icon.h"
 
-
+class CGraphDialog;
 class CSymbolPanel : public wxPanel
 {
 	CPicturePanel *m_PicturePanel;

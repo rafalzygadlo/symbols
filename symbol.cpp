@@ -9,6 +9,7 @@
 #include "ais.h"
 #include "options.h"
 #include "render.h"
+#include "commanddialog.h"
 
 //#include "nvtime.h"
 
@@ -21,7 +22,8 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_RectHeight = 0;
 	m_TranslationX = 0;
 	m_TranslationY = 0;
-	m_LightOn = true;
+	m_LightOn = LIGHT_NOT_AVAILABLE;
+	m_ForcedOff = LIGHT_NOT_AVAILABLE;
 	m_FirstTime = true;
 	m_Step = 0;
 	m_CommandTick = CHECK_COMMAND_TICK;
@@ -43,7 +45,6 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_AlarmCount = 0;
 	m_TickExit = false;
 	m_PhotoCellNightTime = false;
-	m_ForcedOff = true;
 	m_MMSI = 0;
 	m_InMonitoring = false;
 	m_ReportCount = 0;
@@ -163,9 +164,10 @@ void CSymbol::ClearAlarms()
 	{
 		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
 		delete ptr;
-		m_AlarmList.Remove(i);
-		i = 0;
+		
 	}
+
+	m_AlarmList.Clear();
 
 }
 
@@ -438,13 +440,12 @@ void CSymbol::OnTick(void *db)
 		return;
 	
 	bool result = false;
-
-	//Read();
-	//m_Init = true;
-	
+		
 	if(!m_InMonitoring)
 		return;
-	
+	if(m_NoSBMS)
+		return;
+
 	if(CheckCommand())
 		result = true;
 	if(CheckAlarm())
@@ -559,6 +560,9 @@ void CSymbol::RenderLightOn()
 #endif
 void CSymbol::RenderAlarm()
 {
+	if(m_NoSBMS)
+		return; 
+	
 	if(!m_Alarm)
 		return;
 		
@@ -580,23 +584,19 @@ void CSymbol::RenderAlarm()
 
 void CSymbol::SetSymbolColor()
 {
-	if(!m_InMonitoring || m_IdSBMS == 0)
+	if(!m_InMonitoring || m_NoSBMS)
 	{
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 		return;
 	}
 	
-	if(m_LightOn)
-		SetColor(SYMBOL_LIGHT_ON_COLOR);
-	else
-		SetColor(SYMBOL_NORMAL_COLOR);
-		
-	//if(m_Alarm)
-	//{
-		//if(m_AlarmOn)
-			//SetColor(SYMBOL_ERROR_COLOR);
-	//}
-	
+	switch(m_LightOn)
+	{
+		case LIGHT_ON:				SetColor(SYMBOL_LIGHT_ON_COLOR);	break;
+		case LIGHT_OFF:				SetColor(SYMBOL_NORMAL_COLOR);		break;
+		case LIGHT_NOT_AVAILABLE:	SetColor(SYMBOL_NO_MONITOR_COLOR);	break;
+	}
+
 }
 
 void CSymbol::RenderBusy()
@@ -778,7 +778,7 @@ void CSymbol::RenderNewReport()
 
 void CSymbol::RenderNoSBMS()
 {
-	if(m_IdSBMS > 0)
+	if(!m_NoSBMS)
 		return;
 	
 	glPushMatrix();
@@ -807,21 +807,40 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
-
+		
+	RenderNoSBMS();
+	RenderSymbol();
 	RenderRestricted();
 	RenderBusy();
 	RenderGPS();
-	RenderNoSBMS();
-	
 	RenderNewReport();
-	RenderSymbol();
 	RenderAlarm();
 	RenderPositions();
-		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
 
+}
+
+void CSymbol::ShowManagement(CSymbol *v)
+{
+	if(v == NULL)
+		return;
+	
+	if(!v->GetNoSBMS())
+	{
+		CCommandDialog *CommandDialog = new CCommandDialog(NULL,v);
+		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+
+		ptr->SetForcedOff(v->GetForcedOff());
+		ptr->SetAuto(v->GetAuto());
+			
+		CommandDialog->ShowModal();
+		delete CommandDialog;
+	
+	}else{
+			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
+	}
 }
 
 void CSymbol::ShowGraph()
@@ -965,7 +984,7 @@ void CSymbol::SetRemove(bool v)
 	m_Exists = v;
 }
 
-void CSymbol::SetForcedOff(bool v)
+void CSymbol::SetForcedOff(int v)
 {
 	m_ForcedOff = v;
 }
@@ -975,7 +994,7 @@ void CSymbol::SetPhotoCellNightTime(bool v)
 	m_PhotoCellNightTime = v;
 }
 
-void CSymbol::SetLightOn(bool v)
+void CSymbol::SetLightOn(int v)
 {
 	m_LightOn = v;
 }
@@ -1137,7 +1156,7 @@ bool CSymbol::GetExists()
 	return m_Exists;
 }
 
-bool CSymbol::GetLightOn()
+int CSymbol::GetLightOn()
 {
 	return m_LightOn;
 }
@@ -1188,7 +1207,7 @@ float CSymbol::GetInputVolt()
 	return m_InputVolt;
 }
 
-bool CSymbol::GetForcedOff()
+int CSymbol::GetForcedOff()
 {
 	return m_ForcedOff;
 }

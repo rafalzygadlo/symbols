@@ -646,65 +646,21 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
 		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
+		ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
 		
 		bool exists = false;
 		
 		if(id_sbms > 0)
 		{
-			exists = true;
-			ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
-			ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
-			ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
-			ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
-			ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
-			ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
-			ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
-			ptr->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
-			if(ptr->GetCharging() == CHARGING_TRUE)				ptr->SetChargingAsString(GetMsg(MSG_CHARGING));
-			if(ptr->GetCharging() == CHARGING_FALSE)			ptr->SetChargingAsString(GetMsg(MSG_DISCHARGING));
-			if(ptr->GetCharging() == CHARGING_NOT_AVAILABLE)	ptr->SetChargingAsString(GetMsg(MSG_NA));
 
-			int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
-			ptr->SetTimestamp(timestamp);
-			ptr->SetAge(GetLocalTimestamp() - timestamp);
-				
-			int seconds = GetLocalTimestamp() - timestamp;
-			if(seconds < 0)
-				seconds = 0;
-
-			int minutes = seconds/60;
-			int hours = minutes/60;
-			div_t _divs = div(seconds,60);
-			div_t _divm = div(minutes,60);
-				
-			ptr->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
-
-			//gps
-			sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
-			sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
-			to_x,to_y;
-			m_Broker->Unproject(lon,lat,&to_x,&to_y);
-
-			ptr->SetGpsLon(lon);
-			ptr->SetGpsLat(lat);
-			ptr->SetGpsLonMap(to_x);
-			ptr->SetGpsLatMap(-to_y);
-
-			if(GetPositionFromGps())
+			if(GetSBMSExists(db,id_sbms))
 			{
-				ptr->SetLon(lon);
-				ptr->SetLat(lat);
-				ptr->SetLonMap(to_x);
-				ptr->SetLatMap(-to_y);
+				exists = true;
+				ReadSBMS(ptr,row);
 			}
-
-			ptr->SetValidGPS(true);
 		}
-		
-		ptr->SetNoSBMS(!exists);
-		ptr->SetInit(true);
-		
-		if(ptr->GetInMonitoring())
+				
+		if(ptr->GetInMonitoring() && exists)
 		{
 			char *symbol_new_report = row[FI_VIEW_SYMBOL_NEW_REPORT];
 			ptr->SetNewReport(false);
@@ -712,10 +668,20 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			if(symbol_new_report != NULL)
 				ptr->SetNewReport(atoi(row[FI_VIEW_SYMBOL_NEW_REPORT]));
 			
-			ptr->SetLightOn(!ptr->GetForcedOff());
+			if(ptr->GetForcedOff() == LIGHT_NOT_AVAILABLE)
+				ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
+
+			if(ptr->GetForcedOff() == LIGHT_ON)
+				ptr->SetLightOn(LIGHT_OFF);
+			
+			if(ptr->GetForcedOff() == LIGHT_OFF)
+				ptr->SetLightOn(LIGHT_ON);
+			
 		}
 		
-		ptr->SetRemove(true);		
+		ptr->SetNoSBMS(!exists);
+		ptr->SetInit(true);
+		ptr->SetRemove(true);
 		
 		if(add)
 			m_SymbolList->Add(ptr);
@@ -725,6 +691,80 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 	db_free_result(result);
 
 }
+
+void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
+{
+	double to_x,to_y;
+	double lon;
+	double lat;
+	
+	ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
+	ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
+	ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
+	ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
+	ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
+	ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
+	ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
+	ptr->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
+			
+	if(ptr->GetCharging() == CHARGING_TRUE)				ptr->SetChargingAsString(GetMsg(MSG_CHARGING));
+	if(ptr->GetCharging() == CHARGING_FALSE)			ptr->SetChargingAsString(GetMsg(MSG_DISCHARGING));
+	if(ptr->GetCharging() == CHARGING_NOT_AVAILABLE)	ptr->SetChargingAsString(GetMsg(MSG_NA));
+
+	int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
+	ptr->SetTimestamp(timestamp);
+	ptr->SetAge(GetLocalTimestamp() - timestamp);
+				
+	int seconds = GetLocalTimestamp() - timestamp;
+	if(seconds < 0)
+		seconds = 0;
+
+	int minutes = seconds/60;
+	int hours = minutes/60;
+	div_t _divs = div(seconds,60);
+	div_t _divm = div(minutes,60);
+				
+	ptr->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
+
+	//gps
+	sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
+	sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
+	
+	m_Broker->Unproject(lon,lat,&to_x,&to_y);
+
+	ptr->SetGpsLon(lon);
+	ptr->SetGpsLat(lat);
+	ptr->SetGpsLonMap(to_x);
+	ptr->SetGpsLatMap(-to_y);
+
+	if(GetPositionFromGps())
+	{
+		ptr->SetLon(lon);
+		ptr->SetLat(lat);
+		ptr->SetLonMap(to_x);
+		ptr->SetLatMap(-to_y);
+	}
+
+	ptr->SetValidGPS(true);
+}
+
+void CMapPlugin::ReadAlarm(void *db)
+{	
+	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM);
+
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		
+	}
+}
+
 /*
 void CMapPlugin::ReadGroup(void *db)
 {
@@ -1543,11 +1583,10 @@ void CMapPlugin::OnTick()
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);			//przeczytaj symbole
-	//fprintf(stderr,"%d\n",GetTickCount() - t);
+	ReadAlarm(db);
 	Remove();				//usuń
 	ReadSymbolValues(db);	// wczytaj inne opcje
-	//fprintf(stderr,"%d\n",GetTickCount() - t);
-	
+		
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
 	SetFilterChanged(false);
@@ -1556,9 +1595,8 @@ void CMapPlugin::OnTick()
 	
 	SendInsertSignal();
 	ShowAlarm();
-
-
-	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+	
+	//fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 
 	DBClose(db);
 		

@@ -245,9 +245,9 @@ wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
 	//Sizer->Add(Scan2,0,wxALL,2);
 	
-	m_ButtonManagement = new wxButton(m_Page3,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
-	Sizer->Add(m_ButtonManagement,0,wxALL|wxALIGN_RIGHT,2);
-	m_ButtonManagement->Disable();
+	//m_ButtonManagement = new wxButton(m_Page3,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
+	//Sizer->Add(m_ButtonManagement,0,wxALL|wxALIGN_RIGHT,2);
+	//m_ButtonManagement->Disable();
 		
 	//m_ButtonAlarm = new wxButton(m_Page3,ID_ALARM,GetMsg(MSG_ALARM));
 	//Sizer->Add(m_ButtonAlarm,0,wxALL|wxALIGN_RIGHT,2);
@@ -262,6 +262,19 @@ wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 
 	return m_Page3;
 }
+
+
+wxPanel *CDisplayPlugin::GetPage4(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	m_Page4 = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+		
+		
+	m_Page4->SetSizer(Sizer);
+
+	return m_Page4;
+}
+
 
 void CDisplayPlugin::ShowControls()
 {
@@ -282,7 +295,7 @@ void CDisplayPlugin::ShowControls()
 	
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
-	//m_Notebook->AddPage(GetPage3(m_Notebook),GetMsg(MSG_OPTIONS));
+	m_Notebook->AddPage(GetPage4(m_Notebook),GetMsg(MSG_ALARM));
 	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 
@@ -433,15 +446,15 @@ void CDisplayPlugin::SignalSelect()
 	
 	if(m_Selected)
 	{	
-		if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-			m_ButtonManagement->Enable();
-		else
-			m_ButtonManagement->Disable();
+		//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+			//m_ButtonManagement->Enable();
+		//else
+			//m_ButtonManagement->Disable();
 
 		m_SymbolPanel->SetPage1(m_Selected);
 	
 	}else{
-		m_ButtonManagement->Disable();
+		//m_ButtonManagement->Disable();
 	}
 
 }

@@ -54,7 +54,7 @@ void CAlarmDialog::OnOk(wxCommandEvent &event)
 
 void CAlarmDialog::OnSetAlarm(wxCommandEvent &event)
 {
-	m_TextAlarm->SetPage(m_Html);
+//	m_TextAlarm->SetPage(m_Html);
 }
 
 bool CAlarmDialog::Validate()
@@ -66,7 +66,7 @@ wxPanel *CAlarmDialog::GetPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	m_TextAlarm = new wxHtmlWindow(Panel,wxID_ANY);
+	m_TextAlarm = new CAlarmList(Panel);
 	Sizer->Add(m_TextAlarm,1,wxALL|wxEXPAND,5);
 
 	Panel->SetSizer(Sizer);
@@ -82,19 +82,21 @@ void CAlarmDialog::Set(CSymbol *v)
 		return;
 	
 	v->SetNewAlarmCount(0);
+	int counter = v->GetAlarmCount();
 	
-	for(int i = 0 ; i < v->GetAlarmCount();i++)
+	for(int i = 0 ; i < counter; i++)
 	{
 		CAlarm *ptr = v->GetAlarm(i);
 		if(ptr->GetNew() && !ptr->GetConfirmed())
 		{
-		
+			//m_TextAlarm->set
 			m_Html << wxString::Format(_("<font size=3>%s</font>"),v->GetName());
 			m_Html << wxString::Format(_("<br><font color=red>%s</font>"),ptr->GetName());
 			m_Html << "<hr>";
 			m_Counter++;
 		}
 		ptr->SetNew(false);
+				
 	}
 		
 	wxCommandEvent evt(EVT_SET_ALARM,ID_ALARM);

@@ -2,13 +2,16 @@
 #define __ALARMDIALOG
 
 #include <wx/wx.h>
+#include <wx/htmllbox.h>
 #include "conf.h"
 #include "symbol.h"
+#include "alarmlist.h"
 
 class CSymbol;
+class CAlarmList;
 class CAlarmDialog: public wxDialog
 {
-	wxHtmlWindow *m_TextAlarm;
+	CAlarmList *m_TextAlarm;
 	wxString m_Html;
 	int m_Counter;
 

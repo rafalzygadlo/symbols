@@ -695,11 +695,12 @@
 #define FI_SBMS_LON							23
 #define FI_SBMS_LAT							24
 #define FI_SBMS_NEW_REPORT					25 //new report has arived
-#define FI_SBMS_LOADING						26
-#define FI_SBMS_INFO						27
-#define FI_SBMS_DATE_TIME_STAMP				28
-#define FI_SBMS_LOCAL_UTC_TIME_STAMP		29
-#define FI_SBMS_LOCAL_UTC_TIME				30
+#define FI_SBMS_CHARGING					26
+#define FI_SBMS_PROTOCOL_VERSION			27
+#define FI_SBMS_INFO						28
+#define FI_SBMS_DATE_TIME_STAMP				29
+#define FI_SBMS_LOCAL_UTC_TIME_STAMP		30
+#define FI_SBMS_LOCAL_UTC_TIME				31
 
 #define FN_SBMS_NAME			"name"
 #define FN_SBMS_MMSI			"mmsi"
@@ -873,6 +874,16 @@
 #define CHARGING_FALSE          0
 
 #define DEFAULT_REPORT_TIMEOUT	(3600*2)
+
+
+// html list link actions 
+#define HREF_ACTION_GRAPH		0
+#define HREF_ACTION_MANAGEMENT	1
+
+//statusy światła
+#define LIGHT_NOT_AVAILABLE     -1
+#define LIGHT_OFF               0
+#define LIGHT_ON                1
 
 /*
 
