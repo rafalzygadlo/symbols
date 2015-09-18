@@ -780,7 +780,8 @@ void CMapPlugin::ReadAlarm(void *db)
 		ptr->SetSymbolName(Convert(row[FI_VIEW_ALARM_SYMBOL_NAME]));
 		ptr->SetName(Convert(row[FI_VIEW_ALARM_ALARM_NAME]));
 		ptr->SetConfirmed(atoi(row[FI_VIEW_ALARM_CONFIRMED]));
-
+		ptr->SetExists(true);
+		
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
 		
@@ -849,7 +850,7 @@ void CMapPlugin::ClearSymbols()
 }
 
 
-void CMapPlugin::Remove()
+void CMapPlugin::RemoveSymbol()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
@@ -863,12 +864,10 @@ void CMapPlugin::Remove()
 			i = 0;
 		}
 	}
-
-	//fprintf(stderr,"Size:%d\n",m_SymbolList->size());
+		
 }
 
-
-void CMapPlugin::SetRemove()
+void CMapPlugin::SetRemoveSymbol()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
@@ -911,6 +910,38 @@ void CMapPlugin::ClearAlarms()
 	
 	m_AlarmList->Clear();
 }
+
+void CMapPlugin::RemoveAlarm()
+{
+	/*
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		
+		if(!ptr->GetExists())
+		{
+			ptr->SetInit(false);
+			m_SymbolList->Remove(ptr);
+			delete ptr;
+			i = 0;
+		}
+	}
+	*/
+		
+}
+
+void CMapPlugin::SetRemoveAlarm()
+{
+	/*
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ptr->SetRemove(false);
+	}
+	*/
+}
+
+
 
 /*
 bool CMapPlugin::ShipIsSelected(SSymbol *ship)
@@ -1625,12 +1656,12 @@ void CMapPlugin::OnTick()
 	if(db == NULL)
 		return;
 
-	SetRemove();
+	SetRemoveSymbol();
 	SetSql(sql);
 	
 	ReadSymbol(db,sql);		//przeczytaj symbole
 	ReadAlarm(db);			
-	Remove();				//usuń
+	RemoveSymbol();			//usuń
 	ReadSymbolValues(db);	// wczytaj inne opcje
 		
 	//display potrzebuje tej flagi

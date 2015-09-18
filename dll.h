@@ -103,7 +103,13 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadSymbolValues(void *db);
 	void ClearSymbols();
 	void ClearAlarms();
-	void Remove();
+	
+	void RemoveSymbol();
+	void SetRemoveSymbol();
+
+	void RemoveAlarm();
+	void SetRemoveAlarm();
+		
 	void ReadConfig();
 	void WriteConfig();
 	void ReadConfigDB();
@@ -142,7 +148,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowInfo(int x, int y);
 	CSymbol *ExistsSymbol(int id);
 	CAlarm *ExistsAlarm(int id);
-	void SetRemove();
+	
 		
 	int Count();
 	CSymbol *Get(int id);
