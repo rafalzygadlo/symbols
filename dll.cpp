@@ -69,6 +69,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_OldSearchText = wxEmptyString;
 
 	m_SymbolList = new wxArrayPtrVoid();
+	m_AlarmList = new wxArrayPtrVoid();
 
 	m_NameFont = NULL;
 	
@@ -123,20 +124,13 @@ CMapPlugin::~CMapPlugin()
 	delete m_AlarmDialog;
 	delete m_Command;
 	
-	//if(PositionDialog != NULL)
-		//delete PositionDialog;
 
-	//delete Font;
-
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		delete ptr;
-	}
-	
-	m_SymbolList->Clear();
+	ClearSymbols();
 	delete m_SymbolList;
 	
+	ClearAlarms();
+	delete m_AlarmList;
+
 	delete m_NameFont;
 
 	DBClose(m_DB);
@@ -487,6 +481,11 @@ wxArrayPtrVoid *CMapPlugin::GetSymbolListPtr()
 	return m_SymbolList;
 }
 
+wxArrayPtrVoid *CMapPlugin::GetAlarmListPtr()
+{
+	return m_AlarmList;
+}
+
 int CMapPlugin::GetDisplaySignal()
 {
 	return DisplaySignalType;
@@ -597,7 +596,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		
 	if(GetSortChanged() || GetFilterChanged())
 	{
-		Clear();
+		ClearSymbols();
 	}
 
 	my_query(db,sql);
@@ -616,7 +615,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		sscanf(row[FI_VIEW_SYMBOL_ID],"%d",&id);
 		sscanf(row[FI_VIEW_SYMBOL_ID_SBMS],"%d",&id_sbms);
 		CSymbol *ptr = NULL;
-		ptr = Exists(id);
+		ptr = ExistsSymbol(id);
 		bool add = false;
 		
 		if(ptr == NULL)
@@ -657,6 +656,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			{
 				exists = true;
 				ReadSBMS(ptr,row);
+				
 			}
 		}
 				
@@ -700,6 +700,7 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 	
 	ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
 	ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
+	ptr->SetMMSI(atoi(row[FI_VIEW_SYMBOL_MMSI]));
 	ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
 	ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 	ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
@@ -750,7 +751,7 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 
 void CMapPlugin::ReadAlarm(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE active='%d' ORDER BY set_local_utc_time"),VIEW_ALARM,ALARM_ACTIVE);
 
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -758,10 +759,33 @@ void CMapPlugin::ReadAlarm(void *db)
     char **row = NULL;
 	if(result == NULL)
 		return;
-		
+	
+	m_ConfirmCounter = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
+		CAlarm *ptr = NULL;
+		int id;
+		sscanf(row[FI_VIEW_ALARM_ID],"%d",&id);
+		ptr = ExistsAlarm(id);
+		bool add = false;
 		
+		if(ptr == NULL)
+		{
+			add = true;
+			ptr = new CAlarm();
+			
+		}
+		
+		ptr->SetId(id);
+		ptr->SetSymbolName(Convert(row[FI_VIEW_ALARM_SYMBOL_NAME]));
+		ptr->SetName(Convert(row[FI_VIEW_ALARM_ALARM_NAME]));
+		ptr->SetConfirmed(atoi(row[FI_VIEW_ALARM_CONFIRMED]));
+
+		if(!ptr->GetConfirmed())
+			m_ConfirmCounter++;
+		
+		if(add)
+			m_AlarmList->Insert(ptr,0);
 	}
 }
 
@@ -812,7 +836,7 @@ void CMapPlugin::ReadSymbolValues(void *db)
 	
 }
 
-void CMapPlugin::Clear()
+void CMapPlugin::ClearSymbols()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
@@ -844,7 +868,6 @@ void CMapPlugin::Remove()
 }
 
 
-
 void CMapPlugin::SetRemove()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
@@ -854,7 +877,7 @@ void CMapPlugin::SetRemove()
 	}
 }
 
-CSymbol *CMapPlugin::Exists(int id)
+CSymbol *CMapPlugin::ExistsSymbol(int id)
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
@@ -864,6 +887,29 @@ CSymbol *CMapPlugin::Exists(int id)
 	}
 
 	return NULL;
+}
+
+CAlarm *CMapPlugin::ExistsAlarm(int id)
+{
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
+}
+
+void CMapPlugin::ClearAlarms()
+{
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
+		delete ptr;
+	}
+	
+	m_AlarmList->Clear();
 }
 
 /*
@@ -1582,8 +1628,8 @@ void CMapPlugin::OnTick()
 	SetRemove();
 	SetSql(sql);
 	
-	ReadSymbol(db,sql);			//przeczytaj symbole
-	ReadAlarm(db);
+	ReadSymbol(db,sql);		//przeczytaj symbole
+	ReadAlarm(db);			
 	Remove();				//usuń
 	ReadSymbolValues(db);	// wczytaj inne opcje
 		

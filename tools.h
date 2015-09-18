@@ -66,6 +66,7 @@ int GetUTCMonth();
 int GetUTCYear();
 void SetNightTime();
 void ConfirmAlarms();
+void ConfirmAlarm(int id);
 bool GetSBMSExists(void *db,int id);
 
 

@@ -91,18 +91,12 @@ void CAlarmList::SetList(wxArrayPtrVoid *v)
 	m_List = v;
 	
 	int count = m_List->size();
-
-	//if(m_Count != count || GetSortChanged())
-	//{
 		
-		m_Count = count;
-		wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
-		wxPostEvent(this,evt);
-		Refresh();
-	//}
-		
+	m_Count = count;
+	wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
+	wxPostEvent(this,evt);
+	Refresh();
 	
-
 }
 
 void CAlarmList::_SetSelection(CAlarm *ptr)
@@ -139,14 +133,14 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 		return;
 	
 	int a = GetSelection();
-	CSymbol *ptr = (CSymbol*)m_List->Item(GetSelection());
-	m_MapPlugin->SetSelectedPtr(ptr);
-
+	
+	CAlarm *ptr = (CAlarm*)m_List->Item(GetSelection());
+	ConfirmAlarm(ptr->GetId());
 }
 
 void CAlarmList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.SetPen(*wxBLACK_DASHED_PEN);
+	dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
@@ -163,61 +157,24 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CSymbol *ptr = (CSymbol*)m_List->Item(item);
+	CAlarm *ptr = (CAlarm*)m_List->Item(item);
 	wxString str;
-	
-	for(int i = 0; i < ptr->GetAlarmCount();i++)
-	{
-		str << wxString::Format(_("<font size=4 color=red>%s</font><br>"),ptr->GetAlarmName(i));
-	}
-	
+		
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	if(ptr->GetIdSBMS() == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
-	
-	if(ptr->GetInMonitoring())
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	else
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
-
-	if(ptr->GetInMonitoring() & (ptr->GetIdSBMS() > 0))
+	if(ptr->GetConfirmed())
 	{
-		if(GetSelection() == item)
-		{
-			if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-				str << wxString::Format(_("<hr><a target=1 href='%d'>%s</a><hr>"),item,GetMsg(MSG_MANAGEMENT));
-		}
+		str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetSymbolName());
+		str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
+	
+	}else{
 		
-		if(ptr->GetLightOn())
-		{
-			nvRGBA rgba = GetColor(SYMBOL_LIGHT_ON_COLOR);
-			str.Append(wxString::Format(_("<tr><td><font size=5 color='#%02X%02X%02X'><b>%s</b></font></td>"),rgba.R,rgba.G,rgba.B,GetLightOnAsString(ptr->GetLightOn())));
-		}else{
-			//nvRGBA rgba = GetColor(SYMBOL_NORMAL_COLOR);
-			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
-		}
-
-		//str.Append(_("<tr>"));
-		str.Append(_("<td rowspan=3 align=right width=80>"));
-		if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
-			str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7 color=red>%4.2fV</font></a>"),item,ptr->GetInputVolt()));
-		else
-			str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7>%4.2fV</font></a>"),item, ptr->GetInputVolt()));
-		
-		str.Append(_("</td>"));
-
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
-
+		str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+		str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetChargingAsString());
+	
 	str.Append(_("</table>"));
-
-
+	
 	return str;
 
 }

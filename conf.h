@@ -55,7 +55,8 @@
 #define KEY_RESTRICTED_AREA	"restricted_area"
 
 
-#define PAGE_ALL 1
+#define PAGE_ALL	1
+#define PAGE_ALARM	2
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1
@@ -273,6 +274,7 @@
 #define MSG_GPS							154
 #define MSG_SYMBOL_POSITION				155
 #define MSG_REPORT_TIMEOUT				156
+#define MSG_ALARMS						157
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -458,9 +460,9 @@
 #define TABLE_GLOBAL_OPTION			"global_option"
 #define TABLE_ALARM					"alarm"
 
-
 //WIDOKI
-#define VIEW_SYMBOL	"_view_symbol"
+#define VIEW_SYMBOL		"_view_symbol"
+#define VIEW_ALARM		"_view_alarm"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -650,17 +652,6 @@
 #define FN_CHARACTERISTIC_ON_OFF_ON		"_on"
 #define FN_CHARACTERISTIC_ON_OFF_OFF	"_off"
 
-// pola widoku _VIEW_SYMBOL_TYPE
-#define FI_VIEW_SYMBOL_ITEM_ID			0
-#define FI_VIEW_SYMBOL_ITEM_ID_SYMBOL	1
-#define FI_VIEW_SYMBOL_ITEM_ITEM_TYPE	2
-#define FI_VIEW_SYMBOL_ITEM_NAME		3
-#define FI_VIEW_SYMBOL_ITEM_TYPE		4
-#define FN_VIEW_SYMBOL_ITEM_ID			"id"
-#define FN_VIEW_SYMBOL_ITEM_ID_SYMBOL	"id_symbol"
-#define FN_VIEW_SYMBOL_ITEM_ITEM_TYPE	"item_type"
-#define FN_VIEW_SYMBOL_ITEM_NAME		"name"
-#define FN_VIEW_SYMBOL_ITEM_TYPE		"type"
 
 // pola tabeli RIGHT
 #define FI_RIGHT_ID					0
@@ -793,7 +784,6 @@
 #define	FN_ALARM_NAME		"name"
 #define FN_ALARM_TYPE		"type"
 
-
 // pola widoku _VIEW_SYMBOL
 #define FI_VIEW_SYMBOL_ID					0
 #define FI_VIEW_SYMBOL_ID_SBMS				1
@@ -802,24 +792,36 @@
 #define FI_VIEW_SYMBOL_ID_SYMBOL_TYPE		4
 #define FI_VIEW_SYMBOL_ID_BASE_STATION		5
 #define FI_VIEW_SYMBOL_SBMSID				6
-#define FI_VIEW_SYMBOL_NAME					7
-#define FI_VIEW_SYMBOL_NUMBER				8
-#define FI_VIEW_SYMBOL_SBMS_NAME			9
-#define FI_VIEW_SYMBOL_BASE_STATION_NAME	10
-#define FI_VIEW_SYMBOL_RLON					11
-#define FI_VIEW_SYMBOL_RLAT					12
-#define FI_VIEW_SYMBOL_LON					13
-#define FI_VIEW_SYMBOL_LAT					14
-#define FI_VIEW_SYMBOL_INPUT_VOLT			15
-#define FI_VIEW_SYMBOL_IN_MONITORING		16
-#define FI_VIEW_SYMBOL_AUTO					17
-#define FI_VIEW_SYMBOL_FORCED_OFF			18
-#define FI_VIEW_SYMBOL_NEW_REPORT			19
-#define FI_VIEW_SYMBOL_CHARGING				20
-#define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	21
+#define FI_VIEW_SYMBOL_MMSI					7
+#define FI_VIEW_SYMBOL_NAME					8
+#define FI_VIEW_SYMBOL_NUMBER				9
+#define FI_VIEW_SYMBOL_SBMS_NAME			10
+#define FI_VIEW_SYMBOL_BASE_STATION_NAME	11
+#define FI_VIEW_SYMBOL_RLON					12
+#define FI_VIEW_SYMBOL_RLAT					13
+#define FI_VIEW_SYMBOL_LON					14
+#define FI_VIEW_SYMBOL_LAT					15
+#define FI_VIEW_SYMBOL_INPUT_VOLT			16
+#define FI_VIEW_SYMBOL_IN_MONITORING		17
+#define FI_VIEW_SYMBOL_AUTO					18
+#define FI_VIEW_SYMBOL_FORCED_OFF			19
+#define FI_VIEW_SYMBOL_NEW_REPORT			20
+#define FI_VIEW_SYMBOL_CHARGING				21
+#define FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP	22
 
 #define FN_VIEW_SYMBOL_NAME					"name"
 #define FN_VIEW_SYMBOL_NUMBER				"number"
+
+// pola widoku _VIEW_ALARM
+#define FI_VIEW_ALARM_ID					0
+#define FI_VIEW_ALARM_ID_SBMS				1
+#define FI_VIEW_ALARM_SYMBOL_NAME			2
+#define FI_VIEW_ALARM_SYMBOL_NUMBER			3
+#define FI_VIEW_ALARM_ALARM_NAME			4
+#define FI_VIEW_ALARM_ACTIVE				5
+#define FI_VIEW_ALARM_CONFIRMED				6
+#define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	7
+
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

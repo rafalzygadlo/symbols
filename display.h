@@ -14,6 +14,7 @@
 #include <wx/hyperlink.h>
 #include "symbolpanel.h"
 #include "htmllist.h"
+#include "alarmlist.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -26,6 +27,7 @@ extern "C" {
 
 class CMapPlugin;
 class CHtmlList;
+class CAlarmList;
 class CSymbolPanel;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
@@ -38,9 +40,11 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
 	CHtmlList *m_HtmlList;
+	CAlarmList *m_AlarmList;
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
-	int m_OldCount;
+	int m_OldSymbolCount;
+	int m_OldAlarmCount;
 	bool m_OldNight;
 	wxPanel *m_Page3;
 	wxPanel *m_Page4;

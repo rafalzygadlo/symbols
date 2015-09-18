@@ -181,7 +181,7 @@ void CHtmlList::OnSelect(wxCommandEvent &event)
 
 void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.SetPen(*wxBLACK_DASHED_PEN);
+	dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }

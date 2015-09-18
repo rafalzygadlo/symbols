@@ -88,6 +88,7 @@ class CMapPlugin :public CNaviMapIOApi
 	wxArrayPtrVoid *m_AlarmList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
+	int m_ConfirmCounter;
 	ISpVoice * m_Voice;
 
 	void ReadDBConfig();
@@ -100,7 +101,8 @@ class CMapPlugin :public CNaviMapIOApi
 	//void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);
-	void Clear();
+	void ClearSymbols();
+	void ClearAlarms();
 	void Remove();
 	void ReadConfig();
 	void WriteConfig();
@@ -138,7 +140,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void SetSmoothScaleFactor(double _Scale);
 	void ShowProperties();
 	void ShowInfo(int x, int y);
-	CSymbol *Exists(int id);
+	CSymbol *ExistsSymbol(int id);
+	CAlarm *ExistsAlarm(int id);
 	void SetRemove();
 		
 	int Count();
@@ -186,6 +189,7 @@ public:
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();
 	wxArrayPtrVoid *GetSymbolListPtr();
+	wxArrayPtrVoid *GetAlarmListPtr();
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();

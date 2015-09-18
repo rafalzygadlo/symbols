@@ -37,7 +37,8 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_Broker = NULL;
 	m_ControlName = Parent->GetLabel();
 	m_ControlType = DEFAULT_CONTROL_TYPE;
-	m_OldCount = 0;
+	m_OldAlarmCount = 0;
+	m_OldSymbolCount = 0;
 	ReadConfig();
 	ShowControls();
 	SetRenderBackground(false);
@@ -194,9 +195,8 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER_DOT),wxDefaultPosition,wxSize(20,-1));
 	hSizer->Add(BFilter,0,wxALL,0);
 	
-
 	//m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
-	wxListItem item;
+	//wxListItem item;
 	
 	//item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
 	//item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
@@ -235,25 +235,7 @@ wxPanel *CDisplayPlugin::GetPage3(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	m_Page3 = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-
-	//wxHyperlinkCtrl *Href1 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_GRAPH),wxEmptyString);
-	//Sizer->Add(Href1,0,wxALL,2);
 	
-	//wxHyperlinkCtrl *Scan1 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_MANAGEMENT),wxEmptyString);
-	//Sizer->Add(Scan1,0,wxALL,2);
-
-	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(Panel,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
-	//Sizer->Add(Scan2,0,wxALL,2);
-	
-	//m_ButtonManagement = new wxButton(m_Page3,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
-	//Sizer->Add(m_ButtonManagement,0,wxALL|wxALIGN_RIGHT,2);
-	//m_ButtonManagement->Disable();
-		
-	//m_ButtonAlarm = new wxButton(m_Page3,ID_ALARM,GetMsg(MSG_ALARM));
-	//Sizer->Add(m_ButtonAlarm,0,wxALL|wxALIGN_RIGHT,2);
-	//m_ButtonAlarm->Disable();
-
-
 	m_NightTime = new wxStaticText(m_Page3,wxID_ANY,wxEmptyString);
 	m_NightTime->SetLabel(wxEmptyString);
 	Sizer->Add(m_NightTime,0,wxALL|wxALIGN_RIGHT,5);
@@ -268,8 +250,10 @@ wxPanel *CDisplayPlugin::GetPage4(wxWindow *parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	m_Page4 = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-		
-		
+	
+	m_AlarmList = new CAlarmList(m_Page4);
+	Sizer->Add(m_AlarmList,1,wxALL|wxEXPAND,5);
+
 	m_Page4->SetSizer(Sizer);
 
 	return m_Page4;
@@ -280,17 +264,7 @@ void CDisplayPlugin::ShowControls()
 {
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 	
-		
-	//wxHyperlinkCtrl *m_LogText = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_GRAPH),wxEmptyString);
-	//Main->Add(Scan,0,wxALL,5);
 	
-	//wxHyperlinkCtrl *Scan1 = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_MANAGEMENT),wxEmptyString);
-	//Main->Add(Scan1,0,wxALL,5);
-
-	//wxHyperlinkCtrl *Scan2 = new wxHyperlinkCtrl(this,wxID_ANY,GetMsg(MSG_ALARM),wxEmptyString);
-	//Main->Add(Scan2,0,wxALL,5);
-
-
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
@@ -416,13 +390,22 @@ void CDisplayPlugin::SignalInsert()
 	wxArrayPtrVoid *ptr = m_MapPlugin->GetSymbolListPtr();
 	int count = ptr->size();
 
-	if(m_OldCount != count)
-			m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
-		m_OldCount = count;
+	if(m_OldSymbolCount != count)
+		m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
+	m_OldSymbolCount = count;	
 
 	m_HtmlList->SetList(ptr);
 	m_HtmlList->SetMapPlugin(m_MapPlugin);
+	
+	ptr = m_MapPlugin->GetAlarmListPtr();
+	count = ptr->size();
 
+	if(m_OldAlarmCount != count)
+		m_Notebook->SetPageText(PAGE_ALARM,wxString::Format(GetMsg(MSG_ALARMS),count));
+	m_OldAlarmCount = count;
+
+	m_AlarmList->SetList(ptr);
+		
 	wxCommandEvent evt(EVT_SET_NIGHT_TIME,ID_NIGHT_TIME);
 	wxPostEvent(this,evt);
 }	
