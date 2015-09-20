@@ -210,12 +210,12 @@ wxString CHtmlList::OnGetItem(size_t item) const
 		
 		for(int i = 0; i < ptr->GetAlarmCount();i++)
 			str << wxString::Format(_("<tr><td><font size=4 color=red>%s</font></td></tr>"),ptr->GetAlarmName(i));
-	
+		/*
 		if(ptr->GetInMonitoring())
 			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
 		else
 			str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
-
+		*/
 		if(ptr->GetInMonitoring())
 		{
 			if(GetSelection() == item)
@@ -225,7 +225,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 			}
 		
 			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
-			str.Append(_("<td rowspan=3 align=right width=80>"));
+			str.Append(_("<td rowspan=7 align=right width=80>"));
 			if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
 				str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7 color=red>%4.2fV</font></a>"),item,ptr->GetInputVolt()));
 			else
@@ -233,16 +233,16 @@ wxString CHtmlList::OnGetItem(size_t item) const
 		
 			str.Append(_("</td>"));
 
-			str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
-			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetBaseStationName());
-			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAgeAsString());
-			str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetChargingAsString());
+			str.Append(wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
+			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetBaseStationName());
+			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetAgeAsString());
+			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetChargingAsString());
 		}
 	
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
+	str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
+	str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str.Append(_("</table>"));
 
 
