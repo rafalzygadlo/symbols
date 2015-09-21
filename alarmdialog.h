@@ -11,24 +11,23 @@ class CSymbol;
 class CAlarmList;
 class CAlarmDialog: public wxDialog
 {
+	wxArrayPtrVoid *m_List;
 	CAlarmList *m_TextAlarm;
 	wxString m_Html;
-	int m_Counter;
+	int m_Count;
+	bool m_New;
 
 	wxPanel *GetPanel(wxWindow *parent);
 	void OnSetAlarm(wxCommandEvent &event);
 	void OnOk(wxCommandEvent &event);
-	bool Validate();
-	
+		
 public:
 
 	CAlarmDialog();
 	~CAlarmDialog();
-	void Set(CSymbol *v);
-	void ClearAlert();
-	bool IsNewAlert();
-	bool IsValidating();
+	void Set(wxArrayPtrVoid *v);
 	void ShowWindow();
+	void SetNew(bool v);
 	
 	DECLARE_EVENT_TABLE();
 		

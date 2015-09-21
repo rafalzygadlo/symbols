@@ -186,13 +186,6 @@ void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
-void CHtmlList::OnDrawItem(wxDC& dc, wxRect& rect, size_t) const
-{
-	//dc.DrawText(_("TEST"),10,10);
-
-	//dc.DrawBitmap
-}
-
 wxString CHtmlList::OnGetItem(size_t item) const
 {
 	if(m_List->size() <= item)
@@ -221,7 +214,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 			if(GetSelection() == item)
 			{
 				if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-					str << wxString::Format(_("<hr><a target=1 href='%d'>%s</a><hr>"),item,GetMsg(MSG_MANAGEMENT));
+					str << wxString::Format(_("<a target=1 href='%d'>%s</a>"),item,GetMsg(MSG_MANAGEMENT));
 			}
 		
 			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));

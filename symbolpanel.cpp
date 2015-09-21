@@ -206,11 +206,10 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	if(ptr->GetInMonitoring())
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
 	else
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));
 	
 	if(ptr->GetInMonitoring() & ptr->GetIdSBMS() > 0)
 	{
-
 		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
 		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
 	}

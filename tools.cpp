@@ -176,7 +176,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Position From",L"Pozycja z.."},
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
-
+	
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -1028,7 +1028,6 @@ void ConfirmAlarm(int id)
 	my_query(db,sql);
 	DBClose(db);
 }
-
 
 //COMMANDS . . . . . . . . . . . . . . . .
 int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)

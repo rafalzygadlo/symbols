@@ -979,7 +979,7 @@ void CSymbol::SetInputVolt(float v)
 	m_InputVolt = v;
 }
 
-void CSymbol::SetRemove(bool v)
+void CSymbol::SetExists(bool v)
 {
 	m_Exists = v;
 }
@@ -1078,6 +1078,7 @@ void CSymbol::SetNewAlarmCount(int v)
 {
 	m_NewAlarmCount = v;
 }
+
 
 //GET
 int CSymbol::GetId()

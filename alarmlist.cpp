@@ -140,16 +140,9 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 
 void CAlarmList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.SetPen(*wxBLACK_PEN);
-    dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
+	dc.SetPen(*wxGREY_PEN);
+	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
-}
-
-void CAlarmList::OnDrawItem(wxDC& dc, wxRect& rect, size_t) const
-{
-	//dc.DrawText(_("TEST"),10,10);
-
-	//dc.DrawBitmap
 }
 
 wxString CAlarmList::OnGetItem(size_t item) const
@@ -163,15 +156,17 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetConfirmed())
 	{
-		str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetSymbolName());
-		str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
+		str << wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+		str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetName());
 	
 	}else{
 		
-		str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+		str << wxString::Format(_("<tr><td><font size=6><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
 		str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
 	}
 	
+	if(GetSelection() == item)
+		str << wxString::Format(_("<tr><td><a target=1 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_CANCEL));
 	
 	str.Append(_("</table>"));
 	

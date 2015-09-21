@@ -140,7 +140,7 @@ void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
 		else
 			str << GetMsg(MSG_DAY_TIME);
 		
-		str << wxString::Format(_("(%02d:%02d)(%02d:%02d %02d:%02d)"),_local.tm_hour,_local.tm_min,_on.tm_hour,_on.tm_min, _off.tm_hour,_off.tm_min);
+		str << wxString::Format(_("(%02d:%02d %02d:%02d)"),_on.tm_hour,_on.tm_min, _off.tm_hour,_off.tm_min);
 		m_NightTime->SetLabel(str);
 		this->Layout();
 	}
@@ -252,7 +252,7 @@ wxPanel *CDisplayPlugin::GetPage4(wxWindow *parent)
 	m_Page4 = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	
 	m_AlarmList = new CAlarmList(m_Page4);
-	Sizer->Add(m_AlarmList,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_AlarmList,1,wxALL|wxEXPAND,0);
 
 	m_Page4->SetSizer(Sizer);
 

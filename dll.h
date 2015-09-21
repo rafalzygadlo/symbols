@@ -105,10 +105,10 @@ class CMapPlugin :public CNaviMapIOApi
 	void ClearAlarms();
 	
 	void RemoveSymbol();
-	void SetRemoveSymbol();
-
 	void RemoveAlarm();
 	void SetRemoveAlarm();
+	void SetExistsSymbol();
+	void SetExistsAlarm();
 		
 	void ReadConfig();
 	void WriteConfig();

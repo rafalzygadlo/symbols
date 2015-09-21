@@ -10,12 +10,11 @@ DEFINE_EVENT_TYPE(EVT_SET_ALARM)
 BEGIN_EVENT_TABLE(CAlarmDialog, wxDialog)
 	EVT_BUTTON(ID_OK,OnOk)
 	//EVT_LISTBOX(ID_LIST,OnListBox)
-	EVT_COMMAND(ID_ALARM,EVT_SET_ALARM,OnSetAlarm)
 END_EVENT_TABLE()
 CAlarmDialog::CAlarmDialog()
 	:wxDialog(NULL,wxID_ANY,GetMsg(MSG_ALARM),wxDefaultPosition,wxSize(500,400),wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX| wxSTAY_ON_TOP)
 {
-	m_Counter = 0;
+	m_Count = 0;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	
 	//Sizer->Add(GetTitlePanel(this,station),0,wxALL|wxEXPAND,0);
@@ -36,7 +35,6 @@ CAlarmDialog::CAlarmDialog()
 	SetSizer(Sizer);
 	Center();
 	
-	
 }
 
 CAlarmDialog::~CAlarmDialog()
@@ -48,18 +46,6 @@ void CAlarmDialog::OnOk(wxCommandEvent &event)
 {
 	ConfirmAlarms();
 	Hide();
-	m_Html = wxEmptyString;
-	
-}
-
-void CAlarmDialog::OnSetAlarm(wxCommandEvent &event)
-{
-//	m_TextAlarm->SetPage(m_Html);
-}
-
-bool CAlarmDialog::Validate()
-{
-	return true;
 }
 
 wxPanel *CAlarmDialog::GetPanel(wxWindow *parent)
@@ -72,48 +58,21 @@ wxPanel *CAlarmDialog::GetPanel(wxWindow *parent)
 	Panel->SetSizer(Sizer);
 	
 	return Panel;
-
 }
 
-
-void CAlarmDialog::Set(CSymbol *v)
+void CAlarmDialog::Set(wxArrayPtrVoid *v)
 {
-	if(v->GetNewAlarmCount() == 0)
-		return;
-	
-	v->SetNewAlarmCount(0);
-	int counter = v->GetAlarmCount();
-	
-	for(int i = 0 ; i < counter; i++)
-	{
-		CAlarm *ptr = v->GetAlarm(i);
-		if(ptr->GetNew() && !ptr->GetConfirmed())
-		{
-			//m_TextAlarm->set
-			m_Html << wxString::Format(_("<font size=3>%s</font>"),v->GetName());
-			m_Html << wxString::Format(_("<br><font color=red>%s</font>"),ptr->GetName());
-			m_Html << "<hr>";
-			m_Counter++;
-		}
-		ptr->SetNew(false);
-				
-	}
-		
-	wxCommandEvent evt(EVT_SET_ALARM,ID_ALARM);
-	wxPostEvent(this,evt);
-	
+	m_TextAlarm->SetList(v);
 }
 
 void CAlarmDialog::ShowWindow()
 {
-	if(m_Counter)
+	if(m_New)
 		Show();
-
-	m_Counter = 0;
 }
 
-void CAlarmDialog::ClearAlert()
+void CAlarmDialog::SetNew(bool v)
 {
-	//m_TextAlert->Clear();
+	m_New = v;
 }
 

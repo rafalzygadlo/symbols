@@ -142,7 +142,7 @@ public:
 	void SetNumber(wxString v);
 	void SetInMonitoring(bool v);
 	void SetName(wxString v);
-	void SetRemove(bool v);
+	void SetExists(bool v);
 	void SetDB(void *db);
 	void SetForcedOff(int v);
 	void SetLightOn(int v);

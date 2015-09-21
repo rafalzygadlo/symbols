@@ -681,7 +681,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		
 		ptr->SetNoSBMS(!exists);
 		ptr->SetInit(true);
-		ptr->SetRemove(true);
+		ptr->SetExists(true);
 		
 		if(add)
 			m_SymbolList->Add(ptr);
@@ -867,13 +867,14 @@ void CMapPlugin::RemoveSymbol()
 		
 }
 
-void CMapPlugin::SetRemoveSymbol()
+void CMapPlugin::SetExistsSymbol()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->SetRemove(false);
+		ptr->SetExists(false);
 	}
+		
 }
 
 CSymbol *CMapPlugin::ExistsSymbol(int id)
@@ -900,6 +901,16 @@ CAlarm *CMapPlugin::ExistsAlarm(int id)
 	return NULL;
 }
 
+void CMapPlugin::SetExistsAlarm()
+{
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
+		ptr->SetExists(false);
+	}
+		
+}
+
 void CMapPlugin::ClearAlarms()
 {
 	for(size_t i = 0; i < m_AlarmList->size(); i++)
@@ -913,34 +924,30 @@ void CMapPlugin::ClearAlarms()
 
 void CMapPlugin::RemoveAlarm()
 {
-	/*
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
 	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
 		
 		if(!ptr->GetExists())
 		{
-			ptr->SetInit(false);
-			m_SymbolList->Remove(ptr);
+			m_AlarmList->Remove(ptr);
 			delete ptr;
 			i = 0;
 		}
 	}
-	*/
+	
 		
 }
 
 void CMapPlugin::SetRemoveAlarm()
 {
-	/*
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->SetRemove(false);
-	}
-	*/
+	//for(size_t i = 0; i < m_SymbolList->size(); i++)
+	//{
+		//CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		//ptr->SetRemove(false);
+	//}
 }
-
 
 
 /*
@@ -1638,13 +1645,12 @@ void CMapPlugin::SetMouseXY(int x, int y)
 
 void CMapPlugin::ShowAlarm()
 {
-	for(int i = 0; i < m_SymbolList->size();i++)
+	m_AlarmDialog->Set(m_AlarmList);
+	if(m_ConfirmCounter > 0)
 	{
-		m_AlarmDialog->Set((CSymbol*)m_SymbolList->Item(i));
+		m_AlarmDialog->SetNew(true);
+		m_AlarmDialog->ShowWindow();
 	}
-	
-	m_AlarmDialog->ShowWindow();
-
 }
 
 void CMapPlugin::OnTick()
@@ -1656,12 +1662,16 @@ void CMapPlugin::OnTick()
 	if(db == NULL)
 		return;
 
-	SetRemoveSymbol();
 	SetSql(sql);
 	
+	SetExistsSymbol();
 	ReadSymbol(db,sql);		//przeczytaj symbole
-	ReadAlarm(db);			
 	RemoveSymbol();			//usuń
+
+	SetExistsAlarm();	
+	ReadAlarm(db);			//przeczytaj alarmy
+	RemoveAlarm();			//usuń
+		
 	ReadSymbolValues(db);	// wczytaj inne opcje
 		
 	//display potrzebuje tej flagi

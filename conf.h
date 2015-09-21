@@ -814,13 +814,14 @@
 
 // pola widoku _VIEW_ALARM
 #define FI_VIEW_ALARM_ID					0
-#define FI_VIEW_ALARM_ID_SBMS				1
-#define FI_VIEW_ALARM_SYMBOL_NAME			2
-#define FI_VIEW_ALARM_SYMBOL_NUMBER			3
-#define FI_VIEW_ALARM_ALARM_NAME			4
-#define FI_VIEW_ALARM_ACTIVE				5
-#define FI_VIEW_ALARM_CONFIRMED				6
-#define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	7
+#define FI_VIEW_ALARM_ID_SYMBOL				1
+#define FI_VIEW_ALARM_ID_SBMS				2
+#define FI_VIEW_ALARM_SYMBOL_NAME			3
+#define FI_VIEW_ALARM_SYMBOL_NUMBER			4
+#define FI_VIEW_ALARM_ALARM_NAME			5
+#define FI_VIEW_ALARM_ACTIVE				6
+#define FI_VIEW_ALARM_CONFIRMED				7
+#define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	8
 
 
 // . . . . . . . . . . . . . . . . . . . .
