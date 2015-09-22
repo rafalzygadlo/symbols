@@ -40,6 +40,11 @@ void CAlarm::SetConfirmed(bool v)
 	m_Confirmed = v;
 }
 
+void CAlarm::SetType(int v)
+{
+	m_Type = v;
+}
+
 //GET
 int CAlarm::GetId()
 {
@@ -69,4 +74,9 @@ bool CAlarm::GetExists()
 bool CAlarm::GetConfirmed()
 {
 	return m_Confirmed;
+}
+
+int CAlarm::GetType()
+{
+	return m_Type;
 }

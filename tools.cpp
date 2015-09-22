@@ -1239,6 +1239,15 @@ bool GetSBMSExists(void *db,int id)
 
 }
 
+nvRGBA GetAlarmTypeColor(int id)
+{
+	switch(id)
+	{
+		case ALARM_TYPE_ALARM:		return GetDefaultColor(ALARM_ALARM_COLOR);
+		case ALARM_TYPE_WARNING:	return GetDefaultColor(ALARM_WARNING_COLOR);
+	}
+}
+
 
 #if 0
 void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)

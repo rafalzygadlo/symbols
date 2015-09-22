@@ -202,14 +202,14 @@ public:
 	void OnTickExit();
 	void SetSelectedPtr(CSymbol *v);
 
-	virtual void Run(void *Params); 
+	virtual void Run(void *Params);
 	virtual void Kill(void);
 	virtual void Render(void);
 	virtual void Mouse(int x, int y, bool lmb, bool mmb, bool rmb );
 	virtual void MouseDBLClick(int x, int y);
 	virtual void OnInitGL();
 	virtual void SetUID(int uid);
-	virtual void SetLanguage(int LanguageID);					
+	virtual void SetLanguage(int LanguageID);
 	
 	static void *GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params);
 	static void *OnSynchro(void *NaviMapIOApiPtr, void *Params);

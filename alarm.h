@@ -24,6 +24,7 @@
 class CAlarm
 {	
 	int m_Id;
+	int m_Type;
 	wxString m_Name;
 	wxString m_SymbolName;
 	bool m_New;
@@ -40,6 +41,7 @@ public:
 	void SetNew(bool v);
 	void SetExists(bool v);
 	void SetConfirmed(bool v);
+	void SetType(int v);
 		
 	//GET
 	int GetId();
@@ -48,6 +50,7 @@ public:
 	bool GetNew();
 	bool GetExists();
 	bool GetConfirmed();
+	int GetType();
 };
 
 
