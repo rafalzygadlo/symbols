@@ -339,17 +339,18 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 	{
 		wxString str;
 		wxColor BgColor(atoi(row[FI_VIEW_LIGHT_COLOR]));
-		BgColor.GetRGB();
+		
+		str.Append(_("<br><hr><br>"));
+		str.Append(wxString::Format(_("<font size=3><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
-		str.Append(_("<tr><td><font size=2><br><hr><br></font></td></tr>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X><font size=3><b>Color</b></font></td></tr>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceMeter)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
-
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>0 [Milisekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
 		str.Append(_("</table>"));
 			
 		m_Html->AppendToPage(str);

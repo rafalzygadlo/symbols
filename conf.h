@@ -275,6 +275,7 @@
 #define MSG_SYMBOL_POSITION				155
 #define MSG_REPORT_TIMEOUT				156
 #define MSG_ALARMS						157
+#define MSG_LIGHT_RIPLE_DELAY			158
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -904,6 +905,9 @@
 #define LIGHT_OFF               0
 #define LIGHT_ON                1
 
+#define nvDistanceNauticMile			0
+#define nvDistanceKilometer				1
+#define nvDistanceMeter					2
 /*
 
 typedef struct Symbol

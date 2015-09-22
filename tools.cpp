@@ -176,6 +176,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Position From",L"Pozycja z.."},
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
+	{L"Riple delay",L"OpóŸnienie impulsu"},
 	
 };
 
