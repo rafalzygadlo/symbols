@@ -176,7 +176,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Position From",L"Pozycja z.."},
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
-	
+	{L"Export..",L"Export.."},
+		
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -1024,6 +1025,14 @@ void ConfirmAlarms()
 void ConfirmAlarm(int id)
 {
 	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE id='%d' AND confirmed='%d'"),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,id,ALARM_NOT_CONFIRMED);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
+void DeactivateAlarm(int id)
+{
+	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id);
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);

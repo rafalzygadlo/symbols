@@ -51,13 +51,12 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CSymbol *Symbol = (CSymbol*)m_List->Item(item);
+	CAlarm *Alarm = (CAlarm*)m_List->Item(item);
 
 	switch(action)
 	{
-//		case HREF_ACTION_GRAPH:			ShowGraph(Symbol);			break;
-		//case HREF_ACTION_MANAGEMENT:	ShowManagement(Symbol);		break;
-		break;
+		case HREF_ACTION_ALARM_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		
 	}
 
 }
@@ -168,7 +167,7 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	}
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE_ALARM));
+		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE));
 	
 	str.Append(_("</table>"));
 	

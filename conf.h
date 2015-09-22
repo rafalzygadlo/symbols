@@ -275,7 +275,7 @@
 #define MSG_SYMBOL_POSITION				155
 #define MSG_REPORT_TIMEOUT				156
 #define MSG_ALARMS						157
-#define MSG_DELETE_ALARM				158
+#define MSG_EXPORT						158
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -333,7 +333,7 @@
 
 #define PICTURE_MAX_WIDTH	200
 #define PICTURE_MAX_HEIGHT	200
-#define PICTURE_MAX_SIZE 64000
+#define PICTURE_MAX_SIZE	64000
 	
 #define PICTURE_PANEL_NEW		0
 #define PICTURE_PANEL_PICKER	1
@@ -900,8 +900,11 @@
 
 
 // html list link actions 
-#define HREF_ACTION_GRAPH		0
-#define HREF_ACTION_MANAGEMENT	1
+#define HREF_ACTION_GRAPH			0
+#define HREF_ACTION_MANAGEMENT		1
+
+//alarm list link actions
+#define HREF_ACTION_ALARM_DELETE	0
 
 //statusy światła
 #define LIGHT_NOT_AVAILABLE     -1

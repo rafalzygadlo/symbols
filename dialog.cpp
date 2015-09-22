@@ -41,7 +41,7 @@ SHeader Header[] =
 	
 	{CONTROL_BASE_STATION,250, {FI_BASE_STATION_NAME  , FN_BASE_STATION_NAME, MSG_NAME} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_IP  , FN_BASE_STATION_IP, MSG_IP} },
-	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_LOCAL_UTC_TIME  , FN_BASE_STATION_IP, MSG_IP} },
+	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_LOCAL_UTC_TIME  , FN_BASE_STATION_IP, MSG_TIME} },
 	{CONTROL_BASE_STATION,100, {FI_BASE_STATION_INFO  , FN_BASE_STATION_INFO, MSG_INFO } },
 
 	{CONTROL_CHARACTERISTIC,250, {FI_CHARACTERISTIC_NAME  , FN_CHARACTERISTIC_NAME, MSG_NAME} },
@@ -194,8 +194,13 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 	
 	}else{
 	
-		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
 		Sizer->AddStretchSpacer();
+		if(m_ControlType == CONTROL_SYMBOL_ALARM)
+		{
+			wxButton *ButtonExport = new wxButton(Panel,ID_EXPORT,GetMsg(MSG_EXPORT));
+			Sizer->Add(ButtonExport,0,wxALL,2);
+		}
+		wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
 		Sizer->Add(ButtonClose,0,wxALL,2);
 	
 	}
