@@ -334,8 +334,8 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 	if(result == NULL)
 		return;
 		
-	row = (char**)db_fetch_row(result);
-	if(row)
+	//row = (char**)db_fetch_row(result);
+	while(row = (char**)db_fetch_row(result))
 	{
 		wxString str;
 		wxColor BgColor(atoi(row[FI_VIEW_LIGHT_COLOR]));
@@ -343,7 +343,8 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(_("<br><hr><br>"));
 		str.Append(wxString::Format(_("<font size=3><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X><font size=3><b>Color</b></font></td></tr>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
+		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 ><tr><td width=100%><font size=4><b><br></b></font></td></tr></table></td></tr>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceMeter)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
