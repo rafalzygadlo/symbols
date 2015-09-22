@@ -353,7 +353,7 @@
 #define SECTOR_MIN 0.00f
 #define SECTOR_MAX (360.00 * 2)
 #define SECTOR_FROM_DEFAULT_VALUE 0.00
-#define SECTOR_TO_DEFAULT_VALUE 60.00
+#define SECTOR_TO_DEFAULT_VALUE 360.00
 
 #define CHRACTERISTIC_ON_DEFAULT_VALUE 0.20
 #define CHRACTERISTIC_OFF_DEFAULT_VALUE 5.00
@@ -823,6 +823,7 @@
 #define FI_VIEW_ALARM_ACTIVE				6
 #define FI_VIEW_ALARM_CONFIRMED				7
 #define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	8
+#define FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	9
 
 // pola widoku _VIEW_LIGHT
 #define FI_VIEW_LIGHT_ID_SYMBOL				0
@@ -834,6 +835,10 @@
 #define FI_VIEW_LIGHT_CHARACTERISTIC		6
 #define FI_VIEW_LIGHT_CHARACTERISTIC_CODE	7
 #define FI_VIEW_LIGHT_CHARACTERISTIC_IALA	8
+
+#define FN_VIEW_ALARM_ALARM_NAME			"alarm_name"
+#define FN_VIEW_ALARM_SET_LOCAL_UTC_TIME	"set_local_utc_time"
+#define FN_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	"unset_local_utc_time"
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

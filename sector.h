@@ -11,7 +11,7 @@ class CSector
 	float m_SectorTo;
 	float m_Radius;
 	wxColor m_Color;
-	int m_CharacteristicId;
+	int m_IdCharacteristic;
 		
 public:
 
@@ -23,6 +23,7 @@ public:
 	float GetSectorFrom();
 	float GetSectorTo();
 	int GetId();
+	int GetIdCharacteristic();
 	
 	void SetId(int v);
 	void SetColor(wxColor color);
@@ -30,7 +31,7 @@ public:
 	void SetSectorFrom(float v);
 	void SetSectorTo(float v);
 	void SetRadius(float v);
-	void SetCharacteristicId(int v);
+	void SetIdCharacteristic(int v);
 
 	void RenderSelected();
 	void Render();

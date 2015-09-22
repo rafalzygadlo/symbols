@@ -83,9 +83,9 @@ void CSector::SetRadius(float v)
 	m_Radius = v;
 }
 
-void CSector::SetCharacteristicId(int v)
+void CSector::SetIdCharacteristic(int v)
 {
-
+	m_IdCharacteristic = v;
 }
 //GET
 wxColor CSector::GetColor()
@@ -106,4 +106,9 @@ float CSector::GetSectorFrom()
 float CSector::GetSectorTo()
 {
 	return m_SectorTo;
+}
+
+int CSector::GetIdCharacteristic()
+{
+	return m_IdCharacteristic;
 }

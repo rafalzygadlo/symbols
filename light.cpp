@@ -21,7 +21,7 @@ CLightPanel::CLightPanel(void *db, wxWindow *parent)
 	:wxGLCanvas( parent, wxID_ANY,0, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxWANTS_CHARS)
 {
 	GLContext = new wxGLContext(this);
-	//m_DB = db;
+	m_DB = db;
 }
 
 CLightPanel::~CLightPanel()
@@ -76,7 +76,6 @@ void CLightPanel::OnPaint(wxPaintEvent &event)
 	SetCurrent(*GLContext);
 	Render();
 	event.Skip();
-	
 }
 
 void CLightPanel::OnNew(wxCommandEvent &event)
@@ -85,22 +84,54 @@ void CLightPanel::OnNew(wxCommandEvent &event)
 	Append(Sector);
 	Refresh();
 	
-	CSectorDialog *SectorDialog = new CSectorDialog(this);
+	CSectorDialog *SectorDialog = new CSectorDialog(m_DB,this);
 	SectorDialog->SetSector(Sector);
-	if(SectorDialog->ShowModal() == wxID_CANCEL)
+	if(SectorDialog->ShowModal() == wxID_OK)
+	{
+		Sector->SetColor(SectorDialog->GetColor());
+		Sector->SetCoverage(SectorDialog->GetCoverage());
+		Sector->SetIdCharacteristic(SectorDialog->GetIdCharacteristic());
+		Sector->SetSectorFrom(SectorDialog->GetSectorFrom());
+		Sector->SetSectorTo(SectorDialog->GetSectorTo());
+
+	}else{
+		
 		Remove(Sector);
+	}
+	
 	delete SectorDialog;
 }
 
 void CLightPanel::OnEdit(wxCommandEvent &event)
 {
-
 	for(size_t i = 0; i < m_Select.size();i++)
 	{
 		CSector *Sector = (CSector*)m_Select.Item(i);
-		CSectorDialog *SectorDialog = new CSectorDialog(this);
+		CSectorDialog *SectorDialog = new CSectorDialog(m_DB,this);
 		SectorDialog->SetSector(Sector);
-		SectorDialog->ShowModal();
+		SectorDialog->SetColor(Sector->GetColor());
+
+		wxString from = wxString::Format(_("%4.2f"),Sector->GetSectorFrom());
+		SectorDialog->SetSectorFrom(from);
+		
+		wxString to = wxString::Format(_("%4.2f"),Sector->GetSectorTo());
+		SectorDialog->SetSectorTo(to);
+		
+		wxString co = wxString::Format(_("%4.2f"),Sector->GetCoverage());
+		SectorDialog->SetCoverage(co);
+
+		wxString id = wxString::Format(_("%d"),Sector->GetIdCharacteristic());
+		SectorDialog->SetIdCharacteristic(id);
+		
+		if(SectorDialog->ShowModal() == wxID_OK)
+		{
+			Sector->SetColor(SectorDialog->GetColor());
+			Sector->SetCoverage(SectorDialog->GetCoverage());
+			Sector->SetIdCharacteristic(SectorDialog->GetIdCharacteristic());
+			Sector->SetSectorFrom(SectorDialog->GetSectorFrom());
+			Sector->SetSectorTo(SectorDialog->GetSectorTo());
+		}
+				
 		delete SectorDialog;
 	}
 }
