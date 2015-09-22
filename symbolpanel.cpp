@@ -162,9 +162,13 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
-	if(ptr->GetInMonitoring())
+
+	if(ptr->GetInMonitoring()) {
+
 		SBMSInfo(db,m_IdSBMS);
-	
+		LightInfo(db,ptr->GetId());
+
+	};
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	DBClose(db);
@@ -317,6 +321,53 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 	db_free_result(result);
 
 }
+
+
+
+void CSymbolPanel::LightInfo(void *db,int id_symbol)
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol ='%d'"), VIEW_LIGHT, id_symbol);
+	my_query(db,sql);
+			
+	void *result = db_result(db);	
+	char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		wxString str;
+		wxColor BgColor(atoi(row[FI_VIEW_LIGHT_COLOR]));
+		BgColor.GetRGB();
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
+		str.Append(_("<tr><td><font size=2><br><hr><br></font></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X><font size=3><b>Color</b></font></td></tr>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
+
+		str.Append(_("</table>"));
+			
+		m_Html->AppendToPage(str);
+
+		//SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
+		//SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		//SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
+		//SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
+		//SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
+		//SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
+		//SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
+		
+	}
+
+	db_free_result(result);
+
+}
+
 /*
 void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 {

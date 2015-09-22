@@ -1594,7 +1594,7 @@ void CMapPlugin::RenderNames()
 		
 		if(ptr->GetInit())
 		{
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetNumber());
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
 			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
 			if(ptr->GetInMonitoring())
 				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());

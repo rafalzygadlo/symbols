@@ -35,6 +35,7 @@ class CSymbolPanel : public wxPanel
 	void SBMSInfo(void *db,int id_sbms);
 	void PictureInfo(void *db,CSymbol *ptr);
 	void BaseStationInfo(void *db, int id_base_station);
+	void LightInfo(void *db,int id_symbol);
 	void SBMSLastRaport(void *db, int id_sbms, int id_base_station);
 	void SetGraph(void *db, int id_sbms, int id_base_station);
 	void OnManagement(wxCommandEvent &event);

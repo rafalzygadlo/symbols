@@ -463,6 +463,7 @@
 //WIDOKI
 #define VIEW_SYMBOL		"_view_symbol"
 #define VIEW_ALARM		"_view_alarm"
+#define VIEW_LIGHT		"_view_light"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -823,6 +824,16 @@
 #define FI_VIEW_ALARM_CONFIRMED				7
 #define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	8
 
+// pola widoku _VIEW_LIGHT
+#define FI_VIEW_LIGHT_ID_SYMBOL				0
+#define FI_VIEW_LIGHT_SYMBOL_NUMBER			1
+#define FI_VIEW_LIGHT_COLOR					2
+#define FI_VIEW_LIGHT_COVERAGE				3
+#define FI_VIEW_LIGHT_SECTOR_FROM			4
+#define FI_VIEW_LIGHT_SECTOR_TO				5
+#define FI_VIEW_LIGHT_CHARACTERISTIC		6
+#define FI_VIEW_LIGHT_CHARACTERISTIC_CODE	7
+#define FI_VIEW_LIGHT_CHARACTERISTIC_IALA	8
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
