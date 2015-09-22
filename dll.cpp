@@ -1664,7 +1664,7 @@ void CMapPlugin::OnTick()
 
 	SetSql(sql);
 	
-	SetExistsSymbol();
+SetExistsSymbol();
 	ReadSymbol(db,sql);		//przeczytaj symbole
 	RemoveSymbol();			//usuń
 

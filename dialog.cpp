@@ -60,11 +60,9 @@ SHeader Header[] =
 	{CONTROL_SYMBOL_ALARM,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
 	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
 	
-	{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ID_ALARM  , FN_SBMS_ALARM_ID_ALARM, MSG_ALARM} },
-	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_ACTIVE  , FN_SBMS_ALARM_ACTIVE, MSG_ACTIVE} },
-	//{CONTROL_SBMS_ALARM,80,  {FI_SBMS_ALARM_CONFIRMED  , FN_SBMS_ALARM_CONFIRMED, MSG_CONFIRMED} },
-	{CONTROL_SBMS_ALARM,180, {FI_SBMS_ALARM_SET_LOCAL_UTC_TIME  , FN_SBMS_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
-	{CONTROL_SBMS_ALARM,180, {FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME  , FN_SBMS_ALARM_UNSET_LOCAL_UTC_TIME, MSG_UNSET_TIME} },
+	{CONTROL_SBMS_ALARM,80,  {FI_VIEW_ALARM_ALARM_NAME  , FN_VIEW_ALARM_ALARM_NAME, MSG_ALARM} },
+	{CONTROL_SBMS_ALARM,180, {FI_VIEW_ALARM_SET_LOCAL_UTC_TIME  , FN_VIEW_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
+	{CONTROL_SBMS_ALARM,180, {FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME  , FN_VIEW_ALARM_UNSET_LOCAL_UTC_TIME, MSG_UNSET_TIME} },
 	//{CONTROL_SBMS_ALARM,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
 
 	//komendy master/slave
@@ -640,7 +638,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
 		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
 		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
-		case CONTROL_SBMS_ALARM:		m_Table = TABLE_SBMS_ALARM;		break;
+		case CONTROL_SBMS_ALARM:		m_Table = VIEW_ALARM;			break;
 		case CONTROL_SYMBOL_ALARM:		m_Table = TABLE_SYMBOL;			break;
 		case CONTROL_SYMBOL_COMMAND:	m_Table = TABLE_SYMBOL;			break;
 		case CONTROL_COMMAND:			m_Table = TABLE_COMMAND;		break;
@@ -676,7 +674,7 @@ void CDialogPanel::ReadData()
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms='%d' AND"),m_Table,m_IDMaster);
 		break;
 		case CONTROL_SYMBOL_ALARM:
-			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM);
+			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
 		break;
 
 		case CONTROL_SYMBOL_COMMAND:
@@ -934,8 +932,8 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 	for(size_t i = 0; i <LightPanel->GetCount(); i++)
 	{
 		CSector *Sector = LightPanel->GetSector(i);
-		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,color='%d' ,coverage='%4.2f' ,sector_from='%4.2f' ,sector_to='%4.2f'"),
-			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
+		sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d' ,id_characteristic='%s', color='%d' ,coverage='%4.2f' ,sector_from='%4.2f' ,sector_to='%4.2f'"),
+			TABLE_SYMBOL_LIGHT,id,Sector->GetIdCharacteristic(),Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 		my_query(m_DB,sql);
 	}
 	
@@ -1226,8 +1224,8 @@ void CDialogPanel::EditSymbol(int id)
 		for(size_t i = 0; i < pan->GetCount(); i++)
 		{
 			CSector *Sector = pan->GetSector(i);
-			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d', color='%d',coverage='%4.2f',sector_from='%4.2f',sector_to='%4.2f'"),
-			TABLE_SYMBOL_LIGHT,id,Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
+			sql = wxString::Format(_("INSERT INTO %s SET id_symbol='%d',id_characteristic='%d', color='%d',coverage='%4.2f',sector_from='%4.2f',sector_to='%4.2f'"),
+				TABLE_SYMBOL_LIGHT,id,Sector->GetIdCharacteristic(), Sector->GetColor().GetRGB(),Sector->GetCoverage(),Sector->GetSectorFrom(),Sector->GetSectorTo());
 			my_query(m_DB,sql);
 		}
 		
@@ -1615,7 +1613,7 @@ void CDialogPanel::SetSymbolLight(CNew *ptr,int id)
 		Sector->SetCoverage(atof(row[FI_SYMBOL_LIGHT_COVERAGE]));
 		Sector->SetSectorFrom(atof(row[FI_SYMBOL_LIGHT_SECTOR_FROM]));
 		Sector->SetSectorTo(atof(row[FI_SYMBOL_LIGHT_SECTOR_TO]));
-		//Light->SetCharacteristic(row[FI_SYMBOL_LIGHT_CHARACTERISTIC]);
+		Sector->SetIdCharacteristic(atoi(row[FI_SYMBOL_LIGHT_ID_CHARACTERISTIC]));
 		LightPanel->Append(Sector);
 	}
 		

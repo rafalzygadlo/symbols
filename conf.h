@@ -822,7 +822,12 @@
 #define FI_VIEW_ALARM_ACTIVE				6
 #define FI_VIEW_ALARM_CONFIRMED				7
 #define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	8
+#define FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	9
 
+
+#define FN_VIEW_ALARM_ALARM_NAME			"alarm_name"
+#define FN_VIEW_ALARM_SET_LOCAL_UTC_TIME	"set_local_utc_time"
+#define FN_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	"unset_local_utc_time"
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
