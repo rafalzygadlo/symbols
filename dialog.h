@@ -33,7 +33,13 @@ public:
 	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
-		
+	
+	enum
+	{
+		ID_EXPORT = 1100,
+				
+	};
+
 	
 };
 

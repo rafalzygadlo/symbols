@@ -177,7 +177,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
 	{L"Riple delay",L"OpóŸnienie impulsu"},
-	
+	{L"Export..",L"Export.."},
+		
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -1030,6 +1031,14 @@ void ConfirmAlarm(int id)
 	DBClose(db);
 }
 
+void DeactivateAlarm(int id)
+{
+	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
 //COMMANDS . . . . . . . . . . . . . . . .
 int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
 {
@@ -1238,6 +1247,15 @@ bool GetSBMSExists(void *db,int id)
         
     return _result;
 
+}
+
+nvRGBA GetAlarmTypeColor(int id)
+{
+	switch(id)
+	{
+		case ALARM_TYPE_ALARM:		return GetDefaultColor(ALARM_ALARM_COLOR);
+		case ALARM_TYPE_WARNING:	return GetDefaultColor(ALARM_WARNING_COLOR);
+	}
 }
 
 

@@ -149,6 +149,8 @@ nvRGBA GetDefaultColor(int type)
 		case SYMBOL_NO_MONITOR_COLOR:		rgba.R = 150;	rgba.G = 150;	rgba.B = 150;	rgba.A = 50;	break;
 		case SYMBOL_ERROR_COLOR:			rgba.R = 255;	rgba.G = 0;		rgba.B = 0;		rgba.A = 100;	break;
 		case SYMBOL_LIGHT_ON_COLOR:			rgba.R = 0;		rgba.G = 255;	rgba.B = 0;		rgba.A = 200;	break;
+		case ALARM_WARNING_COLOR:			rgba.R = 0;		rgba.G = 0;		rgba.B = 255;	rgba.A = 255;	break;
+		case ALARM_ALARM_COLOR:				rgba.R = 255;	rgba.G = 0;		rgba.B = 0;		rgba.A = 255;	break;
 	}
 		
 	return rgba;
@@ -177,8 +179,6 @@ void SetColor(int type, nvRGBA color)
 		case SYMBOL_NO_MONITOR_COLOR:	SymbolNoMonitorColor.R = color.R;	SymbolNoMonitorColor.G = color.G;	SymbolNoMonitorColor.B = color.B;	SymbolNoMonitorColor.A = color.A;	break;
 		case SYMBOL_ERROR_COLOR:		SymbolErrorColor.R = color.R;		SymbolErrorColor.G = color.G;		SymbolErrorColor.B = color.B;		SymbolErrorColor.A = color.A;		break;
 		case SYMBOL_LIGHT_ON_COLOR:		SymbolLightOnColor.R = color.R;		SymbolLightOnColor.G = color.G;		SymbolLightOnColor.B = color.B;		SymbolLightOnColor.A = color.A;		break;
-
-		
 	}
 
 }

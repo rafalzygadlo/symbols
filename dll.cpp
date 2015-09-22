@@ -780,6 +780,7 @@ void CMapPlugin::ReadAlarm(void *db)
 		ptr->SetSymbolName(Convert(row[FI_VIEW_ALARM_SYMBOL_NAME]));
 		ptr->SetName(Convert(row[FI_VIEW_ALARM_ALARM_NAME]));
 		ptr->SetConfirmed(atoi(row[FI_VIEW_ALARM_CONFIRMED]));
+		ptr->SetType(atoi(row[FI_VIEW_ALARM_ALARM_TYPE]));
 		ptr->SetExists(true);
 		
 		if(!ptr->GetConfirmed())
@@ -1006,10 +1007,10 @@ void CMapPlugin::Run(void *Params)
 	CreateApiMenu(); // jezyki
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
-	
-     if (CoInitialize(NULL))
-	 {
-         //return FALSE;
+	/*
+    if (CoInitialize(NULL))
+	{
+		//return FALSE;
 		HRESULT hr = CoCreateInstance(CLSID_SpVoice, NULL, CLSCTX_ALL, IID_ISpVoice, (void **)&m_Voice);
 
 		if( SUCCEEDED( hr ) )
@@ -1030,7 +1031,7 @@ void CMapPlugin::Run(void *Params)
 		
 		}
 	}
-     
+    */
  
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);

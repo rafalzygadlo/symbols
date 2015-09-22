@@ -51,13 +51,12 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CSymbol *Symbol = (CSymbol*)m_List->Item(item);
+	CAlarm *Alarm = (CAlarm*)m_List->Item(item);
 
 	switch(action)
 	{
-//		case HREF_ACTION_GRAPH:			ShowGraph(Symbol);			break;
-		//case HREF_ACTION_MANAGEMENT:	ShowManagement(Symbol);		break;
-		break;
+		case HREF_ACTION_ALARM_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		
 	}
 
 }
@@ -157,16 +156,18 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	if(ptr->GetConfirmed())
 	{
 		str << wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
-		str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetName());
+		nvRGBA c = GetAlarmTypeColor(ptr->GetType());
+		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
 	
 	}else{
 		
 		str << wxString::Format(_("<tr><td><font size=6><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
-		str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
+		nvRGBA c = GetAlarmTypeColor(ptr->GetType());
+		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=5>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
 	}
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=1 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_CANCEL));
+		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE));
 	
 	str.Append(_("</table>"));
 	
