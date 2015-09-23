@@ -1101,6 +1101,7 @@ wxString GetLightOnAsString(int v)
 		case LIGHT_ON:				return GetMsg(MSG_LIGHT_IS_ON);
 		case LIGHT_OFF:				return GetMsg(MSG_LIGHT_IS_OFF);
 		case LIGHT_NOT_AVAILABLE:	return GetMsg(MSG_NA);
+		default :					return GetMsg(MSG_NA);
 	}
 }
 
@@ -1255,6 +1256,7 @@ nvRGBA GetAlarmTypeColor(int id)
 	{
 		case ALARM_TYPE_ALARM:		return GetDefaultColor(ALARM_ALARM_COLOR);
 		case ALARM_TYPE_WARNING:	return GetDefaultColor(ALARM_WARNING_COLOR);
+		default:					return GetDefaultColor(ALARM_WARNING_COLOR);
 	}
 }
 

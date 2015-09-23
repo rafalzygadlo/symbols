@@ -26,14 +26,15 @@ class CDialog : public wxDialog
 	void ReadConfig();
 	void WriteConfig();
 	void OnRefresh(wxCommandEvent &event);
+	void OnExport(wxCommandEvent &event);
 	
-
 public:
 	CDialog(void *db, int control_type, bool picker = false);
 	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
 	
+	DECLARE_EVENT_TABLE();
 	enum
 	{
 		ID_EXPORT = 1100,
@@ -111,8 +112,7 @@ class CDialogPanel: public wxPanel
 	void OnSearchText(wxCommandEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnRefresh(wxCommandEvent &event);
-
-
+	
 	void ReadConfig();
 	void WriteConfig();
 	
@@ -159,7 +159,6 @@ public:
 		ID_SEARCH,
 		ID_TICK_SEARCH,
 		ID_REFRESH,
-		
 	};
 
 };
