@@ -45,6 +45,11 @@ void CAlarm::SetType(int v)
 	m_Type = v;
 }
 
+void CAlarm::SetAlarmOnDate(wxString v)
+{
+	m_AlarmOnDate = v;
+}
+
 //GET
 int CAlarm::GetId()
 {
@@ -79,4 +84,9 @@ bool CAlarm::GetConfirmed()
 int CAlarm::GetType()
 {
 	return m_Type;
+}
+
+wxString CAlarm::GetAlarmOnDate()
+{
+	return m_AlarmOnDate;
 }

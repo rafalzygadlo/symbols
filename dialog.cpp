@@ -12,6 +12,7 @@
 #include "light.h"
 #include "conf.h"
 #include "symbolgroup.h"
+#include "export.h"
 
 SHeader Header[] =
 {
@@ -92,7 +93,7 @@ SIds Id[] =
 	{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
 
-BEGIN_EVENT_TABLE(CDialog,wxPanel)
+BEGIN_EVENT_TABLE(CDialog,wxDialog)
 	EVT_BUTTON(ID_EXPORT,OnExport)
 END_EVENT_TABLE()
 
@@ -216,10 +217,8 @@ int CDialog::_GetId()
 
 void CDialog::OnExport(wxCommandEvent &event)
 {
-
-	wxMessageBox(_("On Export"));
+	m_DialogPanel->OnExport();
 }
-
 
 BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
 	EVT_LISTBOX(ID_FILTER,OnListBox)
@@ -366,6 +365,13 @@ void CDialogPanel::OnRefresh(wxCommandEvent &event)
 	Select();
 }
 
+void CDialogPanel::OnExport()
+{
+	switch(m_ControlType)
+	{
+		case CONTROL_SYMBOL_ALARM:	ExportAlarm(m_DB);	break;
+	}
+}
 
 void CDialogPanel::SetSearchText(const wchar_t *txt)
 {

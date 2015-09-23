@@ -144,6 +144,7 @@ public:
 	void OnAddToGroup(int id);
 	void OnColumnCLick(wxString field, int order);
 	void OnSelect(int id);
+	void OnExport();
 	void SetSlave(CDialogPanel *ptr);
 
 	int _GetId();

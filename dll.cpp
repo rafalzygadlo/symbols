@@ -781,6 +781,7 @@ void CMapPlugin::ReadAlarm(void *db)
 		ptr->SetName(Convert(row[FI_VIEW_ALARM_ALARM_NAME]));
 		ptr->SetConfirmed(atoi(row[FI_VIEW_ALARM_CONFIRMED]));
 		ptr->SetType(atoi(row[FI_VIEW_ALARM_ALARM_TYPE]));
+		ptr->SetAlarmOnDate(Convert(row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]));
 		ptr->SetExists(true);
 		
 		if(!ptr->GetConfirmed())
@@ -1222,7 +1223,6 @@ void CMapPlugin::Options()
 	delete OptionsDialog;
 	
 	WriteGlobalConfigDB();
-
 }
 
 void CMapPlugin::SBMS()
@@ -1263,8 +1263,12 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SBMS),this, MenuSBMS );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
-	NaviApiMenu->AddItem(L"-",this, NULL );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
+
+	if(db_check_right(MODULE_OPTION,ACTION_OPTION,_GetUID()))
+	{
+		NaviApiMenu->AddItem(L"-",this, NULL );
+		NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
+	}
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 

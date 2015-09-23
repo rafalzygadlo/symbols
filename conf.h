@@ -401,18 +401,18 @@
 #define CHECK_REPORT_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //
 
-#define MODULE_AREA "area"
-#define MODULE_SEAWAY "seaway"
-#define MODULE_BATTERY "battery"
-#define MODULE_SYMBOL "symbol"
-#define MODULE_SYMBOL_TYPE "symbol_type"
-#define MODULE_ITEM "item"
-#define MODULE_PICTURE "picture"
-#define MODULE_SYMBOL_GROUP "symbol_group"
-#define MODULE_BASE_STATION "base_station"
-#define MODULE_CHARACTERISTIC "characteristic"
-#define MODULE_SBMS	"sbms"
-
+#define MODULE_AREA				"area"
+#define MODULE_SEAWAY			"seaway"
+#define MODULE_BATTERY			"battery"
+#define MODULE_SYMBOL			"symbol"
+#define MODULE_SYMBOL_TYPE		"symbol_type"
+#define MODULE_ITEM				"item"
+#define MODULE_PICTURE			"picture"
+#define MODULE_SYMBOL_GROUP		"symbol_group"
+#define MODULE_BASE_STATION		"base_station"
+#define MODULE_CHARACTERISTIC	"characteristic"
+#define MODULE_SBMS				"sbms"
+#define MODULE_OPTION			"option"
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -428,6 +428,7 @@
 #define ACTION_PROPERTIES	"properties"
 #define ACTION_MANAGEMENT	"management"
 #define ACTION_ADD_TO_GROUP "add_to_group"
+#define ACTION_OPTION		"option"
 
 //TABELE
 #define TABLE_AREA					"area"
