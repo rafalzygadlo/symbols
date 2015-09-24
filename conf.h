@@ -277,6 +277,10 @@
 #define MSG_ALARMS						157
 #define MSG_LIGHT_RIPLE_DELAY			158
 #define MSG_EXPORT						159
+#define MSG_SET_LIGHT_TIME				160
+#define MSG_SET_LIGHT_INTENSITY			161
+#define MSG_SET_PHOTOCELL_RESIST		162
+#define MSG_SET_RIPLE_DELAY				163
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -853,7 +857,7 @@
 #define COMMAND_PHOTO_CELL_RESISTANCE	5	//fotorezystor czułość
 #define COMMAND_RIPLE_DELAY				6	//opóźnienie impulsu
 #define COMMAND_POWER_OFF				7	//ręczne wyłączenie
-#define COMMAND_GET_TIME				8	//pobierz czas
+#define COMMAND_GET_TIME				8	//pobierz czas (SBMS)
 #define COMMAND_STANDARD_REPORT			9	//standardowy raport
 #define COMMAND_GET_UPTIME				10	//uptime
 #define COMMAND_LIGHT_ON				11	//light on off
@@ -864,8 +868,9 @@
 #define COMMAND_AUTO_MANAGEMENT			16	//człowiek coś tam
 #define COMMAND_POWER					17	//ais power
 #define COMMAND_ACCEL_THRESHOLD			18	//próg akcelerometru
+#define COMMAND_SET_TIME				19	//ustaw czas (TYLKO DLA AM6)
 
-#define COMMAND_COUNT 19 //ilosc komend
+#define COMMAND_COUNT 20 //ilosc komend
 // . . . . . . . . . . . . . . . . . . . .
 
 #define DEFAULT_RESTRICTED_AREA_RADIUS	50		//metry

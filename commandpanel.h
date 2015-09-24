@@ -14,12 +14,19 @@ class CCommandPanel: public wxPanel
 	wxSlider *m_FlashCode;
 	wxSlider *m_DriveCurrent;
 	wxSlider *m_PowerOfLight;
+	wxSlider *m_PhotoCellResistSlider;
+	wxSlider *m_LightIntensitySlider;
 	//wxCheckBox *m_ForcedOff;
 	wxCheckBox *m_Time;
 	wxCheckBox *m_Uptime;
+	wxCheckBox *m_LightTime;
+	wxCheckBox *m_LightIntensity;
+	wxCheckBox *m_PhotoCellResistant;
+	wxCheckBox *m_RipleDelay;
 	wxCheckBox *m_SeasonControl;
 	wxCheckBox *m_StandardReport;
 	wxTextCtrl *m_TextLog;
+	wxTextCtrl *m_RipleDelayEdit;
 
 	wxButton *m_LightOn;
 	wxButton *m_LightOff;
@@ -34,6 +41,10 @@ class CCommandPanel: public wxPanel
 	wxPanel *m_TimePanel;
 	wxPanel *m_UptimePanel;
 	wxPanel *m_TextLogPanel;
+	wxPanel *m_LightTimePanel;
+	wxPanel *m_LightIntensityPanel;
+	wxPanel *m_PhotoCellResistantPanel;
+	wxPanel *m_RipleDelayPanel;
 	
 	wxStaticText *m_InfoText;
 	wxButton *m_ButtonSend;
@@ -50,6 +61,10 @@ class CCommandPanel: public wxPanel
 	bool m_UptimeValue;
 	bool m_AutoValue;
 	bool m_LightOnValue;
+	bool m_LightTimeValue;
+	bool m_LightIntensityValue;
+	bool m_PhotoCellResistValue;
+	bool m_RipleDelayValue;
 
 	void OnDriveCurrent(wxCommandEvent &event);
 	void OnPowerOfLight(wxCommandEvent &event);
@@ -61,11 +76,16 @@ class CCommandPanel: public wxPanel
 	void OnUptime(wxCommandEvent &event);
 	void OnAuto(wxCommandEvent &event);
 	void OnManual(wxCommandEvent &event);
+	void OnLightTime(wxCommandEvent &event);
+	void OnLightIntensity(wxCommandEvent &event);
+	void OnPhotoCellResistant(wxCommandEvent &event);
+	void OnRipleDelay(wxCommandEvent &event);
 
 	
 	void OnButtonOk(wxCommandEvent &event);
 	void OnButtonCancel(wxCommandEvent &event);
 	void SetButtonState();
+
 	wxPanel *StandardReportPanel(wxPanel *parent);
 	wxPanel *AutoPanel(wxPanel *parent);
 	wxPanel *LightPanel(wxPanel *parent);
@@ -78,6 +98,10 @@ class CCommandPanel: public wxPanel
 	wxPanel *GetCommandPanel(wxPanel *parent);
 	wxPanel *GetAutoPanel(wxPanel *parent);
 	wxPanel *TextLogPanel(wxPanel *parent);
+	wxPanel *SetLightTimePanel(wxPanel *parent);
+	wxPanel *SetLightIntensityPanel(wxPanel *parent);
+	wxPanel *SetPhotoCellResistantPanel(wxPanel *parent);
+	wxPanel *SetRipleDelayPanel(wxPanel *parent);
 
 	void EnableControls(bool v);
 	
@@ -118,6 +142,14 @@ public:
 		ID_UPTIME,
 		ID_AUTO,
 		ID_MANUAL,
+		ID_LIGHT_TIME,
+		ID_LIGHT_INTENSITY,
+		ID_PHOTOCELL_RESIST,
+		ID_RIPLE_DELAY,
+		ID_RIPLE_DELAY_EDIT,
+		ID_PHOTOCELL_RESIST_SLIDER,
+		ID_RIPLE_DELAY_UNIT,
+		ID_LIGHT_INTENSITY_SLIDER
 	};
 
 };

@@ -176,12 +176,13 @@ const wchar_t *nvLanguage[][2] =
 	{L"Position From",L"Pozycja z.."},
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
+<<<<<<< HEAD
 	{L"Riple delay",L"OpóŸnienie impulsu"},
+	
+=======
 	{L"Export..",L"Export.."},
-	{L"Set internal clock",L"Ustaw wewnêtrzny czas"},
-	{L"Set light intensity",L"Ustaw intensywnoœæ œwiecenia"},
-	{L"Set photocell resistant",L"Ustaw czu³oœæ fotorezystora"},
-	{L"Set riple delay",L"Ustaw opóŸnienie impulsu"},
+		
+>>>>>>> 498e1da5877fdca7552bf26934517da03646967f
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
