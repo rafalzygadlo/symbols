@@ -785,6 +785,13 @@ void CMapPlugin::ReadAlarm(void *db)
 		ptr->SetAlarmOnDate(Convert(row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]));
 		ptr->SetExists(true);
 		
+		if(atoi(row[FI_VIEW_ALARM_ID_USER]) > 0)
+		{
+			ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
+			ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
+		
+		}
+
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
 		

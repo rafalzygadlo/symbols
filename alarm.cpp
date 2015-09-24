@@ -50,6 +50,16 @@ void CAlarm::SetAlarmOnDate(wxString v)
 	m_AlarmOnDate = v;
 }
 
+void CAlarm::SetUserFirstName(wxString v)
+{
+	m_UserFirstName = v;
+}
+
+void CAlarm::SetUserLastName(wxString v)
+{
+	m_UserLastName = v;
+}
+
 //GET
 int CAlarm::GetId()
 {
@@ -89,4 +99,14 @@ int CAlarm::GetType()
 wxString CAlarm::GetAlarmOnDate()
 {
 	return m_AlarmOnDate;
+}
+
+wxString CAlarm::GetUserFirstName()
+{
+	return m_UserFirstName;
+}
+
+wxString CAlarm::GetUserLastName()
+{
+	return m_UserLastName;
 }

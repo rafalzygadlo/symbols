@@ -163,6 +163,7 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	nvRGBA c = GetAlarmTypeColor(ptr->GetType());
 	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
 	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetAlarmOnDate());
+	str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
 		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE));

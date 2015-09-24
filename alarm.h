@@ -29,6 +29,8 @@ class CAlarm
 	wxString m_SymbolName;
 	wxString m_AlarmOnDate;
 	wxString m_AlarmOffDate;
+	wxString m_UserFirstName;
+	wxString m_UserLastName;
 	bool m_New;
 	bool m_Exists;
 	bool m_Confirmed;
@@ -45,6 +47,8 @@ public:
 	void SetConfirmed(bool v);
 	void SetType(int v);
 	void SetAlarmOnDate(wxString v);
+	void SetUserFirstName(wxString v);
+	void SetUserLastName(wxString v);
 			
 	//GET
 	int GetId();
@@ -55,6 +59,8 @@ public:
 	bool GetConfirmed();
 	int GetType();
 	wxString GetAlarmOnDate();
+	wxString GetUserFirstName();
+	wxString GetUserLastName();
 	
 
 };
