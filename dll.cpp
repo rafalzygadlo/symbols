@@ -788,8 +788,7 @@ void CMapPlugin::ReadAlarm(void *db)
 		if(atoi(row[FI_VIEW_ALARM_ID_USER]) > 0)
 		{
 			ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
-			ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
-		
+			ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_LAST_NAME]));
 		}
 
 		if(!ptr->GetConfirmed())
