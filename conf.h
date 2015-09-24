@@ -54,6 +54,7 @@
 #define KEY_SCALE_FACTOR	"scale_factor"
 #define KEY_RESTRICTED_AREA	"restricted_area"
 
+#define DEFAULT_EXPORT_DIRECTORY "export"
 
 #define PAGE_ALL	1
 #define PAGE_ALARM	2
@@ -281,6 +282,11 @@
 #define MSG_SET_LIGHT_INTENSITY			161
 #define MSG_SET_PHOTOCELL_RESIST		162
 #define MSG_SET_RIPLE_DELAY				163
+#define MSG_FROM						164
+#define MSG_TO							165
+#define MSG_EXPORTED_TO_FILE			166
+#define MSG_ERROR_WRITING_FILE			167
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -405,18 +411,18 @@
 #define CHECK_REPORT_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //
 
-#define MODULE_AREA "area"
-#define MODULE_SEAWAY "seaway"
-#define MODULE_BATTERY "battery"
-#define MODULE_SYMBOL "symbol"
-#define MODULE_SYMBOL_TYPE "symbol_type"
-#define MODULE_ITEM "item"
-#define MODULE_PICTURE "picture"
-#define MODULE_SYMBOL_GROUP "symbol_group"
-#define MODULE_BASE_STATION "base_station"
-#define MODULE_CHARACTERISTIC "characteristic"
-#define MODULE_SBMS	"sbms"
-
+#define MODULE_AREA				"area"
+#define MODULE_SEAWAY			"seaway"
+#define MODULE_BATTERY			"battery"
+#define MODULE_SYMBOL			"symbol"
+#define MODULE_SYMBOL_TYPE		"symbol_type"
+#define MODULE_ITEM				"item"
+#define MODULE_PICTURE			"picture"
+#define MODULE_SYMBOL_GROUP		"symbol_group"
+#define MODULE_BASE_STATION		"base_station"
+#define MODULE_CHARACTERISTIC	"characteristic"
+#define MODULE_SBMS				"sbms"
+#define MODULE_OPTION			"option"
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -432,6 +438,7 @@
 #define ACTION_PROPERTIES	"properties"
 #define ACTION_MANAGEMENT	"management"
 #define ACTION_ADD_TO_GROUP "add_to_group"
+#define ACTION_OPTION		"option"
 
 //TABELE
 #define TABLE_AREA					"area"
@@ -820,17 +827,21 @@
 #define FN_VIEW_SYMBOL_NUMBER				"number"
 
 // pola widoku _VIEW_ALARM
-#define FI_VIEW_ALARM_ID					0
-#define FI_VIEW_ALARM_ID_SYMBOL				1
-#define FI_VIEW_ALARM_ID_SBMS				2
-#define FI_VIEW_ALARM_SYMBOL_NAME			3
-#define FI_VIEW_ALARM_SYMBOL_NUMBER			4
-#define FI_VIEW_ALARM_ALARM_NAME			5
-#define FI_VIEW_ALARM_ALARM_TYPE			6
-#define FI_VIEW_ALARM_ACTIVE				7
-#define FI_VIEW_ALARM_CONFIRMED				8
-#define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME	9
-#define FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	10
+#define FI_VIEW_ALARM_ID						0
+#define FI_VIEW_ALARM_ID_SYMBOL					1
+#define FI_VIEW_ALARM_ID_SBMS					2
+#define FI_VIEW_ALARM_ID_USER					3
+#define FI_VIEW_ALARM_SYMBOL_NAME				4
+#define FI_VIEW_ALARM_SYMBOL_NUMBER				5
+#define FI_VIEW_ALARM_ALARM_NAME				6
+#define FI_VIEW_ALARM_ALARM_TYPE				7
+#define FI_VIEW_ALARM_USER_FIRST_NAME			8
+#define FI_VIEW_ALARM_USER_LAST_NAME			9
+#define FI_VIEW_ALARM_ACTIVE					10
+#define FI_VIEW_ALARM_CONFIRMED					11
+#define FI_VIEW_ALARM_SET_LOCAL_UTC_TIME		12
+#define FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME		13
+#define FI_VIEW_ALARM_CONFIRMED_LOCAL_UTC_TIME	14
 
 // pola widoku _VIEW_LIGHT
 #define FI_VIEW_LIGHT_ID_SYMBOL				0

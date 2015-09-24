@@ -200,11 +200,10 @@ void CPicturePanel::Read()
 		
 	}
 
-	if(m_Type > 0)
-		this->Show(true);
-	else
-		this->Show(show);
-
+	if(m_Type == PICTURE_PANEL_PICKER || m_Type == PICTURE_PANEL_NEW)
+		show = true;
+	
+	this->Show(show);
 	this->Refresh();
 	this->Layout();
 	this->GetParent()->Layout();

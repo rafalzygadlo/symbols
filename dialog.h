@@ -26,14 +26,15 @@ class CDialog : public wxDialog
 	void ReadConfig();
 	void WriteConfig();
 	void OnRefresh(wxCommandEvent &event);
+	void OnExport(wxCommandEvent &event);
 	
-
 public:
 	CDialog(void *db, int control_type, bool picker = false);
 	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
 	
+	DECLARE_EVENT_TABLE();
 	enum
 	{
 		ID_EXPORT = 1100,
@@ -85,7 +86,8 @@ class CDialogPanel: public wxPanel
 	void EditName(int id); // wszystkie tabele z polami [type]
 	void EditType(int id); // wszystkie tabele z polami [type]
 	void EditPicture(int id);
-	
+	void ExportAlarmDialog();
+
 	void Read();
 	void ReadData();
 	void SetStatus();
@@ -111,8 +113,7 @@ class CDialogPanel: public wxPanel
 	void OnSearchText(wxCommandEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnRefresh(wxCommandEvent &event);
-
-
+	
 	void ReadConfig();
 	void WriteConfig();
 	
@@ -144,6 +145,7 @@ public:
 	void OnAddToGroup(int id);
 	void OnColumnCLick(wxString field, int order);
 	void OnSelect(int id);
+	void OnExport();
 	void SetSlave(CDialogPanel *ptr);
 
 	int _GetId();
@@ -159,7 +161,6 @@ public:
 		ID_SEARCH,
 		ID_TICK_SEARCH,
 		ID_REFRESH,
-		
 	};
 
 };

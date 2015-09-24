@@ -182,6 +182,11 @@ const wchar_t *nvLanguage[][2] =
 	{L"Set light intensity",L"Ustaw intensywnoœæ œwiecenia"},
 	{L"Set photocell resistant",L"Ustaw czu³oœæ fotorezystora"},
 	{L"Set riple delay",L"Ustaw opóŸnienie impulsu"},
+	{L"Date From",L"Data Od"},
+	{L"Date To",L"Date Do"},
+	{L"Exported to file",L"Wyeksportowano do pliku"},
+	{L"Error writing file",L"B³¹d zapisu pliku"},
+		
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -1104,6 +1109,7 @@ wxString GetLightOnAsString(int v)
 		case LIGHT_ON:				return GetMsg(MSG_LIGHT_IS_ON);
 		case LIGHT_OFF:				return GetMsg(MSG_LIGHT_IS_OFF);
 		case LIGHT_NOT_AVAILABLE:	return GetMsg(MSG_NA);
+		default :					return GetMsg(MSG_NA);
 	}
 }
 
@@ -1258,6 +1264,7 @@ nvRGBA GetAlarmTypeColor(int id)
 	{
 		case ALARM_TYPE_ALARM:		return GetDefaultColor(ALARM_ALARM_COLOR);
 		case ALARM_TYPE_WARNING:	return GetDefaultColor(ALARM_WARNING_COLOR);
+		default:					return GetDefaultColor(ALARM_WARNING_COLOR);
 	}
 }
 
@@ -1269,4 +1276,3 @@ void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)
 
 }
 #endif
-

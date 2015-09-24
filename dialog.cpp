@@ -12,6 +12,8 @@
 #include "light.h"
 #include "conf.h"
 #include "symbolgroup.h"
+#include "export.h"
+#include "datedialog.h"
 
 SHeader Header[] =
 {
@@ -73,9 +75,6 @@ SHeader Header[] =
 	{CONTROL_COMMAND,80,  {FI_COMMAND_COMMAND  , FN_COMMAND_COMMAND, MSG_COMMAND} },
 	{CONTROL_COMMAND,80,  {FI_COMMAND_ID_COMMAND  , FN_COMMAND_ID_COMMAND, MSG_CONFIRMED} },
 	
-
-
-	
 	{-1},
 
 };
@@ -94,6 +93,10 @@ SIds Id[] =
 	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 	{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
+
+BEGIN_EVENT_TABLE(CDialog,wxDialog)
+	EVT_BUTTON(ID_EXPORT,OnExport)
+END_EVENT_TABLE()
 
 CDialog::CDialog(void *db,int control_type, bool picker)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX)
@@ -211,6 +214,11 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 int CDialog::_GetId()
 {
 	return m_DialogPanel->_GetId();
+}
+
+void CDialog::OnExport(wxCommandEvent &event)
+{
+	m_DialogPanel->OnExport();
 }
 
 BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
@@ -357,6 +365,29 @@ void CDialogPanel::OnRefresh(wxCommandEvent &event)
 	Read();
 	Select();
 }
+
+void CDialogPanel::OnExport()
+{
+	switch(m_ControlType)
+	{
+		case CONTROL_SYMBOL_ALARM:	ExportAlarmDialog();	break;
+	}
+}
+
+void CDialogPanel::ExportAlarmDialog()
+{
+	CDateDialog *DateDialog = new CDateDialog();
+	
+	if(DateDialog->ShowModal() == wxID_OK)
+	{
+		DateDialog->GetTo();
+		DateDialog->GetFrom();
+		ExportAlarm(m_DB);
+	}
+
+	delete DateDialog;
+}
+
 
 void CDialogPanel::SetSearchText(const wchar_t *txt)
 {
