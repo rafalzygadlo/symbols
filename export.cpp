@@ -12,17 +12,23 @@ void ExportAlarm(void *db)
 	void *result = db_result(db);
 			
 	char **row;
-	wxString fname = wxString::Format(_("%s/alarm.csv"),GetWorkDir());
+	wxDateTime dt = wxDateTime::Now();
+	wxString fname = wxString::Format(_("%s\\%s\\alarm_%d_%d_%d.csv"),GetWorkDir(),DEFAULT_EXPORT_DIRECTORY,dt.GetYear(),dt.GetMonth(),dt.GetDay());
 	FILE *f = fopen(fname.mb_str(wxConvUTF8),"wb");
 	
 	if(f == NULL)
-		wxMessageBox(_("errr"));
+	{
+		wxMessageBox(_(wxString::Format(_("%s %s"),GetMsg(MSG_ERROR_WRITING_FILE),fname)));
+		return;
+	}
 	
 	while(row = (char**)db_fetch_row(result))
 	{
-		fprintf(f,"%s,%s,%s,%s,%s\r\n",row[FI_VIEW_ALARM_SYMBOL_NAME],row[FI_VIEW_ALARM_ALARM_NAME],row[FI_VIEW_ALARM_USER_FIRST_NAME],row[FI_VIEW_ALARM_USER_LAST_NAME],row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]);	
+		fprintf(f,"%s,%s,%s,%s,%s\r\n",row[FI_VIEW_ALARM_SYMBOL_NAME],row[FI_VIEW_ALARM_ALARM_NAME],row[FI_VIEW_ALARM_USER_FIRST_NAME],row[FI_VIEW_ALARM_USER_LAST_NAME],row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]);
 	}
 
 	fclose(f);
-	wxMessageBox("Wyeksportowano");
+	
+	wxMessageBox(wxString::Format(_("%s: %s"),GetMsg(MSG_EXPORTED_TO_FILE),fname));
+
 }

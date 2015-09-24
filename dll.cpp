@@ -450,6 +450,7 @@ void CMapPlugin::SetUID(int uid)
 {
 	_SetUID(uid);
 	ReadConfigDB();
+	
 }
 
 void CMapPlugin::WritePasswordConfig(char *v)
@@ -1003,9 +1004,9 @@ void CMapPlugin::Run(void *Params)
 		wxString str(db_error(m_DB),wxConvUTF8);
 		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR));
 		return;
-	}	
+	}
 	
-	CreateApiMenu(); // jezyki
+	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
 	/*
@@ -1218,11 +1219,13 @@ void CMapPlugin::SymbolGroup()
 
 void CMapPlugin::Options()
 {
-	COptionsDialog *OptionsDialog = new COptionsDialog();
-	OptionsDialog->ShowModal();
-	delete OptionsDialog;
-	
-	WriteGlobalConfigDB();
+	if(db_check_right(MODULE_OPTION,ACTION_OPTION,_GetUID()))
+	{
+		COptionsDialog *OptionsDialog = new COptionsDialog();
+		OptionsDialog->ShowModal();
+		delete OptionsDialog;
+		WriteGlobalConfigDB();
+	}
 }
 
 void CMapPlugin::SBMS()
@@ -1263,12 +1266,9 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SBMS),this, MenuSBMS );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
-
-	if(db_check_right(MODULE_OPTION,ACTION_OPTION,_GetUID()))
-	{
-		NaviApiMenu->AddItem(L"-",this, NULL );
-		NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
-	}
+	NaviApiMenu->AddItem(L"-",this, NULL );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
+	
 }	
 
 void *CMapPlugin::MenuNew(void *NaviMapIOApiPtr, void *Input) 

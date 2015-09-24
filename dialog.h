@@ -86,7 +86,8 @@ class CDialogPanel: public wxPanel
 	void EditName(int id); // wszystkie tabele z polami [type]
 	void EditType(int id); // wszystkie tabele z polami [type]
 	void EditPicture(int id);
-	
+	void ExportAlarmDialog();
+
 	void Read();
 	void ReadData();
 	void SetStatus();

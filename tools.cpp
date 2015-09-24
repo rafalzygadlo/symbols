@@ -178,6 +178,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Alarms (%d)",L"Alarmy (%d)"},
 	{L"Riple delay",L"OpóŸnienie impulsu"},
 	{L"Export..",L"Export.."},
+	{L"Date From",L"Data Od"},
+	{L"Date To",L"Date Do"},
+	{L"Exported to file",L"Wyeksportowano do pliku"},
+	{L"Error writing file",L"B³¹d zapisu pliku"},
 		
 };
 

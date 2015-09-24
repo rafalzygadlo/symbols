@@ -54,6 +54,7 @@
 #define KEY_SCALE_FACTOR	"scale_factor"
 #define KEY_RESTRICTED_AREA	"restricted_area"
 
+#define DEFAULT_EXPORT_DIRECTORY "export"
 
 #define PAGE_ALL	1
 #define PAGE_ALARM	2
@@ -277,6 +278,11 @@
 #define MSG_ALARMS						157
 #define MSG_LIGHT_RIPLE_DELAY			158
 #define MSG_EXPORT						159
+#define MSG_FROM						160
+#define MSG_TO							161
+#define MSG_EXPORTED_TO_FILE			162
+#define MSG_ERROR_WRITING_FILE			163
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0

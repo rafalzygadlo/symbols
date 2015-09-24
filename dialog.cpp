@@ -13,6 +13,7 @@
 #include "conf.h"
 #include "symbolgroup.h"
 #include "export.h"
+#include "datedialog.h"
 
 SHeader Header[] =
 {
@@ -369,9 +370,24 @@ void CDialogPanel::OnExport()
 {
 	switch(m_ControlType)
 	{
-		case CONTROL_SYMBOL_ALARM:	ExportAlarm(m_DB);	break;
+		case CONTROL_SYMBOL_ALARM:	ExportAlarmDialog();	break;
 	}
 }
+
+void CDialogPanel::ExportAlarmDialog()
+{
+	CDateDialog *DateDialog = new CDateDialog();
+	
+	if(DateDialog->ShowModal() == wxID_OK)
+	{
+		DateDialog->GetTo();
+		DateDialog->GetFrom();
+		ExportAlarm(m_DB);
+	}
+
+	delete DateDialog;
+}
+
 
 void CDialogPanel::SetSearchText(const wchar_t *txt)
 {
