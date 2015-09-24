@@ -892,6 +892,13 @@ void CCommandPanel::SetForcedOff(bool v)
 		m_LightOff->Disable();
 	}
 
+
+	if(GetNight())
+	{
+		m_LightOn->Disable();
+		m_LightOff->Disable();
+	}
+
 }
 
 void CCommandPanel::SetAuto(bool v)
