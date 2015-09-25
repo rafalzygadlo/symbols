@@ -43,6 +43,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CAlarmDialog *m_AlarmDialog;
 	
 	bool m_On;
+	bool m_SelectedOn;
 	bool m_Reading;
 	CTicker *m_Ticker;
 	void *m_DB;

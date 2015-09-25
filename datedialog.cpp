@@ -8,27 +8,27 @@ CDateDialog::CDateDialog()
 
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 
-	wxBoxSizer *CenterSizer = new wxBoxSizer(wxVERTICAL);
-	MainSizer->Add(CenterSizer,1,wxALL|wxEXPAND,0);
-
-    wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	CenterSizer->Add(Panel,1,wxALL|wxEXPAND,0);
-	Panel->SetBackgroundColour(*wxWHITE);
+	wxPanel *Panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer *PanelSizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(PanelSizer);
 
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
-	PanelSizer->Add(FlexSizer,0,wxALL,5);
+	MainSizer->Add(Panel,1,wxALL|wxEXPAND,5);
+
+	wxStaticBoxSizer *BoxSizer = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_ALARM_DATE));
+	PanelSizer->Add(BoxSizer,1,wxALL|wxEXPAND,5);
+	
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(4);
+	BoxSizer->Add(FlexSizer,1,wxALL|wxEXPAND,5);
 
 	wxStaticText *LabelFromTime = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_FROM));
-	FlexSizer->Add(LabelFromTime,0,wxALL,10);
+	FlexSizer->Add(LabelFromTime,0,wxALL,5);
 	m_From = new wxDatePickerCtrl(Panel,wxID_ANY);
-	FlexSizer->Add(m_From,0,wxALL,10);
+	FlexSizer->Add(m_From,0,wxALL,5);
 
 	wxStaticText *LabelToTime = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_TO));
-	FlexSizer->Add(LabelToTime,0,wxALL,10);
+	FlexSizer->Add(LabelToTime,0,wxALL,5);
 	m_To = new wxDatePickerCtrl(Panel,wxID_ANY);
-	FlexSizer->Add(m_To,0,wxALL,10);
+	FlexSizer->Add(m_To,0,wxALL,5);
 
 	wxBoxSizer *PanelButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *PanelButton = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);

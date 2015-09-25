@@ -515,7 +515,7 @@ void CSymbol::SetValues()
 	m_Broker->GetVisibleMap(m_VisibleMap);
 	
 }
-#if 0
+
 void CSymbol::RenderSelected()
 {
 	if(!m_Selected)
@@ -536,6 +536,7 @@ void CSymbol::RenderSelected()
 
 }
 
+#if 0
 void CSymbol::RenderLightOn()
 {
 	if(!m_LightOn)

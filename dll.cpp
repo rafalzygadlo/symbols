@@ -45,7 +45,8 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SBMS = NULL;
 	m_Alarm = NULL;
 	m_Command = NULL;
-	
+	m_SelectedOn = false;
+
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;
 	m_Broker = NaviBroker;
@@ -1449,8 +1450,8 @@ void CMapPlugin::SetValues()
 void CMapPlugin::RenderSelected()
 {
 	double x,y;
-	//SelectedPtr->RenderSelected();
 #if 1
+
 	x = SelectedPtr->GetLonMap(); 
 	y = SelectedPtr->GetLatMap();
 		
@@ -1461,18 +1462,23 @@ void CMapPlugin::RenderSelected()
 	glTranslatef(x, y ,0.0f);
 	glTranslatef(m_OffsetX, m_OffsetY,0.0f);
 	glLineWidth(2);
+	
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
-	c.Radius = RectWidth/1.5;
+	static bool a = true;
+	
+	if(m_SelectedOn)
+		c.Radius = RectWidth/1.5;
+	else
+		c.Radius = RectWidth*4.0;
+
 	nvDrawCircleFilled(&c);
 	glLineWidth(1);
-	glPopMatrix();
 	
+	glPopMatrix();
 	glDisable(GL_BLEND);
 
-
-	
 #endif
 
 }
@@ -1669,13 +1675,15 @@ void CMapPlugin::OnTick()
 	wxString sql;
 	int t = GetTickCount();
 
+	m_SelectedOn = !m_SelectedOn;
+
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
 
 	SetSql(sql);
 	
-SetExistsSymbol();
+	SetExistsSymbol();
 	ReadSymbol(db,sql);		//przeczytaj symbole
 	RemoveSymbol();			//usuń
 

@@ -294,6 +294,8 @@
 #define MSG_TO							165
 #define MSG_EXPORTED_TO_FILE			166
 #define MSG_ERROR_WRITING_FILE			167
+#define MSG_NO_DATA						168
+#define MSG_ALARM_DATE					169
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
