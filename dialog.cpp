@@ -380,9 +380,7 @@ void CDialogPanel::ExportAlarmDialog()
 	
 	if(DateDialog->ShowModal() == wxID_OK)
 	{
-		DateDialog->GetTo();
-		DateDialog->GetFrom();
-		ExportAlarm(m_DB);
+		ExportAlarm(m_DB,DateDialog->GetFrom().FormatISODate(),DateDialog->GetTo().FormatISODate());
 	}
 
 	delete DateDialog;

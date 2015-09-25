@@ -112,9 +112,8 @@ class CSymbol
 	void RenderBusy();
 	void RenderRestricted();
 	void RenderAlarm();
-	void RenderGPS();		//real position
+	void RenderGPS();
 	void RenderPositions();
-	void RenderSelected();
 	void RenderNewReport();
 	void RenderNoSBMS();
 			
@@ -207,6 +206,7 @@ public:
 	
 	
 	void Render();
+	void RenderSelected();
 
 };
 

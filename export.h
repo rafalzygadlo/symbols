@@ -2,6 +2,6 @@
 #define __EXPORT
 
 #include "conf.h"
-void ExportAlarm(void *db);
+void ExportAlarm(void *db, wxString from, wxString to);
 
 #endif

@@ -186,7 +186,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Date To",L"Date Do"},
 	{L"Exported to file",L"Wyeksportowano do pliku"},
 	{L"Error writing file",L"B³¹d zapisu pliku"},
-		
+	{L"No Data",L"Brak Danych"},
+	{L"Alarm Date",L"Data alarmu"}
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -280,12 +281,18 @@ wxString GetConfigFile()
 
 wxString GetWorkDir()
 {
-	static wxString buffer;
+	wxString buffer;
 	wxStandardPaths Paths = wxStandardPaths::Get();
 	buffer.Printf(wxT("%s%s%s%s"), Paths.GetDataDir().wc_str(wxConvUTF8),  wxT(DIR_SEPARATOR), wxT(DIR_WORKDIR), wxT(DIR_SEPARATOR) );
 	return buffer;
 }
 
+wxString GetProgramDir()
+{
+	wxString buffer;
+	wxStandardPaths Paths = wxStandardPaths::Get();
+	return Paths.GetDataDir();
+}
 
 wxString GetProductInfo()
 {	
@@ -1025,7 +1032,7 @@ wxString GetNvTime(nvtime_t v)
 
 void ConfirmAlarms()
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE active='%d' "),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,ALARM_ACTIVE);
+	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE active='%d' AND confirmed='%d' "),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,ALARM_ACTIVE,ALARM_NOT_CONFIRMED);
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);

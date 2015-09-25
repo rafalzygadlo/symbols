@@ -70,6 +70,7 @@ void ConfirmAlarm(int id);
 bool GetSBMSExists(void *db,int id);
 nvRGBA GetAlarmTypeColor(int id);
 void DeactivateAlarm(int id);
+wxString GetProgramDir();
 
 //COMMANDS
 void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
