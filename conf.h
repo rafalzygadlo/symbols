@@ -15,13 +15,13 @@
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
 
-#ifdef NAVI_SBMS
+//#ifdef NAVI_SBMS
 	#define PRODUCT_NAME "SBMS Monitor"
 	#define PRODUCT_COPYRIGHT "Copyright 2008/2015 by NavSim. All rights reserved"
-#else
-	#define PRODUCT_NAME "Symbol Manager"
-	#define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"	
-#endif
+//#else
+//	#define PRODUCT_NAME "Symbol Manager"
+//	#define PRODUCT_COPYRIGHT "Copyright 2010/2013 by NavSim. All rights reserved"	
+//#endif
 
 
 #define PRODUCT_VERSION "1.0"

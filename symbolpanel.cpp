@@ -73,14 +73,14 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster->Disable();
 	//m_SeasonControl->Disable();
 
-	/*
+	
 	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
 	ScrollSizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
 
 	m_ButtonManagement = new wxButton(Scroll,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
-	m_ButtonManagement->Disable();
-		
+	//m_ButtonManagement->Disable();
+	/*	
 	m_ButtonAlarm = new wxButton(Scroll,ID_ALARM,GetMsg(MSG_ALARM));
 	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
 	m_ButtonAlarm->Disable();
@@ -108,9 +108,50 @@ void CSymbolPanel::OnShowMenu(wxCommandEvent &event)
 	this->Layout();
 }
 
+
+void CSymbolPanel::ShowManagement(CSymbol *v)
+{
+	if(v == NULL)
+		return;
+	
+	if(!v->GetNoSBMS())
+	{
+		CCommandDialog *CommandDialog = new CCommandDialog(NULL,v);
+		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+
+		ptr->SetForcedOff(v->GetForcedOff());
+		ptr->SetAuto(v->GetAuto());
+			
+		CommandDialog->ShowModal();
+		delete CommandDialog;
+	
+	}else{
+			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
+	}
+}
+
 void CSymbolPanel::OnHtml(wxHtmlLinkEvent &event)
 {
 	//event.GetLinkInfo().GetHtmlCell()
+	int id =  event.GetSelection();
+
+	id = event.GetId();
+
+	wxHtmlLinkInfo link = event.GetLinkInfo();
+
+	long item;
+	link.GetHref().ToLong(&item);
+	
+	wxString t = link.GetTarget();
+
+	long action = -1;
+	t.ToLong(&action);
+
+	switch(action)
+	{
+		case HREF_ACTION_MANAGEMENT:	ShowManagement(m_Symbol);		break;
+		break;
+	}
 }
 
 void CSymbolPanel::SetPageEmpty()
@@ -154,11 +195,10 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	}
 	*/
 	//m_ButtonGraph->Enable();
-	
 	m_Html->SetPage(wxEmptyString);
 
-	//SetHeader();
 	PictureInfo(db,ptr);
+	SetHeader( m_IdSBMS );
 	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
@@ -174,11 +214,11 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	DBClose(db);
 }
 
-void CSymbolPanel::SetHeader()
+void CSymbolPanel::SetHeader( int _IdSBMS )
 {
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
-	str.Append(wxString::Format(_("<tr><td colspan=3><b><a href=\"#%d\">%s</a></b></td></tr>"),HTML_ANCHOR_LAST_REPORT,GetMsg(MSG_LAST_REPORT) ));
+	str.Append(wxString::Format(_("<tr><td colspan=3><a target=1 href='%d'>%s</a></td></tr>"),_IdSBMS,GetMsg(MSG_MANAGEMENT)));
 	str.Append(_("</table>"));
 	m_Html->AppendToPage(str);
 	
