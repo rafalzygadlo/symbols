@@ -13,7 +13,10 @@ void ExportAlarm(void *db)
 			
 	char **row;
 	wxDateTime dt = wxDateTime::Now();
-	wxString fname = wxString::Format(_("%s%s\\alarm_%d_%d_%d.csv"),GetWorkDir(),DEFAULT_EXPORT_DIRECTORY,dt.GetYear(),dt.GetMonth(),dt.GetDay());
+	wxString export_dir = wxString::Format(_("%s%s"),GetWorkDir(),DEFAULT_EXPORT_DIRECTORY);
+	wxMkDir(export_dir);
+
+	wxString fname = wxString::Format(_("%s%s\\alarm_%d_%02d_%02d.csv"),GetWorkDir(),DEFAULT_EXPORT_DIRECTORY,dt.GetYear(),dt.GetMonth(),dt.GetDay());
 	FILE *f = fopen(fname.mb_str(wxConvUTF8),"wb");
 	
 	if(f == NULL)
