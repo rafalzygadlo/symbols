@@ -17,6 +17,8 @@
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_MENU(ID_SHOW_PICTURE,OnShowMenu)
+	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
+	EVT_BUTTON(ID_GRAPH,OnGraph)
 	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
 END_EVENT_TABLE()
 
@@ -58,6 +60,7 @@ void CSymbolPanel::GetPage1()
 	//m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxCENTER,2);
 	//m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxCENTER,2);
 	//m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxCENTER,2);
+	
 	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
 	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
@@ -108,6 +111,7 @@ void CSymbolPanel::OnShowMenu(wxCommandEvent &event)
 }
 
 
+/*
 void CSymbolPanel::ShowManagement(CSymbol *v)
 {
 	if(v == NULL)
@@ -128,11 +132,24 @@ void CSymbolPanel::ShowManagement(CSymbol *v)
 			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
 	}
 }
+*/
+
+void CSymbolPanel::OnManagement(wxCommandEvent &event)
+{
+	m_Symbol->ShowManagement(m_Symbol);
+}
+
+
+void CSymbolPanel::OnGraph(wxCommandEvent &event)
+{
+	m_Symbol->ShowGraph();
+}
+
 
 void CSymbolPanel::OnHtml(wxHtmlLinkEvent &event)
 {
 	//event.GetLinkInfo().GetHtmlCell()
-	int id =  event.GetSelection();
+/*	int id =  event.GetSelection();
 
 	id = event.GetId();
 
@@ -150,7 +167,7 @@ void CSymbolPanel::OnHtml(wxHtmlLinkEvent &event)
 	{
 		case HREF_ACTION_MANAGEMENT:	ShowManagement(m_Symbol);		break;
 		break;
-	}
+	}*/
 }
 
 void CSymbolPanel::SetPageEmpty()
@@ -199,7 +216,6 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonAlarm->SetLabel(GetMsg(MSG_ALARM));
 	}
 	*/
-	//m_ButtonGraph->Enable();
 	m_Html->SetPage(wxEmptyString);
 
 	PictureInfo(db,ptr);
@@ -396,7 +412,7 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>0 [Milisekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
 		str.Append(_("</table>"));
 			
 		m_Html->AppendToPage(str);
@@ -494,6 +510,7 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 
 }
 
+/*
 void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
 {
 	/*
@@ -525,8 +542,8 @@ void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
 	m_Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
 	m_Graph->Refresh();
 	db_free_result(result);
-	*/
-}
+	
+}*/
 
 void CSymbolPanel::SetSBMS()
 {

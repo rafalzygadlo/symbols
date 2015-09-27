@@ -24,8 +24,8 @@ class CSymbolPanel : public wxPanel
 	int m_IdBaseStation;
 	int m_SBMSID;
 	wxButton *m_ButtonManagement;
-	//wxButton *m_ButtonGraph;
-	wxButton *m_ButtonAlarm;
+	wxButton *m_ButtonGraph;
+	//wxButton *m_ButtonAlarm;
 
 	CMyIcon *m_Calibrated,*m_ForcedOff,*m_PhotoCellNightTime,*m_FaultOutput,*m_SolarCharger,*m_SyncMaster,*m_SeasonControl;
 
@@ -52,7 +52,8 @@ class CSymbolPanel : public wxPanel
 	void SetSolarCharger(bool v);
 	void SetSyncMaster(bool v);
 	void SetSeasonControl(bool v);
-	void ShowManagement(CSymbol *v);
+	//void ShowManagement(CSymbol *v);
+	//void ShowGraph(CSymbol *v);
 
 public:
 

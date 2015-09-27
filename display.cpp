@@ -22,7 +22,6 @@ BEGIN_EVENT_TABLE(CDisplayPlugin,CNaviDiaplayApi)
 	EVT_MENU_RANGE(ID_MENU_BEGIN,ID_MENU_END,OnMenuRange)
 	EVT_CONTEXT_MENU(OnMenu)
 	EVT_COMMAND(ID_NIGHT_TIME,EVT_SET_NIGHT_TIME,OnSetNightTime)
-	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 END_EVENT_TABLE()
 
 
@@ -148,6 +147,7 @@ void CDisplayPlugin::OnSetNightTime(wxCommandEvent &event)
 	m_OldNight = GetNight();
 	
 }
+
 
 void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 {
@@ -423,23 +423,24 @@ void CDisplayPlugin::SignalSelect()
 	if(m_OldSelected == m_Selected)
 		return;
 
-	m_OldSelected = m_Selected;
-		
+	m_OldSelected = m_Selected;	
 	m_HtmlList->_SetSelection(m_Selected);	
 	
 	if(m_Selected)
 	{	
-		//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-			//m_ButtonManagement->Enable();
-		//else
-			//m_ButtonManagement->Disable();
 
 		m_SymbolPanel->SetPage1(m_Selected);
-	
+
+	//	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+	//		m_ButtonManagement->Enable();
+	//	else
+	//		m_ButtonManagement->Disable();
+
+			
 	}else{
 		//m_ButtonManagement->Disable();
 	}
-
+	
 }
 
 void CDisplayPlugin::ShowInfoPanel(bool show)

@@ -78,7 +78,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	void OnSetNightTime(wxCommandEvent &event);
 	void OnFilter(wxCommandEvent &event);
 	void OnManagement(wxCommandEvent &event);
-		
+	//void OnGraph(wxCommandEvent &event);
+
 public:
 	
 	CDisplayPlugin(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString& name = wxT("DisplayApiPanel") );
