@@ -79,12 +79,11 @@ void CSymbolPanel::GetPage1()
 
 	m_ButtonManagement = new wxButton(Scroll,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
-	//m_ButtonManagement->Disable();
-	/*	
-	m_ButtonAlarm = new wxButton(Scroll,ID_ALARM,GetMsg(MSG_ALARM));
-	WrapSizer->Add(m_ButtonAlarm,0,wxALL,2);
-	m_ButtonAlarm->Disable();
-	*/
+	m_ButtonManagement->Disable();	
+	m_ButtonGraph = new wxButton(Scroll,ID_GRAPH,GetMsg(MSG_GRAPH));
+	WrapSizer->Add(m_ButtonGraph,0,wxALL,2);
+	m_ButtonGraph->Disable();
+	
 	Scroll->SetScrollbars(20, 20, 20, 20);
 	SetSizer(Sizer);
 			
@@ -172,15 +171,21 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
 		
-	//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-		//m_ButtonManagement->Enable();
-	//else
-		//m_ButtonManagement->Disable();
+	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) {
+		m_ButtonManagement->Enable();
+		m_ButtonGraph->Enable();
+	} else {
+		m_ButtonManagement->Disable();
+		m_ButtonGraph->Disable();
+	};
 
-	//if(ptr->GetBusy())
-		//m_ButtonManagement->Disable();
-	//else
-		//m_ButtonManagement->Enable();
+	if(ptr->GetBusy()) {
+		m_ButtonManagement->Disable();
+		m_ButtonGraph->Disable();	
+	} else {
+		m_ButtonManagement->Enable();
+		m_ButtonGraph->Enable();
+	};
 	/*
 	int count = ptr->GetAlarmCount();
 	if(count > 0)
@@ -198,7 +203,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	m_Html->SetPage(wxEmptyString);
 
 	PictureInfo(db,ptr);
-	SetHeader( m_IdSBMS );
+	//SetHeader( m_IdSBMS );
 	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
@@ -396,14 +401,6 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 			
 		m_Html->AppendToPage(str);
 
-		//SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
-		//SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		//SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
-		//SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
-		//SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
-		//SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
-		//SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
-		
 	}
 
 	db_free_result(result);
