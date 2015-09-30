@@ -135,7 +135,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Font View",L"Widocznoœæ czcionki"},
 	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
 	{L"Symbol timeout",L"Czas oczekiwania"},
-	{L"Not In Monitoring",L"Nie monitorowany"},
+	{L"Not In Monitoring",L"Brak ³¹cznoœci"},	//nie monitorowany ma byc
 	{L"Send command(s)",L"Wyœlij komendy"},
 	{L"Add to group",L"Dodaj do grupy"},
 	{L"Confirm",L"PotwierdŸ"},

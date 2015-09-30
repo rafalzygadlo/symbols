@@ -636,18 +636,13 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetRLat(lat);
 		ptr->SetRLonMap(to_x);
 		ptr->SetRLatMap(-to_y);
-		
-		ptr->SetLon(lon);
-		ptr->SetLat(lat);
-		ptr->SetLonMap(to_x);
-		ptr->SetLatMap(-to_y);
-		
+				
 		ptr->SetId(id);
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
 		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
-		ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
+		//ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
 		
 		bool exists = false;
 		
@@ -684,6 +679,14 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetNoSBMS(!exists);
 		ptr->SetInit(true);
 		ptr->SetExists(true);
+
+		if(!exists)
+		{
+			ptr->SetLon(lon);
+			ptr->SetLat(lat);
+			ptr->SetLonMap(to_x);
+			ptr->SetLatMap(-to_y);
+		}
 		
 		if(add)
 			m_SymbolList->Add(ptr);
@@ -746,6 +749,13 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 		ptr->SetLat(lat);
 		ptr->SetLonMap(to_x);
 		ptr->SetLatMap(-to_y);
+	}else{
+	
+		ptr->SetLon(ptr->GetRLon());
+		ptr->SetLat(ptr->GetRLat());
+		ptr->SetLonMap(ptr->GetRLonMap());
+		ptr->SetLatMap(ptr->GetRLatMap());
+	
 	}
 
 	ptr->SetValidGPS(true);
@@ -1260,7 +1270,7 @@ void CMapPlugin::CreateApiMenu(void)
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_ALARM),this, MenuAlarm );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMAND),this, MenuCommand );
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_COMMAND),this, MenuCommand );
 	NaviApiMenu->AddItem(L"-",this, NULL );
 	//NaviApiMenu->AddItem(L"-",this,NULL);
 	NaviApiMenu->AddItem((wchar_t*)GetMsg(MSG_AREA),this,MenuArea);
