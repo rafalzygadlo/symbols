@@ -48,9 +48,9 @@ public:
 	void SetId(int v);
 	//pozycja referencyjna
 	void SetRLon(double v);	void SetRLat(double v);	void SetRLonMap(double v);	void SetRLatMap(double v);
+	
 	void SetName(wxString v);
-	
-	
+		
 	void SetDB(void *db);
 	void SetLon(double v);
 	void SetLat(double v);

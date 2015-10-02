@@ -2,6 +2,7 @@
 #define __SYMBOLPANEL_H
 
 #include <wx/html/htmlwin.h>
+#include <wx/webview.h>
 #include "symbolpanel.h"
 #include "navibroker.h"
 #include "tgamem.h"
@@ -16,15 +17,16 @@
 class CGraphDialog;
 class CSymbolPanel : public wxPanel
 {
-	CPicturePanel *m_PicturePanel;
+	//CPicturePanel *m_PicturePanel;
 	CSymbol *m_Symbol;	
 	CGraphDialog *m_GraphDialog;
-	wxHtmlWindow *m_Html;
+	wxWebView *m_Html;
 	int m_IdSBMS;
 	int m_IdBaseStation;
 	int m_SBMSID;
 	wxButton *m_ButtonManagement;
 	wxButton *m_ButtonGraph;
+	wxString m_HtmlString;
 	//wxButton *m_ButtonAlarm;
 
 	CMyIcon *m_Calibrated,*m_ForcedOff,*m_PhotoCellNightTime,*m_FaultOutput,*m_SolarCharger,*m_SyncMaster,*m_SeasonControl;
@@ -45,6 +47,8 @@ class CSymbolPanel : public wxPanel
 	void OnMenu(wxContextMenuEvent &event);
 	void OnShowMenu(wxCommandEvent &event);
 	void OnHtml(wxHtmlLinkEvent &event);
+	void OnNavigationRequest(wxWebViewEvent& event);
+
 	void SetCalibrated(bool v);
 	void SetForcedOff(bool v);
 	void SetPhotoCellNightTime(bool v);

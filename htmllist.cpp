@@ -28,6 +28,7 @@ CHtmlList::CHtmlList( wxWindow *Parent)
 	m_List = NULL;
 	SetItemCount(0);
 	SetMargins(10,10);
+		
 	//SetSelectionBackground(wxColor(200,200,200));
 }
 
@@ -194,7 +195,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
 		
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetNoSBMS())
 	{
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
@@ -234,7 +235,9 @@ wxString CHtmlList::OnGetItem(size_t item) const
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetBaseStationName());
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetAgeAsString());
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetChargingAsString());
+			
 		}
+
 	
 	}
 	

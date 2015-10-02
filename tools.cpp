@@ -6,7 +6,8 @@
 #include "db.h"
 #include "stdio.h"
 #include <wx/msw/wrapshl.h>
-#include "NaviToolsLib.h"
+#include "navitoolslib.h"
+#include "naviencryption.h"
 #include "options.h"
 #include "alarm.h"
 
@@ -1185,6 +1186,8 @@ void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, f
 	SUN_PRECISION OnLight = (SUN_PI - (E + 0.017453293 * lon + (-1.0) * acos(C))) * 57.295779551 / 15.0;
 	SUN_PRECISION OffLight = (SUN_PI - (E + 0.017453293 * lon + 1.0 * acos(C))) * 57.29577951 / 15.0;
 
+	OffLight = abs(OffLight);
+
 	float HourPercent = OnLight - (uint32_t)OnLight;
 	*TimeOnLight = (3600 * (uint32_t)OnLight) + (uint32_t)(3600.0 * HourPercent);
 	HourPercent = OffLight - (uint32_t)OffLight;
@@ -1275,6 +1278,33 @@ nvRGBA GetAlarmTypeColor(int id)
 	}
 }
 
+bool GetPictureAsBase64(void *db, int id_symbol, char *&base64)
+{
+	wxString sql;
+	sql = wxString::Format(_("SELECT data FROM `%s`,`%s` WHERE id_symbol='%d' AND `%s`.id_picture=id"),TABLE_SYMBOL_PICTURE,TABLE_PICTURE,id_symbol,TABLE_SYMBOL_PICTURE);
+		
+	my_query(db,sql);
+
+	bool _result = false;
+	void *result = db_result(db);
+	char **row = (char**)db_fetch_row(result);
+	unsigned long *len = db_fetch_lengths(result);
+	
+	if(row && len)
+	{
+		int size = len[0];
+			
+		if(size > 0)
+		{
+			base64 = Base64Encode((unsigned char*)row[0],len[0]);
+			_result = true;
+		}
+	}
+	
+	db_free_result(result);
+
+	return _result;
+}
 
 #if 0
 void SetDriveCurrent(int id_sbms,m_DriveCurrentValue)

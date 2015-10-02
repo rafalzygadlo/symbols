@@ -20,6 +20,7 @@ BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
 	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
+	EVT_WEBVIEW_NAVIGATING(ID_HTML,OnNavigationRequest)
 END_EVENT_TABLE()
 
 
@@ -28,13 +29,15 @@ CSymbolPanel::CSymbolPanel(wxWindow *parent)
 {
 	m_Symbol = NULL;
 	m_GraphDialog = NULL;
+	m_HtmlString = wxEmptyString;
 	GetPage1();
 }
 CSymbolPanel::~CSymbolPanel()
 {
 	if(m_GraphDialog)
 		delete m_GraphDialog;
-		
+
+	
 }
 
 void CSymbolPanel::GetPage1()
@@ -48,8 +51,8 @@ void CSymbolPanel::GetPage1()
 	Scroll->SetSizer(ScrollSizer);
 	
 
-	m_PicturePanel = new CPicturePanel(NULL,Scroll);
-	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+//	m_PicturePanel = new CPicturePanel(NULL,Scroll);
+//	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 	
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
@@ -64,7 +67,8 @@ void CSymbolPanel::GetPage1()
 	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
 	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
 	
-	m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+	//m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+	m_Html = wxWebView::New(Scroll,ID_HTML,wxEmptyString);
 	//m_Html->SetMinSize(wxSize(200,450));
 	
 	ScrollSizer->Add(m_Html,1,wxALL|wxEXPAND,0);
@@ -106,7 +110,7 @@ void CSymbolPanel::OnShowMenu(wxCommandEvent &event)
 {
 	bool static a = false;
 	a =!a;
-	m_PicturePanel->Show(a);
+//	m_PicturePanel->Show(a);
 	this->Layout();
 }
 
@@ -203,33 +207,23 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 		m_ButtonManagement->Enable();
 		m_ButtonGraph->Enable();
 	};
-	/*
-	int count = ptr->GetAlarmCount();
-	if(count > 0)
-	{
-		m_ButtonAlarm->Enable();
-		m_ButtonAlarm->SetLabel(wxString::Format(_("%s (%d)"),GetMsg(MSG_ALARM),count));
-
-	}else{
-
-		m_ButtonAlarm->Disable();
-		m_ButtonAlarm->SetLabel(GetMsg(MSG_ALARM));
-	}
-	*/
-	m_Html->SetPage(wxEmptyString);
-
+	m_HtmlString.Clear();
+	m_HtmlString.Append("<html>");
 	PictureInfo(db,ptr);
 	//SetHeader( m_IdSBMS );
 	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
 
-	if(ptr->GetInMonitoring()) {
-
+	if(ptr->GetInMonitoring()) 
+	{
 		SBMSInfo(db,m_IdSBMS);
 		LightInfo(db,ptr->GetId());
-
-	};
+	}
+	
+	m_HtmlString.Append("</html>");
+	
+	m_Html->SetPage(m_HtmlString,wxEmptyString);
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	DBClose(db);
@@ -241,7 +235,8 @@ void CSymbolPanel::SetHeader( int _IdSBMS )
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
 	str.Append(wxString::Format(_("<tr><td colspan=3><a target=1 href='%d'>%s</a></td></tr>"),_IdSBMS,GetMsg(MSG_MANAGEMENT)));
 	str.Append(_("</table>"));
-	m_Html->AppendToPage(str);
+	m_HtmlString.Append(str);
+	//m_Html->set AppendToPage(str);
 	
 }
 
@@ -255,15 +250,22 @@ void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 		str.Append(wxString::Format(_("<tr><td><font color=red size=3><b>%s</b></font></td></tr>"),ptr->GetAlarm(i)->GetName()));
 		str.Append(_("</table>"));
 	}
-
-	m_Html->AppendToPage(str);
+	m_HtmlString.Append(str);
+	//m_Html->AppendToPage(str);
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+	char *b64 = NULL;
+
+	if(GetPictureAsBase64(db,ptr->GetId(),b64))
+	{
+		str.Append(wxString::Format(_("<tr><td><center><a target=1 href=#><img src='data:image/png;base64,%s'></a></center></td></tr>"),b64));
+		free(b64);
+	}
 	
 	if(m_IdSBMS == 0)
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
@@ -284,10 +286,14 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetAgeAsString()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
+
+	
+	
 	str.Append(_("</table>"));
 	str.Append(_("<hr>"));
 	
-	m_Html->AppendToPage(str);
+	m_HtmlString.Append(str);
+	//m_Html->AppendToPage(str);
 	
 }
 
@@ -341,8 +347,9 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
 		
 		str.Append(_("</table>"));
-			
-		m_Html->AppendToPage(str);
+		
+		m_HtmlString.Append(str);
+		//m_Html->AppendToPage(str);
 
 		//SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
 		//SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
@@ -376,7 +383,8 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
-		m_Html->AppendToPage(str);
+		m_HtmlString.Append(str);
+		//m_Html->AppendToPage(str);
 	}
 
 	db_free_result(result);
@@ -414,8 +422,9 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
 		str.Append(_("</table>"));
-			
-		m_Html->AppendToPage(str);
+		
+		m_HtmlString.Append(str);
+		//m_Html->AppendToPage(str);
 
 	}
 
@@ -482,6 +491,7 @@ void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
 */
 void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 {
+	/*
 	m_PicturePanel->Clear();
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
 	my_query(db,sql);
@@ -507,7 +517,7 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	
 	this->Layout();
 	db_free_result(result);
-
+	*/
 }
 
 /*
@@ -544,6 +554,28 @@ void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
 	db_free_result(result);
 	
 }*/
+
+
+void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)
+{
+    
+    wxLogMessage("%s", "Navigation request to '" + event.GetURL() + "' (target='" + event.GetTarget() + "')");
+
+    //wxASSERT(m_browser->IsBusy());
+
+    //If we don't want to handle navigation then veto the event and navigation
+    //will not take place, we also need to stop the loading animation
+    //if(!m_tools_handle_navigation->IsChecked())
+    //{
+       // evt.Veto();
+        //m_toolbar->EnableTool( m_toolbar_stop->GetId(), false );
+    //}
+    //else
+    //{
+      //  UpdateState();
+    //}
+}
+
 
 void CSymbolPanel::SetSBMS()
 {

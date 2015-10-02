@@ -18,7 +18,6 @@ CBaseStation::CBaseStation(CNaviBroker *broker)
 	m_TranslationX = 0;
 	m_TranslationY = 0;
 	m_DB = NULL;
-	
 }
 
 CBaseStation::~CBaseStation()
