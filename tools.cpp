@@ -967,8 +967,9 @@ double GetMilesPerDegree(double x, double y)
 	return _nvDistance( x, y, x + 1.0, y );	// iloœæ mil na stopieñ w aktualnej pozycji y
 }
 
-wxString GetOnOff(int v)
+wxString GetOnOff( int v )
 {
+	
 	if(v > 0)
 	{
 		return GetMsg(MSG_TRUE);
@@ -978,6 +979,19 @@ wxString GetOnOff(int v)
 	}
 
 }
+
+wxString GetPhotoCellValue(  int _Mask, int _Value ) {
+
+	if ( _Mask != PHOTOCELL_ANALOG_MASK )
+		return GetMsg( MSG_NA );
+
+	if ( _Value > PHOTOCELL_NIGHT_TIME_MIN_VALUE )
+		return GetMsg( MSG_TRUE );
+	else
+		return GetMsg( MSG_FALSE );
+
+};
+
 
 wxString GetMonitoredChannels(int v)
 {
