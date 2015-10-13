@@ -68,7 +68,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	wxStaticBoxSizer *Sizer1 = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_FILTER));
 	Sizer->Add(Sizer1,1,wxALL|wxEXPAND,0);
 
-	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
+	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(4);
 	Sizer1->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 		
 	//m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));

@@ -754,8 +754,6 @@ bool db_check_right(const char *module, const char *action, int uid)
 	return res;
 }
 
-
-
 int _GetUID()
 {
 	return GlobalUID;

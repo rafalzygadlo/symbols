@@ -92,6 +92,7 @@ class CSymbol
 	
 	CAlarm *AlarmExists(int id);
 	void AlarmRemove();
+	void SetAlarms();
 	void ShowAlarm();
 	void ClearAlarms();
 	void SetColor(int id);

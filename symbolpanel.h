@@ -17,10 +17,16 @@
 class CGraphDialog;
 class CSymbolPanel : public wxPanel
 {
-	//CPicturePanel *m_PicturePanel;
+#ifndef WEBVIEW
+	CPicturePanel *m_PicturePanel;
+#endif
 	CSymbol *m_Symbol;	
 	CGraphDialog *m_GraphDialog;
+#ifdef WEBVIEW
 	wxWebView *m_Html;
+#else
+	wxHtmlWindow *m_Html;
+#endif
 	int m_IdSBMS;
 	int m_IdBaseStation;
 	int m_SBMSID;

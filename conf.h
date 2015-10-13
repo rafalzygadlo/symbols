@@ -10,6 +10,12 @@
 #if 1
 #define THREAD_JOINABLE
 #endif
+
+//html or webview
+#if 0
+#define WEBVIEW
+#endif
+
 #define DEFAULT_MYSQL_PORT 3306
 #define DIR_WORKDIR "data"
 #define CONFIG_FILE "symbol.conf"

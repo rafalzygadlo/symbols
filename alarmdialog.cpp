@@ -67,12 +67,16 @@ void CAlarmDialog::Set(wxArrayPtrVoid *v)
 
 void CAlarmDialog::ShowWindow()
 {
-	if(m_New)
-		Show();
+	PlaySound();
+	Show();
 }
 
-void CAlarmDialog::SetNew(bool v)
+//void CAlarmDialog::SetNew(bool v)
+//{
+	//m_New = v;
+//}
+
+void CAlarmDialog::PlaySound()
 {
-	m_New = v;
+	//wxSound snd(
 }
-

@@ -50,37 +50,23 @@ void CSymbolPanel::GetPage1()
 	Scroll->SetFocusIgnoringChildren();
 	Scroll->SetSizer(ScrollSizer);
 	
-
-//	m_PicturePanel = new CPicturePanel(NULL,Scroll);
-//	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+#ifndef WEBVIEW
+	m_PicturePanel = new CPicturePanel(NULL,Scroll);
+	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+#endif
 	
 	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
-	
-
-	//m_Calibrated			= new CMyIcon(this,ID_CALIBRATED,GetMsg(MSG_CALIBRATED_SHORT),GetMsg(MSG_CALIBRATED));									hSizer->Add(m_Calibrated,0,wxALL|wxCENTER,2);
-	//m_ForcedOff				= new CMyIcon(this,ID_FORCED_OFF,GetMsg(MSG_FORCED_OFF_SHORT),GetMsg(MSG_FORCED_OFF));									hSizer->Add(m_ForcedOff,0,wxALL|wxCENTER,2);
-	//m_PhotoCellNightTime	= new CMyIcon(this,ID_PHOTOCELL_NIGHT_TIME,GetMsg(MSG_PHOTOCELL_NIGHT_TIME_SHORT),GetMsg(MSG_PHOTOCELL_NIGHT_TIME));	hSizer->Add(m_PhotoCellNightTime,0,wxALL|wxCENTER,2);
-	//m_FaultOutput			= new CMyIcon(this,ID_FAULT_OUTPUT,GetMsg(MSG_FAULT_OUTPUT_SHORT),GetMsg(MSG_FAULT_OUTPUT));							hSizer->Add(m_FaultOutput,0,wxALL|wxCENTER,2);
-	//m_SolarCharger			= new CMyIcon(this,ID_SOLAR_CHARGER,GetMsg(MSG_SOLAR_CHARGER_ON_SHORT),GetMsg(MSG_SOLAR_CHARGER_ON));					hSizer->Add(m_SolarCharger,0,wxALL|wxCENTER,2);
-	
-	//m_SyncMaster			= new CMyIcon(this,ID_SYNC_MASTER,GetMsg(MSG_SYNC_MASTER_SHORT),GetMsg(MSG_SYNC_MASTER));								hSizer->Add(m_SyncMaster,0,wxALL|wxCENTER,2);
-	//m_SeasonControl			= new CMyIcon(this,ID_SEASON_CONTROL,GetMsg(MSG_SEASON_CONTROL_SHORT),GetMsg(MSG_SEASON_CONTROL));						hSizer->Add(m_SeasonControl,0,wxALL|wxCENTER,2);
-	
-	//m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+		
+#ifndef WEBVIEW
+	m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+#else
 	m_Html = wxWebView::New(Scroll,ID_HTML,wxEmptyString);
+#endif
 	//m_Html->SetMinSize(wxSize(200,450));
 	
 	ScrollSizer->Add(m_Html,1,wxALL|wxEXPAND,0);
-	//m_Calibrated->Disable();
-	//m_ForcedOff->Disable();
-	//m_PhotoCellNightTime->Disable();
-	//m_FaultOutput->Disable();
-	//m_SolarCharger->Disable();
-	//m_SyncMaster->Disable();
-	//m_SeasonControl->Disable();
-
-	
+		
 	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
 	ScrollSizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
 
@@ -191,26 +177,25 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 
 	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
+	
+	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) 
+	{
+		if(ptr->GetBusy()) 
+			m_ButtonManagement->Disable();
+		else
+			m_ButtonManagement->Enable();
 		
-	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) {
-		m_ButtonManagement->Enable();
-		m_ButtonGraph->Enable();
 	} else {
 		m_ButtonManagement->Disable();
-		m_ButtonGraph->Disable();
-	};
-
-	if(ptr->GetBusy()) {
-		m_ButtonManagement->Disable();
-		m_ButtonGraph->Disable();	
-	} else {
-		m_ButtonManagement->Enable();
-		m_ButtonGraph->Enable();
-	};
+	}
+	
+	m_ButtonGraph->Enable();
+	
 	m_HtmlString.Clear();
 	m_HtmlString.Append("<html>");
-	PictureInfo(db,ptr);
+
 	//SetHeader( m_IdSBMS );
+	PictureInfo(db,ptr);
 	AlarmInfo(ptr);
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
@@ -222,8 +207,12 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	}
 	
 	m_HtmlString.Append("</html>");
-	
+
+#ifdef WEBVIEW	
 	m_Html->SetPage(m_HtmlString,wxEmptyString);
+#else
+	m_Html->SetPage(m_HtmlString);
+#endif
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	DBClose(db);
@@ -236,7 +225,6 @@ void CSymbolPanel::SetHeader( int _IdSBMS )
 	str.Append(wxString::Format(_("<tr><td colspan=3><a target=1 href='%d'>%s</a></td></tr>"),_IdSBMS,GetMsg(MSG_MANAGEMENT)));
 	str.Append(_("</table>"));
 	m_HtmlString.Append(str);
-	//m_Html->set AppendToPage(str);
 	
 }
 
@@ -251,21 +239,23 @@ void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 		str.Append(_("</table>"));
 	}
 	m_HtmlString.Append(str);
-	//m_Html->AppendToPage(str);
+	
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	
+#ifdef WEBVIEW
 	char *b64 = NULL;
-
 	if(GetPictureAsBase64(db,ptr->GetId(),b64))
 	{
 		str.Append(wxString::Format(_("<tr><td><center><a target=1 href=#><img src='data:image/png;base64,%s'></a></center></td></tr>"),b64));
 		free(b64);
 	}
+#endif	
 	
 	if(m_IdSBMS == 0)
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
@@ -293,7 +283,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	str.Append(_("<hr>"));
 	
 	m_HtmlString.Append(str);
-	//m_Html->AppendToPage(str);
+	
 	
 }
 
@@ -347,18 +337,9 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
 		
 		str.Append(_("</table>"));
-		
-		m_HtmlString.Append(str);
-		//m_Html->AppendToPage(str);
 
-		//SetCalibrated(atoi(row[FI_SBMS_MODE_CALIBRATED]));
-		//SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		//SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
-		//SetFaultOutput(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]));
-		//SetSolarCharger(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]));
-		//SetSyncMaster(atoi(row[FI_SBMS_MODE_SYNC_MASTER]));
-		//SetSeasonControl(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]));
-		
+		m_HtmlString.Append(str);
+				
 	}
 
 	db_free_result(result);
@@ -384,7 +365,7 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
 		m_HtmlString.Append(str);
-		//m_Html->AppendToPage(str);
+
 	}
 
 	db_free_result(result);
@@ -424,7 +405,6 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(_("</table>"));
 		
 		m_HtmlString.Append(str);
-		//m_Html->AppendToPage(str);
 
 	}
 
@@ -432,66 +412,8 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 
 }
 
-/*
-void CSymbolPanel::SBMSLastRaport(void *db, int id_sbms, int id_base_station)
-{
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC LIMIT 0,1"),TABLE_STANDARD_REPORT,id_sbms,id_base_station);
-	my_query(db,sql);
-			
-	void *result = db_result(db);
-		
-	char **row = NULL;
-	if(result == NULL)
-		return;
-		
-	while(row = (char**)db_fetch_row(result))
-	{
-		wxString str;
-		//str.Append(wxString::Format(_("<font size=2><a name=\"%d\"><b>%s</b></a></font>"),HTML_ANCHOR_LAST_REPORT,GetMsg(MSG_LAST_REPORT)));
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		
-		nvtime_t dt;
-		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
-		
-		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),GetNvDateTime(dt)));
-
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_STANDARD_REPORT_INPUT_VOLT]));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>100%</b></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_STANDARD_REPORT_MONITORED_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_STANDARD_REPORT_OVERLOAD_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_STANDARD_REPORT_DOWN_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_STANDARD_REPORT_ANALOG_MASK]));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_STANDARD_REPORT_DIGITAL_VALUE]));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_STANDARD_REPORT_ANALOG_VALUE]));
-		str.Append(_("<tr><td><br></td></tr>"));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_CALIBRATED]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_FORCED_OFF]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_PHOTOCELL_NIGHT_TIME]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_FAULT_OUTPUT]))));
-		str.Append(wxString::Format(_("<tr><td font size=3>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SOLAR_CHARGER_ON]))));
-		//str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SYNC_MASTER),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SYNC_MASTER]))));
-		str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_STANDARD_REPORT_MODE_SEASON_CONTROL]))));
-
-		SetCalibrated(atoi(row[FI_STANDARD_REPORT_MODE_CALIBRATED]));
-		SetForcedOff(atoi(row[FI_STANDARD_REPORT_MODE_FORCED_OFF]));
-		SetPhotoCellNightTime(atoi(row[FI_STANDARD_REPORT_MODE_PHOTOCELL_NIGHT_TIME]));
-		SetFaultOutput(atoi(row[FI_STANDARD_REPORT_MODE_FAULT_OUTPUT]));
-		SetSolarCharger(atoi(row[FI_STANDARD_REPORT_MODE_SOLAR_CHARGER_ON]));
-		SetSyncMaster(atoi(row[FI_STANDARD_REPORT_MODE_SYNC_MASTER]));
-		SetSeasonControl(atoi(row[FI_STANDARD_REPORT_MODE_SEASON_CONTROL]));
-		
-		//str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_])));
-		str.Append(_("</table>"));
-				
-		m_Html->AppendToPage(str);
-	}
-
-	db_free_result(result);
-}
-*/
 void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 {
-	/*
 	m_PicturePanel->Clear();
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
 	my_query(db,sql);
@@ -517,43 +439,8 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	
 	this->Layout();
 	db_free_result(result);
-	*/
+
 }
-
-/*
-void CSymbolPanel::SetGraph(void *db, int id_sbms, int id_base_station)
-{
-	
-	wxString sql = wxString::Format(_("SELECT input_volt FROM `%s` WHERE SBMSID ='%d' AND id_base_station='%d' ORDER BY local_utc_time DESC"),TABLE_STANDARD_REPORT,id_sbms,id_base_station);
-	my_query(db,sql);
-			
-	void *result = db_result(db);
-		
-	char **row = NULL;
-	if(result == NULL)
-
-	
-	m_Graph->Clear();
-	int count = 0;
-	while(row = (char**)db_fetch_row(result))
-	{
-		nvPoint3f pt;
-		
-		pt.x = count++;
-		pt.y = atof(row[0]);
-		m_Graph->AddPoint(pt);
-		nvRGBA c;
-		c.A = 255; c.R = 0; c.G = 255; c.B = 0;
-		m_Graph->AddColor(c);
-	}
-	
-	m_Graph->SetMin(11);
-	m_Graph->SetMax(14);
-	m_Graph->SetTitle(GetMsg(MSG_INPUT_VOLT));
-	m_Graph->Refresh();
-	db_free_result(result);
-	
-}*/
 
 
 void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)

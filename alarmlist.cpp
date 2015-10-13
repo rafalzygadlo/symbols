@@ -157,7 +157,7 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	if(ptr->GetConfirmed())
 		fsize = 3;
 	else
-		fsize = 8;
+		fsize = 6;
 	
 	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetSymbolName());
 	nvRGBA c = GetAlarmTypeColor(ptr->GetType());

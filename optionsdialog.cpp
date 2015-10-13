@@ -289,24 +289,24 @@ wxPanel *COptionsDialog::GetGlobalOtherPanel(wxWindow *Parent)
 	Box->Add(FlexSizer,1,wxALL|wxEXPAND,5);
 	
 	wxStaticText *TextOffPositionArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_OFF_POSITION_RADIUS),wxDefaultPosition,wxDefaultSize);
-	FlexSizer->Add(TextOffPositionArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	FlexSizer->Add(TextOffPositionArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 		
 	m_OffPositionArea = new wxTextCtrl(Panel,ID_OFF_POSITION_AREA);
 	m_OffPositionArea->SetValue(wxString::Format(_("%d"),GetOffPositionArea()));
 	FlexSizer->Add(m_OffPositionArea,0,wxALL,5);
 
 	wxStaticText *TextRestrictedArea = new wxStaticText(Panel,ID_RESTRICTED_AREA,GetMsg(MSG_RESTRICTED_AREA_RADIUS),wxDefaultPosition,wxDefaultSize);
-	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	FlexSizer->Add(TextRestrictedArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 		
 	m_RestrictedArea = new wxTextCtrl(Panel,ID_RESTRICTED_AREA);
 	m_RestrictedArea->SetValue(wxString::Format(_("%d"),GetRestrictedArea()));
 	FlexSizer->Add(m_RestrictedArea,0,wxALL,5);
 	
 	wxStaticText *TextReportTimeout = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_REPORT_TIMEOUT),wxDefaultPosition,wxDefaultSize);
-	FlexSizer->Add(TextReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	FlexSizer->Add(TextReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 
 	m_ReportTimeout = new wxTextCtrl(Panel,ID_REPORT_TIMEOUT,wxEmptyString);
-	FlexSizer->Add(m_ReportTimeout,0,wxALL|wxALIGN_CENTER_VERTICAL,2);
+	FlexSizer->Add(m_ReportTimeout,0,wxALL,5);
 	m_ReportTimeout->SetValue(wxString::Format(_("%d"),GetReportTimeout()));
 	
 

@@ -200,6 +200,15 @@ void CSymbol::AlarmRemove()
 	//fprintf(stderr,"Size:%d\n",m_SymbolList->size());
 }
 
+void CSymbol::SetAlarms()
+{
+	for(size_t i = 0; i < m_AlarmList.Length(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		ptr->SetExists(false);
+	}
+		
+}
 
 bool CSymbol::CheckCollision()
 {
@@ -251,17 +260,17 @@ bool CSymbol::CheckCollision()
 
 bool CSymbol::CheckAlarm()
 {
-	m_AlarmTick++;
-	m_AlarmTickOn++;
+	//m_AlarmTick++;
+	//m_AlarmTickOn++;
 
-	if(m_AlarmTickOn >= CHECK_ALARM_TICK_ON)
-	{
+	//if(m_AlarmTickOn >= CHECK_ALARM_TICK_ON)
+	//{
 		//m_AlertOn = !m_AlertOn;
-		m_AlarmTickOn = 0;
-	}
+		//m_AlarmTickOn = 0;
+	//}
 
-	if(m_AlarmTick <= CHECK_ALARM_TICK)
-		return false;
+	//if(m_AlarmTick <= CHECK_ALARM_TICK)
+		//return false;
 	
 	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id"),TABLE_SBMS_ALARM,TABLE_ALARM, m_IdSBMS,ALARM_ACTIVE,TABLE_ALARM);
 	my_query(m_DB,sql);
@@ -271,15 +280,15 @@ bool CSymbol::CheckAlarm()
 	if(result == NULL)
 		return false;
 	
-	m_AlarmCount = 0;
 	m_NewAlarmCount = 0;
 	m_Alarm = false;
-	
+	bool exists = false;
 	int offset = 9;
+	CAlarm *Alarm = NULL;
+	
 	while(row = (char**)db_fetch_row(result))
 	{
 		int id = atoi(row[FI_SBMS_ALARM_ID]);
-		CAlarm *Alarm = NULL;
 		Alarm = AlarmExists(id);
 		
 		bool add = false;
@@ -292,7 +301,7 @@ bool CSymbol::CheckAlarm()
 			m_NewAlarmCount++;
 		}
 				
-		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
+		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
 		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
 		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
 		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));
@@ -300,14 +309,13 @@ bool CSymbol::CheckAlarm()
 		if(add)
 		{
 			m_AlarmList.Append(Alarm);
-			m_AlarmCount++;
 		}
 		
 		Alarm->SetExists(true);
-		
+
 	}	
-		
-	if(m_AlarmCount > 0)
+	
+	if(m_AlarmList.Length() > 0)
 	{
 		m_Alarm = true;
 		m_AlarmOn = true;
@@ -422,13 +430,7 @@ bool CSymbol::CheckReport()
 	row = (char**)db_fetch_row(result);
 	sscanf(row[0],"%d",&m_ReportCount);
 	
-	//if(m_AlarmCount > 0)
-	//{
-		//m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
-		//m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_
-
-	//}
-
+	
 	db_free_result(result);
 	return true;
 }
@@ -446,7 +448,9 @@ void CSymbol::OnTick(void *db)
 		return;
 	if(m_NoSBMS)
 		return;
-
+	
+	SetAlarms();		//flaga alarm exists na false
+	
 	if(CheckCommand())
 		result = true;
 	if(CheckAlarm())
@@ -720,7 +724,7 @@ void CSymbol::RenderPositions()
 	glColor4f(0.0f,0.0f,1.0f,0.5f);
 	if(m_PosBuffer.Length() > 0)
 	{
-		RenderGeometry(GL_LINE_LOOP,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
+		RenderGeometry(GL_LINE_STRIP,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
 		RenderGeometry(GL_POINTS,m_PosBuffer.GetRawData(),m_PosBuffer.Length());
 	}
 	
@@ -1122,7 +1126,7 @@ double CSymbol::GetLatMap(){	return m_LatMap;}
 
 int CSymbol::GetAlarmCount()
 {
-	return m_AlarmCount;
+	return m_AlarmList.Length();
 }
 CAlarm *CSymbol::GetAlarm(int v)
 {

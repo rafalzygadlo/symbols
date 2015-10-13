@@ -556,8 +556,7 @@ void CMapPlugin::SetSql(wxString &sql)
 		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),VIEW_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
 	
 	if(id_alarm >= 0)
-		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm);
-
+		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND `%s`.id_sbms > 0 AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm,VIEW_SYMBOL);
 
 	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
@@ -1674,8 +1673,7 @@ void CMapPlugin::ShowAlarm()
 {
 	m_AlarmDialog->Set(m_AlarmList);
 	if(m_ConfirmCounter > 0)
-	{
-		m_AlarmDialog->SetNew(true);
+	{		
 		m_AlarmDialog->ShowWindow();
 	}
 }

@@ -195,7 +195,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
 		
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetNoSBMS())
 	{
 		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	

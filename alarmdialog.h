@@ -15,9 +15,9 @@ class CAlarmDialog: public wxDialog
 	CAlarmList *m_TextAlarm;
 	wxString m_Html;
 	int m_Count;
-	bool m_New;
-
+	
 	wxPanel *GetPanel(wxWindow *parent);
+	void PlaySound();
 	void OnSetAlarm(wxCommandEvent &event);
 	void OnOk(wxCommandEvent &event);
 		
@@ -27,8 +27,7 @@ public:
 	~CAlarmDialog();
 	void Set(wxArrayPtrVoid *v);
 	void ShowWindow();
-	void SetNew(bool v);
-	
+		
 	DECLARE_EVENT_TABLE();
 		
 	enum
