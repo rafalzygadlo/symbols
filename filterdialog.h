@@ -7,22 +7,17 @@ class CFilterDialog: public wxDialog
 {
 	wxButton *m_ButtonSelect;
 	//wxCheckBox *m_CheckInMonitoring;
+	wxComboBox *m_ComboGroup;
 	wxComboBox *m_ComboLight;
+	wxComboBox *m_ComboArea;
+	wxComboBox *m_ComboSeaway;
 	wxComboBox *m_ComboInMonitoring;
+	wxComboBox *m_ComboBaseStation;
+	wxComboBox *m_ComboSymbolType;
+	wxComboBox *m_ComboAlarm;
 	
-	wxCheckListBox *m_ComboArea;
-	wxCheckListBox *m_ComboSeaway;
-	wxCheckListBox *m_ComboSymbolType;
-	wxCheckListBox *m_ComboGroup;
-	wxCheckListBox *m_ComboAlarm;
-	
-	wxCheckListBox *m_ComboBaseStation;
-
-	void SetGui();
 	void Set(int id, bool checked);
-	wxPanel *GetPanel(void *db,wxWindow *Parent);
-	wxPanel *GetAlarmPanel(void *db,wxWindow *Parent);
-	wxPanel *GetGroupPanel(void *db,wxWindow *Parent);
+	wxPanel *GetPanel(wxWindow *Parent);
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	
 

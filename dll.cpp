@@ -1022,12 +1022,13 @@ void CMapPlugin::Run(void *Params)
 		return;
 	}
 	
+	/*
 	if(!CheckDBVersion(m_DB))
 	{
 		wxMessageBox(GetMsg(MSG_DB_VERSION_MISMATCH),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
-	
+	*/
 		
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
