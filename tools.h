@@ -35,7 +35,9 @@ wxString Convert(char *v);
 wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid);
 wxComboBox *GetFilterCombo(wxWindow *Parent, int wid);
 wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table , wxString sel,int field_id, int field_name, bool all = false, bool empty = false);
+wxCheckListBox *GetCheckListBox(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all = false, bool empty = false);
 void ComboSetSelection(wxComboBox *combo, int id);
+void CheckListBoxSetSelection(wxCheckListBox *combo, int id);
 wxString GetFontPath();
 const wchar_t *GetDegreeFormat(int id, int dir);
 void db_history(int uid, const char *module, const char *action );
@@ -73,6 +75,7 @@ void DeactivateAlarm(int id);
 wxString GetProgramDir();
 bool GetPictureAsBase64(void *db, int id, char *&base64);
 wxString GetPhotoCellValue(  int _Mask, int _Value );
+bool CheckDBVersion(void *db);
 
 //COMMANDS
 void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);

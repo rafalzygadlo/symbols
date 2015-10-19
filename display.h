@@ -2,16 +2,16 @@
 #define __DISPLAY
 
 #include <wx/srchctrl.h>
-#include "dll.h"
-#include "listctrl.h"
-#include "navimapioapi.h"
-#include <wx/fileconf.h>
-#include <vector>
-#include <wx/wx.h>
-#include "navidisplayapi.h"
 #include <wx/fileconf.h>
 #include <wx/listctrl.h>
 #include <wx/hyperlink.h>
+#include <wx/fileconf.h>
+#include <vector>
+#include <wx/wx.h>
+#include "dll.h"
+#include "listctrl.h"
+#include "navimapioapi.h"
+#include "navidisplayapi.h"
 #include "symbolpanel.h"
 #include "htmllist.h"
 #include "alarmlist.h"

@@ -23,8 +23,8 @@ BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_BUTTON(ID_BUTTON_CANCEL,OnButtonCancel)	
 	EVT_RADIOBUTTON(ID_AUTO,OnAuto)
 	EVT_RADIOBUTTON(ID_MANUAL,OnManual)
-	EVT_BUTTON(ID_LIGHT_ON,OnLightOn)
-	EVT_BUTTON(ID_LIGHT_OFF,OnLightOff)
+	EVT_RADIOBUTTON(ID_LIGHT_ON,OnLightOn)
+	EVT_RADIOBUTTON(ID_LIGHT_OFF,OnLightOff)
 END_EVENT_TABLE()
 
 CCommandPanel::CCommandPanel(wxWindow *parent)
@@ -175,18 +175,10 @@ void CCommandPanel::OnRipleDelay(wxCommandEvent &event)
 void CCommandPanel::OnLightOff(wxCommandEvent &event)
 {
 	m_LightOnValue = false;
-	m_LightOn->Enable(true);
-	m_LightOff->Enable(false);
-
-	if(m_LightValue)
-	{
-		m_Changed[COMMAND_LIGHT_ON] = false;
-		m_Changed[COMMAND_LIGHT_OFF] = true;
-	}else{
-		m_Changed[COMMAND_LIGHT_ON] = false;
-		m_Changed[COMMAND_LIGHT_OFF] = false;
-	}
-
+	m_Changed[COMMAND_LIGHT_ON] = false;
+	m_Changed[COMMAND_LIGHT_OFF] = true;
+	m_Changed[COMMAND_AUTO_MANAGEMENT] = false;
+	
 	//m_LightValue = false;
 	SetButtonState();
 	SetTextLog();
@@ -198,19 +190,11 @@ void CCommandPanel::OnLightOn(wxCommandEvent &event)
 {
 	
 	m_LightOnValue = true;
-	m_LightOn->Enable(false);
-	m_LightOff->Enable(true);
 	
-	if(m_LightValue)
-	{
-		m_Changed[COMMAND_LIGHT_ON] = false;
-		m_Changed[COMMAND_LIGHT_OFF] = false;
-	}else{
+	m_Changed[COMMAND_LIGHT_ON] = true;
+	m_Changed[COMMAND_LIGHT_OFF] = false;
+	m_Changed[COMMAND_AUTO_MANAGEMENT] = false;
 	
-		m_Changed[COMMAND_LIGHT_ON] = true;
-		m_Changed[COMMAND_LIGHT_OFF] = false;
-	}
-
 	//m_LightValue = true;
 	SetButtonState();
 	SetTextLog();
@@ -241,10 +225,10 @@ void CCommandPanel::OnAuto(wxCommandEvent &event)
 	m_Changed[COMMAND_LIGHT_ON] = false;
 	m_Changed[COMMAND_LIGHT_OFF] = false;
 	
-	if(!m_AutoValue)
-		m_Changed[COMMAND_AUTO_MANAGEMENT] = true;
+	//if(!m_AutoValue)
+	m_Changed[COMMAND_AUTO_MANAGEMENT] = true;
 		
-	m_LightPanel->Disable();	
+	//m_LightPanel->Disable();	
 	m_AutoValue = true;
 	SetButtonState();
 	SetTextLog();
@@ -296,7 +280,7 @@ void CCommandPanel::SetButtonState()
 {
 	m_ButtonSend->Disable();
 	for(size_t i = 0; i < COMMAND_COUNT; i++)
-	{		
+	{
 		if(m_Changed[i])
 			m_ButtonSend->Enable();
 	}
@@ -424,7 +408,7 @@ void CCommandPanel::EnableControls(bool v)
 	m_LightPanel->Enable(v);
 	m_TimePanel->Enable(v);
 	m_UptimePanel->Enable(v);
-	m_AutoPanel->Enable(v);
+	//m_AutoPanel->Enable(v);
 	m_LightOn->Enable(v);
 	m_LightOff->Enable(v);
 	//m_LightTime->Enable(v);
@@ -483,8 +467,8 @@ wxPanel *CCommandPanel::AutoPanel(wxPanel *parent)
 	m_LightAuto = new wxRadioButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
 	Sizer->Add(m_LightAuto,0,wxALL|wxEXPAND,5);
 	
-	m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
-	Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
+	//m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
+	//Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
 		
 	return Panel;
 }
@@ -492,16 +476,21 @@ wxPanel *CCommandPanel::AutoPanel(wxPanel *parent)
 wxPanel *CCommandPanel::LightPanel(wxPanel *parent)
 {
     wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 		
-	m_LightOn = new wxButton(Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	m_LightAuto = new wxRadioButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
+	Sizer->Add(m_LightAuto,0,wxALL|wxEXPAND,5);
+	
+	m_LightOn = new wxRadioButton(Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
 	Sizer->Add(m_LightOn,0,wxALL,5);
 
-	m_LightOff = new wxButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	m_LightOff = new wxRadioButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
 	Sizer->Add(m_LightOff,0,wxALL,5);
-
-		
+			
+	//m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
+	//Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
+			
 	return Panel;
 }
 
@@ -779,7 +768,6 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	GridSizer->Add(m_UptimePanel,0,wxALL,2);
 
 	//ustawianie wewnetrznego zegara lammpy
-
 	m_LightTimePanel = SetLightTimePanel(Panel);
 	GridSizer->Add(m_LightTimePanel,0,wxALL,2);
 
@@ -791,16 +779,10 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	m_LightIntensityPanel = SetLightIntensityPanel(Panel);
 	GridSizer->Add(m_LightIntensityPanel,0,wxALL,2);
 
-
-
-
-	//usrtawienie czu³oœci fotokomórki
+	//ustawienie czu³oœci fotokomórki
 	m_PhotoCellResistantPanel = SetPhotoCellResistantPanel(Panel);
 	GridSizer->Add(m_PhotoCellResistantPanel,0,wxALL,2);
-
-
-
-	
+		
 	//standardowy raport
 	//m_StandardReportPanel = StandardReportPanel(Panel);
 	//Sizer->Add(m_StandardReportPanel,0,wxALL|wxEXPAND,2);
@@ -809,8 +791,8 @@ wxPanel *CCommandPanel::GetCommandPanel(wxPanel *parent)
 	Sizer->Add(BoxSizer,0,wxALL|wxEXPAND,5);
 
 	//serwisowe wy³¹czenie
-	m_AutoPanel = AutoPanel(Panel);
-	BoxSizer->Add(m_AutoPanel,0,wxALL|wxEXPAND,2);
+	//m_AutoPanel = AutoPanel(Panel);
+	//BoxSizer->Add(m_AutoPanel,0,wxALL|wxEXPAND,2);
 	m_LightPanel = LightPanel(Panel);
 	BoxSizer->Add(m_LightPanel,0,wxALL|wxEXPAND,2);
 				
@@ -905,7 +887,7 @@ void CCommandPanel::SetAuto(bool v)
 {
 	m_AutoValue = v;
 	m_LightAuto->SetValue(v);
-	m_LightManual->SetValue(!v);
+	//m_LightManual->SetValue(!v);
 	
 	m_LightPanel->Enable(!v);
 }

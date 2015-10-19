@@ -28,10 +28,10 @@ class CCommandPanel: public wxPanel
 	wxTextCtrl *m_TextLog;
 	wxTextCtrl *m_RipleDelayEdit;
 
-	wxButton *m_LightOn;
-	wxButton *m_LightOff;
+	wxRadioButton *m_LightOn;
+	wxRadioButton *m_LightOff;
 	wxRadioButton *m_LightAuto;
-	wxRadioButton *m_LightManual;
+	//wxRadioButton *m_LightManual;
 	
 	wxPanel *m_AutoPanel;
 	wxPanel *m_LightPanel;

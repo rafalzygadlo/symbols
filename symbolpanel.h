@@ -2,7 +2,9 @@
 #define __SYMBOLPANEL_H
 
 #include <wx/html/htmlwin.h>
+#ifdef WEBVIEW
 #include <wx/webview.h>
+#endif
 #include "symbolpanel.h"
 #include "navibroker.h"
 #include "tgamem.h"
@@ -53,7 +55,9 @@ class CSymbolPanel : public wxPanel
 	void OnMenu(wxContextMenuEvent &event);
 	void OnShowMenu(wxCommandEvent &event);
 	void OnHtml(wxHtmlLinkEvent &event);
+#ifdef WEBVIEW
 	void OnNavigationRequest(wxWebViewEvent& event);
+#endif
 
 	void SetCalibrated(bool v);
 	void SetForcedOff(bool v);

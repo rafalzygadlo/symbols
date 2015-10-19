@@ -302,7 +302,8 @@
 #define MSG_ERROR_WRITING_FILE			167
 #define MSG_NO_DATA						168
 #define MSG_ALARM_DATE					169
-
+#define MSG_DB_VERSION_MISMATCH			170
+#define MSG_ERROR						171
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -488,6 +489,7 @@
 #define TABLE_USER_OPTION			"user_option"
 #define TABLE_GLOBAL_OPTION			"global_option"
 #define TABLE_ALARM					"alarm"
+#define TABLE_VALUE					"table_value"
 
 //WIDOKI
 #define VIEW_SYMBOL		"_view_symbol"
@@ -948,6 +950,10 @@
 #define nvDistanceNauticMile			0
 #define nvDistanceKilometer				1
 #define nvDistanceMeter					2
+
+//VALUE
+#define VALUE_DB_VERSION	1
+
 /*
 
 typedef struct Symbol

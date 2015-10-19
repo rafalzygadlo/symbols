@@ -1018,14 +1018,22 @@ void CMapPlugin::Run(void *Params)
 	if(m_DB == NULL)
 	{
 		wxString str(db_error(m_DB),wxConvUTF8);
-		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR));
+		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
 	
+	if(!CheckDBVersion(m_DB))
+	{
+		wxMessageBox(GetMsg(MSG_DB_VERSION_MISMATCH),GetMsg(MSG_ERROR),wxICON_ERROR);
+		return;
+	}
+	
+		
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
-	/*
+
+#if 0
     if (CoInitialize(NULL))
 	{
 		//return FALSE;
@@ -1035,22 +1043,21 @@ void CMapPlugin::Run(void *Params)
 		{
 			SetVoice(m_Voice);
 			//m_Voice->Speak(L"Starting system.", 0, NULL);
-			//m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
+			m_Voice->Speak(L"Testowanie syntezatora mowy.", 0, NULL);
 			//m_Voice->Release();
 			//m_Voice = NULL;
 		}
 
-		ISpRecognizer* recognizer;
-		hr = CoCreateInstance(CLSID_SpSharedRecognizer,NULL, CLSCTX_ALL, IID_ISpRecognizer,reinterpret_cast<void**>(&recognizer));
-		if( SUCCEEDED( hr ) )
-		{
-			bool a = true;
+		//ISpRecognizer* recognizer;
+		//hr = CoCreateInstance(CLSID_SpSharedRecognizer,NULL, CLSCTX_ALL, IID_ISpRecognizer,reinterpret_cast<void**>(&recognizer));
+		//if( SUCCEEDED( hr ) )
+		//{
+			//bool a = true;
 			//recognizer->GetStatus();
 		
-		}
+		//}
 	}
-    */
- 
+#endif 
 	m_Ticker = new CTicker(this,TICK_DLL);
 	m_Ticker->Start(TICK_DLL_TIME);
 
@@ -1515,7 +1522,7 @@ void CMapPlugin::RenderHighlighted()
 	glEnable(GL_BLEND);
 	glPushMatrix();
 	
-	glColor4f(1.0f,0.0f,0.0f,0.2f);	
+	glColor4f(1.0f,0.0f,0.0f,0.2f);
 	glTranslatef(x, y ,0.0f);
 	glTranslatef(m_OffsetX, m_OffsetY ,0.0f);
 	glLineWidth(2);

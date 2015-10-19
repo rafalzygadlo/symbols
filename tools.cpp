@@ -188,7 +188,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Exported to file",L"Wyeksportowano do pliku"},
 	{L"Error writing file",L"B³¹d zapisu pliku"},
 	{L"No Data",L"Brak Danych"},
-	{L"Alarm Date",L"Data alarmu"}
+	{L"Alarm Date",L"Data alarmu"},
+	{L"Database version is not compatible.\nRun the service tool.",L"Wersja programu i bazy danych nie zgodna.\nUruchom program serwisowy."},
+	{L"Error",L"B³¹d"},
+
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -912,6 +915,67 @@ void ComboSetSelection(wxComboBox *combo, int id)
 	}
 }
 
+wxCheckListBox *GetCheckListBox(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all, bool empty)
+{
+	//int i = 0;
+	wxCheckListBox *ptr = new wxCheckListBox(Parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,NULL,0);
+	
+	if(all)
+	{
+		ptr->Append(GetMsg(MSG_ALL));
+		ptr->SetClientData(0,(int*)-1);
+		//i = 1;
+	}
+
+	if(empty)
+	{
+		ptr->Append(GetMsg(MSG_EMPTY));
+		ptr->SetClientData(0,(int*)0);
+		//i = 1;
+	}
+
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
+	if(!my_query(db,sql))
+		return ptr;
+	
+	int rows = 0;
+	void *result = db_result(db);
+	char **row;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString name(row[field_name],wxConvUTF8);
+		int id = ptr->Append(name);
+		int row_id = atoi(row[field_id]);
+
+		long sid = 0;
+		if(!sel.empty())
+			sel.ToLong(&sid);
+
+		if(sid == row_id)
+			ptr->SetSelection(id);
+		if(sid == 0)
+			ptr->SetSelection(0);
+
+		ptr->SetClientData(id,(int*)row_id);
+	}
+
+	db_free_result(result);
+
+	return ptr;
+}
+
+void CheckListBoxSetSelection(wxCheckListBox *combo, int id)
+{
+	for(int i = 0; i < combo->GetCount(); i++)
+	{
+		int cid = (int)combo->GetClientData(i);
+		if(cid == id)
+			combo->SetSelection(i);
+	
+	}
+}
+
 wxString GetFontFolderPath()
 {
 	#ifdef __WXMSW__
@@ -1316,6 +1380,16 @@ bool GetPictureAsBase64(void *db, int id_symbol, char *&base64)
 	db_free_result(result);
 
 	return _result;
+}
+
+bool CheckDBVersion(void *db)
+{
+	wxString sql = wxString::Format(_("SELECT value FROM `%s` WHERE id='%d'",TABLE_VALUE,VALUE_DB_VERSION));
+	my_query(db,sql);
+	int a = 0;
+	a = db_get_version();
+	
+	return true;
 }
 
 #if 0

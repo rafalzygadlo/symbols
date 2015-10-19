@@ -158,7 +158,6 @@ void CPicturePanel::_SetId(int id)
 	m_ID = id;
 }
 
-
 void CPicturePanel::Read()
 {
 	wxString sql;

@@ -838,8 +838,8 @@ void CSymbol::ShowManagement(CSymbol *v)
 		CCommandDialog *CommandDialog = new CCommandDialog(NULL,v);
 		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
-		ptr->SetForcedOff(v->GetForcedOff());
-		ptr->SetAuto(v->GetAuto());
+		//ptr->SetForcedOff(v->GetForcedOff());
+		//ptr->SetAuto(v->GetAuto());
 			
 		CommandDialog->ShowModal();
 		delete CommandDialog;

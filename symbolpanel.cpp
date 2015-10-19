@@ -20,7 +20,9 @@ BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_BUTTON(ID_MANAGEMENT,OnManagement)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
 	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
+#ifdef WEBVIEW
 	EVT_WEBVIEW_NAVIGATING(ID_HTML,OnNavigationRequest)
+#endif
 END_EVENT_TABLE()
 
 
@@ -442,7 +444,7 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 
 }
 
-
+#ifdef WEBVIEW
 void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)
 {
     
@@ -462,7 +464,7 @@ void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)
       //  UpdateState();
     //}
 }
-
+#endif
 
 void CSymbolPanel::SetSBMS()
 {
