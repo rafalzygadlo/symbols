@@ -89,6 +89,7 @@ class CSymbol
 	bool m_Auto;
 	float m_InputVolt;
 	int m_Charging;
+	int m_ProtocolVersion;
 	
 	CAlarm *AlarmExists(int id);
 	void AlarmRemove();
@@ -149,7 +150,6 @@ public:
 	void SetPhotoCellNightTime(bool v);
 	void SetMMSI(int v);
 	void SetNvTime(nvtime_t dt);
-		
 	void SetTimestamp(int v);
 	void SetAge(int v);
 	void SetAge(wxString v);
@@ -165,6 +165,7 @@ public:
 	void SetCharging(int v);
 	void SetChargingAsString(wxString v);
 	void SetNewAlarmCount(int v);
+	void SetProtocolVersion(int v);
 		
 
 	//GET
@@ -198,6 +199,7 @@ public:
 	bool GetNoSBMS();
 	int GetCharging();
 	int GetNewAlarmCount();
+	int GetProtocolVersion();
 	CAlarm *GetAlarm(int v);
 	wxString GetChargingAsString();
 	wxString GetAlarmName(int v);

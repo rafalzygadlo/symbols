@@ -198,7 +198,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetNoSBMS())
 	{
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
+		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
 	
 	}else{
 		
@@ -241,7 +241,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
+	str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
 	str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str.Append(_("</table>"));
 

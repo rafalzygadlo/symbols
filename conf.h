@@ -489,7 +489,7 @@
 #define TABLE_USER_OPTION			"user_option"
 #define TABLE_GLOBAL_OPTION			"global_option"
 #define TABLE_ALARM					"alarm"
-#define TABLE_VALUE					"table_value"
+#define TABLE_VALUE					"value"
 
 //WIDOKI
 #define VIEW_SYMBOL		"_view_symbol"

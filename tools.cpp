@@ -1384,12 +1384,28 @@ bool GetPictureAsBase64(void *db, int id_symbol, char *&base64)
 
 bool CheckDBVersion(void *db)
 {
-	wxString sql = wxString::Format(_("SELECT value FROM `%s` WHERE id='%d'",TABLE_VALUE,VALUE_DB_VERSION));
+	wxString sql = wxString::Format(_("SELECT value FROM `%s` WHERE id='%d'"),TABLE_VALUE,VALUE_DB_VERSION);
 	my_query(db,sql);
-	int a = 0;
-	a = db_get_version();
 	
-	return true;
+	void *result = db_result(db);
+	if(result == NULL)
+		return false;
+	
+	char **row = (char**)db_fetch_row(result);
+	int value = 0;
+	
+	if(row)
+	{
+		value = atoi(row[0]);
+	}
+	
+	int version = 0;
+	version = db_get_version();
+	
+	if(value >= version)
+		return true;
+	else
+		return false;
 }
 
 #if 0

@@ -11,7 +11,6 @@
 #include "render.h"
 #include "commanddialog.h"
 
-//#include "nvtime.h"
 
 CSymbol::CSymbol(CNaviBroker *broker)
 {
@@ -57,6 +56,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_GraphDialog = NULL;
 	m_Charging = false;
 	m_NewAlarmCount = 0;
+	m_ProtocolVersion = 0;
 	
 }
 
@@ -369,7 +369,7 @@ bool  CSymbol::CheckCommand()
 }
 
 bool CSymbol::SetPositions()
-{	
+{
 	m_PositionsTick++;
 	
 	if(m_PositionsTick >= CHECK_POSITIONS_TICK_ON)
@@ -1244,3 +1244,7 @@ int CSymbol::GetNewAlarmCount()
 	return m_NewAlarmCount;
 }
 
+int CSymbol::GetProtocolVersion()
+{
+	return m_ProtocolVersion;
+}

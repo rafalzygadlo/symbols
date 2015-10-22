@@ -144,7 +144,7 @@ void CLightPanel::OnDelete(wxCommandEvent &event)
 	}
 
 	m_Select.Clear();
-		
+
 }
 
 void CLightPanel::UpdateViewPort()
