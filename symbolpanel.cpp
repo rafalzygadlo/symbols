@@ -259,8 +259,8 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	}
 #endif	
 	
-	if(m_IdSBMS == 0)
-		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
+	//if(m_IdSBMS == 0)
+		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
 
 	if(ptr->GetInMonitoring())
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));

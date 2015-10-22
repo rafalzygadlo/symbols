@@ -199,6 +199,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 	if(ptr->GetNoSBMS())
 	{
 		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	// taka g³upata dla UM
 	
 	}else{
 		
@@ -208,12 +209,12 @@ wxString CHtmlList::OnGetItem(size_t item) const
 			nvRGBA c = GetAlarmTypeColor(alarm->GetType());
 			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 		}
-		/*
+		
 		if(ptr->GetInMonitoring())
 			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
 		else
 			str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
-		*/
+		
 		if(ptr->GetInMonitoring())
 		{
 			if(GetSelection() == item)
