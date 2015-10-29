@@ -71,6 +71,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 
 	m_SymbolList = new wxArrayPtrVoid();
 	m_AlarmList = new wxArrayPtrVoid();
+	m_CommandList = new wxArrayPtrVoid();
 
 	m_NameFont = NULL;
 	
@@ -131,7 +132,9 @@ CMapPlugin::~CMapPlugin()
 	
 	ClearAlarms();
 	delete m_AlarmList;
-
+	
+	ClearCommands();
+	delete m_CommandList;
 	delete m_NameFont;
 
 	DBClose(m_DB);
@@ -279,8 +282,6 @@ void CMapPlugin::ReadConfigDB()
 		bool _val;
 		_val = atoi(row[FI_USER_OPTION_POSITION_FROM_GPS]);	SetPositionFromGps(_val);
 		
-		val = atoi(row[FI_USER_OPTION_REPORT_TIMEOUT]);	SetReportTimeout(val);
-		
 	}
 	
 	db_free_result(result);
@@ -314,6 +315,8 @@ void CMapPlugin::ReadGlobalConfigDB()
 		sscanf(row[FI_GLOBAL_OPTION_SUN_LAT],"%lf",&lat);
 		SetSunLon(lon);
 		SetSunLat(lat);
+
+		val = atoi(row[FI_GLOBAL_OPTION_REPORT_TIMEOUT]);		SetReportTimeout(val);
 	}
 	
 	db_free_result(result);
@@ -359,12 +362,12 @@ void CMapPlugin::WriteConfigDB()
 		
 	//OTHER
 	sql << sql.Format("scale_factor='%d',",GetScaleFactor());
-	sql << sql.Format("position_from_gps='%d',",GetPositionFromGps());
-	sql << sql.Format("report_timeout='%d'",GetReportTimeout());
-
+	sql << sql.Format("position_from_gps='%d'",GetPositionFromGps());
+	
 	my_query(m_DB,sql);
 
 }
+
 void CMapPlugin::WriteGlobalConfigDB()
 {
 	wxString sql = wxString::Format(_("DELETE FROM `%s`"),TABLE_GLOBAL_OPTION);
@@ -382,8 +385,10 @@ void CMapPlugin::WriteGlobalConfigDB()
 	
 	//SUN
 	sql << sql.Format("sun_lon='%4.13f',",GetSunLon());
-	sql << sql.Format("sun_lat='%4.13f'",GetSunLat());
+	sql << sql.Format("sun_lat='%4.13f',",GetSunLat());
 
+	//REPORT TIMEOUT
+	sql << sql.Format("report_timeout='%d'",GetReportTimeout());
 	my_query(m_DB,sql);
 
 }
@@ -784,7 +789,6 @@ void CMapPlugin::ReadAlarm(void *db)
 		{
 			add = true;
 			ptr = new CAlarm();
-			
 		}
 		
 		ptr->SetId(id);
@@ -794,7 +798,7 @@ void CMapPlugin::ReadAlarm(void *db)
 		ptr->SetType(atoi(row[FI_VIEW_ALARM_ALARM_TYPE]));
 		ptr->SetAlarmOnDate(Convert(row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]));
 		ptr->SetExists(true);
-		
+				
 		if(atoi(row[FI_VIEW_ALARM_ID_USER]) > 0)
 		{
 			ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
@@ -809,7 +813,48 @@ void CMapPlugin::ReadAlarm(void *db)
 	}
 }
 
+void CMapPlugin::ReadCommand(void *db)
+{	
+	wxString sql = _("SELECT ");
+	sql << wxString::Format(_("`%s`.id,name,id_command,command"),TABLE_SYMBOL);
+
+	sql << wxString::Format(_(" FROM `%s` LEFT JOIN `%s` ON `%s`.id=`%s`.id_sbms ORDER BY local_utc_time"),TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,COMMAND_STATUS_NEW);
+
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	m_ConfirmCounter = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		CCommand *ptr = NULL;
+		int id;
+		sscanf(row[0],"%d",&id);
+		ptr = ExistsCommand(id);
+		bool add = false;
+		
+		if(ptr == NULL)
+		{
+			add = true;
+			ptr = new CCommand();
+		}
+		
+		ptr->SetId(id);
+		ptr->SetSymbolName(Convert(row[1]));
+		ptr->SetIdCommand(atoi(row[2]));
+		ptr->SetStatus(atoi(row[3]));
+		ptr->SetExists(true);
+						
+		if(add)
+			m_CommandList->Insert(ptr,0);
+	}
+}
+
 /*
+
 void CMapPlugin::ReadGroup(void *db)
 {
 	int group_id = 1;
@@ -908,6 +953,16 @@ CSymbol *CMapPlugin::ExistsSymbol(int id)
 	return NULL;
 }
 
+void CMapPlugin::SetExistsAlarm()
+{
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	{
+		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
+		ptr->SetExists(false);
+	}
+		
+}
+
 CAlarm *CMapPlugin::ExistsAlarm(int id)
 {
 	for(size_t i = 0; i < m_AlarmList->size(); i++)
@@ -918,16 +973,6 @@ CAlarm *CMapPlugin::ExistsAlarm(int id)
 	}
 
 	return NULL;
-}
-
-void CMapPlugin::SetExistsAlarm()
-{
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
-	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
-		ptr->SetExists(false);
-	}
-		
 }
 
 void CMapPlugin::ClearAlarms()
@@ -955,9 +1000,59 @@ void CMapPlugin::RemoveAlarm()
 			i = 0;
 		}
 	}
+}
+
+// COMMANDS
+void CMapPlugin::ClearCommands()
+{
+	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	{
+		CCommand *ptr = (CCommand*)m_AlarmList->Item(i);
+		delete ptr;
+	}
 	
+	m_AlarmList->Clear();
+}
+
+CCommand *CMapPlugin::ExistsCommand(int id)
+{
+	for(size_t i = 0; i < m_CommandList->size(); i++)
+	{
+		CCommand *ptr = (CCommand*)m_CommandList->Item(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
+}
+
+void CMapPlugin::SetExistsCommand()
+{
+	for(size_t i = 0; i < m_CommandList->size(); i++)
+	{
+		CCommand *ptr = (CCommand*)m_CommandList->Item(i);
+		ptr->SetExists(false);
+	}
 		
 }
+
+void CMapPlugin::RemoveCommand()
+{
+	
+	for(size_t i = 0; i < m_CommandList->size(); i++)
+	{
+		CCommand *ptr = (CCommand*)m_CommandList->Item(i);
+		
+		if(!ptr->GetExists())
+		{
+			m_CommandList->Remove(ptr);
+			delete ptr;
+			i = 0;
+		}
+	}
+}
+
+
 
 void CMapPlugin::SetRemoveAlarm()
 {
@@ -1706,7 +1801,11 @@ void CMapPlugin::OnTick()
 	SetExistsAlarm();	
 	ReadAlarm(db);			//przeczytaj alarmy
 	RemoveAlarm();			//usuń
-		
+	
+	SetExistsCommand();		//przeczytaj komendy
+	ReadCommand(db);		//usuń
+	RemoveCommand();
+
 	ReadSymbolValues(db);	// wczytaj inne opcje
 		
 	//display potrzebuje tej flagi
@@ -1741,7 +1840,7 @@ void NAVIMAPAPI *CreateNaviClassInstance(CNaviBroker *NaviBroker)
 const NAVIMAPAPI wchar_t *NaviPluginIntroduce(int LangID) 
 {
 	SetLangId(LangID);
-	return TEXT(PRODUCT_NAME);	
+	return TEXT(PRODUCT_NAME);
 }
 
 int NAVIMAPAPI GetNaviPluginType(void) 

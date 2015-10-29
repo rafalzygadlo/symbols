@@ -189,7 +189,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Error writing file",L"B³¹d zapisu pliku"},
 	{L"No Data",L"Brak Danych"},
 	{L"Alarm Date",L"Data alarmu"},
-	{L"Database version is not compatible.\nRun the service tool.",L"Wersja programu i bazy danych nie zgodna.\nUruchom program serwisowy."},
+	{L"Database version is not compatible.\nRun the service tool.",L"Wersja plugina i bazy danych nie zgodna. Uruchom program serwisowy. Plugin nie bêdzie uruchomiony."},
 	{L"Error",L"B³¹d"},
 
 };
@@ -640,12 +640,12 @@ bool my_query(void *db,wxString sql)
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32
-		wxLogError(db_error(db));
+		//wxLogError(db_error(db));
 #endif
 #ifdef linux
 		syslog(LOG_LOCAL0,db_error());
 #endif
-		return result;
+		result = false;
 	}
 		
 	return result;
@@ -1282,8 +1282,6 @@ time_t GetLocalTimestamp()
     
 	return t;
 	//return mktime(now);
-
-
 }
 
 void SetNightTime()

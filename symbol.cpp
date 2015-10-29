@@ -271,7 +271,7 @@ bool CSymbol::CheckAlarm()
 
 	//if(m_AlarmTick <= CHECK_ALARM_TICK)
 		//return false;
-	
+	m_AlarmOn = !m_AlarmOn;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id"),TABLE_SBMS_ALARM,TABLE_ALARM, m_IdSBMS,ALARM_ACTIVE,TABLE_ALARM);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -318,7 +318,7 @@ bool CSymbol::CheckAlarm()
 	if(m_AlarmList.Length() > 0)
 	{
 		m_Alarm = true;
-		m_AlarmOn = true;
+		
 	}else{
 		m_Alarm = false;
 	}
@@ -333,13 +333,11 @@ bool  CSymbol::CheckCommand()
 {
 	m_CommandTick++;
 	m_CommandTickOn++;
+	m_BusyOn = !m_BusyOn;
 	
 	if(m_CommandTickOn >= CHECK_COMMAND_TICK_ON)
-	{
-		m_BusyOn = !m_BusyOn;
 		m_CommandTickOn = 0;
-	}
-
+	
 	if(m_CommandTick <= CHECK_COMMAND_TICK)
 		return false;
 	
@@ -573,14 +571,17 @@ void CSymbol::RenderAlarm()
 		return;
 		
 	glPushMatrix();
-	SetColor(SYMBOL_ERROR_COLOR);
+	if(m_AlarmOn)
+		SetColor(SYMBOL_ERROR_COLOR);
+	else
+		glColor4f(1.0f,1.0f,1.0f,0.3f);
+	
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
 	//glTranslatef(0.0,th/2,0.0f);
-
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
-	c.Radius = m_RectWidth;
+	c.Radius = m_RectWidth * 1.5;
 	nvDrawCircleArcFilled(&c,270,0);
 		
 	glPopMatrix();
@@ -620,11 +621,11 @@ void CSymbol::RenderBusy()
 	nvCircle c;
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
-	c.Radius = m_RectWidth*1.2;
+	c.Radius = m_RectWidth*1.5;
 	
 		
 	if(m_BusyOn)
-		glColor4f(1.0f,0.0f,0.0f,0.3f);
+		SetColor(SYMBOL_ERROR_COLOR);
 	else
 		glColor4f(1.0f,1.0f,1.0f,0.3f);
 	

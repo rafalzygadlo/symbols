@@ -12,6 +12,7 @@
 #include "positiondialog.h"
 #include "nvfastfont.h"
 #include "dialog.h"
+#include "command.h"
 #include "ticker.h"
 #include "symbol.h"
 #include "optionsdialog.h"
@@ -87,6 +88,7 @@ class CMapPlugin :public CNaviMapIOApi
 	int DisplaySignalType;
 	wxArrayPtrVoid *m_SymbolList;
 	wxArrayPtrVoid *m_AlarmList;
+	wxArrayPtrVoid *m_CommandList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
 	int m_ConfirmCounter;
@@ -99,17 +101,23 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadSymbol(void *db,wxString sql);
 	void ReadSBMS(CSymbol *ptr, char **row);
 	void ReadAlarm(void *db);
+	void ReadCommand(void *db);
 	//void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);
+	
 	void ClearSymbols();
 	void ClearAlarms();
+	void ClearCommands();
 	
 	void RemoveSymbol();
 	void RemoveAlarm();
+	void RemoveCommand();
+	
 	void SetRemoveAlarm();
 	void SetExistsSymbol();
 	void SetExistsAlarm();
+	void SetExistsCommand();
 		
 	void ReadConfig();
 	void WriteConfig();
@@ -149,7 +157,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowInfo(int x, int y);
 	CSymbol *ExistsSymbol(int id);
 	CAlarm *ExistsAlarm(int id);
-	
+	CCommand *ExistsCommand(int id);
 		
 	int Count();
 	CSymbol *Get(int id);

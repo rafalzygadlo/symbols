@@ -259,6 +259,20 @@ wxPanel *CDisplayPlugin::GetPage4(wxWindow *parent)
 	return m_Page4;
 }
 
+wxPanel *CDisplayPlugin::GetPage5(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_CommandList = new CCommandList(Panel);
+	Sizer->Add(m_CommandList,1,wxALL|wxEXPAND,0);
+
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+
 
 void CDisplayPlugin::ShowControls()
 {
@@ -270,6 +284,7 @@ void CDisplayPlugin::ShowControls()
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
 	m_Notebook->AddPage(GetPage4(m_Notebook),GetMsg(MSG_ALARM));
+	m_Notebook->AddPage(GetPage5(m_Notebook),GetMsg(MSG_COMMAND));
 	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 

@@ -41,6 +41,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_OldSelected;
 	CHtmlList *m_HtmlList;
 	CAlarmList *m_AlarmList;
+	CComandList *m_CommandList;
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldSymbolCount;
@@ -70,6 +71,8 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *GetPage2(wxWindow *parent);
 	wxPanel *GetPage3(wxWindow *parent);
 	wxPanel *GetPage4(wxWindow *parent);
+	wxPanel *GetPage5(wxWindow *parent);
+
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);
 	void OnMenu(wxContextMenuEvent &event);
