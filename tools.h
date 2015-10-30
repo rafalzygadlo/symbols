@@ -49,6 +49,7 @@ void DBClose(void *db);
 double GetMilesPerDegree(double x, double y);
 const char *GetCommand(int id);
 const wchar_t *GetCommandName(int id);
+const wchar_t *GetCommandStatus(int id);
 wxString GetOnOff(int v);
 wxString GetNvDateTime(nvtime_t v);
 wxString GetNvDate(nvtime_t v);

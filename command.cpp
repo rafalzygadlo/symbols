@@ -6,7 +6,6 @@ CCommand::CCommand()
 {
 	m_New = false;
 	m_Exists = false;
-	
 }
 
 //SET
@@ -50,9 +49,9 @@ void CCommand::SetStatus(int v)
 	m_Status = v;
 }
 
-void CCommand::SetIdCommand(int v)
+void CCommand::SetStatusText(wxString v)
 {
-	m_IdCommand = v;
+	m_StatusText = v;
 }
 
 //GET
@@ -79,6 +78,16 @@ bool CCommand::GetExists()
 int CCommand::GetType()
 {
 	return m_Type;
+}
+
+int CCommand::GetStatus()
+{
+	return m_Status;
+}
+
+wxString CCommand::GetStatusText()
+{
+	return m_StatusText;
 }
 
 wxString CCommand::GetUserFirstName()

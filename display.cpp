@@ -38,6 +38,7 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 	m_ControlType = DEFAULT_CONTROL_TYPE;
 	m_OldAlarmCount = 0;
 	m_OldSymbolCount = 0;
+	m_OldComandCount = 0;
 	ReadConfig();
 	ShowControls();
 	SetRenderBackground(false);
@@ -412,6 +413,7 @@ void CDisplayPlugin::SignalInsert()
 	m_HtmlList->SetList(ptr);
 	m_HtmlList->SetMapPlugin(m_MapPlugin);
 	
+	//ALARM LIST
 	ptr = m_MapPlugin->GetAlarmListPtr();
 	count = ptr->size();
 
@@ -420,7 +422,18 @@ void CDisplayPlugin::SignalInsert()
 	m_OldAlarmCount = count;
 
 	m_AlarmList->SetList(ptr);
-		
+	
+	//COMMAND LIST
+	ptr = m_MapPlugin->GetCommandListPtr();
+	count = ptr->size();
+
+	if(m_OldComandCount != count)
+		m_Notebook->SetPageText(PAGE_COMMAND,wxString::Format(GetMsg(MSG_COMMANDS),count));
+	m_OldComandCount = count;
+
+	m_CommandList->SetList(ptr);
+	
+
 	wxCommandEvent evt(EVT_SET_NIGHT_TIME,ID_NIGHT_TIME);
 	wxPostEvent(this,evt);
 }	

@@ -15,6 +15,7 @@
 #include "symbolpanel.h"
 #include "htmllist.h"
 #include "alarmlist.h"
+#include "commandlist.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -29,6 +30,7 @@ class CMapPlugin;
 class CHtmlList;
 class CAlarmList;
 class CSymbolPanel;
+class CCommandList;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
@@ -41,11 +43,12 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_OldSelected;
 	CHtmlList *m_HtmlList;
 	CAlarmList *m_AlarmList;
-	CComandList *m_CommandList;
+	CCommandList *m_CommandList;
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldSymbolCount;
 	int m_OldAlarmCount;
+	int m_OldComandCount;
 	bool m_OldNight;
 	wxPanel *m_Page3;
 	wxPanel *m_Page4;

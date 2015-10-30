@@ -191,6 +191,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Alarm Date",L"Data alarmu"},
 	{L"Database version is not compatible.\nRun the service tool.",L"Wersja plugina i bazy danych nie zgodna. Uruchom program serwisowy. Plugin nie bêdzie uruchomiony."},
 	{L"Error",L"B³¹d"},
+	{L"Commands (%d)",L"Komendy (%d)"},
+	{L"Timeout",L"Timeout"},
 
 };
 
@@ -276,6 +278,18 @@ const char *GetCommand(int id)
 const wchar_t *GetCommandName(int id)
 {
 	return GetMsg(nvCommandMSG[id]);
+}
+
+const wchar_t *GetCommandStatus(int id )
+{
+	switch(id)
+	{
+		case COMMAND_STATUS_NEW:		return GetMsg(MSG_NEW);
+		case COMMAND_STATUS_OK:			return GetMsg(MSG_OK);	
+		case COMMAND_STATUS_SEND:		return GetMsg(MSG_SEND_COMMAND);
+		case COMMAND_STATUS_TIMEOUT:	return GetMsg(MSG_TIMEOUT);
+		default: return GetMsg(MSG_NA);
+	}
 }
 
 wxString GetConfigFile()

@@ -152,12 +152,16 @@ wxString CCommandList::OnGetItem(size_t item) const
 	CCommand *ptr = (CCommand*)m_List->Item(item);
 	wxString str;
 		
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table bgcolor=#DDDDDD border=1 cellpadding=2 cellspacing=0 width=100%>"));
 		
-	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
-	nvRGBA c = GetAlarmTypeColor(ptr->GetType());
-	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
-	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetAlarmOnDate());
+	if(ptr->GetStatus() == COMMAND_STATUS_NEW)
+		str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+	else
+		str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetSymbolName());
+		
+	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetName());
+	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetStatusText());
+	//str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetAlarmOnDate());
 	str << wxString::Format(_("<tr><td><b>%s %s</b></font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
@@ -169,49 +173,18 @@ wxString CCommandList::OnGetItem(size_t item) const
 
 }
 /*
-wxString CHtmlList::OnGetItemMarkup(size_t  n) const
+wxString CCommandList::OnGetItemMarkup(size_t  n) const
 {
-	CSymbol *ptr = (CSymbol*)m_List->Item(n);
+	CCommand *ptr = (CCommand*)m_List->Item(n);
 	
 	//wxString str = HtmlListPtr->geti
 	//if(ptr->GetAlarmCount() > 0)
-	return wxString::Format(_("ABCDEF"),ptr->GetAgeAsString());
+	return wxString::Format(_("ABCDEF"),ptr->GetStatus());
 }
-*/
-/*
+
 wxColour CHtmlList::GetSelectedTextColour(const wxColour& colFg) const
 {
     return wxColor(255,255,255);
 }
 
-void CHtmlList::_SetSelection(SMarker *ship)
-{
-	if(ship == NULL)
-	{
-		this->SetSelection(-1);
-		return;
-	}
-	
-	if(this->GetItemCount() != ShipList->size())
-		return;
-	
-	//SetItemCount(ShipList->size());
-	for(size_t i = 0; i < ShipList->size();i++)
-	{ 
-		SMarker *Ship = (SMarker*)ShipList->Item(i);
-		if(Ship != NULL)
-		{
-		
-			if(Ship == ship)
-			{
-				this->SetSelection(i);
-				//this->
-				Refresh();
-				return;
-			}
-		}
-	}
-		
-	Refresh();
-}
 */

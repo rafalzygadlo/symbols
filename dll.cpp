@@ -493,6 +493,11 @@ wxArrayPtrVoid *CMapPlugin::GetAlarmListPtr()
 	return m_AlarmList;
 }
 
+wxArrayPtrVoid *CMapPlugin::GetCommandListPtr()
+{
+	return m_CommandList;
+}
+
 int CMapPlugin::GetDisplaySignal()
 {
 	return DisplaySignalType;
@@ -815,18 +820,17 @@ void CMapPlugin::ReadAlarm(void *db)
 
 void CMapPlugin::ReadCommand(void *db)
 {	
-	wxString sql = _("SELECT ");
-	sql << wxString::Format(_("`%s`.id,name,id_command,command"),TABLE_SYMBOL);
-
-	sql << wxString::Format(_(" FROM `%s` LEFT JOIN `%s` ON `%s`.id=`%s`.id_sbms ORDER BY local_utc_time"),TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,COMMAND_STATUS_NEW);
+	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status FROM `%s`"),TABLE_SYMBOL,TABLE_COMMAND);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL); 
+	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_STATUS_NEW,TABLE_SYMBOL);
 
 	my_query(db,sql);
 	void *result = db_result(db);
-		
+
     char **row = NULL;
 	if(result == NULL)
 		return;
-	
+
 	m_ConfirmCounter = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -835,26 +839,27 @@ void CMapPlugin::ReadCommand(void *db)
 		sscanf(row[0],"%d",&id);
 		ptr = ExistsCommand(id);
 		bool add = false;
-		
+
 		if(ptr == NULL)
 		{
 			add = true;
 			ptr = new CCommand();
 		}
-		
+
 		ptr->SetId(id);
 		ptr->SetSymbolName(Convert(row[1]));
-		ptr->SetIdCommand(atoi(row[2]));
-		ptr->SetStatus(atoi(row[3]));
+		ptr->SetName(GetCommandName(atoi(row[2])));
+		ptr->SetStatus(atoi(row[4]));
+		ptr->SetStatusText(GetCommandStatus(atoi(row[4])));
+		
 		ptr->SetExists(true);
-						
+
 		if(add)
 			m_CommandList->Insert(ptr,0);
 	}
 }
 
 /*
-
 void CMapPlugin::ReadGroup(void *db)
 {
 	int group_id = 1;
@@ -891,6 +896,7 @@ void CMapPlugin::ReadGroup(void *db)
 	
 }
 */
+
 void CMapPlugin::ReadSymbolValues(void *db)
 {  
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
@@ -1005,13 +1011,13 @@ void CMapPlugin::RemoveAlarm()
 // COMMANDS
 void CMapPlugin::ClearCommands()
 {
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
+	for(size_t i = 0; i < m_CommandList->size(); i++)
 	{
-		CCommand *ptr = (CCommand*)m_AlarmList->Item(i);
+		CCommand *ptr = (CCommand*)m_CommandList->Item(i);
 		delete ptr;
 	}
 	
-	m_AlarmList->Clear();
+	m_CommandList->Clear();
 }
 
 CCommand *CMapPlugin::ExistsCommand(int id)

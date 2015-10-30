@@ -200,11 +200,13 @@ public:
 	CMapPlugin(CNaviBroker *NaviBroker);
 	~CMapPlugin();
 	
+	wxArrayPtrVoid *GetSymbolListPtr();
+	wxArrayPtrVoid *GetAlarmListPtr();
+	wxArrayPtrVoid *GetCommandListPtr();
 
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();
-	wxArrayPtrVoid *GetSymbolListPtr();
-	wxArrayPtrVoid *GetAlarmListPtr();
+	
 	void ShowFrameWindow(bool show);
 	int GetDisplaySignal();
 	void OnTick();

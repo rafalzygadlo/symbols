@@ -12,7 +12,7 @@
 #endif
 
 //html or webview
-#if 0
+#if 1
 #define WEBVIEW
 #endif
 
@@ -70,8 +70,9 @@
 
 #define DEFAULT_EXPORT_DIRECTORY "export"
 
-#define PAGE_ALL	1
-#define PAGE_ALARM	2
+#define PAGE_ALL		1
+#define PAGE_ALARM		2
+#define PAGE_COMMAND	3
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1
@@ -121,9 +122,10 @@
 #define DEFAULT_OFFSET_MINUTES	(60*60)
 #define DEFAULT_OFFSET_HOURS	(24*60*60)
 
-#define COMMAND_STATUS_NEW		0
-#define COMMAND_STATUS_SEND		1
-#define COMMAND_STATUS_OK		2
+#define COMMAND_STATUS_TIMEOUT	-1
+#define COMMAND_STATUS_NEW		 0
+#define COMMAND_STATUS_SEND		 1
+#define COMMAND_STATUS_OK		 2
 
 #define DEFAULT_FONT_FACTOR		50.0
 #define DEFAULT_FONT_SIZE		6.1
@@ -304,6 +306,8 @@
 #define MSG_ALARM_DATE					169
 #define MSG_DB_VERSION_MISMATCH			170
 #define MSG_ERROR						171
+#define MSG_COMMANDS					172
+#define MSG_TIMEOUT						173
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
