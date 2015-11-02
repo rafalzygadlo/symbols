@@ -1,6 +1,7 @@
 #ifndef __SYMBOLPANEL_H
 #define __SYMBOLPANEL_H
 
+#include "conf.h"
 #include <wx/html/htmlwin.h>
 #ifdef WEBVIEW
 #include <wx/webview.h>
@@ -57,6 +58,7 @@ class CSymbolPanel : public wxPanel
 	void OnHtml(wxHtmlLinkEvent &event);
 #ifdef WEBVIEW
 	void OnNavigationRequest(wxWebViewEvent& event);
+	void OnLoaded(wxWebViewEvent& event);
 #endif
 
 	void SetCalibrated(bool v);

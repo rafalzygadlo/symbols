@@ -820,9 +820,10 @@ void CMapPlugin::ReadAlarm(void *db)
 
 void CMapPlugin::ReadCommand(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status FROM `%s`"),TABLE_SYMBOL,TABLE_COMMAND);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL); 
-	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_STATUS_NEW,TABLE_SYMBOL);
+	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status,first_name,last_name,local_utc_time FROM `%s`"),TABLE_COMMAND,TABLE_COMMAND);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_COMMAND);
+	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d' ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_ACTIVE);
 
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -851,6 +852,9 @@ void CMapPlugin::ReadCommand(void *db)
 		ptr->SetName(GetCommandName(atoi(row[2])));
 		ptr->SetStatus(atoi(row[4]));
 		ptr->SetStatusText(GetCommandStatus(atoi(row[4])));
+		ptr->SetUserFirstName(Convert(row[5]));
+		ptr->SetUserLastName(Convert(row[6]));
+		ptr->SetCommandDate(Convert(row[7]));
 		
 		ptr->SetExists(true);
 
@@ -861,6 +865,7 @@ void CMapPlugin::ReadCommand(void *db)
 
 /*
 void CMapPlugin::ReadGroup(void *db)
+
 {
 	int group_id = 1;
 

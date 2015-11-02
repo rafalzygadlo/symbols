@@ -55,7 +55,7 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 	switch(action)
 	{
-		case HREF_ACTION_ALARM_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		case HREF_ACTION_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
 		
 	}
 
@@ -166,7 +166,7 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));
 	
 	str.Append(_("</table>"));
 	

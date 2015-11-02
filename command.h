@@ -15,6 +15,7 @@ class CCommand
 	wxString m_SymbolName;
 	wxString m_UserFirstName;
 	wxString m_UserLastName;
+	wxString m_CommandDate;
 	
 public:
 
@@ -27,7 +28,7 @@ public:
 	void SetExists(bool v);
 	void SetType(int v);
 	void SetStatus(int v);
-	void SetAlarmOnDate(wxString v);
+	void SetCommandDate(wxString v);
 	void SetUserFirstName(wxString v);
 	void SetUserLastName(wxString v);
 	void SetStatusText(wxString v);

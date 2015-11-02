@@ -225,7 +225,7 @@ wxPanel *CDisplayPlugin::GetPage2(wxWindow *parent)
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	
 	m_SymbolPanel = new CSymbolPanel(Panel);
-	Sizer->Add(m_SymbolPanel,1,wxALL|wxEXPAND,5);
+	Sizer->Add(m_SymbolPanel,1,wxALL|wxEXPAND,0);
 	Panel->SetSizer(Sizer);
 
 	return Panel;

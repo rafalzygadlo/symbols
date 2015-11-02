@@ -220,7 +220,7 @@ wxString CHtmlList::OnGetItem(size_t item) const
 			if(GetSelection() == item)
 			{
 				if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-					str << wxString::Format(_("<a target=1 href='%d'>%s</a>"),item,GetMsg(MSG_MANAGEMENT));
+					str << wxString::Format(_("<a target=%d href='%d'>%s</a>"),HREF_ACTION_MANAGEMENT, item,GetMsg(MSG_MANAGEMENT));
 			}
 		
 			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));

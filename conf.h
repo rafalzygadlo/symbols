@@ -90,6 +90,9 @@
 #define ALARM_NOT_ACTIVE	0
 #define ALARM_ACTIVE		1
 
+#define COMMAND_NOT_ACTIVE	0
+#define COMMAND_ACTIVE		1
+
 #define DEFAULT_FRAME_HEIGHT 400
 #define DEFAULT_FRAME_WIDTH	 280
 #define RECT_WIDTH 24
@@ -308,6 +311,7 @@
 #define MSG_ERROR						171
 #define MSG_COMMANDS					172
 #define MSG_TIMEOUT						173
+#define MSG_COMMAND_SEND				174
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -940,11 +944,9 @@
 
 
 // html list link actions 
-#define HREF_ACTION_GRAPH			0
-#define HREF_ACTION_MANAGEMENT		1
-
-//alarm list link actions
-#define HREF_ACTION_ALARM_DELETE	0
+#define HREF_ACTION_GRAPH		0
+#define HREF_ACTION_MANAGEMENT	1
+#define HREF_ACTION_DELETE		2
 
 //statusy światła
 #define LIGHT_NOT_AVAILABLE     -1

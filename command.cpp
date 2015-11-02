@@ -54,6 +54,10 @@ void CCommand::SetStatusText(wxString v)
 	m_StatusText = v;
 }
 
+void CCommand::SetCommandDate(wxString v)
+{
+	m_CommandDate = v;
+}
 //GET
 int CCommand::GetId()
 {

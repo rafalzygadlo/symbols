@@ -1,4 +1,5 @@
 #include <wx/wx.h>
+#include <wx/webviewfshandler.h>
 #include <wx/notebook.h>
 #include "symbolpanel.h"
 #include "conf.h"
@@ -22,6 +23,7 @@ BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
 	EVT_HTML_LINK_CLICKED(ID_HTML,OnHtml)
 #ifdef WEBVIEW
 	EVT_WEBVIEW_NAVIGATING(ID_HTML,OnNavigationRequest)
+	EVT_WEBVIEW_LOADED(ID_HTML,OnLoaded)
 #endif
 END_EVENT_TABLE()
 
@@ -33,12 +35,14 @@ CSymbolPanel::CSymbolPanel(wxWindow *parent)
 	m_GraphDialog = NULL;
 	m_HtmlString = wxEmptyString;
 	GetPage1();
+	m_Html->LoadURL("about:blank");
+	//m_Html->SetPage("<html><p>test page</p></html>","www.wp.pl");
 }
+
 CSymbolPanel::~CSymbolPanel()
 {
 	if(m_GraphDialog)
 		delete m_GraphDialog;
-
 	
 }
 
@@ -46,40 +50,41 @@ void CSymbolPanel::GetPage1()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
-	wxScrolledWindow *Scroll = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
-	Scroll->SetFocusIgnoringChildren();
-	Scroll->SetSizer(ScrollSizer);
+	//wxBoxSizer *ScrollSizer = new wxBoxSizer(wxVERTICAL);
+	//wxScrolledWindow *Scroll = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+	//Sizer->Add(Scroll,1,wxALL|wxEXPAND,0);
+	//Scroll->SetFocusIgnoringChildren();
+	//Scroll->SetSizer(ScrollSizer);
 	
 #ifndef WEBVIEW
 	m_PicturePanel = new CPicturePanel(NULL,Scroll);
 	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 #endif
 	
-	wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
-	ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
+	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
+	//ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
 		
 #ifndef WEBVIEW
 	m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
 #else
-	m_Html = wxWebView::New(Scroll,ID_HTML,wxEmptyString);
+	m_Html = wxWebView::New(this,ID_HTML,wxEmptyString);
+	
 #endif
 	//m_Html->SetMinSize(wxSize(200,450));
 	
-	ScrollSizer->Add(m_Html,1,wxALL|wxEXPAND,0);
+	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 		
 	wxWrapSizer *WrapSizer = new wxWrapSizer(wxHORIZONTAL);
-	ScrollSizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
+	Sizer->Add(WrapSizer,0,wxALL|wxEXPAND,0);
 
-	m_ButtonManagement = new wxButton(Scroll,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
+	m_ButtonManagement = new wxButton(this,ID_MANAGEMENT,GetMsg(MSG_MANAGEMENT));
 	WrapSizer->Add(m_ButtonManagement,0,wxALL,2);
 	m_ButtonManagement->Disable();	
-	m_ButtonGraph = new wxButton(Scroll,ID_GRAPH,GetMsg(MSG_GRAPH));
+	m_ButtonGraph = new wxButton(this,ID_GRAPH,GetMsg(MSG_GRAPH));
 	WrapSizer->Add(m_ButtonGraph,0,wxALL,2);
 	m_ButtonGraph->Disable();
 	
-	Scroll->SetScrollbars(20, 20, 20, 20);
+	//Scroll->SetScrollbars(20, 20, 20, 20);
 	SetSizer(Sizer);
 			
 }
@@ -248,13 +253,13 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<body style='font-family:Tahoma'><table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 	
 #ifdef WEBVIEW
 	char *b64 = NULL;
 	if(GetPictureAsBase64(db,ptr->GetId(),b64))
 	{
-		str.Append(wxString::Format(_("<tr><td><center><a target=1 href=#><img src='data:image/png;base64,%s'></a></center></td></tr>"),b64));
+		str.Append(wxString::Format(_("<tr><td><center><img src='data:image/png;base64,%s'></center></td></tr>"),b64));
 		free(b64);
 	}
 #endif	
@@ -269,17 +274,16 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	
 	if(ptr->GetInMonitoring() & ptr->GetIdSBMS() > 0)
 	{
-		str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
-		str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
+		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
 	}
 	
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetName()));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber()));
-	str.Append(wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetAgeAsString()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetName()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetNumber()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetAgeAsString()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
-
-	
+	//str.Append(_("<input type='checkbox' name='nazwa' value='wartoœæ'>"));
 	
 	str.Append(_("</table>"));
 	str.Append(_("<hr>"));
@@ -317,26 +321,21 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		
 		//nvtime_t dt;
 		//nvdatetime(atoi(row[FI_SBMS_LOCAL_UTC_TIME]),&dt);
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),Convert(row[FI_SBMS_LOCAL_UTC_TIME])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_LATITUDE),FormatLatitude(atof(row[FI_SBMS_LAT]),DEFAULT_DEGREE_FORMAT)));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_LONGITUDE),FormatLongitude(atof(row[FI_SBMS_LON]),DEFAULT_DEGREE_FORMAT)));
-	
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
-		//str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_PIN),row[FI_SBMS_ANALOG_PIN]));
-		//str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DIGITAL_VALUE),row[FI_SBMS_DIGITAL_VALUE]));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),Convert(row[FI_SBMS_LOCAL_UTC_TIME])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LATITUDE),FormatLatitude(atof(row[FI_SBMS_LAT]),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LONGITUDE),FormatLongitude(atof(row[FI_SBMS_LON]),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetPhotoCellValue(atoi(row[FI_SBMS_ANALOG_PIN]), atoi(row[FI_SBMS_ANALOG_VALUE]))));
-		//str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_RESERVED),GetOnOff(atoi(row[FI_SBMS_MODE_RESERVED]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
-		//str.Append(wxString::Format(_("<tr><td>%s</td><td><b>%s</b></td></tr>"),GetMsg(MSG_SYNC_MASTER),GetOnOff(atoi(row[FI_SBMS_MODE_SYNC_MASTER]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetPhotoCellValue(atoi(row[FI_SBMS_ANALOG_PIN]), atoi(row[FI_SBMS_ANALOG_VALUE]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
 		
 		str.Append(_("</table>"));
 
@@ -392,18 +391,18 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		wxString str;
 		wxColor BgColor(atoi(row[FI_VIEW_LIGHT_COLOR]));
 		
-		str.Append(_("<br><hr><br>"));
-		str.Append(wxString::Format(_("<font size=3><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
+		str.Append(_("<hr>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
-		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 ><tr><td width=100%><font size=4><b><br></b></font></td></tr></table></td></tr>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceMeter)));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=3><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
+		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 width=100%%><tr><td><font size=4><b><br></b></font></td></tr></table></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceMeter)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
 		str.Append(_("</table>"));
 		
 		m_HtmlString.Append(str);
@@ -416,7 +415,9 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 
 void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 {
+#ifndef WEBVIEW
 	m_PicturePanel->Clear();
+
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,ptr->GetId());
 	my_query(db,sql);
 	char **row = NULL;
@@ -441,14 +442,16 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	
 	this->Layout();
 	db_free_result(result);
-
+#endif
 }
 
 #ifdef WEBVIEW
 void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)
 {
     
-    wxLogMessage("%s", "Navigation request to '" + event.GetURL() + "' (target='" + event.GetTarget() + "')");
+    //wxLogMessage("%s", "Navigation request to '" + event.GetURL() + "' (target='" + event.GetTarget() + "')");
+
+	int id = event.GetId();
 
     //wxASSERT(m_browser->IsBusy());
 
@@ -463,6 +466,12 @@ void CSymbolPanel::OnNavigationRequest(wxWebViewEvent& event)
     //{
       //  UpdateState();
     //}
+	event.Skip();
+}
+
+void CSymbolPanel::OnLoaded(wxWebViewEvent& event)
+{
+	event.Skip();
 }
 #endif
 
@@ -511,5 +520,4 @@ void CSymbolPanel::SetSyncMaster(bool v)
 void CSymbolPanel::SetSeasonControl(bool v)
 {
 	m_SeasonControl->SetOn(v);
-
 }

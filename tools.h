@@ -73,6 +73,7 @@ void ConfirmAlarm(int id);
 bool GetSBMSExists(void *db,int id);
 nvRGBA GetAlarmTypeColor(int id);
 void DeactivateAlarm(int id);
+void DeactivateCommand(int id);
 wxString GetProgramDir();
 bool GetPictureAsBase64(void *db, int id, char *&base64);
 wxString GetPhotoCellValue(  int _Mask, int _Value );

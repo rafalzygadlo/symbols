@@ -193,6 +193,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Error",L"B³¹d"},
 	{L"Commands (%d)",L"Komendy (%d)"},
 	{L"Timeout",L"Timeout"},
+	{L"Command Send",L"Wys³ano"},
 
 };
 
@@ -286,7 +287,7 @@ const wchar_t *GetCommandStatus(int id )
 	{
 		case COMMAND_STATUS_NEW:		return GetMsg(MSG_NEW);
 		case COMMAND_STATUS_OK:			return GetMsg(MSG_OK);	
-		case COMMAND_STATUS_SEND:		return GetMsg(MSG_SEND_COMMAND);
+		case COMMAND_STATUS_SEND:		return GetMsg(MSG_COMMAND_SEND);
 		case COMMAND_STATUS_TIMEOUT:	return GetMsg(MSG_TIMEOUT);
 		default: return GetMsg(MSG_NA);
 	}
@@ -1140,6 +1141,14 @@ void ConfirmAlarm(int id)
 void DeactivateAlarm(int id)
 {
 	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+
+void DeactivateCommand(int id)
+{
+	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_COMMAND,COMMAND_NOT_ACTIVE,id);
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);

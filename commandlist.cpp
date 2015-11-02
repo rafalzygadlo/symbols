@@ -55,7 +55,7 @@ void CCommandList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 	switch(action)
 	{
-		//case HREF_ACTION_ALARM_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		case HREF_ACTION_DELETE:	DeactivateCommand(ptr->GetId());	break;
 		
 	}
 
@@ -151,9 +151,9 @@ wxString CCommandList::OnGetItem(size_t item) const
 
 	CCommand *ptr = (CCommand*)m_List->Item(item);
 	wxString str;
-		
-	str.Append(_("<table bgcolor=#DDDDDD border=1 cellpadding=2 cellspacing=0 width=100%>"));
-		
+	
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	
 	if(ptr->GetStatus() == COMMAND_STATUS_NEW)
 		str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
 	else
@@ -165,7 +165,7 @@ wxString CCommandList::OnGetItem(size_t item) const
 	str << wxString::Format(_("<tr><td><b>%s %s</b></font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=0 href='%d'>%s</a></td></tr>"),item,GetMsg(MSG_DELETE));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));
 	
 	str.Append(_("</table>"));
 	
