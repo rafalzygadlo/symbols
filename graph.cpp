@@ -289,16 +289,16 @@ void CGraph::RenderGrid()
 	glBegin(GL_LINES);
 	for(float i = m_GraphLeft; i < m_GraphRight;  i+=(m_GraphRight - m_GraphLeft)/10)
  	{
-		glVertex2f(i ,m_GridBottom);	
-		glVertex2f(i ,m_GridTop);	
+		glVertex2f(i ,m_GridBottom);
+		glVertex2f(i ,m_GridTop);
 	}
 
 	for(float i = m_GraphBottom; i < m_GraphTop;  i+=(m_GraphTop - m_GraphBottom)/3)
  	{
-		glVertex2f(m_GraphLeft,i);	
-		glVertex2f(m_GraphRight,i);	
+		glVertex2f(m_GraphLeft,i);
+		glVertex2f(m_GraphRight,i);
 	}
-		
+
 	glVertex2f(m_GraphLeft,m_GridTop);
 	glVertex2f(m_GraphRight,m_GridTop);
 
@@ -311,6 +311,7 @@ void CGraph::RenderGrid()
 		
 	glColor4f(1.0f,1.0f,1.0f,1.0f);
 	float step = (m_GraphRight - m_GraphLeft)/10;
+	
 	for(float i = m_GraphLeft+step; i < m_GraphRight;  i+=step)
  	{
 		time_t t = m_TimeFrom + ((i - m_MoveX*m_XScale)/m_Scale);
@@ -323,7 +324,6 @@ void CGraph::RenderGrid()
 		RenderText(i,m_GridBottom,txt);
 		
 	}
-	
 	
 	sprintf(txt,"%4.2f",m_GridTop);
 	RenderText(1,m_GridTop,txt);
@@ -384,7 +384,7 @@ void CGraph::Render()
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
 	glEnable(GL_POINT_SMOOTH);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//GetMutex()->Lock();
 	
 	RenderData();

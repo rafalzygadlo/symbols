@@ -1,7 +1,7 @@
 #include <wx/strconv.h>
 #include <algorithm>
 #include <wx/mstream.h>
-#include "alarmlist.h"
+#include "grouplist.h"
 #include "conf.h"
 #include "tools.h"
 #include "info.h"
@@ -9,7 +9,7 @@
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
-BEGIN_EVENT_TABLE(CAlarmList,wxHtmlListBox)
+BEGIN_EVENT_TABLE(CGroupList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
@@ -17,8 +17,8 @@ BEGIN_EVENT_TABLE(CAlarmList,wxHtmlListBox)
 	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
-CAlarmList *HtmlListPtr = NULL;
-CAlarmList::CAlarmList( wxWindow *Parent)
+CGroupList *HtmlListPtr = NULL;
+CGroupList::CGroupList( wxWindow *Parent)
 :wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
 {
 	HtmlListPtr = this;
@@ -28,12 +28,12 @@ CAlarmList::CAlarmList( wxWindow *Parent)
 	SetMargins(10,10);
 }
 
-CAlarmList::~CAlarmList()
+CGroupList::~CGroupList()
 {
 
 }
 
-void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
+void CGroupList::OnLinkClicked(wxHtmlLinkEvent &event)
 {
 	int id =  event.GetSelection();
 	id = event.GetId();
@@ -57,28 +57,28 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 }
 
-void CAlarmList::OnSetItem(wxCommandEvent &event)
+void CGroupList::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
 }
 
-void CAlarmList::OnContextMenu(wxContextMenuEvent &event)
+void CGroupList::OnContextMenu(wxContextMenuEvent &event)
 {
 	
 }
 
-void CAlarmList::ClearList()
+void CGroupList::ClearList()
 {
 	SetItemCount(0);
 }
 
-void CAlarmList::SetMapPlugin(CMapPlugin *v)
+void CGroupList::SetMapPlugin(CMapPlugin *v)
 {
 	m_MapPlugin = v;
 }
 
-void CAlarmList::SetList(wxArrayPtrVoid *v)
+void CGroupList::SetList(wxArrayPtrVoid *v)
 {
 	if(v == NULL)
 		return;
@@ -94,7 +94,7 @@ void CAlarmList::SetList(wxArrayPtrVoid *v)
 	
 }
 
-void CAlarmList::_SetSelection(CAlarm *ptr)
+void CGroupList::_SetSelection(CAlarm *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -121,7 +121,7 @@ void CAlarmList::_SetSelection(CAlarm *ptr)
 	Refresh();
 }
 
-void CAlarmList::OnSelect(wxCommandEvent &event)
+void CGroupList::OnSelect(wxCommandEvent &event)
 {
 	RefreshAll();
 	if(GetSelection() < 0)
@@ -133,37 +133,34 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 	ConfirmAlarm(ptr->GetId());
 }
 
-void CAlarmList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
+void CGroupList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.SetPen(*wxGREY_PEN);
 	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
-wxString CAlarmList::OnGetItem(size_t item) const
+wxString CGroupList::OnGetItem(size_t item) const
 {
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CAlarm *ptr = (CAlarm*)m_List->Item(item);
+	CGroup *ptr = (CGroup*)m_List->Item(item);
 	wxString str;
 		
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	int fsize = 0;
-	if(ptr->GetConfirmed())
-		fsize = 3;
-	else
-		fsize = 6;
+	int fsize = 5;
+		
+	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetName());
 	
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetSymbolName());
-	nvRGBA c = GetAlarmTypeColor(ptr->GetType());
-	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetAlarmOnDate());
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
+	//str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));
-	
+	{
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_LIGHT_ON));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_LIGHT_OFF));
+	}
+
 	str.Append(_("</table>"));
 	
 	return str;

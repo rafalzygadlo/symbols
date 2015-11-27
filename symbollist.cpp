@@ -1,4 +1,4 @@
-#include "htmllist.h"
+#include "symbollist.h"
 #include "conf.h"
 #include "tools.h"
 #include "info.h"
@@ -9,7 +9,7 @@
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
-BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
+BEGIN_EVENT_TABLE(CSymbolList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
@@ -17,8 +17,8 @@ BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
-CHtmlList *HtmlListPtr = NULL;
-CHtmlList::CHtmlList( wxWindow *Parent)
+CSymbolList *HtmlListPtr = NULL;
+CSymbolList::CSymbolList( wxWindow *Parent)
 :wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
 {
 	//Plugin = DspPlugin;
@@ -32,12 +32,12 @@ CHtmlList::CHtmlList( wxWindow *Parent)
 	//SetSelectionBackground(wxColor(200,200,200));
 }
 
-CHtmlList::~CHtmlList()
+CSymbolList::~CSymbolList()
 {
 
 }
 
-void CHtmlList::OnLinkClicked(wxHtmlLinkEvent &event)
+void CSymbolList::OnLinkClicked(wxHtmlLinkEvent &event)
 {
 	int id =  event.GetSelection();
 	id = event.GetId();
@@ -63,24 +63,24 @@ void CHtmlList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 }
 
-void CHtmlList::ShowGraph(CSymbol *v)
+void CSymbolList::ShowGraph(CSymbol *v)
 {
 	v->ShowGraph();
 }
 
-void CHtmlList::ShowManagement(CSymbol *v)
+void CSymbolList::ShowManagement(CSymbol *v)
 {
 	v->ShowManagement(v);
 }
 
 
-void CHtmlList::OnSetItem(wxCommandEvent &event)
+void CSymbolList::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
 }
 
-void CHtmlList::OnContextMenu(wxContextMenuEvent &event)
+void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 {
 	//this->GetItemForCell()
 	//this->getr
@@ -108,39 +108,31 @@ void CHtmlList::OnContextMenu(wxContextMenuEvent &event)
 	delete Menu;
 }
 
-void CHtmlList::ClearList()
+void CSymbolList::ClearList()
 {
 	SetItemCount(0);
 }
 
-void CHtmlList::SetMapPlugin(CMapPlugin *v)
+void CSymbolList::SetMapPlugin(CMapPlugin *v)
 {
 	m_MapPlugin = v;
 }
 
-void CHtmlList::SetList(wxArrayPtrVoid *ships)
+void CSymbolList::SetList(wxArrayPtrVoid *ptr)
 {
-	if(ships == NULL)
+	if(ptr == NULL)
 		return;
 
-	m_List = ships;
+	m_List = ptr;
 	
 	int count = m_List->size();
-
-	//if(m_Count != count || GetSortChanged())
-	//{
-		
-		m_Count = count;
-		wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
-		wxPostEvent(this,evt);
-		Refresh();
-	//}
-		
-	
-
+	m_Count = count;
+	wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
+	wxPostEvent(this,evt);
+	Refresh();
 }
 
-void CHtmlList::_SetSelection(CSymbol *ptr)
+void CSymbolList::_SetSelection(CSymbol *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -168,7 +160,7 @@ void CHtmlList::_SetSelection(CSymbol *ptr)
 	Refresh();
 }
 
-void CHtmlList::OnSelect(wxCommandEvent &event)
+void CSymbolList::OnSelect(wxCommandEvent &event)
 {
 	RefreshAll();
 	if(GetSelection() < 0)
@@ -180,14 +172,14 @@ void CHtmlList::OnSelect(wxCommandEvent &event)
 
 }
 
-void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
+void CSymbolList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
-wxString CHtmlList::OnGetItem(size_t item) const
+wxString CSymbolList::OnGetItem(size_t item) const
 {
 	if(m_List->size() <= item)
 		return wxEmptyString;

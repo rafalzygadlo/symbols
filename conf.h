@@ -73,6 +73,7 @@
 #define PAGE_ALL		1
 #define PAGE_ALARM		2
 #define PAGE_COMMAND	3
+#define PAGE_GROUP		4
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1
@@ -218,7 +219,7 @@
 #define MSG_RESERVED					78
 #define MSG_FAULT_OUTPUT				79
 #define MSG_SOLAR_CHARGER_ON			80
-#define MSG_SYNC_MASTER					81
+#define MSG_SYNC						81
 #define MSG_MONITORED_CHANNELS			82
 #define MSG_OVERLOAD_CHANNELS			83
 #define MSG_TRUE						84
@@ -312,6 +313,10 @@
 #define MSG_COMMANDS					172
 #define MSG_TIMEOUT						173
 #define MSG_COMMAND_SEND				174
+#define MSG_SIMPLE						175
+#define MSG_ADVANCED					176
+#define MSG_RESET						177
+#define MSG_GROUPS						178
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0

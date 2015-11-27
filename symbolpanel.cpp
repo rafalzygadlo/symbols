@@ -336,11 +336,11 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(true)));
 		
 		str.Append(_("</table>"));
 
 		m_HtmlString.Append(str);
-				
 	}
 
 	db_free_result(result);
@@ -366,13 +366,11 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
 		m_HtmlString.Append(str);
-
 	}
 
 	db_free_result(result);
 
 }
-
 
 
 void CSymbolPanel::LightInfo(void *db,int id_symbol)

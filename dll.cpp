@@ -72,6 +72,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_SymbolList = new wxArrayPtrVoid();
 	m_AlarmList = new wxArrayPtrVoid();
 	m_CommandList = new wxArrayPtrVoid();
+	m_GroupList = new wxArrayPtrVoid();
 
 	m_NameFont = NULL;
 	
@@ -135,6 +136,10 @@ CMapPlugin::~CMapPlugin()
 	
 	ClearCommands();
 	delete m_CommandList;
+
+	ClearGroup();
+	delete m_GroupList;
+
 	delete m_NameFont;
 
 	DBClose(m_DB);
@@ -496,6 +501,11 @@ wxArrayPtrVoid *CMapPlugin::GetAlarmListPtr()
 wxArrayPtrVoid *CMapPlugin::GetCommandListPtr()
 {
 	return m_CommandList;
+}
+
+wxArrayPtrVoid *CMapPlugin::GetGroupListPtr()
+{
+	return m_GroupList;
 }
 
 int CMapPlugin::GetDisplaySignal()
@@ -863,13 +873,11 @@ void CMapPlugin::ReadCommand(void *db)
 	}
 }
 
-/*
+
 void CMapPlugin::ReadGroup(void *db)
-
 {
-	int group_id = 1;
 
-	wxString sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d'"),TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP,group_id);
+	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL_GROUP);
 
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -881,26 +889,28 @@ void CMapPlugin::ReadGroup(void *db)
 	while(row = (char**)db_fetch_row(result))
 	{
 		int id;
-		sscanf(row[FI_SYMBOL_ID],"%d",&id);
-		CSymbol *ptr = NULL;
-		ptr = Exists(id);
+		sscanf(row[FI_SYMBOL_GROUP_ID],"%d",&id);
+		CGroup *ptr = NULL;
+		ptr = ExistsGroup(id);
 		bool add = false;
 		
 		if(ptr == NULL)
 		{
 			add = true;
-			ptr = new CSymbol(m_Broker);
+			ptr = new CGroup();
 		}
-				
-		//ptr->SetRemove(true);		
+		
+		ptr->SetId(id);
+		ptr->SetName(Convert(row[FI_SYMBOL_GROUP_NAME]));
+		ptr->SetExists(true);		
 		
 		if(add)
-			m_SymbolList->Add(ptr);
+			m_GroupList->Add(ptr);
 
 	}
 	
 }
-*/
+
 
 void CMapPlugin::ReadSymbolValues(void *db)
 {  
@@ -912,6 +922,7 @@ void CMapPlugin::ReadSymbolValues(void *db)
 	
 }
 
+//SYMBOL
 void CMapPlugin::ClearSymbols()
 {
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
@@ -923,7 +934,6 @@ void CMapPlugin::ClearSymbols()
 	
 	m_SymbolList->Clear();
 }
-
 
 void CMapPlugin::RemoveSymbol()
 {
@@ -963,7 +973,7 @@ CSymbol *CMapPlugin::ExistsSymbol(int id)
 
 	return NULL;
 }
-
+//ALARM
 void CMapPlugin::SetExistsAlarm()
 {
 	for(size_t i = 0; i < m_AlarmList->size(); i++)
@@ -1063,28 +1073,55 @@ void CMapPlugin::RemoveCommand()
 	}
 }
 
-
-
-void CMapPlugin::SetRemoveAlarm()
+//GROUP
+void CMapPlugin::ClearGroup()
 {
-	//for(size_t i = 0; i < m_SymbolList->size(); i++)
-	//{
-		//CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		//ptr->SetRemove(false);
-	//}
+	for(size_t i = 0; i < m_GroupList->size(); i++)
+	{
+		CGroup *ptr = (CGroup*)m_GroupList->Item(i);
+		delete ptr;
+	}
+	
+	m_GroupList->Clear();
 }
 
-
-/*
-bool CMapPlugin::ShipIsSelected(SSymbol *ship)
+CGroup *CMapPlugin::ExistsGroup(int id)
 {
-	if(ship == SelectedPtr)
-		return true;
-	else
-		return false;
+	for(size_t i = 0; i < m_GroupList->size(); i++)
+	{
+		CGroup *ptr = (CGroup*)m_GroupList->Item(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
+}
+
+void CMapPlugin::SetExistsGroup()
+{
+	for(size_t i = 0; i < m_GroupList->size(); i++)
+	{
+		CGroup *ptr = (CGroup*)m_GroupList->Item(i);
+		ptr->SetExists(false);
+	}
 		
 }
-*/
+
+void CMapPlugin::RemoveGroup()
+{
+	
+	for(size_t i = 0; i < m_GroupList->size(); i++)
+	{
+		CGroup *ptr = (CGroup*)m_GroupList->Item(i);
+		
+		if(!ptr->GetExists())
+		{
+			m_GroupList->Remove(ptr);
+			delete ptr;
+			i = 0;
+		}
+	}
+}
 
 void CMapPlugin::SendInsertSignal()
 {
@@ -1128,13 +1165,14 @@ void CMapPlugin::Run(void *Params)
 		return;
 	}
 	
-	
-	if(!CheckDBVersion(m_DB))
+	/*
+	int version = GetDBVersion(m_DB);
+	if(version < db_get_version())
 	{
 		wxMessageBox(GetMsg(MSG_DB_VERSION_MISMATCH),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
-	
+	*/
 		
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
@@ -1816,6 +1854,11 @@ void CMapPlugin::OnTick()
 	SetExistsCommand();		//przeczytaj komendy
 	ReadCommand(db);		//usuń
 	RemoveCommand();
+
+	SetExistsGroup();
+	ReadGroup(db);
+	RemoveGroup();
+
 
 	ReadSymbolValues(db);	// wczytaj inne opcje
 		

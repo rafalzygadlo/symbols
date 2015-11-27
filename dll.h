@@ -17,6 +17,7 @@
 #include "symbol.h"
 #include "optionsdialog.h"
 #include "alarmdialog.h"
+#include "group.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -89,6 +90,7 @@ class CMapPlugin :public CNaviMapIOApi
 	wxArrayPtrVoid *m_SymbolList;
 	wxArrayPtrVoid *m_AlarmList;
 	wxArrayPtrVoid *m_CommandList;
+	wxArrayPtrVoid *m_GroupList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
 	int m_ConfirmCounter;
@@ -99,6 +101,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void Menu(int type);
 	void WritecConfig();
 	void ReadSymbol(void *db,wxString sql);
+	void ReadGroup(void *db);
 	void ReadSBMS(CSymbol *ptr, char **row);
 	void ReadAlarm(void *db);
 	void ReadCommand(void *db);
@@ -109,15 +112,17 @@ class CMapPlugin :public CNaviMapIOApi
 	void ClearSymbols();
 	void ClearAlarms();
 	void ClearCommands();
-	
+	void ClearGroup();
+
 	void RemoveSymbol();
 	void RemoveAlarm();
 	void RemoveCommand();
-	
-	void SetRemoveAlarm();
+	void RemoveGroup(); 
+		
 	void SetExistsSymbol();
 	void SetExistsAlarm();
 	void SetExistsCommand();
+	void SetExistsGroup();
 		
 	void ReadConfig();
 	void WriteConfig();
@@ -158,6 +163,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CSymbol *ExistsSymbol(int id);
 	CAlarm *ExistsAlarm(int id);
 	CCommand *ExistsCommand(int id);
+	CGroup *ExistsGroup(int id);
 		
 	int Count();
 	CSymbol *Get(int id);
@@ -203,6 +209,7 @@ public:
 	wxArrayPtrVoid *GetSymbolListPtr();
 	wxArrayPtrVoid *GetAlarmListPtr();
 	wxArrayPtrVoid *GetCommandListPtr();
+	wxArrayPtrVoid *GetGroupListPtr();
 
 	CNaviBroker *GetBroker();
 	CSymbol *GetSelectedPtr();

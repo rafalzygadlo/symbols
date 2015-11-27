@@ -25,6 +25,7 @@ class CCommandPanel: public wxPanel
 	wxCheckBox *m_RipleDelay;
 	wxCheckBox *m_SeasonControl;
 	wxCheckBox *m_StandardReport;
+	wxCheckBox *m_Reset;
 	wxTextCtrl *m_TextLog;
 	wxTextCtrl *m_RipleDelayEdit;
 
@@ -45,7 +46,8 @@ class CCommandPanel: public wxPanel
 	wxPanel *m_LightIntensityPanel;
 	wxPanel *m_PhotoCellResistantPanel;
 	wxPanel *m_RipleDelayPanel;
-	
+	wxPanel *m_ResetPanel;
+		
 	wxStaticText *m_InfoText;
 	wxButton *m_ButtonSend;
 	wxButton *m_ButtonCancel;
@@ -65,6 +67,7 @@ class CCommandPanel: public wxPanel
 	bool m_LightIntensityValue;
 	bool m_PhotoCellResistValue;
 	bool m_RipleDelayValue;
+	bool m_ResetValue;
 
 	void OnDriveCurrent(wxCommandEvent &event);
 	void OnPowerOfLight(wxCommandEvent &event);
@@ -80,8 +83,8 @@ class CCommandPanel: public wxPanel
 	void OnLightIntensity(wxCommandEvent &event);
 	void OnPhotoCellResistant(wxCommandEvent &event);
 	void OnRipleDelay(wxCommandEvent &event);
+	void OnReset(wxCommandEvent &event);
 
-	
 	void OnButtonOk(wxCommandEvent &event);
 	void OnButtonCancel(wxCommandEvent &event);
 	void SetButtonState();
@@ -95,13 +98,16 @@ class CCommandPanel: public wxPanel
 	wxPanel *PowerOfLightPanel(wxPanel *parent);
 	wxPanel *CharacteristicPanel(wxPanel *parent);
 	wxPanel *SeasonControlPanel(wxPanel *parent);
-	wxPanel *GetCommandPanel(wxPanel *parent);
 	wxPanel *GetAutoPanel(wxPanel *parent);
 	wxPanel *TextLogPanel(wxPanel *parent);
 	wxPanel *SetLightTimePanel(wxPanel *parent);
 	wxPanel *SetLightIntensityPanel(wxPanel *parent);
 	wxPanel *SetPhotoCellResistantPanel(wxPanel *parent);
 	wxPanel *SetRipleDelayPanel(wxPanel *parent);
+	wxPanel *ResetPanel(wxPanel *parent);
+
+	wxPanel *GetPage1(wxWindow *parent);
+	wxPanel *GetPage2(wxWindow *parent);
 
 	void EnableControls(bool v);
 	
@@ -148,8 +154,8 @@ public:
 		ID_RIPLE_DELAY,
 		ID_RIPLE_DELAY_EDIT,
 		ID_PHOTOCELL_RESIST_SLIDER,
-		ID_RIPLE_DELAY_UNIT,
-		ID_LIGHT_INTENSITY_SLIDER
+		ID_LIGHT_INTENSITY_SLIDER,
+		ID_RESET
 	};
 
 };

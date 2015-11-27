@@ -1,14 +1,13 @@
-#ifndef __HTMLLIST
-#define __HTMLLIST
+#ifndef __SYMBOLLIST
+#define __SYMBOLLIST
 
 #include <wx/wx.h>
 #include <wx/htmllbox.h>
 #include "NaviBroker.h"
 #include "display.h"
-//#include "frame.h"
 
 class CMapPlugin;
-class CHtmlList: public wxHtmlListBox
+class CSymbolList: public wxHtmlListBox
 {	
 	CMapPlugin *m_MapPlugin;
 	int m_Count;
@@ -29,13 +28,13 @@ class CHtmlList: public wxHtmlListBox
 
 public:
 	
-	CHtmlList(wxWindow *Parent);
-	~CHtmlList();
+	CSymbolList(wxWindow *Parent);
+	~CSymbolList();
 		
-	void SetList(wxArrayPtrVoid *ships);
+	void SetList(wxArrayPtrVoid *ptr);
 	void ClearList();
 	//wxString GetItemValue(long item, long column);
-	const char *GetSelectedColumn();
+	//const char *GetSelectedColumn();
 	bool GetSortOrder();
 	void _SetSelection(CSymbol *ptr);
 	void SetMapPlugin(CMapPlugin *v);

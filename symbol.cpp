@@ -342,7 +342,7 @@ bool  CSymbol::CheckCommand()
 		return false;
 	
 	wxString sql;
-	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d'"),TABLE_COMMAND,m_IdSBMS,COMMAND_STATUS_NEW);
+	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_COMMAND,m_IdSBMS,COMMAND_STATUS_NEW,COMMAND_ACTIVE);
 	
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);

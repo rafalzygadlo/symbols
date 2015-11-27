@@ -100,7 +100,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Reserved",L"Zarezerwowane"},
 	{L"Fault output",L"B³yskacz uszkodzony"},
 	{L"Solar Charger",L"£adowanie akumulatora"},
-	{L"Sync Master",L"Sync Master"},
+	{L"Synchro",L"Praca synchroniczna"},
 	{L"Monitored Channels",L"Monitorowane kana³y"},
 	{L"Overload Channels",L"Przeci¹¿one kana³y"},
 	{L"TRUE",L"TAK"},
@@ -179,10 +179,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Alarms (%d)",L"Alarmy (%d)"},
 	{L"Riple delay",L"OpóŸnienie impulsu"},
 	{L"Export..",L"Export.."},
-	{L"Set internal clock",L"Ustaw wewnêtrzny czas"},
-	{L"Set light intensity",L"Ustaw intensywnoœæ œwiecenia"},
-	{L"Set photocell resistant",L"Ustaw czu³oœæ fotorezystora"},
-	{L"Set riple delay",L"Ustaw opóŸnienie impulsu"},
+	{L"Internal clock",L"Wewnêtrzny czas"},
+	{L"Light intensity",L"Intensywnoœæ œwiecenia"},
+	{L"Photocell resistant",L"Czu³oœæ fotorezystora"},
+	{L"Riple delay",L"OpóŸnienie impulsu"},
 	{L"Date From",L"Data Od"},
 	{L"Date To",L"Date Do"},
 	{L"Exported to file",L"Wyeksportowano do pliku"},
@@ -194,7 +194,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Commands (%d)",L"Komendy (%d)"},
 	{L"Timeout",L"Timeout"},
 	{L"Command Send",L"Wys³ano"},
-
+	{L"Simple",L"Podstawowe"},
+	{L"Advanced",L"Zaawansowane"},
+	{L"Reset",L"Reset"},
+	{L"Groups (%d)",L"Grupy (%d)"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -262,7 +265,7 @@ int nvCommandMSG[COMMAND_COUNT] =
 	{MSG_LIGHT_ON},			//light on/off
 	{MSG_LIGHT_OFF},		//light on/off
 	{MSG_MMSI},				//zmiana mmsi
-	{MSG_MMSI},				//reset
+	{MSG_RESET},			//reset
 	{MSG_MMSI},				//save
 	{MSG_AUTO_MANAGEMENT},	//human management tylko OFF (0,0)
 	{MSG_MMSI},				//ais mmsi
@@ -655,7 +658,7 @@ bool my_query(void *db,wxString sql)
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32
-		//wxLogError(db_error(db));
+		wxLogError(db_error(db));
 #endif
 #ifdef linux
 		syslog(LOG_LOCAL0,db_error());
@@ -1157,7 +1160,7 @@ void DeactivateCommand(int id)
 //COMMANDS . . . . . . . . . . . . . . . .
 int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID());
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
 	void *db = DBConnect();
 	my_query(db,sql);
 	int last_id = db_last_insert_id(db);
@@ -1403,7 +1406,7 @@ bool GetPictureAsBase64(void *db, int id_symbol, char *&base64)
 	return _result;
 }
 
-bool CheckDBVersion(void *db)
+int GetDBVersion(void *db)
 {
 	wxString sql = wxString::Format(_("SELECT value FROM `%s` WHERE id='%d'"),TABLE_VALUE,VALUE_DB_VERSION);
 	my_query(db,sql);
@@ -1420,13 +1423,9 @@ bool CheckDBVersion(void *db)
 		value = atoi(row[0]);
 	}
 	
-	int version = 0;
-	version = db_get_version();
-	
-	if(value >= version)
-		return true;
-	else
-		return false;
+	db_free_result(result);
+
+	return value;
 }
 
 #if 0

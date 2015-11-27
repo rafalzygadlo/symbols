@@ -13,8 +13,9 @@
 #include "navimapioapi.h"
 #include "navidisplayapi.h"
 #include "symbolpanel.h"
-#include "htmllist.h"
+#include "symbollist.h"
 #include "alarmlist.h"
+#include "grouplist.h"
 #include "commandlist.h"
 
 #ifdef _WIN32
@@ -27,10 +28,11 @@ extern "C" {
 #endif
 
 class CMapPlugin;
-class CHtmlList;
+class CSymbolList;
 class CAlarmList;
 class CSymbolPanel;
 class CCommandList;
+class CGroupList;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
@@ -41,14 +43,17 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *m_ControlPanel;
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
-	CHtmlList *m_HtmlList;
+	CSymbolList *m_SymbolList;
 	CAlarmList *m_AlarmList;
 	CCommandList *m_CommandList;
+	CGroupList *m_GroupList;
+
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldSymbolCount;
 	int m_OldAlarmCount;
 	int m_OldComandCount;
+	int m_OldGroupCount;
 	bool m_OldNight;
 	wxPanel *m_Page3;
 	wxPanel *m_Page4;
@@ -75,6 +80,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *GetPage3(wxWindow *parent);
 	wxPanel *GetPage4(wxWindow *parent);
 	wxPanel *GetPage5(wxWindow *parent);
+	wxPanel *GetPage6(wxWindow *parent);
 
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);

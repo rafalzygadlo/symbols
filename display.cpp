@@ -206,8 +206,8 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	//Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
 
-	m_HtmlList = new  CHtmlList(Panel);
-	Sizer->Add(m_HtmlList,1,wxALL|wxEXPAND,0);
+	m_SymbolList = new  CSymbolList(Panel);
+	Sizer->Add(m_SymbolList,1,wxALL|wxEXPAND,0);
 	
 
 	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());
@@ -274,6 +274,20 @@ wxPanel *CDisplayPlugin::GetPage5(wxWindow *parent)
 }
 
 
+wxPanel *CDisplayPlugin::GetPage6(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_GroupList = new CGroupList(Panel);
+	Sizer->Add(m_GroupList,1,wxALL|wxEXPAND,0);
+
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
+
+
 
 void CDisplayPlugin::ShowControls()
 {
@@ -286,6 +300,7 @@ void CDisplayPlugin::ShowControls()
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
 	m_Notebook->AddPage(GetPage4(m_Notebook),GetMsg(MSG_ALARM));
 	m_Notebook->AddPage(GetPage5(m_Notebook),GetMsg(MSG_COMMAND));
+	m_Notebook->AddPage(GetPage6(m_Notebook),GetMsg(MSG_SYMBOL_GROUP));
 	
 	Main->Add(m_Notebook,1,wxALL|wxEXPAND,0);		
 
@@ -408,10 +423,10 @@ void CDisplayPlugin::SignalInsert()
 
 	if(m_OldSymbolCount != count)
 		m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
-	m_OldSymbolCount = count;	
+	m_OldSymbolCount = count;
 
-	m_HtmlList->SetList(ptr);
-	m_HtmlList->SetMapPlugin(m_MapPlugin);
+	m_SymbolList->SetList(ptr);
+	m_SymbolList->SetMapPlugin(m_MapPlugin);
 	
 	//ALARM LIST
 	ptr = m_MapPlugin->GetAlarmListPtr();
@@ -433,6 +448,15 @@ void CDisplayPlugin::SignalInsert()
 
 	m_CommandList->SetList(ptr);
 	
+	//GROUP LIST
+	ptr = m_MapPlugin->GetGroupListPtr();
+	count = ptr->size();
+
+	if(m_OldGroupCount != count)
+		m_Notebook->SetPageText(PAGE_GROUP,wxString::Format(GetMsg(MSG_GROUPS),count));
+	m_OldGroupCount = count;
+
+	m_GroupList->SetList(ptr);
 
 	wxCommandEvent evt(EVT_SET_NIGHT_TIME,ID_NIGHT_TIME);
 	wxPostEvent(this,evt);
@@ -452,7 +476,7 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;	
-	m_HtmlList->_SetSelection(m_Selected);	
+	m_SymbolList->_SetSelection(m_Selected);	
 	
 	if(m_Selected)
 	{	
