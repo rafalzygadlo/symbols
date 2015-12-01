@@ -414,7 +414,6 @@ void CCommandPanel::Set()
 		m_AutoPanel->Disable();
 		m_LightPanel->Disable();
 	}
-
 			
 }
 

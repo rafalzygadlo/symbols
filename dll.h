@@ -97,6 +97,7 @@ class CMapPlugin :public CNaviMapIOApi
 	ISpVoice * m_Voice;
 
 	void ReadDBConfig();
+	void WriteDBConfig();
 	void CreateApiMenu(void);
 	void Menu(int type);
 	void WritecConfig();
@@ -185,6 +186,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SBMS();
 	void Alarm();
 	void Command();
+	void DbConfig();
 	
 	static void *MenuNew(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuSymbol(void *NaviMapIOApiPtr, void *Input);
@@ -200,6 +202,7 @@ class CMapPlugin :public CNaviMapIOApi
 	static void *MenuSBMS(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuAlarm(void *NaviMapIOApiPtr, void *Input);
 	static void *MenuCommand(void *NaviMapIOApiPtr, void *Input);
+	static void *MenuDbConfig(void *NaviMapIOApiPtr, void *Input);
 
 public:
 	

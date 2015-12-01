@@ -198,6 +198,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Advanced",L"Zaawansowane"},
 	{L"Reset",L"Reset"},
 	{L"Groups (%d)",L"Grupy (%d)"},
+	{L"Database Connection",L"Po³¹czenie Bazy Danych"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -754,7 +755,7 @@ bool db_check_right(const char *module, const char *action, int uid)
 	}
 	
 	char **row  = (char**)db_fetch_row(result);
-	query = wxString::Format(_("SELECT * FROM `%s`, `%s` WHERE %s.id_group = %s.id_group AND %s.id_user = '%d' AND %s.id_right='%s'"),TABLE_USER_TO_GROUP, TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,uid,TABLE_USER_GROUP_RIGHT,row[FI_RIGHT_ID]);	
+	query = wxString::Format(_("SELECT * FROM `%s`, `%s` WHERE %s.id_group = %s.id_group AND %s.id_user = '%d' AND %s.id_right='%s'"),TABLE_USER_TO_GROUP, TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,uid,TABLE_USER_GROUP_RIGHT,row[FI_RIGHT_ID]);
 	db_free_result(result);
 	
 	if(!my_query(db,query))
@@ -1184,6 +1185,36 @@ void _SetCommand(int cmd_id,int id_sbms,int mmsi,int SBMSID, int id_base_station
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,on);
 	UpdateDBCommand(id,_cmd);
 }
+
+void GroupCommand(int cmd_id, int id_group, bool on)
+{
+	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi,id_base_station,SBMSID from `%s`"),TABLE_SYMBOL_GROUP);
+	sql << wxString::Format(_(" LEFT JOIN `%s` on id=id_group"),TABLE_SYMBOL_TO_GROUP);
+	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id=`%s`.id_symbol"),TABLE_SYMBOL,TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP);
+	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id_sbms=`%s`.id WHERE id_group='%d' AND id_sbms > 0"),TABLE_SBMS,TABLE_SYMBOL,TABLE_SBMS,id_group);
+	
+	void *db = DBConnect();
+	my_query(db,sql);
+		
+	void *result = db_result(db);
+	if(result)
+	{
+		char **row = NULL;
+		while(row = (char**)db_fetch_row(result))
+		{
+			int id_sbms = atoi(row[0]);
+			int mmsi = atoi(row[1]);
+			int id_base_station = atoi(row[2]);
+			int SBMSID = atoi(row[3]);
+			_SetCommand(cmd_id,id_sbms,mmsi,SBMSID,id_base_station,on);
+		}
+	}
+	
+	db_free_result(result);
+	DBClose(db);
+
+}
+
 /*
 void SetAutoManagement()
 {

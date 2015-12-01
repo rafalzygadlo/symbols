@@ -7,6 +7,7 @@
 #include "naviencryption.h"
 #include "navidrawer.h"
 #include "options.h"
+#include "dbconnect.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -416,7 +417,7 @@ void CMapPlugin::ReadDBConfig()
     FileConfig->Read(KEY_DB_NAME,&m_DBName);
 	SetDBName(m_DBName);
     
-	FileConfig->Read(KEY_DB_PASSWORD,&val);	
+	FileConfig->Read(KEY_DB_PASSWORD,&val);
 	
 	char * pass = (char*)val.mb_str().data();
 	int len = strlen(pass);
@@ -440,6 +441,26 @@ void CMapPlugin::ReadDBConfig()
 	delete FileConfig;
 	
 }
+
+void CMapPlugin::WriteDBConfig()
+{
+    wxString val;
+	wxFileConfig *FileConfig = new wxFileConfig(_(PRODUCT_NAME),wxEmptyString,GetConfigFile(),wxEmptyString);
+	FileConfig->Write(KEY_DB_USER,GetDBUser());
+    FileConfig->Write(KEY_DB_HOST,GetDBHost());
+	FileConfig->Write(KEY_DB_PORT,GetDBPort());
+    FileConfig->Write(KEY_DB_NAME,GetDBName());
+	
+	char * pass = (char*)GetDBPassword().mb_str().data();
+	int len = strlen(pass);
+	char *_pass = Base64Encode((unsigned char*)pass,len);
+	WritePasswordConfig(_pass);
+	free(_pass);
+
+	delete FileConfig;
+
+}
+
 
 void *CMapPlugin::OnSynchro(void *NaviMapIOApiPtr, void *Params)
 {
@@ -902,15 +923,51 @@ void CMapPlugin::ReadGroup(void *db)
 		
 		ptr->SetId(id);
 		ptr->SetName(Convert(row[FI_SYMBOL_GROUP_NAME]));
-		ptr->SetExists(true);		
+		ptr->SetExists(true);
 		
 		if(add)
 			m_GroupList->Add(ptr);
-
 	}
 	
 }
 
+/*
+void CMapPlugin::ReadGroupItems(void *db)
+{
+
+	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL_GROUP);
+
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		int id;
+		sscanf(row[FI_SYMBOL_GROUP_ID],"%d",&id);
+		CGroup *ptr = NULL;
+		ptr = ExistsGroup(id);
+		bool add = false;
+		
+		if(ptr == NULL)
+		{
+			add = true;
+			ptr = new CGroup();
+		}
+		
+		ptr->SetId(id);
+		ptr->SetName(Convert(row[FI_SYMBOL_GROUP_NAME]));
+		ptr->SetExists(true);
+		
+		if(add)
+			m_GroupList->Add(ptr);
+	}
+	
+}
+*/
 
 void CMapPlugin::ReadSymbolValues(void *db)
 {  
@@ -1417,6 +1474,34 @@ void CMapPlugin::Command()
 	m_Command->Show();
 }
 
+void CMapPlugin::DbConfig()
+{
+	if(db_check_right(MODULE_DB,ACTION_CONFIG,_GetUID()))
+	{
+		CDbConnect *DBConnect = new CDbConnect();
+		DBConnect->CreateGUI();
+		DBConnect->SetFooter(GetProductInfo());
+		DBConnect->SetHost(GetDBHost());
+		DBConnect->SetDatabaseName(GetDBName());
+		DBConnect->SetUser(GetDBUser());
+		DBConnect->SetPassword(GetDBPassword());
+		DBConnect->SetPort(GetDBPort());
+		DBConnect->Fit();
+		DBConnect->Layout();
+	
+		if(DBConnect->ShowModal() == wxID_OK)
+		{
+			SetDBHost(DBConnect->GetHost());
+			SetDBName(DBConnect->GetDatabaseName());
+			SetDB
+
+			WriteDb
+		}
+		
+		delete DBConnect;
+	}
+}
+
 void CMapPlugin::CreateApiMenu(void) 
 {
 	NaviApiMenu = new CNaviApiMenu((wchar_t*) GetMsg(MSG_MANAGER));	// nie u�uwa� delete - klasa zwalnia obiekt automatycznie
@@ -1436,6 +1521,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	NaviApiMenu->AddItem(L"-",this, NULL );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_DB_CONFIG),this, MenuDbConfig );
 	
 }	
 
@@ -1484,6 +1570,14 @@ void *CMapPlugin::MenuOptions(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
 	ThisPtr->Menu(CONTROL_OPTIONS);
+	
+	return NULL;	
+}
+
+void *CMapPlugin::MenuDbConfig(void *NaviMapIOApiPtr, void *Input)
+{	
+	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
+	ThisPtr->Menu(CONTROL_DB_CONFIG);
 	
 	return NULL;	
 }
@@ -1569,6 +1663,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_SBMS:				SBMS();				break;
 		case CONTROL_ALARM:				Alarm();			break;
 		case CONTROL_COMMAND:			Command();			break;
+		case CONTROL_DB_CONFIG:			DbConfig();			break;
 	}
 
 }

@@ -317,6 +317,7 @@
 #define MSG_ADVANCED					176
 #define MSG_RESET						177
 #define MSG_GROUPS						178
+#define MSG_DB_CONFIG					179
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -350,6 +351,7 @@
 #define CONTROL_SYMBOL_ALARM	19
 #define CONTROL_SYMBOL_COMMAND	20
 #define CONTROL_COMMAND			21
+#define CONTROL_DB_CONFIG		22
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -453,6 +455,7 @@
 #define MODULE_CHARACTERISTIC	"characteristic"
 #define MODULE_SBMS				"sbms"
 #define MODULE_OPTION			"option"
+#define MODULE_DB				"db"
 
 #define MODULE_USER "user"
 #define ACTION_PASSWORD "password"
@@ -469,6 +472,7 @@
 #define ACTION_MANAGEMENT	"management"
 #define ACTION_ADD_TO_GROUP "add_to_group"
 #define ACTION_OPTION		"option"
+#define ACTION_CONFIG		"config"
 
 //TABELE
 #define TABLE_AREA					"area"
@@ -952,6 +956,8 @@
 #define HREF_ACTION_GRAPH		0
 #define HREF_ACTION_MANAGEMENT	1
 #define HREF_ACTION_DELETE		2
+#define HREF_ACTION_LIGHT_ON	3
+#define HREF_ACTION_LIGHT_OFF	4
 
 //statusy światła
 #define LIGHT_NOT_AVAILABLE     -1

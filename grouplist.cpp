@@ -48,11 +48,12 @@ void CGroupList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CAlarm *Alarm = (CAlarm*)m_List->Item(item);
+	CGroup *ptr = (CGroup*)m_List->Item(item);
 
 	switch(action)
 	{
-		case HREF_ACTION_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		case HREF_ACTION_LIGHT_ON:	GroupCommand(COMMAND_LIGHT_ON, ptr->GetId(),true);		break;
+		case HREF_ACTION_LIGHT_OFF:	GroupCommand(COMMAND_LIGHT_OFF, ptr->GetId(),false);	break;
 	}
 
 }
@@ -152,13 +153,13 @@ wxString CGroupList::OnGetItem(size_t item) const
 	int fsize = 5;
 		
 	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetName());
-	
-	//str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
-	
+		
 	if(GetSelection() == item)
 	{
-		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_LIGHT_ON));
-		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_LIGHT_OFF));
+		str << wxString::Format(_("<tr><td>"));
+		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_ON,item,GetMsg(MSG_LIGHT_ON));
+		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_OFF,item,GetMsg(MSG_LIGHT_OFF));
+		str << wxString::Format(_("</td></tr>"));
 	}
 
 	str.Append(_("</table>"));
