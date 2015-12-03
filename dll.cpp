@@ -8,6 +8,8 @@
 #include "navidrawer.h"
 #include "options.h"
 #include "dbconnect.h"
+#include "alter.h"
+#include "alterdialog.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -34,6 +36,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	SetFGColor(DEFAULT_FG_COLOR);
 	
 	m_DB = NULL;
+	m_DBTicker = NULL;
 	m_Symbol = NULL;
 	m_Items = NULL;
 	m_Area = NULL;
@@ -128,7 +131,6 @@ CMapPlugin::~CMapPlugin()
 	delete m_AlarmDialog;
 	delete m_Command;
 	
-
 	ClearSymbols();
 	delete m_SymbolList;
 	
@@ -144,6 +146,7 @@ CMapPlugin::~CMapPlugin()
 	delete m_NameFont;
 
 	DBClose(m_DB);
+	DBClose(m_DBTicker);
 
 }
 
@@ -631,7 +634,6 @@ void CMapPlugin::SetSql(wxString &sql)
 	}
 	
 }
-
 
 void CMapPlugin::ReadSymbol(void *db, wxString sql)
 {	
@@ -1222,14 +1224,17 @@ void CMapPlugin::Run(void *Params)
 		return;
 	}
 	
-	/*
+	CAlter Alter;
+	
 	int version = GetDBVersion(m_DB);
-	if(version < db_get_version())
+	if(version < Alter.GetSQLVersion())
 	{
-		wxMessageBox(GetMsg(MSG_DB_VERSION_MISMATCH),GetMsg(MSG_ERROR),wxICON_ERROR);
+		CAlterDialog *AlterDialog = new CAlterDialog();
+		AlterDialog->ShowModal();
+		delete AlterDialog;
 		return;
 	}
-	*/
+	
 		
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
@@ -1493,9 +1498,10 @@ void CMapPlugin::DbConfig()
 		{
 			SetDBHost(DBConnect->GetHost());
 			SetDBName(DBConnect->GetDatabaseName());
-			SetDB
-
-			WriteDb
+			SetDBUser(DBConnect->GetUser());
+			SetDBPassword(DBConnect->GetPassword());
+			SetDBPort(DBConnect->GetPort());
+			WriteDBConfig();
 		}
 		
 		delete DBConnect;
@@ -1932,30 +1938,31 @@ void CMapPlugin::OnTick()
 
 	m_SelectedOn = !m_SelectedOn;
 
-	void *db = DBConnect();
-	if(db == NULL)
+	if(m_DBTicker == NULL)
+		m_DBTicker = DBConnect();
+	if(m_DBTicker == NULL)
 		return;
 
 	SetSql(sql);
 	
 	SetExistsSymbol();
-	ReadSymbol(db,sql);		//przeczytaj symbole
-	RemoveSymbol();			//usuń
+	ReadSymbol(m_DBTicker,sql);		//przeczytaj symbole
+	RemoveSymbol();					//usuń
 
 	SetExistsAlarm();	
-	ReadAlarm(db);			//przeczytaj alarmy
-	RemoveAlarm();			//usuń
+	ReadAlarm(m_DBTicker);		//przeczytaj alarmy
+	RemoveAlarm();				//usuń
 	
-	SetExistsCommand();		//przeczytaj komendy
-	ReadCommand(db);		//usuń
+	SetExistsCommand();			//przeczytaj komendy
+	ReadCommand(m_DBTicker);	//usuń
 	RemoveCommand();
 
 	SetExistsGroup();
-	ReadGroup(db);
+	ReadGroup(m_DBTicker);
 	RemoveGroup();
 
 
-	ReadSymbolValues(db);	// wczytaj inne opcje
+	ReadSymbolValues(m_DBTicker);	// wczytaj inne opcje
 		
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
@@ -1966,10 +1973,9 @@ void CMapPlugin::OnTick()
 	SendInsertSignal();
 	ShowAlarm();
 	
-	//fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 
-	DBClose(db);
-		
+			
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

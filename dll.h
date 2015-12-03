@@ -49,6 +49,7 @@ class CMapPlugin :public CNaviMapIOApi
 	bool m_Reading;
 	CTicker *m_Ticker;
 	void *m_DB;
+	void *m_DBTicker;
 	wxString m_DBHost;
 	wxString m_DBUser;
 	wxString m_DBPassword;

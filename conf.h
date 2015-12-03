@@ -20,6 +20,7 @@
 #define DIR_WORKDIR "data"
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
+#define DB_ALTER "sql\alter.sql"
 
 //#ifdef NAVI_SBMS
 	#define PRODUCT_NAME "SBMS Monitor"
@@ -318,6 +319,9 @@
 #define MSG_RESET						177
 #define MSG_GROUPS						178
 #define MSG_DB_CONFIG					179
+#define MSG_ALTER						180
+#define MSG_DB_ADMIN_PASSWORD			181
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -1032,5 +1036,11 @@ typedef struct SAlert
 	bool exists;
 }SAlert;
 
+typedef struct SAlter
+{	
+	int version;
+	const char *sql;
+
+}SAlter;
 
 #endif

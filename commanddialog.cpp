@@ -42,7 +42,7 @@ wxPanel *CCommandDialog::GetButtonPanel(wxWindow *parent)
 
 	wxPanel *Panel = new wxPanel(this);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(Sizer);	
+	Panel->SetSizer(Sizer);
 	
 	wxStaticText *LabelProductInfo = new wxStaticText(Panel,wxID_ANY,GetProductInfo() ,wxDefaultPosition,wxDefaultSize);
 	Sizer->Add(LabelProductInfo,0,wxALL,5);

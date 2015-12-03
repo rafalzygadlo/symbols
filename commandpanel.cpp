@@ -421,20 +421,12 @@ void CCommandPanel::EnableControls(bool v)
 {
 	SetBusy(!v);
 	m_ButtonCancel->Enable(!v);
-	//m_StandardReportPanel->Enable(v);
 	m_LightPanel->Enable(v);
 	m_TimePanel->Enable(v);
 	m_UptimePanel->Enable(v);
-	//m_AutoPanel->Enable(v);
 	m_LightOn->Enable(v);
 	m_LightOff->Enable(v);
-	//m_LightTime->Enable(v);
-	//m_LightIntensity->Enable(v);
-
-	//m_PhotoCellResistant->Enable(v);
-	//m_RipleDelay->Enable(v);
-	//m_DriveCurrentPanel->Enable(v);
-	//m_PowerOfLightPanel->Enable(v);
+	m_Reset->Enable(v);
 	m_SeasonControlPanel->Enable(v);
 
 }

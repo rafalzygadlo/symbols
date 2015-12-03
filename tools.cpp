@@ -189,7 +189,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Error writing file",L"B³¹d zapisu pliku"},
 	{L"No Data",L"Brak Danych"},
 	{L"Alarm Date",L"Data alarmu"},
-	{L"Database version is not compatible.\nRun the service tool.",L"Wersja plugina i bazy danych nie zgodna. Uruchom program serwisowy. Plugin nie bêdzie uruchomiony."},
+	{L"Database version is not compatible.",L"Wersja plugina i bazy danych nie zgodna."},
 	{L"Error",L"B³¹d"},
 	{L"Commands (%d)",L"Komendy (%d)"},
 	{L"Timeout",L"Timeout"},
@@ -199,6 +199,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Reset",L"Reset"},
 	{L"Groups (%d)",L"Grupy (%d)"},
 	{L"Database Connection",L"Po³¹czenie Bazy Danych"},
+	{L"Alter",L"Aktualizuj"},
+	{L"Database Administrator Password",L"Has³o Administratora Bazy Danych"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
