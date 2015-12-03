@@ -1234,8 +1234,7 @@ void CMapPlugin::Run(void *Params)
 		delete AlterDialog;
 		return;
 	}
-	
-		
+			
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();

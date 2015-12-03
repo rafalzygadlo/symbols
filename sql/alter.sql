@@ -5,4 +5,4 @@ SQL ALTER definition for database NAVI_VTS
 */
 {2,"ALTER TABLE `command` CHANGE `tries` `active` INT( 11 ) NOT NULL"},
 {2,"UPDATE `command` SET active=0"},
-{2,"UPDATE `value` SET value=1 WHERE id=1"},
+{2,"UPDATE `value` SET value=2 WHERE id=1"},

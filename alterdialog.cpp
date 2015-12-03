@@ -48,7 +48,7 @@ wxPanel *CAlterDialog::GetPanel(wxWindow *parent)
 	wxButton *ButtonAlter = new wxButton(Panel,ID_ALTER,GetMsg(MSG_ALTER));
 	Sizer->Add(ButtonAlter,0,wxALL,5);
 	
-	m_Log = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(-1,150),wxTE_MULTILINE);
+	m_Log = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(-1,150),wxTE_MULTILINE|wxTE_DONTWRAP);
 	Sizer->Add(m_Log,0,wxALL|wxEXPAND,5);
 
 	wxStaticLine *BottomLine = new wxStaticLine(Panel,wxID_ANY);
