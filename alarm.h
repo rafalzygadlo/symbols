@@ -24,6 +24,7 @@
 class CAlarm
 {	
 	int m_Id;
+	int m_IdAlarm;
 	int m_Type;
 	wxString m_Name;
 	wxString m_SymbolName;
@@ -40,6 +41,7 @@ public:
 	CAlarm();
 	//SET
 	void SetId(int v);
+	void SetIdAlarm(int v);
 	void SetName(wxString v);
 	void SetSymbolName(wxString v);
 	void SetNew(bool v);
@@ -52,6 +54,7 @@ public:
 			
 	//GET
 	int GetId();
+	int GetIdAlarm();
 	wxString GetName();
 	wxString GetSymbolName();
 	bool GetNew();

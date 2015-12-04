@@ -116,7 +116,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Graph",L"Wykres"},
 	{L"Min",L"Min"},
 	{L"Max",L"Max"},
-	{L"Database Connect Error",L"B³¹d po³aczenia z baz¹ danych"},
+	{L"Database Connect Error",L"B³¹d po³¹czenia z baz¹ danych"},
 	{L"Ready",L"Gotowy"},
 	{L"Date UTC",L"Czas UTC"},
 	{L"Number Of Tries",L"Iloœæ prób"},

@@ -864,8 +864,7 @@ void CMapPlugin::ReadCommand(void *db)
     char **row = NULL;
 	if(result == NULL)
 		return;
-
-	m_ConfirmCounter = 0;
+		
 	while(row = (char**)db_fetch_row(result))
 	{
 		CCommand *ptr = NULL;
@@ -1223,7 +1222,7 @@ void CMapPlugin::Run(void *Params)
 		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
-	
+	/*
 	CAlter Alter;
 	
 	int version = GetDBVersion(m_DB);
@@ -1234,7 +1233,7 @@ void CMapPlugin::Run(void *Params)
 		delete AlterDialog;
 		return;
 	}
-			
+	*/		
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
@@ -1526,7 +1525,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	NaviApiMenu->AddItem(L"-",this, NULL );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_DB_CONFIG),this, MenuDbConfig );
+	//NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_DB_CONFIG),this, MenuDbConfig );
 	
 }	
 

@@ -44,7 +44,7 @@ class CSymbolPanel : public wxPanel
 	void SetHeader( int _IdSBMS );
 	void AlarmInfo(CSymbol *ptr);
 	void SymbolInfo(void *db,CSymbol *ptr);
-	void SBMSInfo(void *db,int id_sbms);
+	void SBMSInfo(void *db,int id_sbms,CSymbol *ptr);
 	void PictureInfo(void *db,CSymbol *ptr);
 	void BaseStationInfo(void *db, int id_base_station);
 	void LightInfo(void *db,int id_symbol);

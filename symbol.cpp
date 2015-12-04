@@ -302,6 +302,7 @@ bool CSymbol::CheckAlarm()
 		}
 				
 		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
+		Alarm->SetIdAlarm(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
 		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
 		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
 		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));

@@ -20,7 +20,7 @@
 #define DIR_WORKDIR "data"
 #define CONFIG_FILE "symbol.conf"
 #define DATA_FILE "symbol.data"
-#define DB_ALTER "sql\alter.sql"
+
 
 //#ifdef NAVI_SBMS
 	#define PRODUCT_NAME "SBMS Monitor"
@@ -1036,11 +1036,6 @@ typedef struct SAlert
 	bool exists;
 }SAlert;
 
-typedef struct SAlter
-{	
-	int version;
-	const char *sql;
 
-}SAlter;
 
 #endif

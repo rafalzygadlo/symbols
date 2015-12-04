@@ -15,6 +15,11 @@ void CAlarm::SetId(int v)
 	m_Id = v;
 }
 
+void CAlarm::SetIdAlarm(int v)
+{
+	m_IdAlarm = v;
+}
+
 void CAlarm::SetSymbolName(wxString v)
 {
 	m_SymbolName = v;
@@ -64,6 +69,11 @@ void CAlarm::SetUserLastName(wxString v)
 int CAlarm::GetId()
 {
 	return m_Id;
+}
+
+int CAlarm::GetIdAlarm()
+{
+	return m_IdAlarm;
 }
 
 wxString CAlarm::GetName()

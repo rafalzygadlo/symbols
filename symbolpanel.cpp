@@ -199,7 +199,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	m_ButtonGraph->Enable();
 	
 	m_HtmlString.Clear();
-	m_HtmlString.Append("<html>");
+	m_HtmlString.Append("<html><body style='font-family:Tahoma'>");
 
 	//SetHeader( m_IdSBMS );
 	PictureInfo(db,ptr);
@@ -209,7 +209,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 
 	if(ptr->GetInMonitoring()) 
 	{
-		SBMSInfo(db,m_IdSBMS);
+		SBMSInfo(db,m_IdSBMS,ptr);
 		LightInfo(db,ptr->GetId());
 	}
 	
@@ -228,7 +228,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 void CSymbolPanel::SetHeader( int _IdSBMS )
 {
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%%>"));
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%%>"));
 	str.Append(wxString::Format(_("<tr><td colspan=3><a target=1 href='%d'>%s</a></td></tr>"),_IdSBMS,GetMsg(MSG_MANAGEMENT)));
 	str.Append(_("</table>"));
 	m_HtmlString.Append(str);
@@ -241,8 +241,8 @@ void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 	
 	for(int i = 0; i < ptr->GetAlarmCount();i++)
 	{	
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font color=red size=3><b>%s</b></font></td></tr>"),ptr->GetAlarm(i)->GetName()));
+		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2><b>%s</b></font></td></tr>"),ptr->GetAlarm(i)->GetName()));
 		str.Append(_("</table>"));
 	}
 	m_HtmlString.Append(str);
@@ -253,7 +253,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
 	
 	wxString str;
-	str.Append(_("<body style='font-family:Tahoma'><table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
 	
 #ifdef WEBVIEW
 	char *b64 = NULL;
@@ -293,7 +293,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	
 }
 
-void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
+void CSymbolPanel::SBMSInfo(void *db,int id_sbms,CSymbol *ptr)
 {
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,id_sbms);
 	my_query(db,sql);
@@ -336,7 +336,15 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(true)));
+		
+		bool alarm = false;
+		for(int i = 0; i < ptr->GetAlarmCount();i++)
+		{	
+			if (ptr->GetAlarm(i)->GetIdAlarm() == ALARM_COMMUNICATION_TIMEOUT)
+				alarm = true;
+		}
+		
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(!alarm)));
 		
 		str.Append(_("</table>"));
 
@@ -363,7 +371,7 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 	{
 		wxString str;
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_BASE_STATION_NAME]).wc_str()));
 		str.Append(_("</table>"));
 		m_HtmlString.Append(str);
 	}
