@@ -34,7 +34,7 @@ class CCommandPanel: public wxPanel
 	wxRadioButton *m_LightAuto;
 	//wxRadioButton *m_LightManual;
 	
-	wxPanel *m_AutoPanel;
+	//wxPanel *m_AutoPanel;
 	wxPanel *m_LightPanel;
 	//wxPanel *m_DriveCurrentPanel;
 	//wxPanel *m_PowerOfLightPanel;

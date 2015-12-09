@@ -201,6 +201,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Database Connection",L"Po³¹czenie Bazy Danych"},
 	{L"Alter",L"Aktualizuj"},
 	{L"Database Administrator Password",L"Has³o Administratora Bazy Danych"},
+	{L"Removed",L"Usuniêty"},
+	{L"Off",L"Wy³¹czony"},
+	{L"Winter",L"P³awa zimowa"},
+	{L"Seconds",L"Sekundy"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -292,7 +296,7 @@ const wchar_t *GetCommandStatus(int id )
 	switch(id)
 	{
 		case COMMAND_STATUS_NEW:		return GetMsg(MSG_NEW);
-		case COMMAND_STATUS_OK:			return GetMsg(MSG_OK);	
+		case COMMAND_STATUS_OK:			return GetMsg(MSG_OK);
 		case COMMAND_STATUS_SEND:		return GetMsg(MSG_COMMAND_SEND);
 		case COMMAND_STATUS_TIMEOUT:	return GetMsg(MSG_TIMEOUT);
 		default: return GetMsg(MSG_NA);
@@ -1255,6 +1259,20 @@ wxString GetLightOnAsString(int v)
 		default :					return GetMsg(MSG_NA);
 	}
 }
+
+wxString GetMonitoringAsString(int v)
+{
+	switch(v)
+	{
+		case SYMBOL_NOT_IN_MONITORING:		return GetMsg(MSG_SYMBOL_NOT_IN_MONITORING);
+		case SYMBOL_IN_MONITORING:			return GetMsg(MSG_SYMBOL_IN_MONITORING);
+		case SYMBOL_WINTER:					return GetMsg(MSG_SYMBOL_WINTER);
+		case SYMBOL_OFF:					return GetMsg(MSG_SYMBOL_OFF);
+		case SYMBOL_REMOVED:				return GetMsg(MSG_SYMBOL_REMOVED);
+		default :							return GetMsg(MSG_NA);
+	}
+}
+
 
 wxString GetAutoAsString(bool v)
 {

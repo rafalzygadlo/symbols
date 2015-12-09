@@ -11,7 +11,7 @@ class CFilterDialog: public wxDialog
 	wxComboBox *m_ComboLight;
 	wxComboBox *m_ComboArea;
 	wxComboBox *m_ComboSeaway;
-	wxComboBox *m_ComboInMonitoring;
+	wxComboBox *m_ComboMonitoring;
 	wxComboBox *m_ComboBaseStation;
 	wxComboBox *m_ComboSymbolType;
 	wxComboBox *m_ComboAlarm;
@@ -28,7 +28,7 @@ public:
 	int GetAreaId();
 	int GetSymbolTypeId();
 	int GetSeawayId();
-	int GetInMonitoring();
+	int GetMonitoring();
 	int GetGroupId();
 	int GetLight();
 	int GetBaseStationId();
@@ -38,7 +38,7 @@ public:
 	void SetSymbolTypeId(int v);
 	void SetSeawayId(int v);
 	void SetBaseStationId(int v);
-	void SetInMonitoring(int v);
+	void SetMonitoring(int v);
 	void SetLight(int v);
 	void SetGroupId(int v);
 	void SetAlarmId(int v);

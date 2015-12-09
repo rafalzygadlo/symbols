@@ -14,7 +14,7 @@ BEGIN_EVENT_TABLE(CSymbolList,wxHtmlListBox)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)
-	EVT_CONTEXT_MENU(OnContextMenu)
+	//EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
 CSymbolList *HtmlListPtr = NULL;
@@ -191,7 +191,7 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	if(ptr->GetNoSBMS())
 	{
 		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	// taka g³upata dla UM
+		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_SYMBOL_NOT_IN_MONITORING)));	// taka g³upata dla UM
 	
 	}else{
 		
@@ -202,12 +202,9 @@ wxString CSymbolList::OnGetItem(size_t item) const
 			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 		}
 		
-		if(ptr->GetInMonitoring())
-			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
-		else
-			str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
-		
-		if(ptr->GetInMonitoring())
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
+			
+		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
 		{
 			if(GetSelection() == item)
 			{

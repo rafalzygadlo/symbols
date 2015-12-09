@@ -411,7 +411,7 @@ void CCommandPanel::Set()
 	
 	if(GetNight())
 	{
-		m_AutoPanel->Disable();
+		
 		m_LightPanel->Disable();
 	}
 			

@@ -32,7 +32,7 @@ CNew::CNew(void *db,int type, int id_type, int item_id, bool edit)
 	m_IDType = id_type;
 	m_ItemID = item_id;
 	m_Edit = edit;
-	m_InMonitoring = false;
+	m_Monitoring = SYMBOL_NOT_IN_MONITORING;
 	m_TextValidator.SetStyle(wxFILTER_EXCLUDE_CHAR_LIST);
 	m_TextValidator.SetCharExcludes(_("'\"\\;?"));
 	
@@ -227,11 +227,19 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->AddGrowableCol(1);
 	Panel->SetSizer(FlexGridSizer);
 		
-	m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
-	m_CheckInMonitoring->SetValue(m_InMonitoring);
-	FlexGridSizer->Add(m_CheckInMonitoring,0,wxALL|wxEXPAND,5);
-	FlexGridSizer->AddSpacer(1);
+	wxStaticText *LabelMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_IN_MONITORING));
+	FlexGridSizer->Add(LabelMonitoring,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_MonitoringCombo = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
 	
+	m_MonitoringCombo->Append(GetMsg(MSG_SYMBOL_NOT_IN_MONITORING));
+	m_MonitoringCombo->Append(GetMsg(MSG_SYMBOL_IN_MONITORING));
+	m_MonitoringCombo->Append(GetMsg(MSG_SYMBOL_REMOVED));
+	m_MonitoringCombo->Append(GetMsg(MSG_SYMBOL_OFF));
+	m_MonitoringCombo->Append(GetMsg(MSG_SYMBOL_WINTER));
+
+	m_MonitoringCombo->SetSelection(m_Monitoring);
+	FlexGridSizer->Add(m_MonitoringCombo,0,wxALL|wxEXPAND,5);
+		
 	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
 	FlexGridSizer->Add(LabelSBMS,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
@@ -950,9 +958,9 @@ void CNew::SetCharacteristic(wxString v)
 	m_Characteristic = v;
 }
 
-void CNew::SetInMonitoring(bool v)
+void CNew::SetMonitoring(int  v)
 {
-	m_InMonitoring = v;
+	m_Monitoring = v;
 }
 
 void CNew::SetSBMS(wxString v)
@@ -1092,9 +1100,9 @@ CTimePanel *CNew::GetTimePanel()
 	return m_TimePanel;
 }
 
-bool CNew::GetInMonitoring()
+int CNew::GetMonitoring()
 {
-	return m_CheckInMonitoring->GetValue();
+	return m_MonitoringCombo->GetSelection();
 }
 
 wxString CNew::GetCode()

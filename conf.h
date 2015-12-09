@@ -12,7 +12,7 @@
 #endif
 
 //html or webview
-#if 1
+#if 0
 #define WEBVIEW
 #endif
 
@@ -186,7 +186,7 @@
 #define MSG_NO_PICTURE					44
 #define MSG_PROPERTIES					45
 #define MSG_ON_POSITION					46
-#define MSG_IN_MONITORING				47
+#define MSG_SYMBOL_IN_MONITORING		47
 #define MSG_LONGITUDE_INVALID_VALUE		48
 #define MSG_LATITUDE_INVALID_VALUE		49
 #define MSG_SYMBOL_GROUP				50
@@ -256,7 +256,7 @@
 #define MSG_VIEW_NAME_SCALE				114
 #define MSG_COMM_TIMEOUT				115
 #define MSG_SYMBOL_TIMEOUT				116
-#define MSG_NOT_IN_MONITORING			117
+#define MSG_SYMBOL_NOT_IN_MONITORING	117
 #define MSG_SEND_COMMAND				118
 #define MSG_ADD_TO_GROUP				119
 #define MSG_CONFIRM						120
@@ -321,7 +321,10 @@
 #define MSG_DB_CONFIG					179
 #define MSG_ALTER						180
 #define MSG_DB_ADMIN_PASSWORD			181
-
+#define MSG_SYMBOL_REMOVED				182
+#define MSG_SYMBOL_OFF					183
+#define MSG_SYMBOL_WINTER				184
+#define MSG_SECONDS						185
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -955,7 +958,6 @@
 
 #define DEFAULT_REPORT_TIMEOUT	7200
 
-
 // html list link actions 
 #define HREF_ACTION_GRAPH		0
 #define HREF_ACTION_MANAGEMENT	1
@@ -975,19 +977,13 @@
 //VALUE
 #define VALUE_DB_VERSION	1
 
-/*
+//flagi monitoringu
+#define SYMBOL_NOT_IN_MONITORING	0
+#define SYMBOL_IN_MONITORING		1
+#define SYMBOL_REMOVED				2
+#define SYMBOL_OFF					3
+#define SYMBOL_WINTER				4
 
-typedef struct Symbol
-{
-	int id;
-	double lon;
-	double lat;
-	wchar_t name[SYMBOL_NAME_SIZE + 1];
-	wchar_t description[SYMBOL_DESCRIPTION_SIZE + 1];
-	bool on_command;
-		
-}SSymbol;
-*/
 
 typedef struct Column
 {

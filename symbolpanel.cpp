@@ -35,7 +35,9 @@ CSymbolPanel::CSymbolPanel(wxWindow *parent)
 	m_GraphDialog = NULL;
 	m_HtmlString = wxEmptyString;
 	GetPage1();
+#ifdef WEBVIEW
 	m_Html->LoadURL("about:blank");
+#endif
 	//m_Html->SetPage("<html><p>test page</p></html>","www.wp.pl");
 }
 
@@ -57,20 +59,20 @@ void CSymbolPanel::GetPage1()
 	//Scroll->SetSizer(ScrollSizer);
 	
 #ifndef WEBVIEW
-	m_PicturePanel = new CPicturePanel(NULL,Scroll);
-	ScrollSizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
+	m_PicturePanel = new CPicturePanel(NULL,this);
+	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 #endif
 	
 	//wxBoxSizer *hSizer = new wxBoxSizer(wxHORIZONTAL);
 	//ScrollSizer->Add(hSizer,0,wxALL|wxEXPAND,0);
 		
 #ifndef WEBVIEW
-	m_Html = new wxHtmlWindow(Scroll,ID_HTML,wxDefaultPosition,wxDefaultSize);
+	m_Html = new wxHtmlWindow(this,ID_HTML,wxDefaultPosition,wxDefaultSize);
 #else
 	m_Html = wxWebView::New(this,ID_HTML,wxEmptyString);
 	
 #endif
-	//m_Html->SetMinSize(wxSize(200,450));
+	m_Html->SetMinSize(wxSize(200,300));
 	
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 		
@@ -185,18 +187,25 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	wxString sql = wxString::Format(_("UPDATE `%s` SET new_report='%d' WHERE id='%d'"),TABLE_SBMS,READED_REPORT_FLAG,m_IdSBMS);
 	my_query(db,sql);
 	
-	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) 
+	if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
 	{
-		if(ptr->GetBusy()) 
-			m_ButtonManagement->Disable();
-		else
-			m_ButtonManagement->Enable();
+		if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) 
+		{
+			if(ptr->GetBusy()) 
+				m_ButtonManagement->Disable();
+			else
+				m_ButtonManagement->Enable();
 		
-	} else {
+		} else {
+			m_ButtonManagement->Disable();
+		}
+		
+		m_ButtonGraph->Enable();
+	}else{
+		
+		m_ButtonGraph->Disable();
 		m_ButtonManagement->Disable();
 	}
-	
-	m_ButtonGraph->Enable();
 	
 	m_HtmlString.Clear();
 	m_HtmlString.Append("<html><body style='font-family:Tahoma'>");
@@ -207,12 +216,13 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	SymbolInfo(db,ptr);
 	BaseStationInfo(db,m_IdBaseStation);
 
-	if(ptr->GetInMonitoring()) 
+	if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING) 
 	{
 		SBMSInfo(db,m_IdSBMS,ptr);
-		LightInfo(db,ptr->GetId());
 	}
 	
+	LightInfo(db,ptr->GetId());
+
 	m_HtmlString.Append("</html>");
 
 #ifdef WEBVIEW	
@@ -259,20 +269,14 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	char *b64 = NULL;
 	if(GetPictureAsBase64(db,ptr->GetId(),b64))
 	{
-		str.Append(wxString::Format(_("<tr><td><center><img src='data:image/png;base64,%s'></center></td></tr>"),b64));
+		str.Append(wxString::Format(_("<tr><td><center><img src=\"data:image/png;base64,%s\"></center></td></tr>"),b64));
 		free(b64);
 	}
 #endif	
 	
-	//if(m_IdSBMS == 0)
-		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));
-
-	if(ptr->GetInMonitoring())
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</td></tr>"),GetMsg(MSG_IN_MONITORING)));
-	else
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));
+	str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
 	
-	if(ptr->GetInMonitoring() & ptr->GetIdSBMS() > 0)
+	if((ptr->GetMonitoring() == SYMBOL_IN_MONITORING) & (ptr->GetIdSBMS() > 0))
 	{
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
@@ -280,14 +284,11 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 	
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetName()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetNumber()));
-	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetAgeAsString()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
 	//str.Append(_("<input type='checkbox' name='nazwa' value='wartoœæ'>"));
 	
 	str.Append(_("</table>"));
-	str.Append(_("<hr>"));
-	
 	m_HtmlString.Append(str);
 	
 	
@@ -350,7 +351,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms,CSymbol *ptr)
 
 		m_HtmlString.Append(str);
 	}
-
+		
 	db_free_result(result);
 
 }
@@ -375,7 +376,6 @@ void CSymbolPanel::BaseStationInfo(void *db, int id_base_station)
 		str.Append(_("</table>"));
 		m_HtmlString.Append(str);
 	}
-
 	db_free_result(result);
 
 }
@@ -401,14 +401,14 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
-		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 width=100%%><tr><td><font size=4><b><br></b></font></td></tr></table></td></tr>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceMeter)));
+		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 width=100%%><tr><td width=100%%><font size=4><b><br></b></font></td></tr></table></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceNauticMile)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_CODE])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC_IALA])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[FI_VIEW_LIGHT_CHARACTERISTIC])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [%s]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY),GetMsg(MSG_SECONDS)));
 		str.Append(_("</table>"));
 		
 		m_HtmlString.Append(str);

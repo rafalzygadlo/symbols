@@ -81,7 +81,7 @@ class CSymbol
 	nvtime_t m_nvTime;
 	int m_Timestamp;
 	int m_Age;
-	bool m_InMonitoring;
+	int m_Monitoring;
 	bool m_NewReport;
 	bool m_ValidGPS;
 	bool m_NoSBMS;
@@ -90,12 +90,14 @@ class CSymbol
 	float m_InputVolt;
 	int m_Charging;
 	int m_ProtocolVersion;
+	nvFastFont *m_NameFont;
 	
 	CAlarm *AlarmExists(int id);
 	void AlarmRemove();
 	void SetAlarms();
 	void ShowAlarm();
 	void ClearAlarms();
+	void ClearPositions();
 	void SetColor(int id);
 	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
 	void CreateTexture(TTexture *Texture, GLuint *TextureID);
@@ -109,6 +111,7 @@ class CSymbol
 	void SetSmoothScaleFactor(double v);
 	//void Read();
 	void SetSymbolColor();
+	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);
 	void RenderSymbol();
 	//void RenderLightOn();
 	void RenderBusy();
@@ -118,7 +121,8 @@ class CSymbol
 	void RenderPositions();
 	void RenderNewReport();
 	void RenderNoSBMS();
-			
+	void RenderInfo();
+					
 public:
 
 	CSymbol(CNaviBroker *broker);
@@ -141,7 +145,7 @@ public:
 	void SetIdSBMS(int v);
 	void SetSBMSID(int v);
 	void SetNumber(wxString v);
-	void SetInMonitoring(bool v);
+	void SetMonitoring(int v);
 	void SetName(wxString v);
 	void SetExists(bool v);
 	void SetDB(void *db);
@@ -166,6 +170,9 @@ public:
 	void SetChargingAsString(wxString v);
 	void SetNewAlarmCount(int v);
 	void SetProtocolVersion(int v);
+	void SetFont(nvFastFont *ptr);
+	void SetBusy(bool v);
+	void SetAlarm(bool v);
 		
 
 	//GET
@@ -190,7 +197,7 @@ public:
 	int GetMMSI();
 	nvtime_t GetNvTime();
 	int GetAge();
-	bool GetInMonitoring();
+	int GetMonitoring();
 	bool GetInit();
 	bool GetAuto();
 	float GetInputVolt();
@@ -206,6 +213,7 @@ public:
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();
+	wxString GetInputVoltAsString();
 	
 	
 	void Render();

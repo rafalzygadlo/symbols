@@ -25,7 +25,7 @@ int m_SelectedBaseStationId = -1;
 double m_FontSize = DEFAULT_FONT_SIZE;
 int m_ViewFontScale = DEFAULT_VIEW_FONT_SCALE;
 int m_CommTimeout = DEFAULT_COMM_TIMEOUT;
-int m_InMonitoring = -1;
+int m_Monitoring = SYMBOL_NOT_IN_MONITORING;
 int m_SelectedGroupId = -1;
 int m_Light = -1;
 int m_AlarmId = -1;
@@ -88,7 +88,7 @@ void SetSelectedSeawayId(int v)			{	m_SelectedSeawayId = v;		}
 void SetSelectedSymbolTypeId(int v)		{	m_SelectedSymbolTypeId = v;	}
 void SetSelectedBaseStationId(int v)	{	m_SelectedBaseStationId = v;}
 void SetFilterChanged(bool v)			{	m_FilterChanged = v;		}
-void SetInMonitoring(int v)				{	m_InMonitoring = v;			}
+void SetMonitoring(int v)				{	m_Monitoring = v;			}
 void SetSelectedGroupId(int v)			{	m_SelectedGroupId = v;		}
 void SetLight(int v)					{	m_Light = v;				}
 void SetSelectedAlarmId(int v)			{	m_AlarmId = v;				}
@@ -134,7 +134,7 @@ int GetSelectedSeawayId()		{	return m_SelectedSeawayId;		}
 int GetSelectedSymbolTypeId()	{	return m_SelectedSymbolTypeId;	}
 int GetSelectedBaseStationId()	{	return m_SelectedBaseStationId;	}
 int GetFilterChanged()			{	return m_FilterChanged;			}
-int GetInMonitoring()			{	return m_InMonitoring;			}
+int GetMonitoring()				{	return m_Monitoring;			}
 int GetSelectedGroupId()		{	return m_SelectedGroupId;		}
 int GetLight()					{	return m_Light;					}
 int GetSelectedAlarmId()		{	return m_AlarmId;				}

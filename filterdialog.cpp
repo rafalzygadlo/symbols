@@ -96,14 +96,18 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboLight->SetSelection(0);
 	FlexSizer->Add(m_ComboLight,0,wxALL|wxEXPAND,5);
 
-	wxStaticText *LabelInMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
+	wxStaticText *LabelInMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_IN_MONITORING));
 	FlexSizer->Add(LabelInMonitoring,0,wxALL,5);
-	m_ComboInMonitoring = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
-	m_ComboInMonitoring->Append(GetMsg(MSG_ALL));
-	m_ComboInMonitoring->Append(GetMsg(MSG_NOT_IN_MONITORING));
-	m_ComboInMonitoring->Append(GetMsg(MSG_IN_MONITORING));
-	m_ComboInMonitoring->SetSelection(0);
-	FlexSizer->Add(m_ComboInMonitoring,0,wxALL|wxEXPAND,5);
+	m_ComboMonitoring = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
+	m_ComboMonitoring->Append(GetMsg(MSG_ALL));
+	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_NOT_IN_MONITORING));
+	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_IN_MONITORING));
+	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_REMOVED));
+	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_OFF));
+	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_WINTER));
+	
+	m_ComboMonitoring->SetSelection(0);
+	FlexSizer->Add(m_ComboMonitoring,0,wxALL|wxEXPAND,5);
 	
 	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
 	FlexSizer->Add(LabelBaseStation,0,wxALL,5);
@@ -162,9 +166,9 @@ int CFilterDialog::GetBaseStationId()
 }
 
 
-int CFilterDialog::GetInMonitoring()
+int CFilterDialog::GetMonitoring()
 {
-	return m_ComboInMonitoring->GetSelection() - 1; 
+	return m_ComboMonitoring->GetSelection() - 1; 
 }
 
 int CFilterDialog::GetLight()
@@ -204,9 +208,9 @@ void CFilterDialog::SetSeawayId(int v)
 	ComboSetSelection(m_ComboSeaway,v);
 }
 
-void CFilterDialog::SetInMonitoring(int v)
+void CFilterDialog::SetMonitoring(int v)
 {
-	m_ComboInMonitoring->SetSelection(v + 1);
+	m_ComboMonitoring->SetSelection(v + 1);
 }
 
 void CFilterDialog::SetLight(int v)

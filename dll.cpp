@@ -163,7 +163,7 @@ void CMapPlugin::ReadConfig()
 	FileConfig->Read(_(KEY_FILTER_AREA_ID),&id);			SetSelectedAreaId(id);
 	FileConfig->Read(_(KEY_FILTER_SEAWAY_ID),&id);			SetSelectedSeawayId(id);
 	FileConfig->Read(_(KEY_FILTER_SYMBOL_TYPE_ID),&id);		SetSelectedSymbolTypeId(id);
-	FileConfig->Read(_(KEY_FILTER_IN_MONITORING),&id);		SetInMonitoring(id);
+	FileConfig->Read(_(KEY_FILTER_IN_MONITORING),&id);		SetMonitoring(id);
 	FileConfig->Read(_(KEY_FILTER_GROUP_ID),&id);			SetSelectedGroupId(id);
 
 	//SORT
@@ -211,7 +211,7 @@ void CMapPlugin::WriteConfig()
 	FileConfig->Write(_(KEY_FILTER_AREA_ID),GetSelectedAreaId());
 	FileConfig->Write(_(KEY_FILTER_SEAWAY_ID),GetSelectedSeawayId());
 	FileConfig->Write(_(KEY_FILTER_SYMBOL_TYPE_ID),GetSelectedSymbolTypeId());
-	FileConfig->Write(_(KEY_FILTER_IN_MONITORING),GetInMonitoring());
+	FileConfig->Write(_(KEY_FILTER_IN_MONITORING),GetMonitoring());
 	FileConfig->Write(_(KEY_FILTER_GROUP_ID),GetSelectedGroupId());
 
 	//SORT
@@ -262,7 +262,7 @@ void CMapPlugin::ReadConfigDB()
 		id = atoi(row[FI_USER_OPTION_FILTER_AREA_ID]);			SetSelectedAreaId(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_SEAWAY_ID]);		SetSelectedSeawayId(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_SYMBOL_TYPE_ID]);	SetSelectedSymbolTypeId(id);
-		id = atoi(row[FI_USER_OPTION_FILTER_IN_MONITORING]);	SetInMonitoring(id);
+		id = atoi(row[FI_USER_OPTION_FILTER_IN_MONITORING]);	SetMonitoring(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_GROUP_ID]);			SetSelectedGroupId(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_BASE_STATION_ID]);	SetSelectedBaseStationId(id);
 		id = atoi(row[FI_USER_OPTION_FILTER_LIGHT]);			SetLight(id);
@@ -344,7 +344,7 @@ void CMapPlugin::WriteConfigDB()
 	sql << sql.Format("filter_area_id='%d',",GetSelectedAreaId());
 	sql << sql.Format("filter_seaway_id='%d',",GetSelectedSeawayId());
 	sql << sql.Format("filter_symbol_type_id='%d',",GetSelectedSymbolTypeId());
-	sql << sql.Format("filter_in_monitoring='%d',",GetInMonitoring());
+	sql << sql.Format("filter_in_monitoring='%d',",GetMonitoring());
 	sql << sql.Format("filter_group_id='%d',",GetSelectedGroupId());
 	sql << sql.Format("filter_base_station_id='%d',",GetSelectedBaseStationId());
 	sql << sql.Format("filter_light='%d',",GetLight());
@@ -551,43 +551,7 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 	else
 		m_SmoothScaleFactor = factor;
 }
-/*
-void CMapPlugin::SetSql(wxString &sql)
-{
-	int id_group = GetSelectedGroupId();
-	
-	if(id_group > 0)
-		sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
-	else
-		sql = wxString::Format(_("SELECT * FROM %s WHERE "),TABLE_SYMBOL);
-				
-	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
-	m_OldSearchText = GetSearchText();
-	
-	int in_monitoring = GetInMonitoring();
-	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
-	
-	int area_id = GetSelectedAreaId();
-	if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
-	
-	int symbol_type_id = GetSelectedSymbolTypeId();
-	if(symbol_type_id > 0) sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
 
-	int seaway_id = GetSelectedSeawayId();
-	if(seaway_id > 0) sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
-		
-	if(GetSortColumn() != wxEmptyString)
-	{
-		sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
-	
-		if(GetSortOrder())
-			sql << _("ASC");
-		else
-			sql << _("DESC");
-	}
-	
-}
-*/
 void CMapPlugin::SetSql(wxString &sql)
 {
 	
@@ -605,7 +569,7 @@ void CMapPlugin::SetSql(wxString &sql)
 	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
-	int in_monitoring = GetInMonitoring();
+	int in_monitoring = GetMonitoring();
 	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
 	
 	int light = GetLight();
@@ -666,6 +630,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		{
 			add = true;
 			ptr = new CSymbol(m_Broker);
+			ptr->SetFont(m_NameFont);
 		}
 
 		sscanf(row[FI_VIEW_SYMBOL_RLON],"%lf",&lon);
@@ -683,23 +648,22 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetIdSBMS(id_sbms);
 		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
 		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
-		ptr->SetInMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
+		ptr->SetMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
 		//ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
 		
 		bool exists = false;
 		
-		if(id_sbms > 0)
+		if(GetSBMSExists(db,id_sbms))
 		{
-
-			if(GetSBMSExists(db,id_sbms))
-			{
-				exists = true;
-				ReadSBMS(ptr,row);
-				
-			}
+			exists = true;
+			ReadSBMS(ptr,row);
 		}
-				
-		if(ptr->GetInMonitoring() && exists)
+		
+		ptr->SetNoSBMS(!exists);
+		ptr->SetInit(true);
+		ptr->SetExists(true);
+
+		if((ptr->GetMonitoring() == SYMBOL_IN_MONITORING) && exists)
 		{
 			char *symbol_new_report = row[FI_VIEW_SYMBOL_NEW_REPORT];
 			ptr->SetNewReport(false);
@@ -716,14 +680,10 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			if(ptr->GetForcedOff() == LIGHT_OFF)
 				ptr->SetLightOn(LIGHT_ON);
 			
-		}
-		
-		ptr->SetNoSBMS(!exists);
-		ptr->SetInit(true);
-		ptr->SetExists(true);
-
-		if(!exists)
-		{
+			ptr->SetValidGPS(true);
+			
+		}else{
+					
 			ptr->SetLon(lon);
 			ptr->SetLat(lat);
 			ptr->SetLonMap(to_x);
@@ -785,6 +745,7 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 	ptr->SetGpsLonMap(to_x);
 	ptr->SetGpsLatMap(-to_y);
 
+	//ustawienie pozycji
 	if(GetPositionFromGps())
 	{
 		ptr->SetLon(lon);
@@ -800,7 +761,7 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 	
 	}
 
-	ptr->SetValidGPS(true);
+	
 }
 
 void CMapPlugin::ReadAlarm(void *db)
@@ -1784,13 +1745,23 @@ void CMapPlugin::RenderHighlighted()
 
 void CMapPlugin::RenderInfo(CSymbol *ptr)
 {
-//	if(ptr->GetMMSI() > 0)
-//		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_MMSI),ptr->GetMMSI());
-//	else
-//		RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,4.0f,L"%s:%d",GetMsg(MSG_SBMSID),ptr->GetSBMSID());
-	
-//	nvtime_t t = ptr->GetNvTime();
-//	RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),0.5f,5.0f,L"%02d:%02d",t.h,t.m);
+	return;
+	if(ptr->GetInit())
+	{
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
+		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+		{
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
+		}else{
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
+		}
+			
+		if(ptr->GetBusy())
+			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
+
+	}
 }
 
 void CMapPlugin::RenderDistance()
@@ -1873,11 +1844,14 @@ void CMapPlugin::RenderNames()
 		{
 			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
 			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
-			if(ptr->GetInMonitoring())
+			if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+			{
 				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
-			else
-				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,GetMsg(MSG_NOT_IN_MONITORING));
-
+				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
+			}else{
+				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
+			}
+			
 			if(ptr->GetBusy())
 				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 		
@@ -1904,7 +1878,7 @@ void CMapPlugin::Render(void)
 	
 	if(MapScale > GetViewFontScale())
 	{
-		RenderNames();
+		//RenderNames();
 		m_NameFont->ClearBuffers();
 		m_NameFont->CreateBuffers();
 		m_NameFont->Render();	

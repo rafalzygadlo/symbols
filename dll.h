@@ -151,8 +151,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void RenderAnimation();
 	void RenderDistance();
 	void RenderNames();
-	void RenderInfo(CSymbol *ptr);
-
+	
 	void RenderText(float x, float y, float vx, float vy, const wchar_t *format...);
 	//void RenderText(double x, double y, wchar_t *text);
 	bool IsPointInsideBox(double px, double py, double bx1, double by1, double bx2, double by2);
@@ -223,6 +222,7 @@ public:
 	void OnTick();
 	void OnTickExit();
 	void SetSelectedPtr(CSymbol *v);
+	void RenderInfo(CSymbol *ptr);
 
 	virtual void Run(void *Params);
 	virtual void Kill(void);
@@ -232,6 +232,7 @@ public:
 	virtual void OnInitGL();
 	virtual void SetUID(int uid);
 	virtual void SetLanguage(int LanguageID);
+
 	
 	static void *GetThisPtrFunc(void *NaviMapIOApiPtr, void *Params);
 	static void *OnSynchro(void *NaviMapIOApiPtr, void *Params);

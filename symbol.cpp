@@ -45,7 +45,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_TickExit = false;
 	m_PhotoCellNightTime = false;
 	m_MMSI = 0;
-	m_InMonitoring = false;
+	m_Monitoring = SYMBOL_NOT_IN_MONITORING;
 	m_ReportCount = 0;
 	m_NewReport = false;
 	m_ValidGPS = false;
@@ -57,6 +57,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Charging = false;
 	m_NewAlarmCount = 0;
 	m_ProtocolVersion = 0;
+	m_NameFont = NULL;
 	
 }
 
@@ -68,94 +69,26 @@ CSymbol::~CSymbol()
 	if(m_GraphDialog)
 		delete m_GraphDialog;
 	
-	
+}
+
+void CSymbol::SetFont(nvFastFont *ptr)
+{
+	m_NameFont = ptr;
 }
 
 void CSymbol::SetDB(void *db)
 {
 	m_DB = db;
 }
-/*
-void CSymbol::Read()
-{
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id = '%d'"),TABLE_SBMS,m_IdSBMS);
-
-	my_query(m_DB,sql);
-	void *result = db_result(m_DB);
-
-    char **row = NULL;
-	if(result == NULL)
-		return;
-	
-	double lon,lat,to_x,to_y;
-	bool exists = false;
-	
-	while(row = (char**)db_fetch_row(result))
-	{
-		exists = true;
-		m_SBMSID = atoi(row[FI_SBMS_SBMSID]);
-		m_IdBaseStation = atoi(row[FI_SBMS_ID_BASE_STATION]);
-		SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		SetPhotoCellNightTime(atoi(row[FI_SBMS_MODE_PHOTOCELL_NIGHT_TIME]));
-		SetMMSI(atoi(row[FI_SBMS_MMSI]));
-		SetSBMSName(Convert(row[FI_SBMS_NAME]));
-		SetAuto(atoi(row[FI_SBMS_AUTO]));
-		SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
-		
-		if(m_InMonitoring)
-		{
-			SetNewReport(atoi(row[FI_SBMS_NEW_REPORT]));
-			SetLightOn(!m_ForcedOff);
-		}
-			
-		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
-		SetTimestamp(timestamp);
-		SetAge(GetLocalTimestamp() - timestamp);
-				
-		int seconds = GetLocalTimestamp() - timestamp;
-		if(seconds < 0)
-			seconds = 0;
-
-		int minutes = seconds/60;
-		int hours = minutes/60;
-		div_t _divs = div(seconds,60);
-		div_t _divm = div(minutes,60);
-				
-		SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
-		
-		sscanf(row[FI_SBMS_LON],"%lf",&lon);
-		sscanf(row[FI_SBMS_LAT],"%lf",&lat);
-		double to_x,to_y;
-		m_Broker->Unproject(lon,lat,&to_x,&to_y);
-
-		SetLon(lon);
-		SetLat(lat);
-
-		SetLonMap(to_x);
-		SetLatMap(-to_y);
-		m_GpsValid = true;
-
-		nvtime_t dt;
-		nvdatetime(atoi(row[FI_SBMS_DATE_TIME_STAMP]),&dt);
-		SetNvTime(dt);
-	}
-
-	if(exists)
-		SetNoSBMS(false);
-	else
-		SetNoSBMS(true);
-			
-	
-	db_free_result(result);
-	
-	m_ReadTick = 0;
-
-}
-*/
 
 bool CSymbol::GetBusy()
 {
 	return m_Busy;
+}
+
+void CSymbol::ClearPositions()
+{
+	m_PosBuffer.Clear();
 }
 
 void CSymbol::ClearAlarms()
@@ -435,34 +368,6 @@ bool CSymbol::CheckReport()
 }
 
 
-void CSymbol::OnTick(void *db)
-{
-	m_DB = db;
-	if(m_Broker == NULL)
-		return;
-	
-	bool result = false;
-		
-	if(!m_InMonitoring)
-		return;
-	if(m_NoSBMS)
-		return;
-	
-	SetAlarms();		//flaga alarm exists na false
-	
-	if(CheckCommand())
-		result = true;
-	if(CheckAlarm())
-		result = true;
-	//if(CheckReport())
-		//result = true;
-	if(SetPositions())
-		result = true;
-		
-	AlarmRemove();
-	CheckCollision();
-			
-}
 
 void CSymbol::OnTickExit()
 {
@@ -592,7 +497,7 @@ void CSymbol::RenderAlarm()
 
 void CSymbol::SetSymbolColor()
 {
-	if(!m_InMonitoring || m_NoSBMS)
+	if(m_Monitoring == SYMBOL_NOT_IN_MONITORING || m_NoSBMS)
 	{
 		SetColor(SYMBOL_NO_MONITOR_COLOR);
 		return;
@@ -639,24 +544,6 @@ void CSymbol::RenderBusy()
 
 void CSymbol::RenderSymbol()
 {
-
-/*
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
-	glPushMatrix();
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
-		
-	
-	glBegin(GL_QUADS);
-		glTexCoord2f(1.0f,1.0f); glVertex2f(  m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
-		glTexCoord2f(1.0f,0.0f); glVertex2f(  m_RectWidth/2 + m_TranslationX,   m_RectHeight/2 + m_TranslationY);
-		glTexCoord2f(0.0f,0.0f); glVertex2f( -m_RectWidth/2 + m_TranslationX,   m_RectHeight/2 + m_TranslationY);
-		glTexCoord2f(0.0f,1.0f); glVertex2f( -m_RectWidth/2 + m_TranslationX,  -m_RectHeight/2 + m_TranslationY);
-	glEnd();
-	
-	glPopMatrix();
-	glDisable(GL_TEXTURE_2D);
-*/
 	SetSymbolColor();
 	glPushMatrix();
 		
@@ -680,7 +567,6 @@ void CSymbol::RenderSymbol()
 	nvDrawCircle(&c);
 
 	glPopMatrix();
-	
 	
 }
 
@@ -805,6 +691,38 @@ void CSymbol::RenderNoSBMS()
 
 }
 
+void CSymbol::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
+{	
+	wchar_t buffer[128];
+	va_list args;
+	va_start(args,format);
+	//swprintf_s(buffer,format,args);
+	vswprintf ( buffer, 128, format, args );
+	va_end(args);
+	
+	m_NameFont->Print(x,y,GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
+
+}
+
+void CSymbol::RenderInfo()
+{
+	RenderText(GetLonMap(),GetLatMap(),0.5f,3.0f,GetName());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetSBMSName());
+	if(GetMonitoring() == SYMBOL_IN_MONITORING)
+	{
+		RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
+		RenderText(GetLonMap(),GetLatMap(),0.5f,5.3f,GetAgeAsString());
+		RenderText(GetLonMap(),GetLatMap(),0.5f,6.4f,GetMonitoringAsString(GetMonitoring()));
+	}else{
+		RenderText(GetLonMap(),GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(GetMonitoring()));
+	}
+			
+	if(GetBusy())
+		RenderText(GetLonMap(),GetLatMap(),-1.5f,-0.1f,GetCommandCountAsString());
+
+}
+
+
 void CSymbol::Render()
 {
 	if(!m_Init)
@@ -818,12 +736,15 @@ void CSymbol::Render()
 		
 	RenderNoSBMS();
 	RenderSymbol();
+//	RenderIce();
 	RenderRestricted();
 	RenderBusy();
 	RenderGPS();
 	RenderNewReport();
 	RenderAlarm();
 	RenderPositions();
+	RenderInfo();
+
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
@@ -931,6 +852,46 @@ void CSymbol::ShowGraph()
 	DBClose(db);
 }
 
+void CSymbol::OnTick(void *db)
+{
+	m_DB = db;
+	if(m_Broker == NULL)
+		return;
+	
+	bool result = false;
+		
+	if(m_NoSBMS)
+		return;
+	
+	SetAlarms();		//flaga alarm exists na false
+	
+	if(m_Monitoring == SYMBOL_IN_MONITORING)
+	{
+		if(CheckCommand())
+			result = true;
+		if(CheckAlarm())
+			result = true;
+		if(SetPositions())
+			result = true;
+			
+		AlarmRemove();
+	
+	}else{
+		
+		m_Alarm = false;
+		m_Busy = false;
+		m_NewReport = false;
+		m_ValidGPS = false;
+		m_LightOn = LIGHT_NOT_AVAILABLE;
+		ClearPositions();
+		ClearAlarms();
+	}
+	
+	CheckCollision();
+			
+}
+
+
 //SET
 void CSymbol::SetColor(int id)
 {
@@ -942,20 +903,65 @@ void CSymbol::SetId(int v)
 	m_Id = v;
 }
 
-void CSymbol::SetRLon(double v)		{	m_RLon = v;}
-void CSymbol::SetRLat(double v)		{	m_RLat = v;}
-void CSymbol::SetRLonMap(double v)	{	m_RLonMap = v;}
-void CSymbol::SetRLatMap(double v)	{	m_RLatMap = v;}
+void CSymbol::SetRLon(double v)		
+{	
+	m_RLon = v;
+}
 
-void CSymbol::SetGpsLon(double v)	{	m_GpsLon = v;}
-void CSymbol::SetGpsLat(double v)	{	m_GpsLat = v;}
-void CSymbol::SetGpsLonMap(double v){	m_GpsLonMap = v;}
-void CSymbol::SetGpsLatMap(double v){	m_GpsLatMap = v;}
+void CSymbol::SetRLat(double v)		
+{	
+	m_RLat = v;
+}
 
-void CSymbol::SetLon(double v)		{	m_Lon = v;}
-void CSymbol::SetLat(double v)		{	m_Lat = v;}
-void CSymbol::SetLonMap(double v)	{	m_LonMap = v;}
-void CSymbol::SetLatMap(double v)	{	m_LatMap = v;}
+void CSymbol::SetRLonMap(double v)	
+{	
+	m_RLonMap = v;
+}
+
+void CSymbol::SetRLatMap(double v)	
+{	
+	m_RLatMap = v;
+}
+
+void CSymbol::SetGpsLon(double v)	
+{	
+	m_GpsLon = v;
+}
+
+void CSymbol::SetGpsLat(double v)	
+{	
+	m_GpsLat = v;
+}
+
+void CSymbol::SetGpsLonMap(double v)
+{
+	m_GpsLonMap = v;
+}
+
+void CSymbol::SetGpsLatMap(double v)
+{	
+	m_GpsLatMap = v;
+}
+
+void CSymbol::SetLon(double v)		
+{	
+	m_Lon = v;
+}
+
+void CSymbol::SetLat(double v)		
+{	
+	m_Lat = v;
+}
+
+void CSymbol::SetLonMap(double v)	
+{
+	m_LonMap = v;
+}
+
+void CSymbol::SetLatMap(double v)	
+{	
+	m_LatMap = v;
+}
 
 void CSymbol::SetIdSBMS(int v)
 {	
@@ -1012,11 +1018,10 @@ void CSymbol::SetMMSI(int v)
 	m_MMSI = v;
 }
 
-void CSymbol::SetInMonitoring(bool v)
+void CSymbol::SetMonitoring(int v)
 {
-	m_InMonitoring = v;
+	m_Monitoring = v;
 }
-
 
 void CSymbol::SetNvTime(nvtime_t dt)
 {
@@ -1109,22 +1114,65 @@ int CSymbol::GetBaseStationId()
 	return m_IdBaseStation;
 }
 
-double CSymbol::GetRLon(){		return m_RLon;}
-double CSymbol::GetRLat(){		return m_RLat;}
-double CSymbol::GetRLonMap(){	return m_RLonMap;}
-double CSymbol::GetRLatMap(){	return m_RLatMap;}
+double CSymbol::GetRLon()
+{		
+	return m_RLon;
+}
 
-double CSymbol::GetGpsLon(){	return m_GpsLon;}
-double CSymbol::GetGpsLat(){	return m_GpsLat;}
-double CSymbol::GetGpsLonMap(){	return m_GpsLonMap;}
-double CSymbol::GetGpsLatMap(){	return m_GpsLatMap;}
+double CSymbol::GetRLat()
+{		
+	return m_RLat;
+}
 
-double CSymbol::GetLon(){		return m_Lon;}
-double CSymbol::GetLat(){		return m_Lat;}
-double CSymbol::GetLonMap(){	return m_LonMap;}
-double CSymbol::GetLatMap(){	return m_LatMap;}
+double CSymbol::GetRLonMap()
+{	
+	return m_RLonMap;
+}
 
+double CSymbol::GetRLatMap()
+{	
+	return m_RLatMap;
+}
 
+double CSymbol::GetGpsLon()
+{	
+	return m_GpsLon;
+}
+
+double CSymbol::GetGpsLat()
+{	
+	return m_GpsLat;
+}
+
+double CSymbol::GetGpsLonMap()
+{	
+	return m_GpsLonMap;
+}
+
+double CSymbol::GetGpsLatMap()
+{	
+	return m_GpsLatMap;
+}
+
+double CSymbol::GetLon()
+{		
+	return m_Lon;
+}
+
+double CSymbol::GetLat()
+{		
+	return m_Lat;
+}
+
+double CSymbol::GetLonMap()
+{	
+	return m_LonMap;
+}
+
+double CSymbol::GetLatMap()
+{	
+	return m_LatMap;
+}
 
 int CSymbol::GetAlarmCount()
 {
@@ -1181,6 +1229,11 @@ wxString CSymbol::GetReportCountAsString()
 	return wxString::Format(_("%d"),m_ReportCount);
 }
 
+wxString CSymbol::GetInputVoltAsString()
+{
+	return wxString::Format(_("%4.2f V"),m_InputVolt);
+}
+
 int CSymbol::GetMMSI()
 {
 	return m_MMSI;
@@ -1196,9 +1249,9 @@ wxString CSymbol::GetAgeAsString()
 	return m_AgeString;
 }
 
-bool CSymbol::GetInMonitoring()
+int CSymbol::GetMonitoring()
 {
-	return m_InMonitoring;
+	return m_Monitoring;
 }
 
 bool CSymbol::GetInit()
@@ -1249,4 +1302,14 @@ int CSymbol::GetNewAlarmCount()
 int CSymbol::GetProtocolVersion()
 {
 	return m_ProtocolVersion;
+}
+
+void CSymbol::SetBusy(bool v)
+{
+	m_Busy = v;
+}
+
+void CSymbol::SetAlarm(bool v)
+{
+	m_Alarm = v;
 }

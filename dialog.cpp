@@ -450,7 +450,7 @@ wxPanel *CDialogPanel::GetSymbolFilterPanel(wxWindow *Parent)
 	wxFlexGridSizer *FlexSizer = new wxFlexGridSizer(2);
 	Sizer1->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 		
-	wxCheckBox *CheckInMOnitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
+	wxCheckBox *CheckInMOnitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_IN_MONITORING));
 	FlexSizer->AddSpacer(1);
 	FlexSizer->Add(CheckInMOnitoring,0,wxALL,2);
 		
@@ -951,7 +951,7 @@ void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
 	sql = wxString::Format(_("INSERT INTO %s SET id_sbms='%d', id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetSBMSId(), ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(),ptr->GetName(),ptr->GetInfo());
+		TABLE_SYMBOL,ptr->GetSBMSId(), ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
 	int id = db_last_insert_id(m_DB);
@@ -1232,7 +1232,7 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetName(Convert(row[FI_SYMBOL_NAME]));
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
-	ptr->SetInMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
+	ptr->SetMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
 	ptr->SetSBMS(Convert(row[FI_SYMBOL_ID_SBMS]));
 
 	db_free_result(result);	
@@ -1246,7 +1246,7 @@ void CDialogPanel::EditSymbol(int id)
 	if(ptr->ShowModal() == wxID_OK)
 	{
 		wxString sql = wxString::Format	(_("UPDATE %s SET id_sbms='%d', id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetSBMSId(),ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetInMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
+			m_Table,ptr->GetSBMSId(),ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		
 		//light

@@ -35,7 +35,7 @@ class CNew: public wxDialog
 	wxComboBox *m_AreaCombo;
 	wxComboBox *m_SymbolTypeCombo;
 	wxComboBox *m_SBMSCombo;
-	wxCheckBox *m_CheckInMonitoring;
+	wxComboBox *m_MonitoringCombo;
 
 	bool m_LonValid,m_LatValid;
 	int m_DegreeFormat;
@@ -57,7 +57,6 @@ class CNew: public wxDialog
 	wxString m_SymbolTypeID;
 	wxString m_SBMSId;
 	int m_PictureId;
-	bool m_InMonitoring;
 	CPicturePanel *m_PicturePanel;
 
 	wxListBox *m_ListBox;
@@ -75,6 +74,7 @@ class CNew: public wxDialog
 	wxString m_Code;
 
 	int m_PictureType;
+	int m_Monitoring;
 		
 	void GetPanel(int type);
 	void EditNamePanel();
@@ -126,7 +126,7 @@ public:
 	wxString GetCharacteristic();
 	CLightPanel *GetLightPanel();
 	CItemPanel *GetItemPanel();
-	bool GetInMonitoring();
+	int GetMonitoring();
 	wxString GetCode();
 	wxString GetIala();
 	wxString GetTime();
@@ -152,7 +152,7 @@ public:
 	void SetNumber(wxString v);
 	void SetCoverage(wxString v);
 	void SetCharacteristic(wxString v);
-	void SetInMonitoring(bool v);
+	void SetMonitoring(int v);
 	void SetCode(wxString v);
 	void SetIala(wxString v);
 	void SetTime(wxString v);
