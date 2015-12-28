@@ -2,6 +2,7 @@
 #include "alarm.h"
 #include "conf.h"
 
+
 CAlarm::CAlarm()
 {
 	m_New = false;

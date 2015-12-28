@@ -8,11 +8,11 @@
 #include "tools.h"
 #include "db.h"
 
-CCommandDialog::CCommandDialog(wxWindow *parent, CSymbol *ptr)
+CCommandDialog::CCommandDialog(void *db,wxWindow *parent, CSymbol *ptr)
 	:wxDialog(NULL,wxID_ANY, ptr->GetName())
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	m_CommandPanel = new CCommandPanel(this);
+	m_CommandPanel = new CCommandPanel(db,this);
 	m_CommandPanel->SetSelectedPtr(ptr);
 	m_CommandPanel->Set();
 	Sizer->Add(m_CommandPanel,1,wxALL|wxEXPAND,2);

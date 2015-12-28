@@ -14,7 +14,7 @@ class CCommandDialog: public wxDialog
 
 public:
 
-	CCommandDialog(wxWindow *parent,CSymbol *ptr);
+	CCommandDialog(void *db,wxWindow *parent,CSymbol *ptr);
 	~CCommandDialog();
 	CCommandPanel *GetCommandPanel();
 	

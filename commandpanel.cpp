@@ -7,6 +7,7 @@
 #include "tools.h"
 #include "db.h"
 #include "options.h"
+#include "right.h"
 
 BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_SLIDER(ID_DRIVE_CURRENT,OnDriveCurrent)
@@ -26,12 +27,12 @@ BEGIN_EVENT_TABLE(CCommandPanel, wxPanel)
 	EVT_RADIOBUTTON(ID_MANUAL,OnManual)
 	EVT_RADIOBUTTON(ID_LIGHT_ON,OnLightOn)
 	EVT_RADIOBUTTON(ID_LIGHT_OFF,OnLightOff)
-
 END_EVENT_TABLE()
 
-CCommandPanel::CCommandPanel(wxWindow *parent)
+CCommandPanel::CCommandPanel(void *db, wxWindow *parent)
 	:wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize)
 {
+	m_DB = db;
 	m_Changed = (bool*)malloc(sizeof(bool) * COMMAND_COUNT);
 	memset(m_Changed,0,sizeof(bool) * COMMAND_COUNT);
 	//m_Sizer = new wxBoxSizer(wxVERTICAL);
@@ -454,9 +455,9 @@ void CCommandPanel::SetBusy(bool v)
 	Refresh(false);
 }
 
-wxPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
+CPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
 {
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
@@ -466,9 +467,9 @@ wxPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
 	return Panel;
 }
 
-wxPanel *CCommandPanel::ResetPanel(wxPanel *parent)
+CPanel *CCommandPanel::ResetPanel(wxPanel *parent)
 {
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
@@ -478,24 +479,10 @@ wxPanel *CCommandPanel::ResetPanel(wxPanel *parent)
 	return Panel;
 }
 
-wxPanel *CCommandPanel::AutoPanel(wxPanel *parent)
+CPanel *CCommandPanel::LightPanel(wxPanel *parent)
 {
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	Panel->SetSizer(Sizer);
-
-	m_LightAuto = new wxRadioButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
-	Sizer->Add(m_LightAuto,0,wxALL|wxEXPAND,5);
-	
-	//m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
-	//Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
+    CPanel *Panel = new CPanel(parent);
 		
-	return Panel;
-}
-
-wxPanel *CCommandPanel::LightPanel(wxPanel *parent)
-{
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 		
@@ -507,67 +494,39 @@ wxPanel *CCommandPanel::LightPanel(wxPanel *parent)
 
 	m_LightOff = new wxRadioButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
 	Sizer->Add(m_LightOff,0,wxALL,5);
-			
-	//m_LightManual = new wxRadioButton(Panel,ID_MANUAL,GetMsg(MSG_MANUAL_MANAGEMENT));
-	//Sizer->Add(m_LightManual,0,wxALL|wxEXPAND,5);
-			
+				
 	return Panel;
 }
 
-/*
-wxPanel *CCommandPanel::GetTimePanel(wxPanel *parent)
+CPanel *CCommandPanel::TimePanel(wxPanel *parent)
 {
-		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
-	
-	m_Auto = new wxCheckBox(Panel,ID_TIME,GetMsg(MSG_));
-	Sizer->Add(m_Time,0,wxALL,5);
-		
-	return Panel;
-
-}
-*/
-
-wxPanel *CCommandPanel::GetTimePanel(wxPanel *parent)
-{
-		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
-	wxFlexGridSizer *Sizer = new wxFlexGridSizer(1,1,0,0);
-	//wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
-	Panel->SetSizer(Sizer);
-	
 	m_Time = new wxCheckBox(Panel,ID_TIME,GetMsg(MSG_GET_TIME));
 	Sizer->Add(m_Time,0,wxALL,5);
 	
-
 	return Panel;
-
 }
 
-wxPanel *CCommandPanel::GetUptimePanel(wxPanel *parent)
+CPanel *CCommandPanel::UptimePanel(wxPanel *parent)
 {
-		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
-	wxFlexGridSizer *Sizer = new wxFlexGridSizer(1,1,0,0);
-	//wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
+
+	CPanel *Panel = new CPanel(parent);
+	Panel->CheckRight(MODULE_COMMAND,ACTION_UPTIME);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	m_Uptime = new wxCheckBox(Panel,ID_UPTIME,GetMsg(MSG_GET_UPTIME));
 	Sizer->Add(m_Uptime,0,wxALL,5);
-
-
+	
 	return Panel;
-
 }
 
 
-wxPanel *CCommandPanel::SetLightTimePanel(wxPanel *parent)
+CPanel *CCommandPanel::LightTimePanel(wxPanel *parent)
 {
-		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+
+    CPanel *Panel = new CPanel(parent);
 	wxFlexGridSizer *Sizer = new wxFlexGridSizer(2);
 	Panel->SetSizer(Sizer);
 	
@@ -593,10 +552,10 @@ wxPanel *CCommandPanel::SetLightTimePanel(wxPanel *parent)
 }
 
 
-wxPanel *CCommandPanel::SetLightIntensityPanel(wxPanel *parent)
+CPanel *CCommandPanel::LightIntensityPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	
@@ -615,10 +574,10 @@ wxPanel *CCommandPanel::SetLightIntensityPanel(wxPanel *parent)
 
 }
 
-wxPanel *CCommandPanel::SetPhotoCellResistantPanel(wxPanel *parent)
+CPanel *CCommandPanel::PhotoCellResistantPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 	
@@ -637,10 +596,10 @@ wxPanel *CCommandPanel::SetPhotoCellResistantPanel(wxPanel *parent)
 
 }
 
-wxPanel *CCommandPanel::SetRipleDelayPanel(wxPanel *parent)
+CPanel *CCommandPanel::RipleDelayPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
 
@@ -661,10 +620,10 @@ wxPanel *CCommandPanel::SetRipleDelayPanel(wxPanel *parent)
 
 }
 
-wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
+CPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	Panel->SetSizer(Sizer);
@@ -694,27 +653,24 @@ wxPanel *CCommandPanel::SeasonControlPanel(wxPanel *parent)
 }
 
 
-wxPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
+CPanel *CCommandPanel::CharacteristicPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
 	wxTextCtrl *aa = new wxTextCtrl(Panel,wxID_ANY);
 	Sizer->Add(aa,0,wxALL|wxEXPAND,5);
-	
-	//m_ButtonDelete->Disable();
 		
 	return Panel;
 
 }
 
-wxPanel *CCommandPanel::DriveCurrentPanel(wxPanel *parent)
+CPanel *CCommandPanel::DriveCurrentPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
@@ -730,11 +686,10 @@ wxPanel *CCommandPanel::DriveCurrentPanel(wxPanel *parent)
 
 }
 
-wxPanel *CCommandPanel::PowerOfLightPanel(wxPanel *parent)
+CPanel *CCommandPanel::PowerOfLightPanel(wxPanel *parent)
 {
 		
-    wxPanel *Panel = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	//Panel->SetBackgroundColour(COMMAND_PANEL_BG_COLOR);
+    CPanel *Panel = new CPanel(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 
@@ -775,29 +730,28 @@ wxPanel *CCommandPanel::GetPage1(wxWindow *parent)
 
 	//serwisowe wy³¹czenie
 	m_LightPanel = LightPanel(Panel);
-	Sizer->Add(m_LightPanel,0,wxALL|wxEXPAND,0);
+	m_LightPanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT);
+	Sizer->Add(m_LightPanel,0,wxALL,1);
 	
 	//pobranie czasu
-	m_TimePanel = GetTimePanel(Panel);
-	Sizer->Add(m_TimePanel,0,wxALL,0);
+	m_TimePanel = TimePanel(Panel);
+	m_TimePanel->CheckRight(MODULE_COMMAND,ACTION_TIME);
+	Sizer->Add(m_TimePanel,0,wxALL,1);
 	
 	//pobranie czasu (uptime)
-	m_UptimePanel = GetUptimePanel(Panel);
-	Sizer->Add(m_UptimePanel,0,wxALL,0);
+	m_UptimePanel = UptimePanel(Panel);
+	m_UptimePanel->CheckRight(MODULE_COMMAND,ACTION_UPTIME);
+	Sizer->Add(m_UptimePanel,0,wxALL,1);
 
 	m_ResetPanel = ResetPanel(Panel);
-	Sizer->Add(m_ResetPanel,0,wxALL,0);
+	m_ResetPanel->CheckRight(MODULE_COMMAND,ACTION_RIGHT);
+	Sizer->Add(m_ResetPanel,0,wxALL,1);
 	
 	//sezonowa kontrola
 	m_SeasonControlPanel = SeasonControlPanel(Panel);
-	Sizer->Add(m_SeasonControlPanel,0,wxALL|wxEXPAND,0);
-	// pr¹d podk³adu
-	//m_DriveCurrentPanel = DriveCurrentPanel(Panel);
-	//Sizer->Add(m_DriveCurrentPanel,0,wxALL|wxEXPAND,2);
+	m_SeasonControlPanel->CheckRight(MODULE_COMMAND,ACTION_SEASON_CONTROL);
+	Sizer->Add(m_SeasonControlPanel,0,wxALL,1);
 	
-	//moc œwiat³a
-	//m_PowerOfLightPanel = PowerOfLightPanel(Panel);
-	//Sizer->Add(m_PowerOfLightPanel,0,wxALL|wxEXPAND,2);
 		
 	return Panel;
 }
@@ -811,53 +765,24 @@ wxPanel *CCommandPanel::GetPage2(wxWindow *parent)
 	Panel->SetSizer(Sizer);
 		
 	//ustawianie wewnetrznego zegara lammpy
-	m_LightTimePanel = SetLightTimePanel(Panel);
+	m_LightTimePanel = LightTimePanel(Panel);
+	m_LightTimePanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT_TIME);
 	Sizer->Add(m_LightTimePanel,0,wxALL|wxEXPAND,2);
 
 	//ustawienie impulsu opoznienia (uptime)
-	m_RipleDelayPanel = SetRipleDelayPanel(Panel);
+	m_RipleDelayPanel = RipleDelayPanel(Panel);
+	m_RipleDelayPanel->CheckRight(MODULE_COMMAND,ACTION_RIPLE_DELAY);
 	Sizer->Add(m_RipleDelayPanel,0,wxALL|wxEXPAND,2);
 
 	//ustawienie mocy œwiat³a
-	m_LightIntensityPanel = SetLightIntensityPanel(Panel);
+	m_LightIntensityPanel = LightIntensityPanel(Panel);
+
 	Sizer->Add(m_LightIntensityPanel,0,wxALL|wxEXPAND,2);
 
 	//ustawienie czu³oœci fotokomórki
-	m_PhotoCellResistantPanel = SetPhotoCellResistantPanel(Panel);
+	m_PhotoCellResistantPanel = PhotoCellResistantPanel(Panel);
 	Sizer->Add(m_PhotoCellResistantPanel,0,wxALL|wxEXPAND,2);
-	
-
-		
-	// pr¹d podk³adu
-	//m_DriveCurrentPanel = DriveCurrentPanel(Panel);
-	//Sizer->Add(m_DriveCurrentPanel,0,wxALL|wxEXPAND,2);
-	
-	//moc œwiat³a
-	//m_PowerOfLightPanel = PowerOfLightPanel(Panel);
-	//Sizer->Add(m_PowerOfLightPanel,0,wxALL|wxEXPAND,2);
-
-	//text log
-	//m_TextLogPanel = TextLogPanel(Panel);
-	//Sizer->Add(m_TextLogPanel,0,wxALL|wxEXPAND,2);
-		
-	return Panel;
-}
-
-
-wxPanel *CCommandPanel::GetAutoPanel(wxPanel *parent)
-{
-	
-	wxPanel *Panel = new wxPanel(parent);
-	/*
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	Panel->SetSizer(Sizer);
-
-	wxRadioButton *m_Auto = new wxRadioButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
-	Sizer->Add(m_Auto,0,wxALL|wxEXPAND,5);
-	
-	wxRadioButton *m_Human = new wxRadioButton(Panel,ID_HUMAN,GetMsg(MSG_HUMAN_MANAGEMENT));
-	Sizer->Add(m_Human,0,wxALL|wxEXPAND,5);
-	*/
+			
 	return Panel;
 }
 

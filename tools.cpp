@@ -1,4 +1,4 @@
-#include <stdio.h>
+ï»¿#include <stdio.h>
 #include <wx/wx.h>
 #include <wx/stdpaths.h>
 #include "conf.h"
@@ -23,73 +23,72 @@ const wchar_t *nvLanguage[][2] =
 	{L"New", L"Nowy  \tCtrl+N"},
 	{L"Name", L"Nazwa"},
 	{L"Description",L"Opis"},
-	{L"Longitude",	L"D³ugoœæ geograficzna"},
-	{L"Latitude",L"Szerokoœæ geograficzna"},
+	{L"Longitude",	L"DÅ‚ugoÅ›Ä‡ geograficzna"},
+	{L"Latitude",L"SzerokoÅ›Ä‡ geograficzna"},
 	{L"Close",	L"Zamknij"},
 	{L"OK",L"OK"},
 	{L"Cancel",L"Anuluj"},
-	{L"Click on Chart to put your marker.\nWhen done click Ok to save or Cancel to remove marker.",L"Kliknij na mapie ¿eby ustaliæ pozycjê."},
 	{L"Area",L"Akwen"},
 	{L"New",L"Nowy"},
 	{L"Edit",L"Edycja"},
-	{L"Delete",L"Usuñ"},
+	{L"Delete",L"UsuÅ„"},
 	{L"Seaway",L"Tor wodny"},
-	{L"Name can not be empty",L"Nazwa nie mo¿e byæ pusta"},
+	{L"Name can not be empty",L"Nazwa nie moÅ¼e byÄ‡ pusta"},
 	{L"Info",L"Opis"},
-	{L"Light",L"Œwiat³o"},
+	{L"Light",L"ÅšwiatÅ‚o"},
 	{L"Add color",L"Dodaj kolor"},
 	{L"Color",	L"Kolor"},
-	{L"Delete color", L"Usuñ kolor"},
-	{L"Delete ?",L"Usun¹æ ?"},
+	{L"Delete color", L"UsuÅ„ kolor"},
+	{L"Delete ?",L"UsunÄ…Ä‡ ?"},
 	{L"Character not allowed",L"Niedozwolony znak"},
 	{L"Type",L"Typ"},
-	{L"Devices",L"Urz¹dzenie"},
+	{L"Devices",L"UrzÄ…dzenie"},
 	{L"Id",L"Id"},
 	{L"All",L"Wszystko"},
 	{L"Symbol type",L"Typ znaku"},
-	{L"Item type",L"Typ urz¹dzenia"},
-	{L"Light item",L"Sk³adowe œwiat³a"},
-	{L"Picture",L"Zdjêcie"},
-	{L"Add picture",L"Dodaj zdjêcie"},
-	{L"Bad picture",L"Nie mo¿na za³adowaæ zdjêcia"},
-	{L"Picture too big max %dkB",L"Za du¿e zdjêcie max %dkB"},
+	{L"Item type",L"Typ urzÄ…dzenia"},
+	{L"Light item",L"SkÅ‚adowe Å›wiatÅ‚a"},
+	{L"Picture",L"ZdjÄ™cie"},
+	{L"Add picture",L"Dodaj zdjÄ™cie"},
+	{L"Bad picture",L"Nie moÅ¼na zaÅ‚adowaÄ‡ zdjÄ™cia"},
+	{L"Picture too big max %dkB",L"Za duÅ¼e zdjÄ™cie max %dkB"},
 	{L"Size: %d x %d",L"Wymiary: %d x %d"},
-	{L"Choose picture",L"Wybierz zdjêcie"},
+	{L"Choose picture",L"Wybierz zdjÄ™cie"},
 	{L"Symbol",L"Znak"},
-	{L"Quantity",L"Iloœæ"},
+	{L"Quantity",L"IloÅ›Ä‡"},
 	{L"Symbol number",L"Numer znaku"},
-	{L"Coverage",L"Zasiêg"},
+	{L"Coverage",L"ZasiÄ™g"},
 	{L"Sector",L"Sektor"},
 	{L"Sector from",L"Sektor od"},
 	{L"Sector to",L"Sektor do"},
 	{L"Characteristic",L"Charakterystyka"},
-	{L"No picture",L"Brak zdjêcia"},
-	{L"Properties",L"W³aœciwoœci"},
+	{L"No picture",L"Brak zdjÄ™cia"},
+	{L"Properties",L"WÅ‚aÅ›ciwoÅ›ci"},
 	{L"On position",L"Na pozycji"},
 	{L"In monitor",L"Monitorowany"},
-	{L"Longitude invalid format",L"Nieprawid³owy format (D³ugoœæ geograficzna)"},
-	{L"Latitude invalid format",L"Nieprawid³owy format (Szerokoœæ geograficzna)"},
+	{L"Longitude invalid format",L"NieprawidÅ‚owy format (DÅ‚ugoÅ›Ä‡ geograficzna)"},
+	{L"Latitude invalid format",L"NieprawidÅ‚owy format (SzerokoÅ›Ä‡ geograficzna)"},
 	{L"Symbol group",L"Grupa"},
 	{L"Filter",L"Filtr"},
 	{L"Host",L"Host"},
 	{L"Port",L"Port"},
 	{L"Base Station",L"Stacja bazowa"},
 	{L"Commands",L"Komendy"},
-	{L"Management",L"Zarz¹dzanie"},
-	{L"Flash Code",L"Charakterystyka œwiecenia"},
-	{L"Drive Current",L"Pr¹d podk³adu"},
-	{L"Power Of Light",L"Moc œwiat³a"},
-	{L"Forced Off",L"Serwisowe wy³¹czenie œwiat³a"},
+	{L"Management",L"ZarzÄ…dzanie"},
+	{L"Flash Code",L"Charakterystyka Å›wiecenia"},
+	{L"Drive Current",L"PrÄ…d podkÅ‚adu"},
+	{L"Power Of Light",L"Moc Å›wiatÅ‚a"},
+	{L"Forced Off",L"Serwisowe wyÅ‚Ä…czenie Å›wiatÅ‚a"},
 	{L"Season Control",L"Sezonowa praca"},
 	{L"Code",L"Kod"},
 	{L"IALA",L"IALA"},
 	{L"Time",L"Czas"},
 	{L"Time ON",L"Czas ON"},
 	{L"Time OFF",L"Czas OFF"},
-	{L"Empty Code",L"Kod nie mo¿e byæ pusty"},
-	{L"Empty IALA",L"IALA nie mo¿e byæ puste"},
-	{L"Empty Time",L"Czas nie mo¿e byæ pusty"},
-	{L"Refresh",L"Odœwie¿"},
+	{L"Empty Code",L"Kod nie moÅ¼e byÄ‡ pusty"},
+	{L"Empty IALA",L"IALA nie moÅ¼e byÄ‡ puste"},
+	{L"Empty Time",L"Czas nie moÅ¼e byÄ‡ pusty"},
+	{L"Refresh",L"OdÅ›wieÅ¼"},
 	{L"No SBMS Driver",L"Brak Sterownika SBMS"},
 	{L"Report",L"Raport"},
 	{L"Options",L"Opcje"},
@@ -98,113 +97,114 @@ const wchar_t *nvLanguage[][2] =
 	{L"Last Report",L"Ostatni Raport"},
 	{L"Photocell Night Time",L"Tryb nocny"},
 	{L"Reserved",L"Zarezerwowane"},
-	{L"Fault output",L"B³yskacz uszkodzony"},
-	{L"Solar Charger",L"£adowanie akumulatora"},
+	{L"Fault output",L"BÅ‚yskacz uszkodzony"},
+	{L"Solar Charger",L"Åadowanie akumulatora"},
 	{L"Synchro",L"Praca synchroniczna"},
-	{L"Monitored Channels",L"Monitorowane kana³y"},
-	{L"Overload Channels",L"Przeci¹¿one kana³y"},
+	{L"Monitored Channels",L"Monitorowane kanaÅ‚y"},
+	{L"Overload Channels",L"PrzeciÄ…Å¼one kanaÅ‚y"},
 	{L"TRUE",L"TAK"},
 	{L"FALSE",L"NIE"},
-	{L"Down Channels",L"Uszkodzone kana³y"},
+	{L"Down Channels",L"Uszkodzone kanaÅ‚y"},
 	{L"Analog Pin",L"Analog Pin"},
 	{L"Digital Value",L"Digital Value"},
-	{L"Input Volt",L"Napiêcie"},
+	{L"Input Volt",L"NapiÄ™cie"},
 	{L"Analog Value",L"Analog Value"},
-	{L"Busy",L"Zajêty"},
+	{L"Busy",L"ZajÄ™ty"},
 	{L"HID",L"HID"},
 	{L"IP Address",L"Addres IP"},
 	{L"Graph",L"Wykres"},
 	{L"Min",L"Min"},
 	{L"Max",L"Max"},
-	{L"Database Connect Error",L"B³¹d po³¹czenia z baz¹ danych"},
+	{L"Database Connect Error",L"BÅ‚Ä…d poÅ‚Ä…czenia z bazÄ… danych"},
 	{L"Ready",L"Gotowy"},
 	{L"Date UTC",L"Czas UTC"},
-	{L"Number Of Tries",L"Iloœæ prób"},
+	{L"Number Of Tries",L"IloÅ›Ä‡ prÃ³b"},
 	{L"Number",L"Numer"},
 	{L"Symbols (%d)",L"Znaki (%d)"},
 	{L"..",L".."},
 	{L"Symbol Color",L"Kolor znaku"},
 	{L"Normal Color",L"Normalny"},
 	{L"No Monitor",L"Nie monitorowany"},
-	{L"Error",L"Kolor b³êdu"},
-	{L"Light On",L"Œwiat³o zapalone"},
+	{L"Error",L"Kolor bÅ‚Ä™du"},
+	{L"Light On",L"ÅšwiatÅ‚o zapalone"},
 	{L"Standard Report",L"Raport standardowy"},
 	{L"No SBMS Record in database",L"Brak rekordu z ustawieniami SBMS"},
 	{L"Symbol Fonts",L"Czcionki Znaku"},
 	{L"Font",L"Czcionka"},
 	{L"Font Size",L"Rozmiar czcionki"},
-	{L"Font View",L"Widocznoœæ czcionki"},
-	{L"Communication timeout",L"Czas oczekiwania na ³¹cznoœæ"},
+	{L"Font View",L"WidocznoÅ›Ä‡ czcionki"},
+	{L"Communication timeout",L"Czas oczekiwania na Å‚Ä…cznoÅ›Ä‡"},
 	{L"Symbol timeout",L"Czas oczekiwania"},
-	{L"Not In Monitoring",L"Brak ³¹cznoœci"},	//nie monitorowany ma byc
-	{L"Send command(s)",L"Wyœlij komendy"},
+	{L"Not In Monitoring",L"Brak Å‚Ä…cznoÅ›ci"},	//nie monitorowany ma byc
+	{L"Send command(s)",L"WyÅ›lij komendy"},
 	{L"Add to group",L"Dodaj do grupy"},
-	{L"Confirm",L"PotwierdŸ"},
-	{L"Voltage threshold",L"Próg napiêcia"},
-	{L"Lower threshold",L"Dolny próg"},
-	{L"Upper threshold",L"Górny próg"},
+	{L"Confirm",L"PotwierdÅº"},
+	{L"Voltage threshold",L"PrÃ³g napiÄ™cia"},
+	{L"Lower threshold",L"Dolny prÃ³g"},
+	{L"Upper threshold",L"GÃ³rny prÃ³g"},
 	{L"Get Time",L"Podaj czas"},
-	{L"Get Uptime",L"Podaj czas dzia³ania"},
-	{L"Auto Management",L"Automatyczne zarz¹dzanie"},
-	{L"Manual Management",L"Rêczne zarz¹dzanie"},
+	{L"Get Uptime",L"Podaj czas dziaÅ‚ania"},
+	{L"Auto Management",L"Automatyczne zarzÄ…dzanie"},
+	{L"Manual Management",L"RÄ™czne zarzÄ…dzanie"},
 	{L"SBMS Driver",L"Sterownik SBMS"},
 	{L"MMSI",L"MMSI"},
 	{L"Date (UTC)",L"Data (UTC)"},
 	{L"SBMSID",L"SBMSID"},
-	{L"Light On",L"W³¹cz"},
-	{L"Light Off",L"Wy³¹cz"},
+	{L"Light On",L"WÅ‚Ä…cz"},
+	{L"Light Off",L"WyÅ‚Ä…cz"},
 	{L"Empty",L"Brak"},
-	{L"Show names",L"Poka¿ nazwy"},
-	{L"Scale Factor",L"Skalowanie obiektów"},
-	{L"Restricted Area Radius (meters)",L"Promieñ ochronny znaku (w metrach)"},
+	{L"Show names",L"PokaÅ¼ nazwy"},
+	{L"Scale Factor",L"Skalowanie obiektÃ³w"},
+	{L"Restricted Area Radius (meters)",L"PromieÅ„ ochronny znaku (w metrach)"},
 	{L"Other",L"Inne"},
 	{L"Global Options",L"Opcje globalne"},
 	{L"ON",L"ON"},
 	{L"OFF",L"OFF"},
-	{L"Off Position Radius(meters)",L"Promieñ (OFF POSITION)(w metrach)"},
-	{L"Sunrise/Sunset Position",L"Pozycja Wschód/Zachód S³oñca"},
+	{L"Off Position Radius(meters)",L"PromieÅ„ (OFF POSITION)(w metrach)"},
+	{L"Sunrise/Sunset Position",L"Pozycja WschÃ³d/ZachÃ³d SÅ‚oÅ„ca"},
 	{L"Night",L"Noc"},
 	{L"Pin To Symbol",L"Przypnij do znaku"},
-	{L"Day",L"Dzieñ"},
+	{L"Day",L"DzieÅ„"},
 	{L"Active",L"Aktywny"},
 	{L"Confirmed",L"Potwierdzony"},
 	{L"Set Time",L"Czas aktywacji"},
 	{L"Unset Time",L"Czas dezaktywacji"},
-	{L"Charging",L"£adowanie"},
-	{L"Discharging",L"Roz³adowywanie"},
+	{L"Charging",L"Åadowanie"},
+	{L"Discharging",L"RozÅ‚adowywanie"},
 	{L"N/A",L"Brak Danych"},
 	{L"GPS",L"GPS"},
 	{L"Position From",L"Pozycja z.."},
 	{L"Report Timeout",L"Timeout Raportu"},
 	{L"Alarms (%d)",L"Alarmy (%d)"},
-	{L"Riple delay",L"OpóŸnienie impulsu"},
+	{L"Riple delay",L"OpÃ³Åºnienie impulsu"},
 	{L"Export..",L"Export.."},
-	{L"Internal clock",L"Wewnêtrzny czas"},
-	{L"Light intensity",L"Intensywnoœæ œwiecenia"},
-	{L"Photocell resistant",L"Czu³oœæ fotorezystora"},
-	{L"Riple delay",L"OpóŸnienie impulsu"},
+	{L"Internal clock",L"WewnÄ™trzny czas"},
+	{L"Light intensity",L"IntensywnoÅ›Ä‡ Å›wiecenia"},
+	{L"Photocell resistant",L"CzuÅ‚oÅ›Ä‡ fotorezystora"},
+	{L"Riple delay",L"OpÃ³Åºnienie impulsu"},
 	{L"Date From",L"Data Od"},
 	{L"Date To",L"Date Do"},
 	{L"Exported to file",L"Wyeksportowano do pliku"},
-	{L"Error writing file",L"B³¹d zapisu pliku"},
+	{L"Error writing file",L"BÅ‚Ä…d zapisu pliku"},
 	{L"No Data",L"Brak Danych"},
 	{L"Alarm Date",L"Data alarmu"},
 	{L"Database version is not compatible.",L"Wersja plugina i bazy danych nie zgodna."},
-	{L"Error",L"B³¹d"},
+	{L"Error",L"BÅ‚Ä…d"},
 	{L"Commands (%d)",L"Komendy (%d)"},
 	{L"Timeout",L"Timeout"},
-	{L"Command Send",L"Wys³ano"},
+	{L"Command Send",L"WysÅ‚ano"},
 	{L"Simple",L"Podstawowe"},
 	{L"Advanced",L"Zaawansowane"},
 	{L"Reset",L"Reset"},
 	{L"Groups (%d)",L"Grupy (%d)"},
-	{L"Database Connection",L"Po³¹czenie Bazy Danych"},
+	{L"Database Connection",L"PoÅ‚Ä…czenie Bazy Danych"},
 	{L"Alter",L"Aktualizuj"},
-	{L"Database Administrator Password",L"Has³o Administratora Bazy Danych"},
-	{L"Removed",L"Usuniêty"},
-	{L"Off",L"Wy³¹czony"},
-	{L"Winter",L"P³awa zimowa"},
+	{L"Database Administrator Password",L"HasÅ‚o Administratora Bazy Danych"},
+	{L"Removed",L"UsuniÄ™ty"},
+	{L"Off",L"WyÅ‚Ä…czony"},
+	{L"Winter",L"PÅ‚awa zimowa"},
 	{L"Seconds",L"Sekundy"},
+	{L"User Group",L"Grupy UÅ¼ytkownikÃ³w"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 
@@ -251,7 +251,7 @@ const char *nvCommand[COMMAND_COUNT] =
 	{"s(%d)"},				//save
 	{"h(%d,%d)"},			//human management tylko OFF (0,0)
 	{"p(%d,%d)"},			//ais power 1W itd.
-	{"g(%d,%d)"},			//akcelarator próg
+	{"g(%d,%d)"},			//akcelarator prÃ³g
 
 		
 };
@@ -276,8 +276,7 @@ int nvCommandMSG[COMMAND_COUNT] =
 	{MSG_MMSI},				//save
 	{MSG_AUTO_MANAGEMENT},	//human management tylko OFF (0,0)
 	{MSG_MMSI},				//ais mmsi
-	{MSG_NO_SBMS},			//akcelarator próg
-
+	{MSG_NO_SBMS},			//akcelarator prÃ³g
 		
 };
 
@@ -474,7 +473,7 @@ bool _SetLat(char *text, double *val)
 		if(y > 90)
 			return false;
 
-		if(dindicator == 'S')  //by³o N w naszym g³upim navi
+		if(dindicator == 'S')  //byÅ‚o N w naszym gÅ‚upim navi
 		{
 			if(y == 0)
 				*val = y;
@@ -576,7 +575,7 @@ bool _SetLatSec(char *text, double *val)
 		if(y > 90)
 			return false;
 
-		if(dindicator == 'S')  //by³o N w naszym g³upim navi
+		if(dindicator == 'S')  //byÅ‚o N w naszym gÅ‚upim navi
 		{
 			if(y == 0)
 				*val = y;
@@ -676,7 +675,7 @@ bool my_query(void *db,wxString sql)
 	return result;
 }
 
-// taki ma³y wraper ¿eby nie pisaæ ci¹gle tego samego
+// taki maÅ‚y wraper Å¼eby nie pisaÄ‡ ciÄ…gle tego samego
 bool my_query(void *db,const char *sql, unsigned long length)
 {
 	bool result = true;
@@ -740,7 +739,7 @@ bool db_check_right(const char *module, const char *action, int uid)
 		return true;
 	}
 
-	query = wxString::Format(_("SELECT * FROM `%s` WHERE name = '%s_%s'"),TABLE_RIGHT,module,action);
+	query = wxString::Format(_("SELECT * FROM `%s` WHERE name = '%s.%s'"),TABLE_RIGHT,module,action);
 	if(!my_query(db,query))
 	{
 		DBClose(db);
@@ -753,7 +752,7 @@ bool db_check_right(const char *module, const char *action, int uid)
 	if(count == 0)
 	{
 		db_free_result(result);
-		wxString query = wxString::Format(_("INSERT INTO `%s` SET name = '%s_%s'"),TABLE_RIGHT,module,action);
+		wxString query = wxString::Format(_("INSERT INTO `%s` SET name = '%s.%s'"),TABLE_RIGHT,module,action);
 		my_query(db,query);
 		DBClose(db);
 		return false;
@@ -820,7 +819,6 @@ int GetItemTypeId(wxString name)
 
 }
 */
-
 
 wxListBox *GetFilterList(void *db,wxWindow *Parent, int wid)
 {
@@ -940,66 +938,6 @@ void ComboSetSelection(wxComboBox *combo, int id)
 	}
 }
 
-wxCheckListBox *GetCheckListBox(void *db,wxWindow *Parent, wxString table, wxString sel, int field_id, int field_name, bool all, bool empty)
-{
-	//int i = 0;
-	wxCheckListBox *ptr = new wxCheckListBox(Parent,wxID_ANY,wxDefaultPosition,wxDefaultSize,NULL,0);
-	
-	if(all)
-	{
-		ptr->Append(GetMsg(MSG_ALL));
-		ptr->SetClientData(0,(int*)-1);
-		//i = 1;
-	}
-
-	if(empty)
-	{
-		ptr->Append(GetMsg(MSG_EMPTY));
-		ptr->SetClientData(0,(int*)0);
-		//i = 1;
-	}
-
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
-	if(!my_query(db,sql))
-		return ptr;
-	
-	int rows = 0;
-	void *result = db_result(db);
-	char **row;
-		
-	while(row = (char**)db_fetch_row(result))
-	{
-		wxString name(row[field_name],wxConvUTF8);
-		int id = ptr->Append(name);
-		int row_id = atoi(row[field_id]);
-
-		long sid = 0;
-		if(!sel.empty())
-			sel.ToLong(&sid);
-
-		if(sid == row_id)
-			ptr->SetSelection(id);
-		if(sid == 0)
-			ptr->SetSelection(0);
-
-		ptr->SetClientData(id,(int*)row_id);
-	}
-
-	db_free_result(result);
-
-	return ptr;
-}
-
-void CheckListBoxSetSelection(wxCheckListBox *combo, int id)
-{
-	for(int i = 0; i < combo->GetCount(); i++)
-	{
-		int cid = (int)combo->GetClientData(i);
-		if(cid == id)
-			combo->SetSelection(i);
-	
-	}
-}
 
 wxString GetFontFolderPath()
 {
@@ -1051,7 +989,7 @@ double _nvDistance(double lon1, double lat1, double lon2, double lat2)
 
 double GetMilesPerDegree(double x, double y)
 {
-	return _nvDistance( x, y, x + 1.0, y );	// iloœæ mil na stopieñ w aktualnej pozycji y
+	return _nvDistance( x, y, x + 1.0, y );	// iloÅ›Ä‡ mil na stopieÅ„ w aktualnej pozycji y
 }
 
 wxString GetOnOff( int v )
@@ -1273,7 +1211,6 @@ wxString GetMonitoringAsString(int v)
 	}
 }
 
-
 wxString GetAutoAsString(bool v)
 {
 	if(v)
@@ -1349,7 +1286,7 @@ void GetOnOffLightTime(uint16_t y, uint8_t m, uint8_t d, float lon, float lat, f
 };
 
 /*
-wywo³anie:
+wywoÅ‚anie:
 	GetOnOffLightTime(DatePtr->Year, DatePtr->Month, DatePtr->Day, cr->StaticLon, cr->StaticLat, cr->OnOffLightReq, &LightOnTime, &LightOffTime);
 */
 time_t GetLocalTimestamp()

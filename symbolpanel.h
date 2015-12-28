@@ -36,10 +36,7 @@ class CSymbolPanel : public wxPanel
 	wxButton *m_ButtonManagement;
 	wxButton *m_ButtonGraph;
 	wxString m_HtmlString;
-	//wxButton *m_ButtonAlarm;
-
-	CMyIcon *m_Calibrated,*m_ForcedOff,*m_PhotoCellNightTime,*m_FaultOutput,*m_SolarCharger,*m_SyncMaster,*m_SeasonControl;
-
+		
 	//void SetHeader();
 	void SetHeader( int _IdSBMS );
 	void AlarmInfo(CSymbol *ptr);
@@ -60,16 +57,7 @@ class CSymbolPanel : public wxPanel
 	void OnNavigationRequest(wxWebViewEvent& event);
 	void OnLoaded(wxWebViewEvent& event);
 #endif
-
-	void SetCalibrated(bool v);
-	void SetForcedOff(bool v);
-	void SetPhotoCellNightTime(bool v);
-	void SetFaultOutput(bool v);
-	void SetSolarCharger(bool v);
-	void SetSyncMaster(bool v);
-	void SetSeasonControl(bool v);
-	//void ShowManagement(CSymbol *v);
-	//void ShowGraph(CSymbol *v);
+	
 
 public:
 

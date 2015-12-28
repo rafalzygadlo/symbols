@@ -52,8 +52,9 @@ void CGroupList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 	switch(action)
 	{
-		case HREF_ACTION_LIGHT_ON:	GroupCommand(COMMAND_LIGHT_ON, ptr->GetId(),true);		break;
-		case HREF_ACTION_LIGHT_OFF:	GroupCommand(COMMAND_LIGHT_OFF, ptr->GetId(),false);	break;
+		case HREF_ACTION_LIGHT_ON:			GroupCommand(COMMAND_LIGHT_ON, ptr->GetId(),true);			break;
+		case HREF_ACTION_LIGHT_OFF:			GroupCommand(COMMAND_LIGHT_OFF, ptr->GetId(),false);		break;
+		case HREF_ACTION_AUTO_MANAGEMENT:	GroupCommand(COMMAND_AUTO_MANAGEMENT, ptr->GetId(),false);	break;
 	}
 
 }
@@ -159,6 +160,7 @@ wxString CGroupList::OnGetItem(size_t item) const
 		str << wxString::Format(_("<tr><td>"));
 		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_ON,item,GetMsg(MSG_LIGHT_ON));
 		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_OFF,item,GetMsg(MSG_LIGHT_OFF));
+		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_AUTO_MANAGEMENT,item,GetMsg(MSG_AUTO_MANAGEMENT));
 		str << wxString::Format(_("</td></tr>"));
 	}
 

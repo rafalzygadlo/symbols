@@ -1,4 +1,4 @@
-#include "symbollist.h"
+#include "htmllist.h"
 #include "conf.h"
 #include "tools.h"
 #include "info.h"
@@ -9,16 +9,16 @@
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
-BEGIN_EVENT_TABLE(CSymbolList,wxHtmlListBox)
+BEGIN_EVENT_TABLE(CHtmlList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)
-	//EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
-CSymbolList *HtmlListPtr = NULL;
-CSymbolList::CSymbolList( wxWindow *Parent)
+CHtmlList *HtmlListPtr = NULL;
+CHtmlList::CHtmlList( wxWindow *Parent)
 :wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
 {
 	//Plugin = DspPlugin;
@@ -28,16 +28,15 @@ CSymbolList::CSymbolList( wxWindow *Parent)
 	m_List = NULL;
 	SetItemCount(0);
 	SetMargins(10,10);
-		
 	//SetSelectionBackground(wxColor(200,200,200));
 }
 
-CSymbolList::~CSymbolList()
+CHtmlList::~CHtmlList()
 {
 
 }
 
-void CSymbolList::OnLinkClicked(wxHtmlLinkEvent &event)
+void CHtmlList::OnLinkClicked(wxHtmlLinkEvent &event)
 {
 	int id =  event.GetSelection();
 	id = event.GetId();
@@ -63,24 +62,24 @@ void CSymbolList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 }
 
-void CSymbolList::ShowGraph(CSymbol *v)
+void CHtmlList::ShowGraph(CSymbol *v)
 {
 	v->ShowGraph();
 }
 
-void CSymbolList::ShowManagement(CSymbol *v)
+void CHtmlList::ShowManagement(CSymbol *v)
 {
 	v->ShowManagement(v);
 }
 
 
-void CSymbolList::OnSetItem(wxCommandEvent &event)
+void CHtmlList::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
 }
 
-void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
+void CHtmlList::OnContextMenu(wxContextMenuEvent &event)
 {
 	//this->GetItemForCell()
 	//this->getr
@@ -90,17 +89,17 @@ void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 	wxMenu *Menu = new wxMenu();
 	
 	Menu->Append(wxID_ANY,GetMsg(MSG_NEW));
-//	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
+	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
 		Menu->FindItem(wxID_ANY)->Enable(false);
 			
 	if(id > -1)
 	{
 		Menu->Append(wxID_ANY,GetMsg(MSG_EDIT));
-	//	if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
+		if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
 			Menu->FindItem(wxID_ANY)->Enable(false);
 		
 		Menu->Append(wxID_ANY,GetMsg(MSG_DELETE));
-//		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
+		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
 			Menu->FindItem(wxID_ANY)->Enable(false);
 	}
 		
@@ -108,31 +107,39 @@ void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 	delete Menu;
 }
 
-void CSymbolList::ClearList()
+void CHtmlList::ClearList()
 {
 	SetItemCount(0);
 }
 
-void CSymbolList::SetMapPlugin(CMapPlugin *v)
+void CHtmlList::SetMapPlugin(CMapPlugin *v)
 {
 	m_MapPlugin = v;
 }
 
-void CSymbolList::SetList(wxArrayPtrVoid *ptr)
+void CHtmlList::SetList(wxArrayPtrVoid *ships)
 {
-	if(ptr == NULL)
+	if(ships == NULL)
 		return;
 
-	m_List = ptr;
+	m_List = ships;
 	
 	int count = m_List->size();
-	m_Count = count;
-	wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
-	wxPostEvent(this,evt);
-	Refresh();
+
+	//if(m_Count != count || GetSortChanged())
+	//{
+		
+		m_Count = count;
+		wxCommandEvent evt(EVT_SET_ITEM,ID_SET_ITEM);
+		wxPostEvent(this,evt);
+		Refresh();
+	//}
+		
+	
+
 }
 
-void CSymbolList::_SetSelection(CSymbol *ptr)
+void CHtmlList::_SetSelection(CSymbol *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -160,9 +167,8 @@ void CSymbolList::_SetSelection(CSymbol *ptr)
 	Refresh();
 }
 
-void CSymbolList::OnSelect(wxCommandEvent &event)
+void CHtmlList::OnSelect(wxCommandEvent &event)
 {
-
 	RefreshAll();
 	if(GetSelection() < 0)
 		return;
@@ -173,14 +179,14 @@ void CSymbolList::OnSelect(wxCommandEvent &event)
 
 }
 
-void CSymbolList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
+void CHtmlList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
-wxString CSymbolList::OnGetItem(size_t item) const
+wxString CHtmlList::OnGetItem(size_t item) const
 {
 	if(m_List->size() <= item)
 		return wxEmptyString;
@@ -191,8 +197,7 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	if(ptr->GetNoSBMS())
 	{
-		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_SYMBOL_NOT_IN_MONITORING)));	// taka g³upata dla UM
+		str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
 	
 	}else{
 		
@@ -202,15 +207,18 @@ wxString CSymbolList::OnGetItem(size_t item) const
 			nvRGBA c = GetAlarmTypeColor(alarm->GetType());
 			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 		}
-		
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
-			
-		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+		/*
+		if(ptr->GetInMonitoring())
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMsg(MSG_IN_MONITORING)));
+		else
+			str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_NOT_IN_MONITORING)));	
+		*/
+		if(ptr->GetInMonitoring())
 		{
 			if(GetSelection() == item)
 			{
-				//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-					str << wxString::Format(_("<a target=%d href='%d'>%s</a>"),HREF_ACTION_MANAGEMENT, item,GetMsg(MSG_MANAGEMENT));
+				if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
+					str << wxString::Format(_("<a target=1 href='%d'>%s</a>"),item,GetMsg(MSG_MANAGEMENT));
 			}
 		
 			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
@@ -226,13 +234,11 @@ wxString CSymbolList::OnGetItem(size_t item) const
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetBaseStationName());
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetAgeAsString());
 			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetChargingAsString());
-			
 		}
-
 	
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
+	str << wxString::Format(_("<tr><td><font size=5>%s</font></td></tr>"),ptr->GetName());
 	str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str.Append(_("</table>"));
 
@@ -240,3 +246,50 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	return str;
 
 }
+/*
+wxString CHtmlList::OnGetItemMarkup(size_t  n) const
+{
+	CSymbol *ptr = (CSymbol*)m_List->Item(n);
+	
+	//wxString str = HtmlListPtr->geti
+	//if(ptr->GetAlarmCount() > 0)
+	return wxString::Format(_("ABCDEF"),ptr->GetAgeAsString());
+}
+*/
+/*
+wxColour CHtmlList::GetSelectedTextColour(const wxColour& colFg) const
+{
+    return wxColor(255,255,255);
+}
+
+void CHtmlList::_SetSelection(SMarker *ship)
+{
+	if(ship == NULL)
+	{
+		this->SetSelection(-1);
+		return;
+	}
+	
+	if(this->GetItemCount() != ShipList->size())
+		return;
+	
+	//SetItemCount(ShipList->size());
+	for(size_t i = 0; i < ShipList->size();i++)
+	{ 
+		SMarker *Ship = (SMarker*)ShipList->Item(i);
+		if(Ship != NULL)
+		{
+		
+			if(Ship == ship)
+			{
+				this->SetSelection(i);
+				//this->
+				Refresh();
+				return;
+			}
+		}
+	}
+		
+	Refresh();
+}
+*/

@@ -257,7 +257,6 @@ CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slav
 	//TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
 	if(!slave)
 		Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,5);
-	//Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0); // taki myk bo READ() wpisuje ilosc rekodów
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
 	
 	Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0);
@@ -791,9 +790,6 @@ wxString CDialogPanel::ReadItems()
 void CDialogPanel::ReadPicture()
 {	
 xString sql;
-
-	
-	
 	
 }
 

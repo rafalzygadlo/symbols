@@ -189,16 +189,16 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	
 	if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
 	{
-		if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) 
-		{
+		//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID())) 
+		//{
 			if(ptr->GetBusy()) 
 				m_ButtonManagement->Disable();
 			else
 				m_ButtonManagement->Enable();
 		
-		} else {
-			m_ButtonManagement->Disable();
-		}
+		//} else {
+			//m_ButtonManagement->Disable();
+		//}
 		
 		m_ButtonGraph->Enable();
 	}else{
@@ -340,13 +340,13 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms,CSymbol *ptr)
 		
 		bool alarm = false;
 		for(int i = 0; i < ptr->GetAlarmCount();i++)
-		{	
+		{
 			if (ptr->GetAlarm(i)->GetIdAlarm() == ALARM_COMMUNICATION_TIMEOUT)
 				alarm = true;
 		}
 		
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(!alarm)));
-		
+
 		str.Append(_("</table>"));
 
 		m_HtmlString.Append(str);
@@ -400,8 +400,7 @@ void CSymbolPanel::LightInfo(void *db,int id_symbol)
 		str.Append(_("<hr>"));
 		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
 		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
-		str.Append(_("<table border=1 cellpadding=0 cellspacing=0 width=100%%><tr><td width=100%%><font size=4><b><br></b></font></td></tr></table></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X></td></tr>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[FI_VIEW_LIGHT_COVERAGE]), GetDistanceName(nvDistanceNauticMile)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[FI_VIEW_LIGHT_SECTOR_FROM])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[FI_VIEW_LIGHT_SECTOR_TO])));
@@ -493,37 +492,3 @@ void CSymbolPanel::OnAlarm(wxCommandEvent &event)
 	//delete AlarmDialog;
 }
 
-void CSymbolPanel::SetCalibrated(bool v)
-{
-	m_Calibrated->SetOn(v);
-}
-
-void CSymbolPanel::SetForcedOff(bool v)
-{
-	m_ForcedOff->SetOn(v);
-}
-
-void CSymbolPanel::SetPhotoCellNightTime(bool v)
-{
-	m_PhotoCellNightTime->SetOn(v);
-}
-
-void CSymbolPanel::SetFaultOutput(bool v)
-{
-	m_FaultOutput->SetOn(v);
-}
-
-void CSymbolPanel::SetSolarCharger(bool v)
-{
-	m_SolarCharger->SetOn(v);
-}
-
-void CSymbolPanel::SetSyncMaster(bool v)
-{
-	m_SyncMaster->SetOn(v);
-}
-
-void CSymbolPanel::SetSeasonControl(bool v)
-{
-	m_SeasonControl->SetOn(v);
-}

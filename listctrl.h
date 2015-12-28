@@ -32,11 +32,11 @@ class CListCtrl: public wxListCtrl
 	wxArrayInt m_Checked;
 	wxListItemAttr *m_ListAttr;
 	
-	wxMenu *Menu(int id, const char *module);
-	wxMenu *MenuSymbol(int id, const char *module);
-	wxMenu *MenuSBMS(int id, const char *module);
-	wxMenu *MenuSymbolItem(int id, const char *module);
-	wxMenu *MenuBaseStation(int id, const char *module);
+	wxMenu *Menu(int id, int id_module);
+	wxMenu *MenuSymbol(int id, int id_module);
+	wxMenu *MenuSBMS(int id, int id_module);
+	wxMenu *MenuSymbolItem(int id, int id_module);
+	wxMenu *MenuBaseStation(int id, int id_module);
 
 	void Sort();
 	void NewUser();

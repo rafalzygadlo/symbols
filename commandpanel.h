@@ -5,9 +5,11 @@
 #include <wx/hyperlink.h>
 #include "conf.h"
 #include "symbol.h"
+#include "control.h"
 
 class CCommandPanel: public wxPanel
 {
+	void *m_DB;
 	bool *m_Changed;
 	bool m_Busy;
 	wxBoxSizer *m_Sizer;
@@ -34,19 +36,16 @@ class CCommandPanel: public wxPanel
 	wxRadioButton *m_LightAuto;
 	//wxRadioButton *m_LightManual;
 	
-	//wxPanel *m_AutoPanel;
-	wxPanel *m_LightPanel;
-	//wxPanel *m_DriveCurrentPanel;
-	//wxPanel *m_PowerOfLightPanel;
-	wxPanel *m_SeasonControlPanel;
-	wxPanel *m_TimePanel;
-	wxPanel *m_UptimePanel;
 	wxPanel *m_TextLogPanel;
-	wxPanel *m_LightTimePanel;
-	wxPanel *m_LightIntensityPanel;
-	wxPanel *m_PhotoCellResistantPanel;
-	wxPanel *m_RipleDelayPanel;
-	wxPanel *m_ResetPanel;
+	CPanel *m_LightPanel;
+	CPanel *m_SeasonControlPanel;
+	CPanel *m_TimePanel;
+	CPanel *m_UptimePanel;
+	CPanel *m_LightTimePanel;
+	CPanel *m_LightIntensityPanel;
+	CPanel *m_PhotoCellResistantPanel;
+	CPanel *m_RipleDelayPanel;
+	CPanel *m_ResetPanel;
 		
 	wxStaticText *m_InfoText;
 	wxButton *m_ButtonSend;
@@ -89,23 +88,22 @@ class CCommandPanel: public wxPanel
 	void OnButtonCancel(wxCommandEvent &event);
 	void SetButtonState();
 
-	wxPanel *StandardReportPanel(wxPanel *parent);
-	wxPanel *AutoPanel(wxPanel *parent);
-	wxPanel *LightPanel(wxPanel *parent);
-	wxPanel *GetTimePanel(wxPanel *parent);
-	wxPanel *GetUptimePanel(wxPanel *parent);
-	wxPanel *DriveCurrentPanel(wxPanel *parent);
-	wxPanel *PowerOfLightPanel(wxPanel *parent);
-	wxPanel *CharacteristicPanel(wxPanel *parent);
-	wxPanel *SeasonControlPanel(wxPanel *parent);
-	wxPanel *GetAutoPanel(wxPanel *parent);
-	wxPanel *TextLogPanel(wxPanel *parent);
-	wxPanel *SetLightTimePanel(wxPanel *parent);
-	wxPanel *SetLightIntensityPanel(wxPanel *parent);
-	wxPanel *SetPhotoCellResistantPanel(wxPanel *parent);
-	wxPanel *SetRipleDelayPanel(wxPanel *parent);
-	wxPanel *ResetPanel(wxPanel *parent);
+	CPanel *TimePanel(wxPanel *parent);
+	CPanel *StandardReportPanel(wxPanel *parent);
+	CPanel *AutoPanel(wxPanel *parent);
+	CPanel *LightPanel(wxPanel *parent);
+	CPanel *UptimePanel(wxPanel *parent);
+	CPanel *DriveCurrentPanel(wxPanel *parent);
+	CPanel *PowerOfLightPanel(wxPanel *parent);
+	CPanel *CharacteristicPanel(wxPanel *parent);
+	CPanel *SeasonControlPanel(wxPanel *parent);
+	CPanel *LightTimePanel(wxPanel *parent);
+	CPanel *LightIntensityPanel(wxPanel *parent);
+	CPanel *PhotoCellResistantPanel(wxPanel *parent);
+	CPanel *RipleDelayPanel(wxPanel *parent);
+	CPanel *ResetPanel(wxPanel *parent);
 
+	wxPanel *TextLogPanel(wxPanel *parent);
 	wxPanel *GetPage1(wxWindow *parent);
 	wxPanel *GetPage2(wxWindow *parent);
 
@@ -120,7 +118,7 @@ class CCommandPanel: public wxPanel
 
 public:
 
-	CCommandPanel(wxWindow *parent);
+	CCommandPanel(void *db,wxWindow *parent);
 	~CCommandPanel();
 	void ButtonDisable();
 	void SetSelectedPtr(CSymbol *ptr);

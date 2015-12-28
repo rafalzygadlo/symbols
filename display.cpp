@@ -157,7 +157,7 @@ void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 	
 	if(!m_Selected->GetNoSBMS())
 	{
-		CCommandDialog *CommandDialog = new CCommandDialog(this,m_Selected);
+		CCommandDialog *CommandDialog = new CCommandDialog(m_DB,this,m_Selected); 
 		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
 		ptr->SetForcedOff(m_Selected->GetForcedOff());

@@ -706,6 +706,9 @@ void CSymbol::RenderText(float x, float y, float vx, float vy, const wchar_t *fo
 
 void CSymbol::RenderInfo()
 {
+	if(!GetShowFontNames())
+		return;
+
 	RenderText(GetLonMap(),GetLatMap(),0.5f,3.0f,GetName());
 	RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetSBMSName());
 	if(GetMonitoring() == SYMBOL_IN_MONITORING)
@@ -758,7 +761,7 @@ void CSymbol::ShowManagement(CSymbol *v)
 	
 	if(!v->GetNoSBMS())
 	{
-		CCommandDialog *CommandDialog = new CCommandDialog(NULL,v);
+		CCommandDialog *CommandDialog = new CCommandDialog(m_DB,NULL,v);
 		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
 		//ptr->SetForcedOff(v->GetForcedOff());

@@ -1408,13 +1408,10 @@ void CMapPlugin::SymbolGroup()
 
 void CMapPlugin::Options()
 {
-	if(db_check_right(MODULE_OPTION,ACTION_OPTION,_GetUID()))
-	{
-		COptionsDialog *OptionsDialog = new COptionsDialog();
-		OptionsDialog->ShowModal();
-		delete OptionsDialog;
-		WriteGlobalConfigDB();
-	}
+	COptionsDialog *OptionsDialog = new COptionsDialog();
+	OptionsDialog->ShowModal();
+	delete OptionsDialog;
+	WriteGlobalConfigDB();
 }
 
 void CMapPlugin::SBMS()
@@ -1440,31 +1437,29 @@ void CMapPlugin::Command()
 
 void CMapPlugin::DbConfig()
 {
-	if(db_check_right(MODULE_DB,ACTION_CONFIG,_GetUID()))
-	{
-		CDbConnect *DBConnect = new CDbConnect();
-		DBConnect->CreateGUI();
-		DBConnect->SetFooter(GetProductInfo());
-		DBConnect->SetHost(GetDBHost());
-		DBConnect->SetDatabaseName(GetDBName());
-		DBConnect->SetUser(GetDBUser());
-		DBConnect->SetPassword(GetDBPassword());
-		DBConnect->SetPort(GetDBPort());
-		DBConnect->Fit();
-		DBConnect->Layout();
+	CDbConnect *DBConnect = new CDbConnect();
+	DBConnect->CreateGUI();
+	DBConnect->SetFooter(GetProductInfo());
+	DBConnect->SetHost(GetDBHost());
+	DBConnect->SetDatabaseName(GetDBName());
+	DBConnect->SetUser(GetDBUser());
+	DBConnect->SetPassword(GetDBPassword());
+	DBConnect->SetPort(GetDBPort());
+	DBConnect->Fit();
+	DBConnect->Layout();
 	
-		if(DBConnect->ShowModal() == wxID_OK)
-		{
-			SetDBHost(DBConnect->GetHost());
-			SetDBName(DBConnect->GetDatabaseName());
-			SetDBUser(DBConnect->GetUser());
-			SetDBPassword(DBConnect->GetPassword());
-			SetDBPort(DBConnect->GetPort());
-			WriteDBConfig();
-		}
-		
-		delete DBConnect;
+	if(DBConnect->ShowModal() == wxID_OK)
+	{
+		SetDBHost(DBConnect->GetHost());
+		SetDBName(DBConnect->GetDatabaseName());
+		SetDBUser(DBConnect->GetUser());
+		SetDBPassword(DBConnect->GetPassword());
+		SetDBPort(DBConnect->GetPort());
+		WriteDBConfig();
 	}
+		
+	delete DBConnect;
+
 }
 
 void CMapPlugin::CreateApiMenu(void) 
@@ -1922,18 +1917,17 @@ void CMapPlugin::OnTick()
 	RemoveSymbol();					//usuń
 
 	SetExistsAlarm();	
-	ReadAlarm(m_DBTicker);		//przeczytaj alarmy
-	RemoveAlarm();				//usuń
+	ReadAlarm(m_DBTicker);			//przeczytaj alarmy
+	RemoveAlarm();					//usuń
 	
-	SetExistsCommand();			//przeczytaj komendy
-	ReadCommand(m_DBTicker);	//usuń
+	SetExistsCommand();				//przeczytaj komendy
+	ReadCommand(m_DBTicker);		//usuń
 	RemoveCommand();
 
 	SetExistsGroup();
 	ReadGroup(m_DBTicker);
 	RemoveGroup();
-
-
+	
 	ReadSymbolValues(m_DBTicker);	// wczytaj inne opcje
 		
 	//display potrzebuje tej flagi
@@ -1945,7 +1939,7 @@ void CMapPlugin::OnTick()
 	SendInsertSignal();
 	ShowAlarm();
 	
-	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+	//fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 
 			
 	m_Broker->Refresh(m_Broker->GetParentPtr());
