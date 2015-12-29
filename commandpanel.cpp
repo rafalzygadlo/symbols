@@ -470,6 +470,7 @@ CPanel *CCommandPanel::StandardReportPanel(wxPanel *parent)
 CPanel *CCommandPanel::ResetPanel(wxPanel *parent)
 {
     CPanel *Panel = new CPanel(parent);
+	Panel->SetParent(parent);
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	Panel->SetSizer(Sizer);
 	
@@ -730,26 +731,26 @@ wxPanel *CCommandPanel::GetPage1(wxWindow *parent)
 
 	//serwisowe wy³¹czenie
 	m_LightPanel = LightPanel(Panel);
-	m_LightPanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT);
+//	m_LightPanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT);
 	Sizer->Add(m_LightPanel,0,wxALL,1);
 	
 	//pobranie czasu
 	m_TimePanel = TimePanel(Panel);
-	m_TimePanel->CheckRight(MODULE_COMMAND,ACTION_TIME);
+//	m_TimePanel->CheckRight(MODULE_COMMAND,ACTION_TIME);
 	Sizer->Add(m_TimePanel,0,wxALL,1);
 	
 	//pobranie czasu (uptime)
 	m_UptimePanel = UptimePanel(Panel);
-	m_UptimePanel->CheckRight(MODULE_COMMAND,ACTION_UPTIME);
+	//m_UptimePanel->CheckRight(MODULE_COMMAND,ACTION_UPTIME);
 	Sizer->Add(m_UptimePanel,0,wxALL,1);
 
 	m_ResetPanel = ResetPanel(Panel);
-	m_ResetPanel->CheckRight(MODULE_COMMAND,ACTION_RIGHT);
+	//m_ResetPanel->CheckRight(MODULE_COMMAND,ACTION_RIGHT);
 	Sizer->Add(m_ResetPanel,0,wxALL,1);
 	
 	//sezonowa kontrola
 	m_SeasonControlPanel = SeasonControlPanel(Panel);
-	m_SeasonControlPanel->CheckRight(MODULE_COMMAND,ACTION_SEASON_CONTROL);
+	//m_SeasonControlPanel->CheckRight(MODULE_COMMAND,ACTION_SEASON_CONTROL);
 	Sizer->Add(m_SeasonControlPanel,0,wxALL,1);
 	
 		
@@ -766,12 +767,12 @@ wxPanel *CCommandPanel::GetPage2(wxWindow *parent)
 		
 	//ustawianie wewnetrznego zegara lammpy
 	m_LightTimePanel = LightTimePanel(Panel);
-	m_LightTimePanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT_TIME);
+	//m_LightTimePanel->CheckRight(MODULE_COMMAND,ACTION_LIGHT_TIME);
 	Sizer->Add(m_LightTimePanel,0,wxALL|wxEXPAND,2);
 
 	//ustawienie impulsu opoznienia (uptime)
 	m_RipleDelayPanel = RipleDelayPanel(Panel);
-	m_RipleDelayPanel->CheckRight(MODULE_COMMAND,ACTION_RIPLE_DELAY);
+	//m_RipleDelayPanel->CheckRight(MODULE_COMMAND,ACTION_RIPLE_DELAY);
 	Sizer->Add(m_RipleDelayPanel,0,wxALL|wxEXPAND,2);
 
 	//ustawienie mocy œwiat³a

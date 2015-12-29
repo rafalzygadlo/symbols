@@ -40,10 +40,6 @@ public:
 
 	enum
 	{
-		ID_LIST,
-		ID_PROPERTIES,
-		ID_DELETE_FROM_QUEUE,
-		ID_DELETE_FROM_INSTALLED,
 		ID_SET_ITEM,
 		ID_HTML,
 	};

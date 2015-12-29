@@ -1,8 +1,7 @@
 #include "conf.h"
 #include "right.h"
 #include "tools.h"
-
-#define MODULES_COUNT 13
+#include "db.h"
 
 int nvRightId[][2] =
 {
@@ -51,6 +50,7 @@ int nvRightId[][2] =
 	{MODULE_BASE_STATION,ACTION_NEW},
 	{MODULE_BASE_STATION,ACTION_EDIT},
 	{MODULE_BASE_STATION,ACTION_DELETE},
+	{-1,-1}
 
 };
 
@@ -68,7 +68,8 @@ SModule nvModule[] =
 	{MODULE_CHARACTERISTIC,GetMsg(MSG_CHARACTERISTIC)},
 	{MODULE_BASE_STATION,GetMsg(MSG_BASE_STATION)},
 	{MODULE_SBMS,GetMsg(MSG_SBMS)},
-	{MODULE_OPTION,GetMsg(MSG_OPTIONS)}
+	{MODULE_OPTION,GetMsg(MSG_OPTIONS)},
+	{-1,L"-1"}
 };
 
 SAction nvAction[] =
@@ -79,14 +80,76 @@ SAction nvAction[] =
 //	{ACTION_RIGHT,GetMsg(MSG_RIGHT)},
 	{ACTION_MANAGEMENT,GetMsg(MSG_MANAGEMENT)},
 	{ACTION_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP)},
+	{-1,L"-1"}
 };
 
-const wchar_t *GetModuleName(int id)
+const wchar_t *CRight::GetModuleName(int id)
 {
-	return nvModule[id].name;	
+	return nvModule[id].name;
 }
 
-int GetModuleId(int id)
+int CRight::GetModuleId(int id)
 {
-	return nvModule[id].id;	
+	return nvModule[id].id;
+}
+
+bool CRight::IsBuiltIn(void *db, int uid)
+{
+	// czy wbudowany user
+	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE built_in = '1' AND id = '%d'"),TABLE_USER,uid);
+	if(!my_query(db,query))
+		return false;
+	
+	void *result = db_result(db);
+	int count = db_num_rows(result);
+	db_free_result(result);
+	if(count == 1)
+		return true;
+
+	return false;
+}
+
+//uprawnienia
+bool CRight::CheckRight(void *db,int id_module, int id_action, int uid)
+{
+	
+	if(IsBuiltIn(db,uid))
+		return true;
+
+	wxString query = wxString::Format(_("SELECT * FROM `%s` WHERE id_module = '%d' AND id_action = '%d'"),TABLE_RIGHT,id_module,id_action);
+	if(!my_query(db,query))
+		return false;
+	
+	void *result = db_result(db);
+	int count = db_num_rows(result);
+
+	if(count == 0)
+	{
+		db_free_result(result);
+		wxString query = wxString::Format(_("INSERT INTO `%s` SET id_module = '%d' AND id_action ='%d'"),TABLE_RIGHT,id_module,id_action);
+		my_query(db,query);
+		return false;
+		// nie ma rekordu z uprawnieniem
+	}
+	
+	char **row  = (char**)db_fetch_row(result);
+	query = wxString::Format(_("SELECT * FROM `%s`, `%s` WHERE %s.id_group = %s.id_group AND %s.id_user = '%d' AND %s.id_right='%s'"),TABLE_USER_TO_GROUP, TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,TABLE_USER_GROUP_RIGHT,TABLE_USER_TO_GROUP,uid,TABLE_USER_GROUP_RIGHT,row[FI_RIGHT_ID]);
+	db_free_result(result);
+	
+	if(!my_query(db,query))
+	{
+		DBClose(db);
+		return false;
+	}
+
+	result = db_result(db);
+	count = db_num_rows(result);
+	db_free_result(result);
+	DBClose(db);
+	
+	bool res = false;
+	if(count > 0)
+		res = true;
+	
+	return res;
 }
