@@ -4,31 +4,21 @@
 #include <wx/wx.h>
 #include "conf.h"
 
-
-class CControl 
+class CPanel: public wxPanel
 {
 
 public:
-	
-	void CheckRight(int id_module, int id_action);
-	
+	CPanel(wxWindow *parent);
+	bool CheckRight(int id_module, int id_action);		
 };
 
-
-class CPanel: public CControl, public wxPanel
-{
-
-public:
-	 CPanel(wxWindow *parent);
-		
-};
-
-class CMenu :public CControl, public wxMenu
+class CMenu: public wxMenu
 {
 	void OnMenu(wxCommandEvent &event);
 
 public:
 	CMenu();
+	bool CheckRight(int id_module, int id_action,wxMenuItem *item);
 	
 	DECLARE_EVENT_TABLE();
 

@@ -20,6 +20,14 @@ void CMenu::OnMenu(wxCommandEvent &event)
 	event.Skip();
 }
 
+bool CMenu::CheckRight(int id_module,int id_action,wxMenuItem *item)
+{
+	item->Enable(false);
+	
+	item->SetText(item->GetText() + " " + GetMsg(MSG_NO_PERMISSION));
+	return true;
+}
+
 //Panel
 CPanel::CPanel(wxWindow *parent)
 	:wxPanel(parent)
@@ -28,12 +36,7 @@ CPanel::CPanel(wxWindow *parent)
 	SetBackgroundColour(*wxRED);
 }
 
-//Control
-void CControl::CheckRight(int id_module,int id_action)
+bool CPanel::CheckRight(int id_module,int id_action)
 {
-	//if(db_check_right(module,action,_GetUID()))
-	//{
-//	Show();
-	//Layout();
-	//}
+	return true;
 }

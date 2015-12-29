@@ -286,15 +286,15 @@ wxMenu *CListCtrl::Menu(int id, int id_module)
 	CMenu *Menu = new CMenu();
 	
 	wxMenuItem *item = Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-//	Menu->CheckRight(id_module, ACTION_NEW, item);
+	Menu->CheckRight(id_module, ACTION_NEW, item);
 				
 	if(id > -1)
 	{
 		item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		//Menu->CheckRight(id_module,ACTION_EDIT,item);
+		Menu->CheckRight(id_module,ACTION_EDIT,item);
 		
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		//Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->CheckRight(id_module,ACTION_DELETE,item);
 	}
 	
 	return Menu;

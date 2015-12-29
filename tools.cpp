@@ -205,6 +205,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Winter",L"Pława zimowa"},
 	{L"Seconds",L"Sekundy"},
 	{L"User Group",L"Grupy Użytkowników"},
+	{L"No Permission",L"Brak uprawnień"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

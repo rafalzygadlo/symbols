@@ -326,6 +326,7 @@
 #define MSG_SECONDS						184
 #define MSG_USER_GROUP					185
 #define MSG_USER						186
+#define MSG_NO_PERMISSION				187
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
