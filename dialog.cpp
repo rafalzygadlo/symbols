@@ -90,8 +90,8 @@ SIds Id[] =
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
-	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
-	{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
+	//{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
+	//{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
 
 BEGIN_EVENT_TABLE(CDialog,wxDialog)
@@ -707,11 +707,11 @@ void CDialogPanel::ReadData()
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms='%d' AND"),m_Table,m_IDMaster);
 		break;
 		case CONTROL_SYMBOL_ALARM:
-			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
+			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_driver=`%s`.id_sbms AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
 		break;
 
 		case CONTROL_SYMBOL_COMMAND:
-			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_sbms=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND);
+			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_driver=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND);
 		break;
 
 		default :
@@ -946,7 +946,7 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_sbms='%d', id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
+	sql = wxString::Format(_("INSERT INTO %s SET id_driver='%d', id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
 		TABLE_SYMBOL,ptr->GetSBMSId(), ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
@@ -1229,7 +1229,7 @@ void CDialogPanel::EditSymbol(int id)
 	ptr->SetInfo(Convert(row[FI_SYMBOL_INFO]));
 	ptr->SetNumber(Convert(row[FI_SYMBOL_NUMBER]));
 	ptr->SetMonitoring(atoi(row[FI_SYMBOL_IN_MONITORING]));
-	ptr->SetSBMS(Convert(row[FI_SYMBOL_ID_SBMS]));
+	//ptr->SetSBMS(Convert(row[FI_SYMBOL_ID_SBMS]));
 
 	db_free_result(result);	
 	SetSymbolPicture(ptr,id);

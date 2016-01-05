@@ -240,6 +240,11 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_MonitoringCombo->SetSelection(m_Monitoring);
 	FlexGridSizer->Add(m_MonitoringCombo,0,wxALL|wxEXPAND,5);
 		
+	wxStaticText *LabelSBMSType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
+	FlexGridSizer->Add(LabelSBMSType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS ,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
+	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
+	
 	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
 	FlexGridSizer->Add(LabelSBMS,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);

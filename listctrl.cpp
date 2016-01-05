@@ -567,15 +567,15 @@ void CListCtrl::SetSBMSAttr(long item, wxListItemAttr *v)
 
 void CListCtrl::SetSymbolAttr(long item, wxListItemAttr *v)
 {
-	wxString v1 = GetValue(_GetDataColumn(FI_SYMBOL_ID_SBMS),item);
-	long _v;
-	v1.ToLong(&_v);
+	//wxString v1 = GetValue(_GetDataColumn(FI_SYMBOL_ID_SBMS),item);
+	//long _v;
+	//v1.ToLong(&_v);
 	
-	SetFontBold(_v);
-	if(_v)
-		v->SetTextColour(*wxBLACK);
-	else
-		v->SetTextColour(*wxRED);
+	//SetFontBold(_v);
+	//if(_v)
+		//v->SetTextColour(*wxBLACK);
+	//else
+		//v->SetTextColour(*wxRED);
 }
 
 void CListCtrl::SetFontBold(bool v)

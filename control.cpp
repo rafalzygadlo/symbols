@@ -24,7 +24,7 @@ bool CMenu::CheckRight(int id_module,int id_action,wxMenuItem *item)
 {
 	item->Enable(false);
 	
-	item->SetText(item->GetText() + " " + GetMsg(MSG_NO_PERMISSION));
+	item->SetText(item->GetText() + "(" + GetMsg(MSG_NO_PERMISSION) + ")");
 	return true;
 }
 

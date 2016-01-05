@@ -558,6 +558,14 @@ void CMapPlugin::SetSql(wxString &sql)
 	int id_alarm = GetSelectedAlarmId();
 	int id_group = GetSelectedGroupId();
 	
+	/*
+	SELECT * FROM symbol 
+	left join sbms on id_sbms=sbms.id
+	left join sbms_alarm on sbms.id=sbms_alarm.id_sbms
+	where sbms_alarm.id_alarm =128 and sbms_alarm.id_alarm=131
+	group by symbol.id
+	*/
+	
 	sql = wxString::Format(_("SELECT * FROM %s WHERE "),VIEW_SYMBOL);
 
 	if(id_group > 0)
@@ -1194,7 +1202,7 @@ void CMapPlugin::Run(void *Params)
 		delete AlterDialog;
 		return;
 	}
-	*/		
+	*/
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();

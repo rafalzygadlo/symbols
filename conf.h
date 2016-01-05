@@ -452,8 +452,6 @@
 #define CHECK_REPORT_TICK			(5 *(1000/TICK_SYMBOL_TIME)) //co sekund
 //
 
-
-
 //TABELE
 #define TABLE_AREA					"area"
 #define TABLE_SEAWAY				"seaway"
@@ -478,10 +476,14 @@
 #define TABLE_USER_TO_GROUP			"user_to_group"
 #define TABLE_BASE_STATION			"base_station"
 #define TABLE_COMMAND				"command"
-#define TABLE_CHARACTERISTIC		"characteristic"
-#define TABLE_SBMS_ALARM			"sbms_alarm"
+#define TABLE_COMMAND_ANSWER		"command_answer"
+
 #define TABLE_SBMS					"sbms"
-#define TABLE_STANDARD_REPORT		"standard_report"
+#define TABLE_SBMS_STANDARD_REPORT	"sbms_standard_report"
+#define TABLE_SBMS_ALARM			"sbms_alarm"
+#define TABLE_SBMS_ALARM_REPORT		"sbms_alarm_report"
+
+#define TABLE_CHARACTERISTIC		"characteristic"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 #define TABLE_USER_OPTION			"user_option"
 #define TABLE_GLOBAL_OPTION			"global_option"
@@ -499,18 +501,16 @@
 #define FI_SYMBOL_ID_AREA			1
 #define FI_SYMBOL_ID_SEAWAY			2
 #define FI_SYMBOL_ID_SYMBOL_TYPE	3
-#define FI_SYMBOL_ID_SBMS			4
-#define FI_SYMBOL_NUMBER			5
-#define FI_SYMBOL_LON				6
-#define FI_SYMBOL_LAT				7
-#define FI_SYMBOL_IN_MONITORING		8
-#define FI_SYMBOL_NAME				9
-#define FI_SYMBOL_INFO				10
+#define FI_SYMBOL_NUMBER			4
+#define FI_SYMBOL_LON				5
+#define FI_SYMBOL_LAT				6
+#define FI_SYMBOL_IN_MONITORING		7
+#define FI_SYMBOL_NAME				8
+#define FI_SYMBOL_INFO				9
 #define FN_SYMBOL_ID				"id"
 #define FN_SYMBOL_ID_AREA			"id_area"
 #define FN_SYMBOL_ID_SEAWAY			"id_seaway"
 #define FN_SYMBOL_ID_SYMBOL_TYPE	"id_type"
-#define FN_SYMBOL_ID_SBMS			"id_sbms"
 #define FN_SYMBOL_NUMBER			"number"
 #define FN_SYMBOL_LON				"lon"
 #define FN_SYMBOL_LAT				"lat"

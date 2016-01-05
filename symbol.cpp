@@ -310,7 +310,7 @@ bool CSymbol::SetPositions()
 	}
 	
 	m_PosBuffer.Clear();
-	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 10"),TABLE_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 10"),TABLE_SBMS_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
 		
 	my_query(m_DB,sql);
 
@@ -350,7 +350,7 @@ bool CSymbol::CheckReport()
 	if(m_ReportTick <= CHECK_REPORT_TICK)
 		return false;
 			
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_STANDARD_REPORT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_SBMS_STANDARD_REPORT,m_IdSBMS);
 
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -785,7 +785,7 @@ void CSymbol::ShowGraph()
 		m_GraphDialog = new CGraphDialog(NULL,this);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 
-	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_STANDARD_REPORT,GetIdSBMS());
+	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_SBMS_STANDARD_REPORT,GetIdSBMS());
 	my_query(db,sql);
 			
 	void *result = db_result(db);
