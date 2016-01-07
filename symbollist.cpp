@@ -65,12 +65,12 @@ void CSymbolList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 void CSymbolList::ShowGraph(CSymbol *v)
 {
-	v->ShowGraph();
+	//v->ShowGraph();
 }
 
 void CSymbolList::ShowManagement(CSymbol *v)
 {
-	v->ShowManagement(v);
+	//v->ShowManagement(v);
 }
 
 
@@ -185,10 +185,14 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	wxString str;
-		
+	CSymbol *ptr = (CSymbol*)m_List->Item(item);
+	str = ptr->GetText();
+	
+	/*	
+	
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	
 	if(ptr->GetNoSBMS())
 	{
 		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
@@ -232,10 +236,12 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	
 	}
 	
-	str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
-	str << wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td></tr>"),ptr->GetNumber());
+	
+	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
 	str.Append(_("</table>"));
-
+	*/
 
 	return str;
 

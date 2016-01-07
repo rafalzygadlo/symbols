@@ -551,21 +551,13 @@ void CMapPlugin::SetSmoothScaleFactor(double _Scale)
 	else
 		m_SmoothScaleFactor = factor;
 }
-
+/*
 void CMapPlugin::SetSql(wxString &sql)
 {
 	
 	int id_alarm = GetSelectedAlarmId();
 	int id_group = GetSelectedGroupId();
-	
-	/*
-	SELECT * FROM symbol 
-	left join sbms on id_sbms=sbms.id
-	left join sbms_alarm on sbms.id=sbms_alarm.id_sbms
-	where sbms_alarm.id_alarm =128 and sbms_alarm.id_alarm=131
-	group by symbol.id
-	*/
-	
+		
 	sql = wxString::Format(_("SELECT * FROM %s WHERE "),VIEW_SYMBOL);
 
 	if(id_group > 0)
@@ -606,6 +598,62 @@ void CMapPlugin::SetSql(wxString &sql)
 	}
 	
 }
+*/
+void CMapPlugin::SetSql(wxString &sql)
+{
+	
+	int id_alarm = GetSelectedAlarmId();
+	int id_group = GetSelectedGroupId();
+	
+	/*
+	SELECT * FROM symbol 
+	left join sbms on id_sbms=sbms.id
+	left join sbms_alarm on sbms.id=sbms_alarm.id_sbms
+	where sbms_alarm.id_alarm =128 and sbms_alarm.id_alarm=131
+	group by symbol.id
+	*/
+	
+	sql = wxString::Format(_("SELECT id,name,number,in_monitoring,lon,lat FROM %s WHERE "),TABLE_SYMBOL);
+
+	//if(id_group > 0)
+		//sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),VIEW_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
+	
+	//if(id_alarm >= 0)
+		//sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND `%s`.id_sbms > 0 AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm,VIEW_SYMBOL);
+
+	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
+	m_OldSearchText = GetSearchText();
+	
+	int in_monitoring = GetMonitoring();
+	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
+	
+	//int light = GetLight();
+	//if(light > -1)	sql << wxString::Format(_(" AND forced_off = '%d'"),!light);
+
+	//int base_station_id = GetSelectedBaseStationId();
+	//if(base_station_id > 0)	sql << wxString::Format(_(" AND id_base_station = '%d'"),base_station_id);
+
+	//int area_id = GetSelectedAreaId();
+	//if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
+	
+	//int symbol_type_id = GetSelectedSymbolTypeId();
+	//if(symbol_type_id > 0) sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
+
+	//int seaway_id = GetSelectedSeawayId();
+	//if(seaway_id > 0) sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
+		
+	if(GetSortColumn() != wxEmptyString)
+	{
+		sql << wxString::Format(_(" ORDER BY %s "),GetSortColumn());
+	
+		if(GetSortOrder())
+			sql << _("ASC");
+		else
+			sql << _("DESC");
+	}
+	
+}
+
 
 void CMapPlugin::ReadSymbol(void *db, wxString sql)
 {	
@@ -627,9 +675,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		double lon;
 		double lat;
 		int id;
-		int id_sbms;
-		sscanf(row[FI_VIEW_SYMBOL_ID],"%d",&id);
-		sscanf(row[FI_VIEW_SYMBOL_ID_SBMS],"%d",&id_sbms);
+		sscanf(row[0],"%d",&id);
 		CSymbol *ptr = NULL;
 		ptr = ExistsSymbol(id);
 		bool add = false;
@@ -641,62 +687,18 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 			ptr->SetFont(m_NameFont);
 		}
 
-		sscanf(row[FI_VIEW_SYMBOL_RLON],"%lf",&lon);
-		sscanf(row[FI_VIEW_SYMBOL_RLAT],"%lf",&lat);
+		sscanf(row[4],"%lf",&lon);
+		sscanf(row[5],"%lf",&lat);
 		//reference
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
-		ptr->SetRLon(lon);
-		ptr->SetRLat(lat);
-		ptr->SetRLonMap(to_x);
-		ptr->SetRLatMap(-to_y);
+		ptr->SetRLon(lon);		ptr->SetRLat(lat);		ptr->SetRLonMap(to_x);		ptr->SetRLatMap(-to_y);
+		ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(to_x);		ptr->SetLatMap(-to_y);
 				
 		ptr->SetId(id);
-		ptr->SetIdSBMS(id_sbms);
-		ptr->SetNumber(Convert(row[FI_VIEW_SYMBOL_NUMBER]));
-		ptr->SetName(Convert(row[FI_VIEW_SYMBOL_NAME]));
-		ptr->SetMonitoring(atoi(row[FI_VIEW_SYMBOL_IN_MONITORING]));
-		//ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
-		
-		bool exists = false;
-		
-		if(GetSBMSExists(db,id_sbms))
-		{
-			exists = true;
-			ReadSBMS(ptr,row);
-		}
-		
-		ptr->SetNoSBMS(!exists);
-		ptr->SetInit(true);
-		ptr->SetExists(true);
-
-		if((ptr->GetMonitoring() == SYMBOL_IN_MONITORING) && exists)
-		{
-			char *symbol_new_report = row[FI_VIEW_SYMBOL_NEW_REPORT];
-			ptr->SetNewReport(false);
-			
-			if(symbol_new_report != NULL)
-				ptr->SetNewReport(atoi(row[FI_VIEW_SYMBOL_NEW_REPORT]));
-			
-			if(ptr->GetForcedOff() == LIGHT_NOT_AVAILABLE)
-				ptr->SetLightOn(LIGHT_NOT_AVAILABLE);
-
-			if(ptr->GetForcedOff() == LIGHT_ON)
-				ptr->SetLightOn(LIGHT_OFF);
-			
-			if(ptr->GetForcedOff() == LIGHT_OFF)
-				ptr->SetLightOn(LIGHT_ON);
-			
-			ptr->SetValidGPS(true);
-			
-		}else{
-					
-			ptr->SetLon(lon);
-			ptr->SetLat(lat);
-			ptr->SetLonMap(to_x);
-			ptr->SetLatMap(-to_y);
-		}
+		ptr->SetNumber(Convert(row[2]));
+		ptr->SetName(Convert(row[1]));
 		
 		if(add)
 			m_SymbolList->Add(ptr);
@@ -707,12 +709,24 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 
 }
 
-void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
+void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 {
 	double to_x,to_y;
 	double lon;
 	double lat;
 	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol='%d'"),TABLE_SBMS,ptr->GetId());
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+	
+	/*
 	ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
 	ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 	ptr->SetMMSI(atoi(row[FI_VIEW_SYMBOL_MMSI]));
@@ -769,7 +783,7 @@ void CMapPlugin::ReadSBMS(CSymbol *ptr, char **row)
 	
 	}
 
-	
+	*/
 }
 
 void CMapPlugin::ReadAlarm(void *db)
@@ -964,6 +978,7 @@ void CMapPlugin::ClearSymbols()
 
 void CMapPlugin::RemoveSymbol()
 {
+	/*
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
@@ -976,17 +991,18 @@ void CMapPlugin::RemoveSymbol()
 			i = 0;
 		}
 	}
-		
+	*/
 }
 
 void CMapPlugin::SetExistsSymbol()
 {
+	/*
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->SetExists(false);
 	}
-		
+	*/	
 }
 
 CSymbol *CMapPlugin::ExistsSymbol(int id)
@@ -1748,6 +1764,7 @@ void CMapPlugin::RenderHighlighted()
 
 void CMapPlugin::RenderInfo(CSymbol *ptr)
 {
+	/*
 	return;
 	if(ptr->GetInit())
 	{
@@ -1765,6 +1782,7 @@ void CMapPlugin::RenderInfo(CSymbol *ptr)
 			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
 
 	}
+	*/
 }
 
 void CMapPlugin::RenderDistance()
@@ -1842,24 +1860,15 @@ void CMapPlugin::RenderNames()
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		
-		if(ptr->GetInit())
-		{
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
-			if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
-			{
-				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
-				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
-			}else{
-				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
-			}
-			
-			if(ptr->GetBusy())
-				RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
-		
+		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
+//		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+		//{
+			//RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
+		//}else{
+			//RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
+		//}
+	
 			//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
-		}
 	}
 }
 

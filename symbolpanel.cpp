@@ -135,13 +135,13 @@ void CSymbolPanel::ShowManagement(CSymbol *v)
 
 void CSymbolPanel::OnManagement(wxCommandEvent &event)
 {
-	m_Symbol->ShowManagement(m_Symbol);
+	//m_Symbol->ShowManagement(m_Symbol);
 }
 
 
 void CSymbolPanel::OnGraph(wxCommandEvent &event)
 {
-	m_Symbol->ShowGraph();
+	//m_Symbol->ShowGraph();
 }
 
 
@@ -175,11 +175,12 @@ void CSymbolPanel::SetPageEmpty()
 
 void CSymbolPanel::SetPage1(CSymbol *ptr)
 {
+/*	
 	m_Symbol = ptr;
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
-	
+
 	m_IdSBMS = ptr->GetIdSBMS();
 	m_IdBaseStation = ptr->GetBaseStationId();
 	m_SBMSID = ptr->GetSBMSID();
@@ -233,6 +234,7 @@ void CSymbolPanel::SetPage1(CSymbol *ptr)
 	//SBMSLastRaport(db,m_SBMSID,m_IdBaseStation);
 	//SetGraph(db,m_SBMSID,m_IdBaseStation);
 	DBClose(db);
+	*/
 }
 
 void CSymbolPanel::SetHeader( int _IdSBMS )
@@ -248,7 +250,7 @@ void CSymbolPanel::SetHeader( int _IdSBMS )
 void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 {	
 	wxString str;
-	
+	/*
 	for(int i = 0; i < ptr->GetAlarmCount();i++)
 	{	
 		str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%%>"));
@@ -256,7 +258,7 @@ void CSymbolPanel::AlarmInfo(CSymbol *ptr)
 		str.Append(_("</table>"));
 	}
 	m_HtmlString.Append(str);
-	
+	*/
 }
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
@@ -273,15 +275,15 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 		free(b64);
 	}
 #endif	
-	
+/*		
 	str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
-	
+
 	if((ptr->GetMonitoring() == SYMBOL_IN_MONITORING) & (ptr->GetIdSBMS() > 0))
 	{
 		str.Append(wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetLightOnAsString(ptr->GetLightOn())));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
 	}
-	
+*/	
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetName()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetNumber()));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
@@ -337,7 +339,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms,CSymbol *ptr)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
-		
+/*		
 		bool alarm = false;
 		for(int i = 0; i < ptr->GetAlarmCount();i++)
 		{
@@ -346,7 +348,7 @@ void CSymbolPanel::SBMSInfo(void *db,int id_sbms,CSymbol *ptr)
 		}
 		
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(!alarm)));
-
+*/
 		str.Append(_("</table>"));
 
 		m_HtmlString.Append(str);

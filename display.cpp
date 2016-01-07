@@ -154,7 +154,7 @@ void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 {
 	if(m_Selected == NULL)
 		return;
-	
+/*	
 	if(!m_Selected->GetNoSBMS())
 	{
 		CCommandDialog *CommandDialog = new CCommandDialog(m_DB,this,m_Selected); 
@@ -169,7 +169,7 @@ void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 	}else{
 			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
 	}
-	
+*/	
 }
 
 

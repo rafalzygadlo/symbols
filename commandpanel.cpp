@@ -338,6 +338,7 @@ void CCommandPanel::SetValues()
 
 void CCommandPanel::SetCommand(int id)
 {
+	/*
 	wxString sql;
 	int id_sbms = m_SelectedPtr->GetIdSBMS();
 	int SBMSID = m_SelectedPtr->GetSBMSID();
@@ -356,7 +357,7 @@ void CCommandPanel::SetCommand(int id)
 
 		//case COMMAND_STANDARD_REPORT:	SetCommandStandardReport(id,mmsi,SBMSID,id_base_station);	break;
 	}
-	
+	*/
 }
 
 void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
@@ -369,7 +370,7 @@ void CCommandPanel::ReadCommands()
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
-
+/*
 	int sbmsid = m_SelectedPtr->GetSBMSID();
 	int mmsi = m_SelectedPtr->GetMMSI();
 	int id_base_station = m_SelectedPtr->GetBaseStationId();
@@ -388,11 +389,13 @@ void CCommandPanel::ReadCommands()
 		m_TextLog->AppendText(GetCommandName(atoi(row[FI_COMMAND_ID_COMMAND])));
 		m_TextLog->AppendText("\r\n");
 	}
+*/
 }
 
 
 void CCommandPanel::Set()
 {
+	/*
 	if(m_SelectedPtr->GetNoSBMS())
 	{
 		Disable();
@@ -415,7 +418,7 @@ void CCommandPanel::Set()
 		
 		m_LightPanel->Disable();
 	}
-			
+	*/	
 }
 
 void CCommandPanel::EnableControls(bool v)
