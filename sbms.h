@@ -16,7 +16,7 @@
 
 class CGraphDialog;
 class CAlarmDialog;
-class CSBMS
+class CSBMS :public CDriver
 {
 	void *m_DB;
 	nvCircle m_Circle;
@@ -24,7 +24,7 @@ class CSBMS
 	CNaviArray <SOnOff> m_OnList;
 	CNaviArray <nvPoint3f> m_PosBuffer;
 	CNaviArray <CAlarm*> m_AlarmList;
-
+	
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
@@ -36,6 +36,7 @@ class CSBMS
 	bool m_Busy;
 	bool m_Alarm;
 	bool m_AlarmOn;
+	
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
 	//pozycja GPS
@@ -66,9 +67,6 @@ class CSBMS
 	int m_AlarmCount;
 	int m_NewAlarmCount;
 	int m_ReportCount;
-	wxString m_Name;
-	wxString m_Number;
-	wxString m_SBMSName;
 	wxString m_BaseStationName;
 	wxString m_AgeString;
 	wxString m_ChargingString;
@@ -121,7 +119,9 @@ class CSBMS
 	void RenderNewReport();
 	void RenderNoSBMS();
 	void RenderInfo();
-					
+	
+	
+
 public:
 
 	CSBMS(CNaviBroker *broker);
@@ -145,12 +145,12 @@ public:
 	void SetSBMSID(int v);
 	void SetNumber(wxString v);
 	void SetMonitoring(int v);
-	void SetName(wxString v);
 	void SetExists(bool v);
 	void SetDB(void *db);
 	void SetForcedOff(int v);
 	void SetLightOn(int v);
 	void SetPhotoCellNightTime(bool v);
+	void SetIdBaseStation(int v);
 	void SetMMSI(int v);
 	void SetNvTime(nvtime_t dt);
 	void SetTimestamp(int v);
@@ -161,7 +161,7 @@ public:
 	void SetNoSBMS(bool v);
 	void SetAuto(bool v);
 	void SetInputVolt(float v);
-	void SetIdBaseStation(int v);
+	
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
 	void SetInit(bool v);
@@ -178,6 +178,7 @@ public:
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
+	virtual wxString GetText();
 	int GetBaseStationId();
 	//pozycja referencyjna
 	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
@@ -187,9 +188,6 @@ public:
 	double GetLon();	double GetLat();	double GetLonMap();	double GetLatMap();
 	bool GetBusy();					//zajêty komendami
 	int GetAlarmCount();
-	wxString GetName();
-	wxString GetNumber();
-	wxString GetSBMSName();
 	wxString GetBaseStationName();
 	bool GetExists();
 	int GetLightOn();
@@ -213,8 +211,7 @@ public:
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();
 	wxString GetInputVoltAsString();
-	
-	
+		
 	void Render();
 	void RenderSelected();
 

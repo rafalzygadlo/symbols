@@ -175,8 +175,8 @@ void CSymbolList::OnSelect(wxCommandEvent &event)
 
 void CSymbolList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.SetPen(*wxBLACK_PEN);
-    dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
+	dc.SetPen(*wxBLACK_DASHED_PEN);
+	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
@@ -189,6 +189,12 @@ wxString CSymbolList::OnGetItem(size_t item) const
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
 	str = ptr->GetText();
 	
+	for(int i = 0; i < ptr->GetDriverCount();i++)
+	{
+		CDriver *Driver = ptr->GetDriver(i);
+		str << Driver->GetText();
+	}
+
 	/*	
 	
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));

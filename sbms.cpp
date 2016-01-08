@@ -144,6 +144,7 @@ void CSBMS::SetAlarms()
 
 bool CSBMS::CheckCollision()
 {
+	/*
 	if(m_Broker == NULL)
 		return false;
 	
@@ -186,8 +187,9 @@ bool CSBMS::CheckCollision()
 
 	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexUnlock",NULL);
 	m_CollisionTick = 1;
+	*/	
 	
-	return true;
+	return false;
 }
 
 bool CSBMS::CheckAlarm()
@@ -571,6 +573,7 @@ void CSBMS::RenderSymbol()
 
 void CSBMS::RenderRestricted()
 {
+	/*
 	if(m_RenderRestricted)
 	{
 		glColor4f(1.0,0.0,0.0,0.1);
@@ -580,13 +583,14 @@ void CSBMS::RenderRestricted()
 		c.Radius = (double)GetRestrictedArea()/1852/GetMilesPerDegree(m_RLon,m_RLat);
 		nvDrawCircleFilled(&c);
 	}
+	*/
 }
 
 void CSBMS::RenderGPS()
 {
 	if(!m_ValidGPS)
 		return;
-
+	/*
 	glColor4f(1.0f,1.0f,1.0f,0.6f);
 
 	glPointSize(2);
@@ -601,6 +605,7 @@ void CSBMS::RenderGPS()
 	glEnd();
 
 	glPointSize(1);
+	*/
 	
 }
 
@@ -708,8 +713,8 @@ void CSBMS::RenderInfo()
 	if(!GetShowFontNames())
 		return;
 
-	RenderText(GetLonMap(),GetLatMap(),0.5f,3.0f,GetName());
-	RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetSBMSName());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetName());
+	
 	if(GetMonitoring() == SYMBOL_IN_MONITORING)
 	{
 		RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
@@ -973,21 +978,6 @@ void CSBMS::SetIdSBMS(int v)
 	m_IdSBMS = v;
 }
 
-void CSBMS::SetNumber(wxString v)
-{	
-	m_Number = v;
-}
-
-void CSBMS::SetName(wxString v)
-{	
-	m_Name = v;
-}
-
-void CSBMS::SetSBMSName(wxString v)
-{
-	m_SBMSName = v;
-}
-
 void CSBMS::SetAuto(bool v)
 {
 	m_Auto = v;
@@ -1114,7 +1104,7 @@ int CSBMS::GetSBMSID()
 	return m_SBMSID;
 }
 
-int CSBMS::GetBaseStationId()
+int CSBMS::GetBaseStationId() 
 {
 	return m_IdBaseStation;
 }
@@ -1196,21 +1186,6 @@ int CSBMS::GetAlarmId(int v)
 wxString CSBMS::GetAlarmName(int v)
 {
 	return m_AlarmList.Get(v)->GetName();
-}
-
-wxString CSBMS::GetName()
-{
-	return m_Name;
-}
-
-wxString CSBMS::GetNumber()
-{
-	return m_Number;
-}
-
-wxString CSBMS::GetSBMSName()
-{
-	return m_SBMSName;
 }
 
 bool CSBMS::GetExists()
@@ -1317,4 +1292,20 @@ void CSBMS::SetBusy(bool v)
 void CSBMS::SetAlarm(bool v)
 {
 	m_Alarm = v;
+}
+
+wxString CSBMS::GetText()
+{
+
+	wxString str;
+	str << "<hr>";
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
+	str << wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetName());
+	//str << wxString::Format(_("<tr><td><font size=3>%d</font></td></tr>"),GetBaseStationId());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetInputVoltAsString());
+	str.Append(_("</table>"));
+
+	return str;
+
 }

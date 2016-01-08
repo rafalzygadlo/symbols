@@ -9,6 +9,7 @@
 #include "options.h"
 #include "render.h"
 #include "commanddialog.h"
+#include "sbms.h"
 
 
 CSymbol::CSymbol(CNaviBroker *broker)
@@ -20,7 +21,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_RectHeight = 0;
 	m_TranslationX = 0;
 	m_TranslationY = 0;
-	m_FirstTime = true;
+	m_Exists = false;
 	m_Selected = false;
 	m_TickExit = false;
 	m_Monitoring = SYMBOL_NOT_IN_MONITORING;
@@ -29,7 +30,12 @@ CSymbol::CSymbol(CNaviBroker *broker)
 }
 
 CSymbol::~CSymbol()
-{	
+{
+	for(int i = 0; i < m_DriverList.Length();i++)
+	{
+		delete m_DriverList.Get(i);
+	}	
+	
 	m_Broker = NULL;
 }
 
@@ -72,7 +78,6 @@ void CSymbol::SetValues()
 	m_Broker->GetVisibleMap(m_VisibleMap);
 	
 }
-
 
 void CSymbol::RenderSymbol()
 {
@@ -120,9 +125,8 @@ void CSymbol::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
-	
 	RenderSymbol();
-	RenderRestricted();
+	//RenderRestricted();
 
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -134,10 +138,9 @@ wxString CSymbol::GetText()
 {
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	
 	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
-	str << wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetName());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetNumber());
+	str << wxString::Format(_("<tr><td><font size=3><b>%s(%s)</b></font></td></tr>"),GetName(),GetNumber());
+	//str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetNumber());
 	str.Append(_("</table>"));
 
 	return str;
@@ -152,6 +155,25 @@ void CSymbol::OnTick(void *db)
 	bool result = false;
 					
 }
+
+void CSymbol::AddDriver(CDriver *ptr)
+{
+	m_DriverList.Append(ptr);
+}
+
+CDriver *CSymbol::ExistsDriver(int id, int type)
+{
+	for(int i = 0; i < m_DriverList.Length();i++)
+	{
+		CDriver *ptr = m_DriverList.Get(i);
+		if(ptr->GetType() == type && ptr->GetId() == id)
+			return ptr;
+	}
+
+	return NULL;
+}
+
+
 
 //SET
 void CSymbol::SetColor(int id)
@@ -234,6 +256,12 @@ void CSymbol::SetName(wxString v)
 	m_Name = v;
 }
 
+void CSymbol::SetExists(bool v)
+{
+	m_Exists = v;
+}
+
+
 //GET
 int CSymbol::GetId()
 {
@@ -288,4 +316,19 @@ wxString CSymbol::GetName()
 wxString CSymbol::GetNumber()
 {
 	return m_Number;
+}
+
+int CSymbol::GetDriverCount()
+{
+	return m_DriverList.Length();
+}
+
+CDriver *CSymbol::GetDriver(int v)
+{
+	return m_DriverList.Get(v);
+}
+
+bool CSymbol::GetExists()
+{
+	return m_Exists;
 }

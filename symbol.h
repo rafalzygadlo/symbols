@@ -13,6 +13,7 @@
 #include "graphdialog.h"
 #include "alarm.h"
 #include "alarmdialog.h"
+#include "driver.h"
 
 class CGraphDialog;
 class CAlarmDialog;
@@ -21,8 +22,9 @@ class CSymbol
 	void *m_DB;
 	nvCircle m_Circle;
 	CNaviBroker *m_Broker;
-		
-	bool m_FirstTime;
+	CNaviArray <CDriver*> m_DriverList;
+	
+	bool m_Exists;
 	int m_Id;
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
@@ -51,6 +53,7 @@ class CSymbol
 	void SetSmoothScaleFactor(double v);
 	//void SetSymbolColor();
 	void RenderSymbol();
+	void RenderSBMS();
 	void RenderRestricted();
 						
 public:
@@ -60,7 +63,12 @@ public:
 
 	void OnTick(void *db);
 	void OnTickExit();
+	void AddDriver(CDriver *ptr);
+	CDriver *ExistsDriver(int id,int type);
+	void RenderSelected();
+	void Render();	
 	
+
 	//SET
 	void SetId(int v);
 	//pozycja referencyjna
@@ -74,7 +82,8 @@ public:
 	void SetName(wxString v);
 	void SetDB(void *db);
 	void SetFont(nvFastFont *ptr);
-	
+	void SetExists(bool v);
+			
 	//GET
 	//pozycja referencyjna
 	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
@@ -88,10 +97,10 @@ public:
 	wxString GetNumber();
 	wxString GetText();
 	int GetMonitoring();
-		
-	void Render();
-	void RenderSelected();
-
+	int GetDriverCount();
+	bool GetExists();
+	CDriver *GetDriver(int v);
+	
 };
 
 #endif

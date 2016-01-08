@@ -10,6 +10,7 @@
 #include "dbconnect.h"
 #include "alter.h"
 #include "alterdialog.h"
+#include "sbms.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -678,13 +679,12 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		sscanf(row[0],"%d",&id);
 		CSymbol *ptr = NULL;
 		ptr = ExistsSymbol(id);
-		bool add = false;
-		
+				
 		if(ptr == NULL)
 		{
-			add = true;
 			ptr = new CSymbol(m_Broker);
 			ptr->SetFont(m_NameFont);
+			m_SymbolList->Add(ptr);
 		}
 
 		sscanf(row[4],"%lf",&lon);
@@ -699,14 +699,22 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetId(id);
 		ptr->SetNumber(Convert(row[2]));
 		ptr->SetName(Convert(row[1]));
+		ptr->SetExists(true);
 		
-		if(add)
-			m_SymbolList->Add(ptr);
-
+			
 	}
 	
 	db_free_result(result);
 
+}
+
+void CMapPlugin::ReadDrivers()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		ReadSBMS(m_DBTicker, ptr);
+	}
 }
 
 void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
@@ -725,65 +733,73 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-	
-	/*
-	ptr->SetIdBaseStation(atoi(row[FI_VIEW_SYMBOL_ID_BASE_STATION]));
-	ptr->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
-	ptr->SetMMSI(atoi(row[FI_VIEW_SYMBOL_MMSI]));
-	ptr->SetForcedOff(atoi(row[FI_VIEW_SYMBOL_FORCED_OFF]));
-	ptr->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
-	ptr->SetSBMSName(Convert(row[FI_VIEW_SYMBOL_SBMS_NAME]));
-	ptr->SetInputVolt(atof(row[FI_VIEW_SYMBOL_INPUT_VOLT]));
-	ptr->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
-	ptr->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
-			
-	if(ptr->GetCharging() == CHARGING_TRUE)				ptr->SetChargingAsString(GetMsg(MSG_CHARGING));
-	if(ptr->GetCharging() == CHARGING_FALSE)			ptr->SetChargingAsString(GetMsg(MSG_DISCHARGING));
-	if(ptr->GetCharging() == CHARGING_NOT_AVAILABLE)	ptr->SetChargingAsString(GetMsg(MSG_NA));
+		int id = atoi(row[0]);
+		CDriver *Driver = ptr->ExistsDriver(id,DRIVER_TYPE_SBMS);
+		if(Driver == NULL)
+		{
+			Driver = new CSBMS(m_Broker);
+			Driver->SetType(DRIVER_TYPE_SBMS);
+			Driver->SetId(id);
+			ptr->AddDriver(Driver);
+		}
 
-	int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
-	ptr->SetTimestamp(timestamp);
-	ptr->SetAge(GetLocalTimestamp() - timestamp);
+		Driver->SetName(Convert(row[FI_SBMS_NAME]));
+		Driver->SetIdBaseStation(atoi(row[FI_SBMS_ID_BASE_STATION]));
+		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
+		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
+		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
+		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
+		//SBMS->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
+		//SBMS->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
+
+
+		//if(SBMS->GetCharging() == CHARGING_TRUE)			SBMS->SetChargingAsString(GetMsg(MSG_CHARGING));
+		//if(SBMS->GetCharging() == CHARGING_FALSE)			SBMS->SetChargingAsString(GetMsg(MSG_DISCHARGING));
+		//if(SBMS->GetCharging() == CHARGING_NOT_AVAILABLE)	SBMS->SetChargingAsString(GetMsg(MSG_NA));
+
+		int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
+		//SBMS->SetTimestamp(timestamp);
+		//SBMS->SetAge(GetLocalTimestamp() - timestamp);
 				
-	int seconds = GetLocalTimestamp() - timestamp;
-	if(seconds < 0)
-		seconds = 0;
+		int seconds = GetLocalTimestamp() - timestamp;
+		if(seconds < 0)
+			seconds = 0;
 
-	int minutes = seconds/60;
-	int hours = minutes/60;
-	div_t _divs = div(seconds,60);
-	div_t _divm = div(minutes,60);
+		int minutes = seconds/60;
+		int hours = minutes/60;
+		div_t _divs = div(seconds,60);
+		div_t _divm = div(minutes,60);
 				
-	ptr->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
+		//SBMS->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 
-	//gps
-	sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
-	sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
-	
-	m_Broker->Unproject(lon,lat,&to_x,&to_y);
+		//gps
+		sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
+		sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
+		
+		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
-	ptr->SetGpsLon(lon);
-	ptr->SetGpsLat(lat);
-	ptr->SetGpsLonMap(to_x);
-	ptr->SetGpsLatMap(-to_y);
+		//SBMS->SetLon(lon);
+		//SBMS->SetLat(lat);
+		//SBMS->SetLonMap(to_x);
+		//SBMS->SetLatMap(-to_y);
 
-	//ustawienie pozycji
-	if(GetPositionFromGps())
-	{
-		ptr->SetLon(lon);
-		ptr->SetLat(lat);
-		ptr->SetLonMap(to_x);
-		ptr->SetLatMap(-to_y);
-	}else{
+		//ustawienie pozycji
+		if(GetPositionFromGps())
+		{
+			ptr->SetLon(lon);
+			ptr->SetLat(lat);
+			ptr->SetLonMap(to_x);
+			ptr->SetLatMap(-to_y);
+		}else{
 	
-		ptr->SetLon(ptr->GetRLon());
-		ptr->SetLat(ptr->GetRLat());
-		ptr->SetLonMap(ptr->GetRLonMap());
-		ptr->SetLatMap(ptr->GetRLatMap());
-	
+			ptr->SetLon(ptr->GetRLon());
+			ptr->SetLat(ptr->GetRLat());
+			ptr->SetLonMap(ptr->GetRLonMap());
+			ptr->SetLatMap(ptr->GetRLatMap());
+		}
 	}
-
-	*/
+			
 }
 
 void CMapPlugin::ReadAlarm(void *db)
@@ -978,31 +994,30 @@ void CMapPlugin::ClearSymbols()
 
 void CMapPlugin::RemoveSymbol()
 {
-	/*
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		
 		if(!ptr->GetExists())
 		{
-			ptr->SetInit(false);
+//			ptr->SetInit(false);
 			m_SymbolList->Remove(ptr);
 			delete ptr;
 			i = 0;
 		}
 	}
-	*/
+	
 }
 
 void CMapPlugin::SetExistsSymbol()
 {
-	/*
+	
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->SetExists(false);
 	}
-	*/	
+		
 }
 
 CSymbol *CMapPlugin::ExistsSymbol(int id)
@@ -1931,9 +1946,10 @@ void CMapPlugin::OnTick()
 	
 	SetExistsSymbol();
 	ReadSymbol(m_DBTicker,sql);		//przeczytaj symbole
+	ReadDrivers();
 	RemoveSymbol();					//usuń
 
-	SetExistsAlarm();	
+	SetExistsAlarm();
 	ReadAlarm(m_DBTicker);			//przeczytaj alarmy
 	RemoveAlarm();					//usuń
 	
