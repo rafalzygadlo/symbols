@@ -699,6 +699,7 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		ptr->SetId(id);
 		ptr->SetNumber(Convert(row[2]));
 		ptr->SetName(Convert(row[1]));
+		ptr->SetMonitoring(atoi(row[3]));
 		ptr->SetExists(true);
 		
 			
@@ -738,6 +739,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		if(Driver == NULL)
 		{
 			Driver = new CSBMS(m_Broker);
+			Driver->SetFont(m_NameFont);
 			Driver->SetType(DRIVER_TYPE_SBMS);
 			Driver->SetId(id);
 			ptr->AddDriver(Driver);
@@ -745,6 +747,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 
 		Driver->SetName(Convert(row[FI_SBMS_NAME]));
 		Driver->SetIdBaseStation(atoi(row[FI_SBMS_ID_BASE_STATION]));
+		Driver->SetIdSymbol(atoi(row[FI_SBMS_ID_SYMBOL]));
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
@@ -774,29 +777,21 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		//SBMS->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 
 		//gps
-		sscanf(row[FI_VIEW_SYMBOL_LON],"%lf",&lon);
-		sscanf(row[FI_VIEW_SYMBOL_LAT],"%lf",&lat);
+		sscanf(row[FI_SBMS_LON],"%lf",&lon);
+		sscanf(row[FI_SBMS_LAT],"%lf",&lat);
 		
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
-
-		//SBMS->SetLon(lon);
-		//SBMS->SetLat(lat);
-		//SBMS->SetLonMap(to_x);
-		//SBMS->SetLatMap(-to_y);
-
+		
 		//ustawienie pozycji
 		if(GetPositionFromGps())
 		{
-			ptr->SetLon(lon);
-			ptr->SetLat(lat);
-			ptr->SetLonMap(to_x);
-			ptr->SetLatMap(-to_y);
+			ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
+			Driver->SetLon(lon);		Driver->SetLat(lat);		Driver->SetLonMap(to_x);		Driver->SetLatMap(-to_y);
+		
 		}else{
 	
-			ptr->SetLon(ptr->GetRLon());
-			ptr->SetLat(ptr->GetRLat());
-			ptr->SetLonMap(ptr->GetRLonMap());
-			ptr->SetLatMap(ptr->GetRLatMap());
+			ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
+			Driver->SetLon(ptr->GetRLon());			Driver->SetLat(ptr->GetRLat());			Driver->SetLonMap(ptr->GetRLonMap());		Driver->SetLatMap(ptr->GetRLatMap());
 		}
 	}
 			
@@ -1364,9 +1359,17 @@ void CMapPlugin::SetSelectedPtr(CSymbol *v)
 
 void CMapPlugin::ShowFrameWindow(bool show)
 {
-	if(m_Frame == NULL)
+	if(show)
+	{
+		delete m_Frame;
 		m_Frame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
-	m_Frame->ShowWindow(show);
+		m_Frame->ShowWindow(show);
+	
+	}else{
+		
+		delete m_Frame;
+		m_Frame = NULL;
+	}
 }
 
 void CMapPlugin::MouseDBLClick(int x, int y)
@@ -1864,26 +1867,6 @@ void CMapPlugin::RenderSymbols()
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		ptr->Render();
-	}
-}
-
-void CMapPlugin::RenderNames()
-{
-	if(!GetShowFontNames())
-		return;
-	
-	for(size_t i = 0; i < m_SymbolList->size(); i++)
-	{
-		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
-//		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
-		//{
-			//RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
-		//}else{
-			//RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
-		//}
-	
-			//RenderText(ptr->GetRLonMap(),ptr->GetRLatMap(),1.5f,-0.1f,ptr->GetReportCountAsString());
 	}
 }
 

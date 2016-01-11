@@ -117,6 +117,36 @@ void CSymbol::RenderRestricted()
 	nvDrawCircleFilled(&c);
 }
 
+void CSymbol::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
+{	
+	wchar_t buffer[128];
+	va_list args;
+	va_start(args,format);
+	//swprintf_s(buffer,format,args);
+	vswprintf ( buffer, 128, format, args );
+	va_end(args);
+	
+	m_NameFont->Print(x,y,GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
+
+}
+
+void CSymbol::RenderText()
+{
+	if(GetShowFontNames())
+	{
+		RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetName());
+		RenderText(GetLonMap(),GetLatMap(),0.5f,6.4f,GetMonitoringAsString(GetMonitoring()));
+	}
+}
+
+void CSymbol::RenderDriver()
+{
+	for(int i = 0; i < m_DriverList.Length();i++)
+	{
+		m_DriverList.Get(i)->Render();
+	}
+}
+
 void CSymbol::Render()
 {
 	
@@ -126,6 +156,8 @@ void CSymbol::Render()
 
 	SetValues();
 	RenderSymbol();
+	RenderDriver();
+	RenderText();
 	//RenderRestricted();
 
 	glDisable(GL_BLEND);
@@ -138,6 +170,7 @@ wxString CSymbol::GetText()
 {
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+
 	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
 	str << wxString::Format(_("<tr><td><font size=3><b>%s(%s)</b></font></td></tr>"),GetName(),GetNumber());
 	//str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetNumber());
@@ -261,6 +294,10 @@ void CSymbol::SetExists(bool v)
 	m_Exists = v;
 }
 
+void CSymbol::SetMonitoring(int v)
+{
+	m_Monitoring = v;
+}
 
 //GET
 int CSymbol::GetId()
@@ -331,4 +368,9 @@ CDriver *CSymbol::GetDriver(int v)
 bool CSymbol::GetExists()
 {
 	return m_Exists;
+}
+
+int CSymbol::GetMonitoring()
+{
+	return m_Monitoring;
 }

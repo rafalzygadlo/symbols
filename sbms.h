@@ -13,9 +13,11 @@
 #include "graphdialog.h"
 #include "alarm.h"
 #include "alarmdialog.h"
+#include "sbmspanel.h"
 
 class CGraphDialog;
 class CAlarmDialog;
+class CSBMSPanel;
 class CSBMS :public CDriver
 {
 	void *m_DB;
@@ -25,6 +27,7 @@ class CSBMS :public CDriver
 	CNaviArray <nvPoint3f> m_PosBuffer;
 	CNaviArray <CAlarm*> m_AlarmList;
 	
+	CSBMSPanel *m_SBMSPanel;
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
@@ -82,12 +85,12 @@ class CSBMS :public CDriver
 	bool m_NewReport;
 	bool m_ValidGPS;
 	bool m_NoSBMS;
-	bool m_Init;
 	bool m_Auto;
 	float m_InputVolt;
 	int m_Charging;
 	int m_ProtocolVersion;
 	nvFastFont *m_NameFont;
+	int m_IdSymbol;
 	
 	CAlarm *AlarmExists(int id);
 	void AlarmRemove();
@@ -109,8 +112,7 @@ class CSBMS :public CDriver
 	//void Read();
 	void SetSymbolColor();
 	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);
-	void RenderSymbol();
-	//void RenderLightOn();
+	void RenderSBMS();
 	void RenderBusy();
 	void RenderRestricted();
 	void RenderAlarm();
@@ -119,7 +121,8 @@ class CSBMS :public CDriver
 	void RenderNewReport();
 	void RenderNoSBMS();
 	void RenderInfo();
-	
+	void RenderSelected();
+	virtual void Render();
 	
 
 public:
@@ -142,6 +145,7 @@ public:
 	void SetLon(double v);		void SetLat(double v);		void SetLonMap(double v);		void SetLatMap(double v);
 
 	void SetIdSBMS(int v);
+	void SetIdSymbol(int v);
 	void SetSBMSID(int v);
 	void SetNumber(wxString v);
 	void SetMonitoring(int v);
@@ -169,16 +173,17 @@ public:
 	void SetChargingAsString(wxString v);
 	void SetNewAlarmCount(int v);
 	void SetProtocolVersion(int v);
-	void SetFont(nvFastFont *ptr);
+	void SetFont(nvFastFont *v);
 	void SetBusy(bool v);
 	void SetAlarm(bool v);
-		
+			
 
 	//GET
 	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
-	virtual wxString GetText();
+	wxString GetText();
+	wxString GetFullText();
 	int GetBaseStationId();
 	//pozycja referencyjna
 	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
@@ -205,15 +210,16 @@ public:
 	int GetNewAlarmCount();
 	int GetProtocolVersion();
 	CAlarm *GetAlarm(int v);
+	wxPanel *GetSBMSPanel();
 	wxString GetChargingAsString();
 	wxString GetAlarmName(int v);
 	wxString GetAgeAsString();
 	wxString GetReportCountAsString();
 	wxString GetCommandCountAsString();
 	wxString GetInputVoltAsString();
-		
-	void Render();
-	void RenderSelected();
+	wxPanel *GetSBMSPanel(wxWindow *parent);
+	
+	
 
 };
 

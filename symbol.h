@@ -53,9 +53,12 @@ class CSymbol
 	void SetSmoothScaleFactor(double v);
 	//void SetSymbolColor();
 	void RenderSymbol();
-	void RenderSBMS();
 	void RenderRestricted();
-						
+	void RenderDriver();
+	void RenderText();
+	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);	
+
+
 public:
 
 	CSymbol(CNaviBroker *broker);
@@ -83,6 +86,7 @@ public:
 	void SetDB(void *db);
 	void SetFont(nvFastFont *ptr);
 	void SetExists(bool v);
+	void SetMonitoring(int v);
 			
 	//GET
 	//pozycja referencyjna

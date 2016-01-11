@@ -231,7 +231,7 @@ void CMyFrame::ShowWindow(bool show)
 			pt.y = 0;
 
 
-		m_SymbolPanel->SetPage1(SelectedPtr);
+		m_SymbolPanel->SetPage(SelectedPtr);
 		this->SetPosition(pt);
 		
 				

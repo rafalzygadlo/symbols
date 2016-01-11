@@ -1,6 +1,7 @@
 #ifndef __DRIVER_H
 #define __DRIVER_H
 #include <wx/wx.h>
+#include "nvfastfont.h"
 
 #define DRIVER_TYPE_SBMS	0
 #define DRIVER_TYPE_GE64	1
@@ -25,7 +26,7 @@ public:
 	int GetType();
 	int GetId();
 	
-	void Render();
+	virtual void Render();
 	
 	//SBMS
 	//SET
@@ -33,11 +34,19 @@ public:
 	virtual void SetMMSI(int v);
 	virtual void SetForcedOff(int v);
 	virtual void SetInputVolt(float v);
+	virtual void SetIdSymbol(int v);
+	virtual void SetFont(nvFastFont *v);
+	virtual void SetLon(double v);
+	virtual void SetLat(double v);
+	virtual void SetLonMap(double v);
+	virtual void SetLatMap(double v);
 
 	//GET
 	virtual int GetBaseStationId();
 	virtual wxString GetText();
+	virtual wxString GetFullText();
 	virtual float GetInputVolt();
+	
 		
 };
 

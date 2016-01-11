@@ -49,7 +49,6 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_NewReport = false;
 	m_ValidGPS = false;
 	m_NoSBMS = true;
-	m_Init = false;
 	m_AgeString = "N/A";
 	m_DB = NULL;
 	m_GraphDialog = NULL;
@@ -57,7 +56,7 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_NewAlarmCount = 0;
 	m_ProtocolVersion = 0;
 	m_NameFont = NULL;
-	
+	m_IdSymbol = 0;
 }
 
 CSBMS::~CSBMS()
@@ -70,9 +69,9 @@ CSBMS::~CSBMS()
 	
 }
 
-void CSBMS::SetFont(nvFastFont *ptr)
+void CSBMS::SetFont(nvFastFont *v)
 {
-	m_NameFont = ptr;
+	m_NameFont = v;
 }
 
 void CSBMS::SetDB(void *db)
@@ -543,7 +542,7 @@ void CSBMS::RenderBusy()
 
 }
 
-void CSBMS::RenderSymbol()
+void CSBMS::RenderSBMS()
 {
 	SetSymbolColor();
 	glPushMatrix();
@@ -712,18 +711,10 @@ void CSBMS::RenderInfo()
 {
 	if(!GetShowFontNames())
 		return;
-
-	RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetName());
-	
-	if(GetMonitoring() == SYMBOL_IN_MONITORING)
-	{
-		RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
-		RenderText(GetLonMap(),GetLatMap(),0.5f,5.3f,GetAgeAsString());
-		RenderText(GetLonMap(),GetLatMap(),0.5f,6.4f,GetMonitoringAsString(GetMonitoring()));
-	}else{
-		RenderText(GetLonMap(),GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(GetMonitoring()));
-	}
-			
+		
+	RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,5.3f,GetAgeAsString());
+					
 	if(GetBusy())
 		RenderText(GetLonMap(),GetLatMap(),-1.5f,-0.1f,GetCommandCountAsString());
 
@@ -732,8 +723,6 @@ void CSBMS::RenderInfo()
 
 void CSBMS::Render()
 {
-	if(!m_Init)
-		return;
 
 	glEnable(GL_BLEND);
 	glEnable(GL_POINT_SMOOTH);
@@ -741,8 +730,8 @@ void CSBMS::Render()
 
 	SetValues();
 		
-	RenderNoSBMS();
-	RenderSymbol();
+	//RenderNoSBMS();
+	RenderSBMS();
 //	RenderIce();
 	RenderRestricted();
 	RenderBusy();
@@ -1063,11 +1052,6 @@ void CSBMS::SetValidGPS(bool v)
 	m_ValidGPS = v;
 }
 
-void CSBMS::SetInit(bool v)
-{
-	m_Init = v;
-}
-
 void CSBMS::SetSBMSID(int v)
 {
 	m_SBMSID = v;
@@ -1087,6 +1071,10 @@ void CSBMS::SetNewAlarmCount(int v)
 	m_NewAlarmCount = v;
 }
 
+void CSBMS::SetIdSymbol(int v)
+{
+	m_IdSymbol = v;
+}
 
 //GET
 int CSBMS::GetId()
@@ -1234,11 +1222,6 @@ int CSBMS::GetMonitoring()
 	return m_Monitoring;
 }
 
-bool CSBMS::GetInit()
-{
-	return m_Init;
-}
-
 bool CSBMS::GetAuto()
 {
 	return m_Auto;
@@ -1305,6 +1288,71 @@ wxString CSBMS::GetText()
 	//str << wxString::Format(_("<tr><td><font size=3>%d</font></td></tr>"),GetBaseStationId());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetInputVoltAsString());
 	str.Append(_("</table>"));
+
+	return str;
+
+}
+
+wxString CSBMS::GetFullText()
+{
+	wxString str;
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol ='%d'"),TABLE_SBMS,m_IdSymbol);
+	my_query(m_DB,sql);
+			
+	void *result = db_result(m_DB);
+		
+	char **row = NULL;
+	if(result == NULL)
+		return wxEmptyString;
+		
+	row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		wxString str;
+		str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
+		
+		int phone = atoi(row[FI_SBMS_PHONE]);
+		if(phone)
+			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),phone));
+
+		int mmsi = atoi(row[FI_SBMS_MMSI]);
+		if(mmsi)
+			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),mmsi));
+		
+		//nvtime_t dt;
+		//nvdatetime(atoi(row[FI_SBMS_LOCAL_UTC_TIME]),&dt);
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),Convert(row[FI_SBMS_LOCAL_UTC_TIME])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LATITUDE),FormatLatitude(atof(row[FI_SBMS_LAT]),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LONGITUDE),FormatLongitude(atof(row[FI_SBMS_LON]),DEFAULT_DEGREE_FORMAT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetPhotoCellValue(atoi(row[FI_SBMS_ANALOG_PIN]), atoi(row[FI_SBMS_ANALOG_VALUE]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+/*		
+		bool alarm = false;
+		for(int i = 0; i < ptr->GetAlarmCount();i++)
+		{
+			if (ptr->GetAlarm(i)->GetIdAlarm() == ALARM_COMMUNICATION_TIMEOUT)
+				alarm = true;
+		}
+		
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(!alarm)));
+*/
+		str.Append(_("</table>"));
+		
+	}
+		
+	db_free_result(result);
+
 
 	return str;
 
