@@ -56,7 +56,7 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_NewAlarmCount = 0;
 	m_ProtocolVersion = 0;
 	m_NameFont = NULL;
-	m_IdSymbol = 0;
+	
 }
 
 CSBMS::~CSBMS()
@@ -138,7 +138,6 @@ void CSBMS::SetAlarms()
 		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
 		ptr->SetExists(false);
 	}
-		
 }
 
 bool CSBMS::CheckCollision()
@@ -497,12 +496,6 @@ void CSBMS::RenderAlarm()
 
 void CSBMS::SetSymbolColor()
 {
-	if(m_Monitoring == SYMBOL_NOT_IN_MONITORING || m_NoSBMS)
-	{
-		SetColor(SYMBOL_NO_MONITOR_COLOR);
-		return;
-	}
-	
 	switch(m_LightOn)
 	{
 		case LIGHT_ON:				SetColor(SYMBOL_LIGHT_ON_COLOR);	break;
@@ -897,11 +890,6 @@ void CSBMS::SetColor(int id)
 	glColor4ub(GetColor(id).R,GetColor(id).G,GetColor(id).B,GetColor(id).A);
 }
 
-void CSBMS::SetId(int v)
-{
-	m_Id = v;
-}
-
 void CSBMS::SetRLon(double v)		
 {	
 	m_RLon = v;
@@ -960,11 +948,6 @@ void CSBMS::SetLonMap(double v)
 void CSBMS::SetLatMap(double v)	
 {	
 	m_LatMap = v;
-}
-
-void CSBMS::SetIdSBMS(int v)
-{	
-	m_IdSBMS = v;
 }
 
 void CSBMS::SetAuto(bool v)
@@ -1071,17 +1054,7 @@ void CSBMS::SetNewAlarmCount(int v)
 	m_NewAlarmCount = v;
 }
 
-void CSBMS::SetIdSymbol(int v)
-{
-	m_IdSymbol = v;
-}
-
 //GET
-int CSBMS::GetId()
-{
-	return m_Id;
-}
-
 int CSBMS::GetIdSBMS()
 {
 	return m_IdSBMS;
@@ -1284,7 +1257,7 @@ wxString CSBMS::GetText()
 	str << "<hr>";
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
 	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
-	str << wxString::Format(_("<tr><td><font size=4><b>%s</b></font></td></tr>"),GetName());
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetName());
 	//str << wxString::Format(_("<tr><td><font size=3>%d</font></td></tr>"),GetBaseStationId());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetInputVoltAsString());
 	str.Append(_("</table>"));
@@ -1296,7 +1269,7 @@ wxString CSBMS::GetText()
 wxString CSBMS::GetFullText()
 {
 	wxString str;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol ='%d'"),TABLE_SBMS,m_IdSymbol);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,GetId());
 	my_query(m_DB,sql);
 			
 	void *result = db_result(m_DB);
@@ -1308,8 +1281,8 @@ wxString CSBMS::GetFullText()
 	row = (char**)db_fetch_row(result);
 	if(row)
 	{
-		wxString str;
-		str.Append(_("<table border=1 cellpadding=2 cellspacing=2 width=100%>"));
+		str.Append(_("<hr>"));
+		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
 		int phone = atoi(row[FI_SBMS_PHONE]);

@@ -666,8 +666,8 @@ bool my_query(void *db,wxString sql)
 	if(db_query(db,sql.mb_str(wxConvUTF8))  != 0)
 	{
 #ifdef WIN32
-		//wxLogError(db_error(db));
-		//wxLogError(sql);
+		wxLogError(db_error(db));
+		wxLogError(sql);
 #endif
 #ifdef linux
 		syslog(LOG_LOCAL0,db_error());

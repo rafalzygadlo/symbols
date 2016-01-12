@@ -19,7 +19,7 @@ class CAlarmList: public wxHtmlListBox
 	void OnContextMenu(wxContextMenuEvent &event);
 	
 	virtual wxString OnGetItem(size_t item) const;
-	//virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
+	virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
 	//virtual void OnDrawItem(wxDC &dc, wxRect & 	rect,size_t n)	const;
 	//virtual wxString OnGetItemMarkup(size_t  n) const;
 	//virtual wxColour GetSelectedTextBgColour(const wxColour& colBg) const;

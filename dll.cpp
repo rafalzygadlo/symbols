@@ -740,17 +740,19 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		{
 			Driver = new CSBMS(m_Broker);
 			Driver->SetFont(m_NameFont);
-			Driver->SetType(DRIVER_TYPE_SBMS);
-			Driver->SetId(id);
+			Driver->SetDB(m_DB);
 			ptr->AddDriver(Driver);
 		}
-
+		
+		Driver->SetId(id);
+		Driver->SetType(DRIVER_TYPE_SBMS);
 		Driver->SetName(Convert(row[FI_SBMS_NAME]));
 		Driver->SetIdBaseStation(atoi(row[FI_SBMS_ID_BASE_STATION]));
 		Driver->SetIdSymbol(atoi(row[FI_SBMS_ID_SYMBOL]));
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		Driver->SetLightOn(!atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		//SBMS->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
@@ -781,20 +783,31 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		sscanf(row[FI_SBMS_LAT],"%lf",&lat);
 		
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
-		
+
 		//ustawienie pozycji
-		if(GetPositionFromGps())
-		{
-			ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
-			Driver->SetLon(lon);		Driver->SetLat(lat);		Driver->SetLonMap(to_x);		Driver->SetLatMap(-to_y);
-		
-		}else{
-	
-			ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
-			Driver->SetLon(ptr->GetRLon());			Driver->SetLat(ptr->GetRLat());			Driver->SetLonMap(ptr->GetRLonMap());		Driver->SetLatMap(ptr->GetRLatMap());
-		}
+		//if(GetPositionFromGps())
+		//{
+			//ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
+		//zawsze z GPSA driver ma pozycje
+		Driver->SetLon(lon);		Driver->SetLat(lat);		Driver->SetLonMap(to_x);		Driver->SetLatMap(-to_y);
+
+		//}else{
+
+			//ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
+			//Driver->SetLon(ptr->GetRLon());			Driver->SetLat(ptr->GetRLat());			Driver->SetLonMap(ptr->GetRLonMap());		Driver->SetLatMap(ptr->GetRLatMap());
+		//}
 	}
-			
+
+	//if(GetPositionFromGps())
+	//{
+		//ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
+		
+	//}else{
+
+		//ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
+		
+	//}
+
 }
 
 void CMapPlugin::ReadAlarm(void *db)
@@ -1359,17 +1372,9 @@ void CMapPlugin::SetSelectedPtr(CSymbol *v)
 
 void CMapPlugin::ShowFrameWindow(bool show)
 {
-	if(show)
-	{
-		delete m_Frame;
+	if(m_Frame == NULL)
 		m_Frame = new CMyFrame(this,(wxWindow*)m_Broker->GetParentPtr());
-		m_Frame->ShowWindow(show);
-	
-	}else{
-		
-		delete m_Frame;
-		m_Frame = NULL;
-	}
+	m_Frame->ShowWindow(show);
 }
 
 void CMapPlugin::MouseDBLClick(int x, int y)
@@ -1780,29 +1785,6 @@ void CMapPlugin::RenderHighlighted()
 	
 }
 
-void CMapPlugin::RenderInfo(CSymbol *ptr)
-{
-	/*
-	return;
-	if(ptr->GetInit())
-	{
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,3.0f,ptr->GetName());
-		RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,4.1f,ptr->GetSBMSName());
-		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
-		{
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,5.3f,ptr->GetAgeAsString());
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,6.4f,GetMonitoringAsString(ptr->GetMonitoring()));
-		}else{
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),0.5f,-3.0f,GetMonitoringAsString(ptr->GetMonitoring()));
-		}
-			
-		if(ptr->GetBusy())
-			RenderText(ptr->GetLonMap(),ptr->GetLatMap(),-1.5f,-0.1f,ptr->GetCommandCountAsString());
-
-	}
-	*/
-}
-
 void CMapPlugin::RenderDistance()
 {
 	glLineWidth(2);
@@ -1933,11 +1915,11 @@ void CMapPlugin::OnTick()
 	RemoveSymbol();					//usuń
 
 	SetExistsAlarm();
-	ReadAlarm(m_DBTicker);			//przeczytaj alarmy
+	//ReadAlarm(m_DBTicker);		//przeczytaj alarmy
 	RemoveAlarm();					//usuń
 	
 	SetExistsCommand();				//przeczytaj komendy
-	ReadCommand(m_DBTicker);		//usuń
+	//ReadCommand(m_DBTicker);		//usuń
 	RemoveCommand();
 
 	SetExistsGroup();

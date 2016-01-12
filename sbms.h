@@ -33,7 +33,6 @@ class CSBMS :public CDriver
 	GLuint m_TextureID_0;
 	bool m_FirstTime;
 	bool m_Begin;
-	int m_Id;
 	int m_LightOn;
 	bool m_BusyOn;
 	bool m_Busy;
@@ -90,8 +89,7 @@ class CSBMS :public CDriver
 	int m_Charging;
 	int m_ProtocolVersion;
 	nvFastFont *m_NameFont;
-	int m_IdSymbol;
-	
+		
 	CAlarm *AlarmExists(int id);
 	void AlarmRemove();
 	void SetAlarms();
@@ -136,7 +134,6 @@ public:
 	void ShowManagement(CSymbol *v);
 
 	//SET
-	void SetId(int v);
 	//pozycja referencyjna
 	void SetRLon(double v);		void SetRLat(double v);		void SetRLonMap(double v);		void SetRLatMap(double v);
 	//pozycja Gps
@@ -144,8 +141,6 @@ public:
 	//referencyjna lub Gps
 	void SetLon(double v);		void SetLat(double v);		void SetLonMap(double v);		void SetLatMap(double v);
 
-	void SetIdSBMS(int v);
-	void SetIdSymbol(int v);
 	void SetSBMSID(int v);
 	void SetNumber(wxString v);
 	void SetMonitoring(int v);
@@ -179,7 +174,6 @@ public:
 			
 
 	//GET
-	int GetId();
 	int GetIdSBMS();
 	int GetSBMSID();
 	wxString GetText();

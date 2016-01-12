@@ -175,7 +175,7 @@ void CSymbolList::OnSelect(wxCommandEvent &event)
 
 void CSymbolList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
-	dc.SetPen(*wxBLACK_DASHED_PEN);
+	dc.SetPen(*wxGREY_PEN);
 	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }

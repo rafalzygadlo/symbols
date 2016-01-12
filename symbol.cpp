@@ -91,7 +91,7 @@ void CSymbol::RenderSymbol()
 	c.Center.y = 0.0;
 	c.Radius = m_RectWidth/2;
 	
-	nvDrawCircleFilled(&c);
+	//nvDrawCircleFilled(&c);
 	
 	glColor4f(0.0,0.0,0.0,0.5);
 	glLineWidth(1);
@@ -144,6 +144,7 @@ void CSymbol::RenderDriver()
 	for(int i = 0; i < m_DriverList.Length();i++)
 	{
 		m_DriverList.Get(i)->Render();
+		break; // tylko jeden sterownik
 	}
 }
 
@@ -169,11 +170,8 @@ void CSymbol::Render()
 wxString CSymbol::GetText()
 {
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-
-	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
+	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%>"));
 	str << wxString::Format(_("<tr><td><font size=3><b>%s(%s)</b></font></td></tr>"),GetName(),GetNumber());
-	//str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetNumber());
 	str.Append(_("</table>"));
 
 	return str;
@@ -205,8 +203,6 @@ CDriver *CSymbol::ExistsDriver(int id, int type)
 
 	return NULL;
 }
-
-
 
 //SET
 void CSymbol::SetColor(int id)

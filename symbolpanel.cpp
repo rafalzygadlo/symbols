@@ -73,7 +73,7 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 	
 	for(int i = 0; i < ptr->GetDriverCount();i++)
 	{
-		m_HtmlString.Append(ptr->GetDriver(i)->GetText());
+		m_HtmlString.Append(ptr->GetDriver(i)->GetFullText());
 		//this->GetSizer()->Add(Panel,0,wxALL|wxEXPAND,5);
 	}
 

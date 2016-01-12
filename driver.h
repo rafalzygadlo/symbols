@@ -33,6 +33,7 @@ public:
 	virtual void SetIdBaseStation(int v);
 	virtual void SetMMSI(int v);
 	virtual void SetForcedOff(int v);
+	virtual void SetLightOn(int v);
 	virtual void SetInputVolt(float v);
 	virtual void SetIdSymbol(int v);
 	virtual void SetFont(nvFastFont *v);
@@ -40,6 +41,7 @@ public:
 	virtual void SetLat(double v);
 	virtual void SetLonMap(double v);
 	virtual void SetLatMap(double v);
+	virtual void SetDB(void *v);
 
 	//GET
 	virtual int GetBaseStationId();

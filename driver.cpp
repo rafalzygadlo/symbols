@@ -22,6 +22,7 @@ void CDriver::SetType(int v)			{ m_Type = v;}
 void CDriver::SetIdBaseStation(int v)	{}
 void CDriver::SetMMSI(int v)			{}
 void CDriver::SetForcedOff(int v)		{}
+void CDriver::SetLightOn(int v)			{}
 void CDriver::SetInputVolt(float v)		{}
 void CDriver::SetIdSymbol(int v)		{}
 void CDriver::SetFont(nvFastFont *v)	{}
@@ -29,6 +30,7 @@ void CDriver::SetLon(double v)			{}
 void CDriver::SetLat(double v)			{}
 void CDriver::SetLonMap(double v)		{}
 void CDriver::SetLatMap(double v)		{}
+void CDriver::SetDB(void *v)			{}
 
 //GET
 int CDriver::GetId()					{ return m_Id; }

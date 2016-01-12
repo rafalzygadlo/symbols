@@ -133,14 +133,14 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 	ConfirmAlarm(ptr->GetId());
 }
 
-/*
+
 void CAlarmList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.SetPen(*wxGREY_PEN);
 	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
-*/
+
 
 wxString CAlarmList::OnGetItem(size_t item) const
 {
