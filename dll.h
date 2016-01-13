@@ -111,6 +111,7 @@ class CMapPlugin :public CNaviMapIOApi
 	//void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);
+	void ReadDriverValues(void *db);
 	
 	void ClearSymbols();
 	void ClearAlarms();
@@ -118,6 +119,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ClearGroup();
 
 	void RemoveSymbol();
+	void RemoveDriver();
 	void RemoveAlarm();
 	void RemoveCommand();
 	void RemoveGroup(); 
@@ -126,6 +128,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SetExistsAlarm();
 	void SetExistsCommand();
 	void SetExistsGroup();
+	void SetExistsDriver();
 		
 	void ReadConfig();
 	void WriteConfig();
@@ -172,7 +175,8 @@ class CMapPlugin :public CNaviMapIOApi
 	CSymbol *SetSelection(double x, double y);
 	void SetPosition(double x, double y);
 	void WritePasswordConfig(char *v);
-		
+	void SetPosition(CSymbol *ptr);
+
 	void Items();
 	void Symbol();
 	void Area();

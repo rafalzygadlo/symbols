@@ -69,17 +69,28 @@ public:
 	void AddDriver(CDriver *ptr);
 	CDriver *ExistsDriver(int id,int type);
 	void RenderSelected();
-	void Render();	
+	void Render();
+	void Read(void *db);
 	
-
 	//SET
 	void SetId(int v);
 	//pozycja referencyjna
-	void SetRLon(double v);		void SetRLat(double v);		void SetRLonMap(double v);		void SetRLatMap(double v);
+	void SetRLon(double v);
+	void SetRLat(double v);
+	void SetRLonMap(double v);
+	void SetRLatMap(double v);
+	
 	//pozycja Gps
-	void SetGpsLon(double v);	void SetGpsLat(double v);	void SetGpsLonMap(double v);	void SetGpsLatMap(double v);
+	void SetGpsLon(double v);
+	void SetGpsLat(double v);
+	void SetGpsLonMap(double v);
+	void SetGpsLatMap(double v);
+	
 	//referencyjna lub Gps
-	void SetLon(double v);		void SetLat(double v);		void SetLonMap(double v);		void SetLatMap(double v);
+	void SetLon(double v);
+	void SetLat(double v);
+	void SetLonMap(double v);
+	void SetLatMap(double v);
 		
 	void SetNumber(wxString v);
 	void SetName(wxString v);
@@ -90,11 +101,22 @@ public:
 			
 	//GET
 	//pozycja referencyjna
-	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
+	double GetRLon();	
+	double GetRLat();	
+	double GetRLonMap();	
+	double GetRLatMap();
+	
 	//pozycja GPS
-	double GetGpsLon();	double GetGpsLat();	double GetGpsLonMap();	double GetGpsLatMap();
+	double GetGpsLon();	
+	double GetGpsLat();	
+	double GetGpsLonMap();	
+	double GetGpsLatMap();
+	
 	//referencyjna lub Gps
-	double GetLon();	double GetLat();	double GetLonMap();	double GetLatMap();
+	double GetLon();	
+	double GetLat();	
+	double GetLonMap();	
+	double GetLatMap();
 	
 	int GetId();
 	wxString GetName();
@@ -104,6 +126,7 @@ public:
 	int GetDriverCount();
 	bool GetExists();
 	CDriver *GetDriver(int v);
+	void RemoveDriver(CDriver *ptr);
 	
 };
 

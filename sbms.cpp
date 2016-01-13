@@ -666,27 +666,6 @@ void CSBMS::RenderNewReport()
 	
 }
 
-void CSBMS::RenderNoSBMS()
-{
-	if(!m_NoSBMS)
-		return;
-	
-	glPushMatrix();
-		
-	glTranslatef(m_LonMap,m_LatMap,0.0f);
-	glColor4f(1.0,0.0,0.0,0.5);
-	glLineWidth(5);
-	glBegin(GL_LINES);
-		glVertex2f(m_RectWidth/2,m_RectWidth/2);
-		glVertex2f(-m_RectWidth/2,-m_RectWidth/2);
-		glVertex2f(m_RectWidth/2,-m_RectWidth/2);
-		glVertex2f(-m_RectWidth/2,m_RectWidth/2);
-	glEnd();
-
-	glPopMatrix();
-
-}
-
 void CSBMS::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
 {	
 	wchar_t buffer[128];
@@ -700,13 +679,13 @@ void CSBMS::RenderText(float x, float y, float vx, float vy, const wchar_t *form
 
 }
 
-void CSBMS::RenderInfo()
+void CSBMS::RenderText()
 {
 	if(!GetShowFontNames())
 		return;
 		
 	RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
-	RenderText(GetLonMap(),GetLatMap(),0.5f,5.3f,GetAgeAsString());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,6.6f,GetAgeAsString());
 					
 	if(GetBusy())
 		RenderText(GetLonMap(),GetLatMap(),-1.5f,-0.1f,GetCommandCountAsString());
@@ -722,17 +701,14 @@ void CSBMS::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
-		
-	//RenderNoSBMS();
 	RenderSBMS();
-//	RenderIce();
 	RenderRestricted();
 	RenderBusy();
 	RenderGPS();
 	RenderNewReport();
 	RenderAlarm();
 	RenderPositions();
-	RenderInfo();
+	RenderText();
 
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -844,40 +820,36 @@ void CSBMS::ShowGraph()
 	*/
 }
 
-void CSBMS::OnTick(void *db)
+void CSBMS::Read()
 {
-	m_DB = db;
+	fprintf(stderr,"SBMS\n");
+	
 	if(m_Broker == NULL)
 		return;
 	
 	bool result = false;
 		
-	if(m_NoSBMS)
-		return;
-	
 	SetAlarms();		//flaga alarm exists na false
-	
-	if(m_Monitoring == SYMBOL_IN_MONITORING)
-	{
-		if(CheckCommand())
-			result = true;
-		if(CheckAlarm())
-			result = true;
-		if(SetPositions())
-			result = true;
-			
-		AlarmRemove();
-	
-	}else{
 		
-		m_Alarm = false;
-		m_Busy = false;
-		m_NewReport = false;
-		m_ValidGPS = false;
-		m_LightOn = LIGHT_NOT_AVAILABLE;
-		ClearPositions();
-		ClearAlarms();
-	}
+	if(CheckCommand())
+		result = true;
+	if(CheckAlarm())
+		result = true;
+	if(SetPositions())
+		result = true;
+			
+	AlarmRemove();
+	
+	//}else{
+		
+		//m_Alarm = false;
+		//m_Busy = false;
+		//m_NewReport = false;
+		//m_ValidGPS = false;
+		//m_LightOn = LIGHT_NOT_AVAILABLE;
+		//ClearPositions();
+		//ClearAlarms();
+	//}
 	
 	CheckCollision();
 			

@@ -694,15 +694,13 @@ void CMapPlugin::ReadSymbol(void *db, wxString sql)
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
 		ptr->SetRLon(lon);		ptr->SetRLat(lat);		ptr->SetRLonMap(to_x);		ptr->SetRLatMap(-to_y);
-		ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(to_x);		ptr->SetLatMap(-to_y);
+		//ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(to_x);		ptr->SetLatMap(-to_y);
 				
 		ptr->SetId(id);
 		ptr->SetNumber(Convert(row[2]));
 		ptr->SetName(Convert(row[1]));
 		ptr->SetMonitoring(atoi(row[3]));
 		ptr->SetExists(true);
-		
-			
 	}
 	
 	db_free_result(result);
@@ -714,8 +712,42 @@ void CMapPlugin::ReadDrivers()
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ReadSBMS(m_DBTicker, ptr);
+		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+		{
+			ReadSBMS(m_DBTicker, ptr);
+			SetPosition(ptr);
+		}
 	}
+}
+
+void CMapPlugin::SetPosition(CSymbol *ptr)
+{
+	bool driver = false;
+
+	ptr->SetLon(ptr->GetRLon());			
+	ptr->SetLonMap(ptr->GetRLonMap());				
+	ptr->SetLat(ptr->GetRLat());			
+	ptr->SetLatMap(ptr->GetRLatMap());
+	
+	for(int i = 0; i < ptr->GetDriverCount();i++)
+	{
+		driver = true;
+		CDriver *Driver = ptr->GetDriver(i);
+		
+		if(GetPositionFromGps())
+		{
+			ptr->SetLon(Driver->GetGpsLon());		ptr->SetLonMap(Driver->GetGpsLonMap());			ptr->SetLat(Driver->GetGpsLat());			ptr->SetLatMap(Driver->GetGpsLatMap());
+			Driver->SetLon(Driver->GetGpsLon());	Driver->SetLonMap(Driver->GetGpsLonMap());		Driver->SetLat(Driver->GetGpsLat());		Driver->SetLatMap(Driver->GetGpsLatMap());
+		
+		}else{
+			
+			ptr->SetLon(ptr->GetRLon());			ptr->SetLonMap(ptr->GetRLonMap());				ptr->SetLat(ptr->GetRLat());			ptr->SetLatMap(ptr->GetRLatMap());
+			Driver->SetLon(ptr->GetRLon());			Driver->SetLonMap(ptr->GetRLonMap());			Driver->SetLat(ptr->GetRLat());			Driver->SetLatMap(ptr->GetRLatMap());
+		}
+		
+		break;
+	}
+	
 }
 
 void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
@@ -755,6 +787,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetLightOn(!atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
+		Driver->SetExists(true);
 		//SBMS->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
 		//SBMS->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
 
@@ -783,31 +816,17 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		sscanf(row[FI_SBMS_LAT],"%lf",&lat);
 		
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
+				
+		Driver->SetGpsLon(lon);		
+		Driver->SetGpsLat(lat);		
+		Driver->SetGpsLonMap(to_x);		
+		Driver->SetGpsLatMap(-to_y);
 
-		//ustawienie pozycji
-		//if(GetPositionFromGps())
-		//{
-			//ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
-		//zawsze z GPSA driver ma pozycje
-		Driver->SetLon(lon);		Driver->SetLat(lat);		Driver->SetLonMap(to_x);		Driver->SetLatMap(-to_y);
-
-		//}else{
-
-			//ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
-			//Driver->SetLon(ptr->GetRLon());			Driver->SetLat(ptr->GetRLat());			Driver->SetLonMap(ptr->GetRLonMap());		Driver->SetLatMap(ptr->GetRLatMap());
-		//}
+		
 	}
-
-	//if(GetPositionFromGps())
-	//{
-		//ptr->SetLon(lon);			ptr->SetLat(lat);			ptr->SetLonMap(to_x);			ptr->SetLatMap(-to_y);
+	
+	db_free_result(result);
 		
-	//}else{
-
-		//ptr->SetLon(ptr->GetRLon());			ptr->SetLat(ptr->GetRLat());			ptr->SetLonMap(ptr->GetRLonMap());			ptr->SetLatMap(ptr->GetRLatMap());
-		
-	//}
-
 }
 
 void CMapPlugin::ReadAlarm(void *db)
@@ -982,7 +1001,21 @@ void CMapPlugin::ReadSymbolValues(void *db)
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
-		ptr->OnTick(db);	
+		ptr->Read(db);
+	}
+}
+
+void CMapPlugin::ReadDriverValues(void *db)
+{  
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		for(int j = 0; j < ptr->GetDriverCount(); j++)
+		{
+			CDriver *Driver = ptr->GetDriver(j);
+			Driver->Read();
+		}
+
 	}
 	
 }
@@ -994,7 +1027,6 @@ void CMapPlugin::ClearSymbols()
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		delete ptr;
-		
 	}
 	
 	m_SymbolList->Clear();
@@ -1039,6 +1071,44 @@ CSymbol *CMapPlugin::ExistsSymbol(int id)
 
 	return NULL;
 }
+//DRIVER
+void CMapPlugin::SetExistsDriver()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		for(int j = 0; j < ptr->GetDriverCount(); j++)
+		{
+			CDriver *Driver = ptr->GetDriver(j);
+			Driver->SetExists(false);
+			
+		}
+	}
+			
+}
+
+void CMapPlugin::RemoveDriver()
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		for(int j = 0; j < ptr->GetDriverCount(); j++)
+		{
+			CDriver *Driver = ptr->GetDriver(j);
+			if(!Driver->GetExists())
+			{
+				ptr->RemoveDriver(Driver);
+				delete Driver;
+				i = 0;
+			}
+		}
+	}
+	
+}
+
+
+
+
 //ALARM
 void CMapPlugin::SetExistsAlarm()
 {
@@ -1120,7 +1190,6 @@ void CMapPlugin::SetExistsCommand()
 		CCommand *ptr = (CCommand*)m_CommandList->Item(i);
 		ptr->SetExists(false);
 	}
-		
 }
 
 void CMapPlugin::RemoveCommand()
@@ -1897,6 +1966,8 @@ void CMapPlugin::ShowAlarm()
 
 void CMapPlugin::OnTick()
 {
+	fprintf(stderr,"START\n");
+
 	wxString sql;
 	int t = GetTickCount();
 
@@ -1911,8 +1982,11 @@ void CMapPlugin::OnTick()
 	
 	SetExistsSymbol();
 	ReadSymbol(m_DBTicker,sql);		//przeczytaj symbole
-	ReadDrivers();
 	RemoveSymbol();					//usuń
+	
+	SetExistsDriver();
+	ReadDrivers();					//przeczytaj drivery
+	RemoveDriver();					//usuń
 
 	SetExistsAlarm();
 	//ReadAlarm(m_DBTicker);		//przeczytaj alarmy
@@ -1927,6 +2001,7 @@ void CMapPlugin::OnTick()
 	RemoveGroup();
 	
 	ReadSymbolValues(m_DBTicker);	// wczytaj inne opcje
+	ReadDriverValues(m_DBTicker);
 		
 	//display potrzebuje tej flagi
 	SetSortChanged(false);
@@ -1937,9 +2012,8 @@ void CMapPlugin::OnTick()
 	SendInsertSignal();
 	ShowAlarm();
 	
-	//fprintf(stderr,"DONE %d\n",GetTickCount() - t);
-
-			
+	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+				
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

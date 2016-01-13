@@ -90,9 +90,7 @@ void CSymbol::RenderSymbol()
 	c.Center.x = 0.0;
 	c.Center.y = 0.0;
 	c.Radius = m_RectWidth/2;
-	
-	//nvDrawCircleFilled(&c);
-	
+		
 	glColor4f(0.0,0.0,0.0,0.5);
 	glLineWidth(1);
 	glBegin(GL_LINES);
@@ -135,7 +133,7 @@ void CSymbol::RenderText()
 	if(GetShowFontNames())
 	{
 		RenderText(GetLonMap(),GetLatMap(),0.5f,4.1f,GetName());
-		RenderText(GetLonMap(),GetLatMap(),0.5f,6.4f,GetMonitoringAsString(GetMonitoring()));
+		RenderText(GetLonMap(),GetLatMap(),0.5f,5.4f,GetMonitoringAsString(GetMonitoring()));
 	}
 }
 
@@ -177,16 +175,6 @@ wxString CSymbol::GetText()
 	return str;
 }
 
-void CSymbol::OnTick(void *db)
-{
-	m_DB = db;
-	if(m_Broker == NULL)
-		return;
-	
-	bool result = false;
-					
-}
-
 void CSymbol::AddDriver(CDriver *ptr)
 {
 	m_DriverList.Append(ptr);
@@ -202,6 +190,23 @@ CDriver *CSymbol::ExistsDriver(int id, int type)
 	}
 
 	return NULL;
+}
+
+void CSymbol::Read(void *db)
+{
+	fprintf(stderr,"SYMBOL %d\n",m_Id);
+}
+
+void CSymbol::RemoveDriver(CDriver *ptr)
+{
+	for(int i = 0; i < m_DriverList.Length();i++)
+	{
+		CDriver *Driver = m_DriverList.Get(i);
+		if(ptr == Driver)
+		{
+			m_DriverList.Remove(i);
+		}
+	}
 }
 
 //SET

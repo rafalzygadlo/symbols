@@ -107,7 +107,6 @@ class CSBMS :public CDriver
 	bool SetPositions();
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
-	//void Read();
 	void SetSymbolColor();
 	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);
 	void RenderSBMS();
@@ -118,7 +117,7 @@ class CSBMS :public CDriver
 	void RenderPositions();
 	void RenderNewReport();
 	void RenderNoSBMS();
-	void RenderInfo();
+	void RenderText();
 	void RenderSelected();
 	virtual void Render();
 	
@@ -128,7 +127,7 @@ public:
 	CSBMS(CNaviBroker *broker);
 	~CSBMS();
 
-	void OnTick(void *db);
+	void Read();
 	void OnTickExit();
 	void ShowGraph();
 	void ShowManagement(CSymbol *v);
@@ -212,8 +211,7 @@ public:
 	wxString GetCommandCountAsString();
 	wxString GetInputVoltAsString();
 	wxPanel *GetSBMSPanel(wxWindow *parent);
-	
-	
+		
 
 };
 
