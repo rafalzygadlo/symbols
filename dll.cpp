@@ -772,7 +772,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		{
 			Driver = new CSBMS(m_Broker);
 			Driver->SetFont(m_NameFont);
-			Driver->SetDB(m_DB);
+			Driver->SetDB(db);
 			ptr->AddDriver(Driver);
 		}
 		
@@ -1593,7 +1593,7 @@ void CMapPlugin::CreateApiMenu(void)
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL_GROUP),this, MenuSymbolGroup );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_CHARACTERISTIC),this, MenuCharacteristic );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_BASE_STATION),this, MenuBaseStation );
-	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SBMS),this, MenuSBMS );
+	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_DRIVER),this, MenuSBMS );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_SYMBOL),this, MenuSymbol );
 	NaviApiMenu->AddItem(L"-",this, NULL );
 	NaviApiMenu->AddItem((wchar_t*) GetMsg(MSG_OPTIONS),this, MenuOptions );

@@ -84,6 +84,7 @@ public:
 	void _AddColumn(int id,wxString field_name);
 	void InitColumns();
 	void Clear();
+	void ClearColumns();
 	void Select();
 	void Read(wxString query);
 	void SetColumnWithId(int id);

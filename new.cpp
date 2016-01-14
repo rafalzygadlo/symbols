@@ -55,22 +55,18 @@ void CNew::GetPanel(int type)
 {
 	switch(type)
 	{
-		case CONTROL_ITEM:			EditItemPanel();			break;
-		case CONTROL_PICTURE:		EditPicturePanel();			break;
-		case CONTROL_SYMBOL:		EditSymbolPanel();			break;
-		case CONTROL_BASE_STATION:	EditBaseStationPanel();		break;
-		case CONTROL_CHARACTERISTIC:EditCharacteristicPanel();	break;
+		case CONTROL_ITEM:				EditItemPanel();			break;
+		case CONTROL_PICTURE:			EditPicturePanel();			break;
+		case CONTROL_SYMBOL:			EditSymbolPanel();			break;
+		case CONTROL_BASE_STATION:		EditBaseStationPanel();		break;
+		case CONTROL_CHARACTERISTIC:	EditCharacteristicPanel();	break;
 		
-		case CONTROL_SYMBOL_TYPE:	
+		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_AREA:
 		case CONTROL_SYMBOL_GROUP:
-		case CONTROL_SEAWAY:		
+		case CONTROL_SEAWAY:
 		case CONTROL_SBMS:
 			EditNamePanel(); break;
-		
-		
-		
-
 	}
 }
 
@@ -219,6 +215,27 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 
 }
 
+wxPanel *CNew::GetDriverPanel(wxWindow *Parent)
+{
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	wxListBox *DriverList = new wxListBox(Panel,wxID_ANY);
+	HSizer->Add(DriverList,1,wxALL|wxEXPAND,5);
+
+	wxBoxSizer *VSizer = new wxBoxSizer(wxVERTICAL);
+	HSizer->Add(VSizer);
+
+	wxButton *ButtonAdd = new wxButton(Panel,wxID_ANY,GetMsg(MSG_ADD));
+	VSizer->Add(ButtonAdd,0,wxALL,5);
+
+	wxButton *ButtonDelete = new wxButton(Panel,wxID_ANY,GetMsg(MSG_DELETE));
+	VSizer->Add(ButtonDelete,0,wxALL,5);
+		
+	Panel->SetSizer(HSizer);
+
+	return Panel;
+}
 
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 {
@@ -239,24 +256,15 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 
 	m_MonitoringCombo->SetSelection(m_Monitoring);
 	FlexGridSizer->Add(m_MonitoringCombo,0,wxALL|wxEXPAND,5);
-		
-	wxStaticText *LabelSBMSType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
-	FlexGridSizer->Add(LabelSBMSType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS ,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
-	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
 	
-	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SBMS));
+	/*
+	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVER));
 	FlexGridSizer->Add(LabelSBMS,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
 	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
-	//m_SymbolTypeCombo->SetSelection(0);
-		
-	//wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
-	//FlexGridSizer->Add(LabelBaseStation,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
-	//m_BaseStationCombo = GetCombo(m_DB,Panel,TABLE_BASE_STATION,m_BaseStationID,FI_BASE_STATION_ID,FI_BASE_STATION_NAME);
-	//m_BaseStationCombo->SetSelection(0);
-	//FlexGridSizer->Add(m_BaseStationCombo,0,wxALL|wxEXPAND,5);
-
+	m_SymbolTypeCombo->SetSelection(0);
+	*/
+	
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID,FI_AREA_ID,FI_AREA_NAME);
@@ -271,8 +279,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	FlexGridSizer->Add(LabelSymbolType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SymbolTypeCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL_TYPE,m_SymbolTypeID,FI_SYMBOL_TYPE_ID,FI_SYMBOL_TYPE_NAME);
 	FlexGridSizer->Add(m_SymbolTypeCombo,0,wxALL|wxEXPAND,5);
-		
-
+	
 	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
 	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
@@ -478,6 +485,7 @@ void CNew::EditSymbolPanel()
 	wxNotebook *Notebook = new wxNotebook(Panel,wxID_ANY);
 	PanelSizer->Add(Notebook,1,wxALL|wxEXPAND,0);
 	Notebook->AddPage(GetSymbolPanel(Notebook),GetMsg(MSG_SYMBOL));
+	Notebook->AddPage(GetDriverPanel(Notebook),GetMsg(MSG_DRIVER));
 	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
 	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
 	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));

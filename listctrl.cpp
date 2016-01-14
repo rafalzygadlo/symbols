@@ -193,6 +193,30 @@ void CListCtrl::Clear()
 	}
 	
 	m_Ids.Clear();
+	
+}
+
+void CListCtrl::ClearColumns()
+{
+	SetItemCount(0);
+	for(size_t i = 0; i < m_ColumnArray.size(); i++)
+	{
+		wxArrayString *ptr = (wxArrayString*)m_ColumnArray.Item(i);
+		ptr->Clear();
+		delete ptr;
+	}
+
+	for(size_t i = 0; i < m_DataArray.size(); i++)
+	{	
+		wxArrayString *ptr = (wxArrayString*)m_DataArray.Item(i);
+		ptr->Clear();
+		delete ptr;
+	}
+	
+	m_Ids.Clear();
+	m_ColumnFields.Clear();
+	m_ColumnArray.Clear();
+	m_DataArray.Clear();
 }
 
 void CListCtrl::Select()
@@ -291,10 +315,10 @@ wxMenu *CListCtrl::Menu(int id, int id_module)
 	if(id > -1)
 	{
 		item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		Menu->CheckRight(id_module,ACTION_EDIT,item);
+		//Menu->CheckRight(id_module,ACTION_EDIT,item);
 		
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		//Menu->CheckRight(id_module,ACTION_DELETE,item);
 	}
 	
 	return Menu;

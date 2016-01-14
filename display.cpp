@@ -169,7 +169,7 @@ void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 	}else{
 			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
 	}
-*/	
+*/
 }
 
 

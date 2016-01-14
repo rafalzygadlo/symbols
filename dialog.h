@@ -47,11 +47,12 @@ public:
 class CDialogPanel: public wxPanel
 {
 	void *m_DB;
-	CListCtrl *m_List;	
+	CListCtrl *m_List;
 	wxStaticText *m_TopLabel;
 	wxStaticText *m_RecordCount;
 	wxListBox *m_ListBox;
 	wxComboBox *m_ComboBox;
+	wxComboBox *m_ComboDriver;
 	wxSearchCtrl *m_SearchText;
 	CDialogPanel *m_Slave;
 	CPicturePanel *m_PicturePanel;
@@ -97,6 +98,7 @@ class CDialogPanel: public wxPanel
 	void Clear();
 	void Select();
 	void SetTable();
+	void SetControlType(int v);
 	void NewItem(CNew *ptr);
 	void NewSymbol(CNew *ptr);
 	void NewCharacteristic(CNew *ptr);
@@ -113,9 +115,11 @@ class CDialogPanel: public wxPanel
 	void OnSearchText(wxCommandEvent &event);
 	void OnSearchEnter(wxCommandEvent &event);
 	void OnRefresh(wxCommandEvent &event);
+	void OnComboDriver(wxCommandEvent &event);
 	
 	void ReadConfig();
 	void WriteConfig();
+	void InitList();
 	
 	//wxComboBox *GetFilterCombo(wxWindow *Parent);
 	//wxListBox *GetFilterList(wxWindow *Parent);
@@ -127,7 +131,9 @@ class CDialogPanel: public wxPanel
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 	wxPanel *GetSearchPanel(wxWindow *Parent);
 	wxPanel *GetSymbolFilterPanel(wxWindow *Parent);
+	wxPanel *GetDriverFilterPanel(wxWindow *Parent);
 	wxPanel *GetStatusPanel(wxWindow *Parent);
+	wxPanel *GetSBMSPanel(wxWindow *Parent);
 	
 	void SetSearchText(const wchar_t *txt);
 	const wchar_t *GetSearchText();
@@ -161,6 +167,7 @@ public:
 		ID_SEARCH,
 		ID_TICK_SEARCH,
 		ID_REFRESH,
+		ID_DRIVER,
 	};
 
 };

@@ -91,6 +91,7 @@ class CNew: public wxDialog
 	void GetItemFeaturePanel(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 	wxPanel *GetSymbolPanel(wxWindow *Parent);
+	wxPanel *GetDriverPanel(wxWindow *Parent);
 	wxPanel *GetLightPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	void OnLat(wxCommandEvent &event);

@@ -146,7 +146,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Get Uptime",L"Podaj czas działania"},
 	{L"Auto Management",L"Automatyczne zarządzanie"},
 	{L"Manual Management",L"Ręczne zarządzanie"},
-	{L"SBMS Driver",L"Sterownik SBMS"},
+	{L"Driver",L"Sterownik"},
 	{L"MMSI",L"MMSI"},
 	{L"Date (UTC)",L"Data (UTC)"},
 	{L"SBMSID",L"SBMSID"},
@@ -207,6 +207,9 @@ const wchar_t *nvLanguage[][2] =
 	{L"User Group",L"Grupy Użytkowników"},
 	{L"User",L"Użytkownik"},
 	{L"No Permission",L"Brak uprawnień"},
+	{L"SBMS",L"SBMS"},
+	{L"GE64",L"GE64"},
+	{L"Add",L"Dodaj"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

@@ -89,7 +89,7 @@ SIds Id[] =
 	{CONTROL_PICTURE,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_PICTURE},
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
-	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_SBMS},
+	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_DRIVER},
 	//{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 	//{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
 };
@@ -101,6 +101,7 @@ END_EVENT_TABLE()
 CDialog::CDialog(void *db,int control_type, bool picker)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX)
 {
+	
 	m_ControlType = control_type;
 	m_ButtonOk = NULL;
 	m_Picker = picker;
@@ -123,6 +124,7 @@ CDialog::CDialog(void *db,int control_type, bool picker)
 CDialog::CDialog(void *db,int control_master, int control_slave,bool picker)
 :wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,  wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX)
 {
+	
 	m_ControlType = control_master;
 	m_ButtonOk = NULL;
 	m_Picker = picker;
@@ -148,7 +150,6 @@ CDialog::CDialog(void *db,int control_master, int control_slave,bool picker)
 	ReadConfig();
 	Center();
 	
-
 }
 
 CDialog::~CDialog()
@@ -209,6 +210,7 @@ wxPanel *CDialog::GetButtonPanel(wxWindow *parent)
 	}
 	
 	return Panel;
+
 }
 
 int CDialog::_GetId()
@@ -226,6 +228,7 @@ BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
 	EVT_TIMER(ID_TICK_SEARCH,OnTickSearch)
 	EVT_TEXT(ID_SEARCH,OnSearchText)
 	EVT_BUTTON(ID_REFRESH,OnRefresh)
+	EVT_COMBOBOX(ID_DRIVER,OnComboDriver)
 END_EVENT_TABLE()
 
 CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slave)
@@ -256,7 +259,7 @@ CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slav
 	//m_TopLabel = new wxStaticText(TopPanel,wxID_ANY,wxEmptyString);
 	//TopPanelSizer->Add(m_TopLabel,0,wxALL,5);
 	if(!slave)
-		Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,5);
+		Sizer->Add(GetSearchPanel(this),0,wxALL|wxEXPAND,2);
 	Sizer->Add(GetPanel(this),1,wxALL|wxEXPAND,0);
 	
 	Sizer->Add(GetStatusPanel(this),0,wxALL|wxEXPAND,0);
@@ -358,6 +361,18 @@ void CDialogPanel::OnSearchEnter(wxCommandEvent &event)
 	m_SearchTextChanged = true;
 }
 
+void CDialogPanel::OnComboDriver(wxCommandEvent &event)
+{
+	m_Order = wxEmptyString;
+	m_Field = wxEmptyString;
+	int id = (int)m_ComboDriver->GetClientData(event.GetSelection());
+	SetControlType(id);
+	InitList();
+	SetTable();
+	Clear();
+	Read();
+}
+
 void CDialogPanel::OnRefresh(wxCommandEvent &event)
 {
 	Clear();
@@ -411,6 +426,11 @@ void CDialogPanel::SetSlave(CDialogPanel *ptr)
 	m_Slave = ptr;
 }
 
+void CDialogPanel::SetControlType(int v)
+{
+	m_ControlType = v;
+}
+
 wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 {
 	switch(m_ControlType)
@@ -418,6 +438,7 @@ wxPanel *CDialogPanel::GetPanel(wxWindow *Parent)
 		case CONTROL_ITEM:			return GetItemPanel(Parent);
 		case CONTROL_SYMBOL:		return GetSymbolPanel(Parent);
 		case CONTROL_PICTURE:		return GetPicturePanel(Parent);
+		case CONTROL_SBMS:			return GetSBMSPanel(Parent);
 		default:
 			return GetPanelList(Parent);
 	}
@@ -434,6 +455,25 @@ wxPanel *CDialogPanel::GetStatusPanel(wxWindow *Parent)
 	
 	m_RecordCount = new wxStaticText(Panel,wxID_ANY,wxEmptyString);
 	Sizer->Add(m_RecordCount,0,wxALL|wxEXPAND,5);
+
+	return Panel;
+}
+
+wxPanel *CDialogPanel::GetDriverFilterPanel(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetSizer(Sizer);
+		
+	m_ComboDriver = new wxComboBox(Panel,ID_DRIVER,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	int id = m_ComboDriver->Append(GetMsg(MSG_SBMS));
+	m_ComboDriver->SetClientData(id,(int*)CONTROL_SBMS);
+	
+	//id = m_ComboDriver->Append(GetMsg(MSG_GE64));
+	//m_ComboDriver->SetClientData(id,(int*)CONTROL_PICTURE);
+	
+	m_ComboDriver->SetSelection(0);
+	Sizer->Add(m_ComboDriver,0,wxALL|wxEXPAND,0);
 
 	return Panel;
 }
@@ -479,16 +519,29 @@ wxPanel *CDialogPanel::GetSearchPanel(wxWindow *Parent)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetBackgroundColour(wxColor(200,200,200));
 	Panel->SetSizer(Sizer);
 
 	wxButton *ButtonRefresh = new wxButton(Panel,ID_REFRESH,GetMsg(MSG_REFRESH));
-	Sizer->Add(ButtonRefresh,0,wxALL,2);
+	Sizer->Add(ButtonRefresh,0,wxALL,1);
 	m_SearchText = new wxSearchCtrl(Panel,ID_SEARCH,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxTE_PROCESS_ENTER);
 	Sizer->AddStretchSpacer(1);
-	Sizer->Add(m_SearchText,0,wxALL|wxALIGN_RIGHT,0);
+	Sizer->Add(m_SearchText,0,wxALL|wxALIGN_RIGHT,3);
 
 	return Panel;
 }
+
+wxPanel *CDialogPanel::GetSBMSPanel(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetSizer(Sizer);
+	Sizer->Add(GetDriverFilterPanel(Panel),0,wxALL|wxEXPAND,0);
+	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
+		
+	return Panel;
+}
+
 
 wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 {
@@ -496,12 +549,12 @@ wxPanel *CDialogPanel::GetSymbolPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
 	Sizer->Add(GetPanelList(Panel),1,wxALL|wxEXPAND,0);
-			
+
 	//Sizer->Add(GetSymbolFilterPanel(Panel),0,wxALL|wxEXPAND,0);
-	
+
 	m_PicturePanel = new CPicturePanel(m_DB, Panel);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,5);
-	
+
 	return Panel;
 }
 
@@ -599,17 +652,15 @@ wxComboBox *CDialogPanel::GetFilterCombo(wxWindow *Parent)
 	return Filter;
 }
 */
-wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
+void CDialogPanel::InitList()
 {
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
-	Panel->SetSizer(Sizer);
-	m_List = new CListCtrl(m_DB, Panel,wxLC_REPORT |  wxLC_VIRTUAL | wxLC_SINGLE_SEL | wxLC_ALIGN_LEFT );
-
 	int id = 0;
 	wxListItem item;
 	int counter = 0;
 	SHeader h;
+
+	m_List->ClearColumns();
+	m_List->DeleteAllColumns();
 
 	while(Header[id].id_control != -1)
 	{
@@ -650,8 +701,18 @@ wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
 	m_List->SetControlType(m_ControlType,this);
 	m_List->InitColumns();
 			
-	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
 
+}
+
+wxPanel *CDialogPanel::GetPanelList(wxWindow *Parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
+	Panel->SetSizer(Sizer);
+	m_List = new CListCtrl(m_DB, Panel,wxLC_REPORT |  wxLC_VIRTUAL | wxLC_SINGLE_SEL | wxLC_ALIGN_LEFT );
+	Sizer->Add(m_List,1,wxALL|wxEXPAND,0);
+	InitList();
+	
 	return Panel;
 
 }

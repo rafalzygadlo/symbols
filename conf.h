@@ -266,7 +266,7 @@
 #define MSG_GET_UPTIME					124
 #define MSG_AUTO_MANAGEMENT				125
 #define MSG_MANUAL_MANAGEMENT			126
-#define MSG_SBMS						127
+#define MSG_DRIVER						127
 #define MSG_MMSI						128
 #define MSG_UTC_TIME					129
 #define MSG_SBMSID						130
@@ -327,6 +327,9 @@
 #define MSG_USER_GROUP					185
 #define MSG_USER						186
 #define MSG_NO_PERMISSION				187
+#define MSG_SBMS						188
+#define MSG_GE64						189
+#define MSG_ADD							190
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
