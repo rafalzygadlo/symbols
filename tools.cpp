@@ -940,10 +940,23 @@ void ComboSetSelection(wxComboBox *combo, int id)
 		int cid = (int)combo->GetClientData(i);
 		if(cid == id)
 			combo->SetSelection(i);
-	
 	}
 }
 
+wxComboBox *GetDriverTypeCombo(wxWindow *Parent, int id)
+{
+	int _id = 0;
+	wxComboBox *ComboDriver = new wxComboBox(Parent,id,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY);
+	
+	_id = ComboDriver->Append(GetMsg(MSG_SBMS));
+	ComboDriver->SetClientData(_id,(int*)CONTROL_SBMS);
+	
+	_id = ComboDriver->Append(GetMsg(MSG_GE64));
+	ComboDriver->SetClientData(_id,(int*)CONTROL_PICTURE);
+	ComboDriver->SetSelection(0);
+
+	return ComboDriver;
+}
 
 wxString GetFontFolderPath()
 {

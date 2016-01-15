@@ -96,10 +96,11 @@ SIds Id[] =
 
 BEGIN_EVENT_TABLE(CDialog,wxDialog)
 	EVT_BUTTON(ID_EXPORT,OnExport)
+	EVT_CHAR_HOOK(OnCharHook)
 END_EVENT_TABLE()
 
 CDialog::CDialog(void *db,int control_type, bool picker)
-	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER |wxMINIMIZE_BOX|wxMAXIMIZE_BOX)
+	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMINIMIZE_BOX | wxMAXIMIZE_BOX)
 {
 	
 	m_ControlType = control_type;
@@ -218,9 +219,33 @@ int CDialog::_GetId()
 	return m_DialogPanel->_GetId();
 }
 
+wxString CDialog::_GetName()
+{
+	return m_DialogPanel->_GetName();
+}
+
 void CDialog::OnExport(wxCommandEvent &event)
 {
 	m_DialogPanel->OnExport();
+}
+
+void CDialog::OnCharHook(wxKeyEvent &event)
+{
+	if(IsModal())
+	{
+		switch( event.GetKeyCode() ) 
+		{
+			case WXK_RETURN:	EndModal(wxID_OK);	break;
+			case WXK_LEFT:							break;
+			case WXK_RIGHT:							break;
+			case WXK_UP:							break;
+			case WXK_DOWN:							break;
+			case 61:								break;
+			case 45:								break;
+		}
+	}
+
+	event.Skip();
 }
 
 BEGIN_EVENT_TABLE(CDialogPanel,wxPanel)
@@ -700,7 +725,8 @@ void CDialogPanel::InitList()
 
 	m_List->SetControlType(m_ControlType,this);
 	m_List->InitColumns();
-			
+	m_List->SetFocus();
+	//m_List->SetItemState(3,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 
 }
 
@@ -1616,21 +1642,10 @@ void CDialogPanel::OnSelect(int id)
 		m_Slave->Read();
 	}
 
-	if(m_ControlType == CONTROL_SYMBOL)
+	switch(m_ControlType)
 	{
-		wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,id);
-		my_query(m_DB,sql);
-
-		void *result = db_result(m_DB);
-		if(result == NULL)
-			return;
-		char** row = (char**)db_fetch_row(result);
-		if(row)
-			m_ID = atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]);
-		else
-			m_ID = -1;
-		
-		db_free_result(result);
+		case CONTROL_SYMBOL:	SelectSymbol();		break;
+		case CONTROL_SBMS:		SelectSBMS();		break;
 	}
 	
 	if(m_PicturePanel)
@@ -1643,6 +1658,42 @@ void CDialogPanel::OnSelect(int id)
 	
 }
 
+void CDialogPanel::SelectSymbol()
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SYMBOL_PICTURE,m_ID);
+	my_query(m_DB,sql);
+
+	void *result = db_result(m_DB);
+	if(result == NULL)
+		return;
+	char** row = (char**)db_fetch_row(result);
+	if(row)
+		m_ID = atoi(row[FI_SYMBOL_PICTURE_ID_PICTURE]);
+	else
+		m_ID = -1;
+		
+	db_free_result(result);
+}
+
+void CDialogPanel::SelectSBMS()
+{
+	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id='%d'"),TABLE_SBMS,m_ID);
+	my_query(m_DB,sql);
+
+	void *result = db_result(m_DB);
+	if(result == NULL)
+		return;
+	
+	char** row = (char**)db_fetch_row(result);
+	if(row)
+	{
+		m_ID = atoi(row[FI_SBMS_ID]);
+		m_Name = Convert(row[FI_SBMS_NAME]);
+	}
+
+	db_free_result(result);
+
+}
 
 int CDialogPanel::_GetId()
 {

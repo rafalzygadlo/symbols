@@ -16,6 +16,8 @@ BEGIN_EVENT_TABLE(CNew,wxDialog)
 	EVT_COMBOBOX(ID_FILTER,OnComboFilter)
 	EVT_TEXT(ID_LON,OnLon)
 	EVT_TEXT(ID_LAT,OnLat)
+	EVT_BUTTON(ID_ADD_DRIVER,OnAddDriver)
+	EVT_BUTTON(ID_ADD_DRIVER,OnDeleteDriver)
 END_EVENT_TABLE()
 
 
@@ -220,17 +222,17 @@ wxPanel *CNew::GetDriverPanel(wxWindow *Parent)
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxListBox *DriverList = new wxListBox(Panel,wxID_ANY);
-	HSizer->Add(DriverList,1,wxALL|wxEXPAND,5);
+	m_DriverList = new wxListBox(Panel,wxID_ANY);
+	HSizer->Add(m_DriverList,1,wxALL|wxEXPAND,5);
 
 	wxBoxSizer *VSizer = new wxBoxSizer(wxVERTICAL);
 	HSizer->Add(VSizer);
 
-	wxButton *ButtonAdd = new wxButton(Panel,wxID_ANY,GetMsg(MSG_ADD));
-	VSizer->Add(ButtonAdd,0,wxALL,5);
+	wxButton *ButtonAdd = new wxButton(Panel,ID_ADD_DRIVER,GetMsg(MSG_ADD));
+	VSizer->Add(ButtonAdd,0,wxALL,2);
 
-	wxButton *ButtonDelete = new wxButton(Panel,wxID_ANY,GetMsg(MSG_DELETE));
-	VSizer->Add(ButtonDelete,0,wxALL,5);
+	wxButton *ButtonDelete = new wxButton(Panel,ID_DELETE_DRIVER,GetMsg(MSG_DELETE));
+	VSizer->Add(ButtonDelete,0,wxALL,2);
 		
 	Panel->SetSizer(HSizer);
 
@@ -257,14 +259,18 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_MonitoringCombo->SetSelection(m_Monitoring);
 	FlexGridSizer->Add(m_MonitoringCombo,0,wxALL|wxEXPAND,5);
 	
-	/*
+	wxStaticText *LabelDriverType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVER));
+	FlexGridSizer->Add(LabelDriverType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_DriverTypeCombo = GetDriverTypeCombo(Panel,ID_DRIVER_TYPE);
+	FlexGridSizer->Add(m_DriverTypeCombo,0,wxALL|wxEXPAND,5);
+	m_DriverTypeCombo->SetSelection(0);
+	
 	wxStaticText *LabelSBMS = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVER));
 	FlexGridSizer->Add(LabelSBMS,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
 	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
-	m_SymbolTypeCombo->SetSelection(0);
-	*/
-	
+	m_SBMSCombo->SetSelection(0);
+		
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID,FI_AREA_ID,FI_AREA_NAME);
@@ -718,6 +724,23 @@ void CNew::OnLat(wxCommandEvent &event)
 
 }
 
+void CNew::OnAddDriver(wxCommandEvent &event)
+{
+	CDialog *Driver = new CDialog(m_DB, CONTROL_SBMS,true);
+	int id  = 0;
+	if(Driver->ShowModal() == wxID_OK)
+	{
+		id = Driver->_GetId();
+		m_DriverList->Append(Driver->_GetName());
+	}
+
+	delete Driver;
+}
+
+void CNew::OnDeleteDriver(wxCommandEvent &event)
+{
+	m_DriverList->Delete(m_DriverList->GetSelection());
+}
 
 bool CNew::Validate()
 {

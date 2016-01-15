@@ -36,6 +36,7 @@ class CNew: public wxDialog
 	wxComboBox *m_SymbolTypeCombo;
 	wxComboBox *m_SBMSCombo;
 	wxComboBox *m_MonitoringCombo;
+	wxComboBox *m_DriverTypeCombo;
 
 	bool m_LonValid,m_LatValid;
 	int m_DegreeFormat;
@@ -75,6 +76,7 @@ class CNew: public wxDialog
 
 	int m_PictureType;
 	int m_Monitoring;
+	wxListBox *m_DriverList;
 		
 	void GetPanel(int type);
 	void EditNamePanel();
@@ -96,7 +98,9 @@ class CNew: public wxDialog
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	void OnLat(wxCommandEvent &event);
 	void OnLon(wxCommandEvent &event);
-		
+	void OnDeleteDriver(wxCommandEvent &event);
+	void OnAddDriver(wxCommandEvent &event);
+
 	void OnComboItem(wxCommandEvent &event);
 	void OnComboFilter(wxCommandEvent &event);
 	
@@ -168,6 +172,9 @@ public:
 		ID_FILTER,
 		ID_LON,
 		ID_LAT,
+		ID_ADD_DRIVER,
+		ID_DELETE_DRIVER,
+		ID_DRIVER_TYPE,
 	};
 	
 

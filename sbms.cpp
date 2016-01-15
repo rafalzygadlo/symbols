@@ -50,7 +50,6 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_ValidGPS = false;
 	m_NoSBMS = true;
 	m_AgeString = "N/A";
-	m_DB = NULL;
 	m_GraphDialog = NULL;
 	m_Charging = false;
 	m_NewAlarmCount = 0;
@@ -1240,11 +1239,16 @@ wxString CSBMS::GetText()
 
 wxString CSBMS::GetFullText()
 {
+	void *db = DBConnect();
+
+	if(db == NULL)
+		return wxEmptyString;
+
 	wxString str;
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE id ='%d'"),TABLE_SBMS,GetId());
-	my_query(m_DB,sql);
+	my_query(db,sql);
 			
-	void *result = db_result(m_DB);
+	void *result = db_result(db);
 		
 	char **row = NULL;
 	if(result == NULL)
@@ -1298,6 +1302,7 @@ wxString CSBMS::GetFullText()
 		
 	db_free_result(result);
 
+	DBClose(db);
 
 	return str;
 

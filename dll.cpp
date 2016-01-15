@@ -821,7 +821,6 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetGpsLat(lat);		
 		Driver->SetGpsLonMap(to_x);		
 		Driver->SetGpsLatMap(-to_y);
-
 		
 	}
 	

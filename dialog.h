@@ -25,14 +25,17 @@ class CDialog : public wxDialog
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	void ReadConfig();
 	void WriteConfig();
+	
 	void OnRefresh(wxCommandEvent &event);
 	void OnExport(wxCommandEvent &event);
+	void OnCharHook(wxKeyEvent &event);
 	
 public:
 	CDialog(void *db, int control_type, bool picker = false);
 	CDialog(void *db, int control_master, int control_slave, bool picker = false);
 	~CDialog();
 	int _GetId();
+	wxString _GetName();
 	
 	DECLARE_EVENT_TABLE();
 	enum
@@ -117,6 +120,7 @@ class CDialogPanel: public wxPanel
 	void OnRefresh(wxCommandEvent &event);
 	void OnComboDriver(wxCommandEvent &event);
 	
+	
 	void ReadConfig();
 	void WriteConfig();
 	void InitList();
@@ -139,6 +143,8 @@ class CDialogPanel: public wxPanel
 	const wchar_t *GetSearchText();
 	bool GetSearchTextChanged();
 	void SetSearchTextChanged(bool value);
+	void SelectSymbol();
+	void SelectSBMS();
 	
 
 public:
