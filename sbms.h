@@ -130,7 +130,7 @@ public:
 	void Read();
 	void OnTickExit();
 	void ShowGraph();
-	void ShowManagement(CSymbol *v);
+	void ShowManagement();
 
 	//SET
 	//pozycja referencyjna

@@ -340,7 +340,7 @@ void CCommandPanel::SetCommand(int id)
 {
 	/*
 	wxString sql;
-	int id_sbms = m_SelectedPtr->GetIdSBMS();
+	int id_sbms = m_SelectedPtr->GetId();
 	int SBMSID = m_SelectedPtr->GetSBMSID();
 	int id_base_station = m_SelectedPtr->GetBaseStationId();
 	int mmsi = m_SelectedPtr->GetMMSI();
@@ -362,7 +362,7 @@ void CCommandPanel::SetCommand(int id)
 
 void CCommandPanel::SetSelectedPtr(CSymbol *ptr)
 {
-	m_SelectedPtr = ptr;
+//	m_SelectedPtr = ptr;
 }
 
 void CCommandPanel::ReadCommands()

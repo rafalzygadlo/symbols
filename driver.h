@@ -51,7 +51,12 @@ public:
 	virtual void SetGpsLat(double v);
 	virtual void SetGpsLonMap(double v);
 	virtual void SetGpsLatMap(double v);
-	
+
+	virtual void SetRLon(double v);
+	virtual void SetRLat(double v);
+	virtual void SetRLonMap(double v);
+	virtual void SetRLatMap(double v);
+		
 	virtual void SetDB(void *v);
 
 	//GET
@@ -64,7 +69,9 @@ public:
 	virtual double GetGpsLonMap();
 	virtual double GetGpsLatMap();
 	
-		
+	
+	virtual void ShowGraph();
+	virtual void ShowManagement();
 };
 
 #endif

@@ -51,7 +51,7 @@ class CCommandPanel: public wxPanel
 	wxButton *m_ButtonSend;
 	wxButton *m_ButtonCancel;
 	
-	CSymbol *m_SelectedPtr;
+	CDriver *m_SelectedPtr;
 	//values
 	int m_DriveCurrentValue;
 	int m_PowerOfLightValue;

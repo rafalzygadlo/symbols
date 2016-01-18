@@ -127,6 +127,8 @@ public:
 	bool GetExists();
 	CDriver *GetDriver(int v);
 	void RemoveDriver(CDriver *ptr);
+	void ShowGraph();
+	void LightOn();
 	
 };
 

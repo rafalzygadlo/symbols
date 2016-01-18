@@ -77,7 +77,7 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 		//this->GetSizer()->Add(Panel,0,wxALL|wxEXPAND,5);
 	}
 
-	#ifdef WEBVIEW	
+#ifdef WEBVIEW	
 	m_Html->SetPage(m_HtmlString,wxEmptyString);
 #else
 	m_Html->SetPage(m_HtmlString);

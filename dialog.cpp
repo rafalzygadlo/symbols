@@ -1033,8 +1033,8 @@ void CDialogPanel::New()
 void CDialogPanel::NewSymbol(CNew *ptr)
 {
 	wxString sql;
-	sql = wxString::Format(_("INSERT INTO %s SET id_driver='%d', id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
-		TABLE_SYMBOL,ptr->GetSBMSId(), ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(),ptr->GetName(),ptr->GetInfo());
+	sql = wxString::Format(_("INSERT INTO %s SET id_area='%d', id_seaway='%d', id_symbol_type='%d', number='%s', lon ='%3.14f',lat='%3.14f',in_monitoring='%d',name='%s', info='%s'"),
+		TABLE_SYMBOL, ptr->GetAreaId(), ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(),ptr->GetName(),ptr->GetInfo());
 	my_query(m_DB,sql);
 	
 	int id = db_last_insert_id(m_DB);
@@ -1328,8 +1328,8 @@ void CDialogPanel::EditSymbol(int id)
 
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET id_sbms='%d', id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
-			m_Table,ptr->GetSBMSId(),ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_area='%d', id_seaway='%d',id_symbol_type='%d',number='%s',lon='%3.14f', lat='%3.14f',in_monitoring='%d', name='%s', info ='%s' WHERE id = '%d'"),
+			m_Table,ptr->GetAreaId(),ptr->GetSeawayId(),ptr->GetSymbolTypeId(), ptr->GetNumber(),ptr->GetLon(),ptr->GetLat(),ptr->GetMonitoring(), ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		
 		//light
@@ -1510,7 +1510,7 @@ void CDialogPanel::EditSBMS(int id)
 	char **row = (char**)db_fetch_row(result);
 	
 	ptr->SetName(Convert(row[FI_SBMS_NAME]));
-	//ptr->SetMMSI(atoi(row[FI_SBMS_MMSI]));
+	ptr->SetIdSymbol(Convert(row[FI_SBMS_ID_SYMBOL]));
 	ptr->SetInfo(Convert(row[FI_SBMS_INFO]));
 	db_free_result(result);	
 	
@@ -1518,7 +1518,7 @@ void CDialogPanel::EditSBMS(int id)
 	
 	if(ptr->ShowModal() == wxID_OK)
 	{
-		wxString sql = wxString::Format	(_("UPDATE %s SET name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetName(),ptr->GetInfo(),id);
+		wxString sql = wxString::Format	(_("UPDATE %s SET id_symbol='%d', name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetIdSymbol(),ptr->GetName(),ptr->GetInfo(),id);
 		my_query(m_DB,sql);
 		Clear();
 		Read();

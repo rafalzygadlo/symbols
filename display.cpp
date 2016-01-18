@@ -197,16 +197,17 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	hSizer->Add(BFilter,0,wxALL,0);
 	
 	//m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
-	//wxListItem item;
-	
+		
 	//item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
 	//item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
 	
 	//m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
 	//Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
 	
-
-	m_SymbolList = new  CSymbolList(Panel);
+	m_SymbolList = new  CSymbolList(Panel, wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL);
+	wxListItem item;
+	item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_SymbolList->InsertColumn(0,item);
+	item.SetWidth(100); item.SetText(GetMsg(MSG_NUMBER)); m_SymbolList->InsertColumn(1,item);
 	Sizer->Add(m_SymbolList,1,wxALL|wxEXPAND,0);
 	
 

@@ -15,6 +15,8 @@ CDriver::~CDriver()
 
 void CDriver::Render()					{}
 void CDriver::Read()					{}
+void CDriver::ShowGraph()				{}
+void CDriver::ShowManagement()			{}
 
 //SET
 void CDriver::SetId(int v)				{ m_Id = v;}
@@ -41,6 +43,11 @@ void CDriver::SetGpsLon(double v)		{}
 void CDriver::SetGpsLat(double v)		{}
 void CDriver::SetGpsLonMap(double v)	{}
 void CDriver::SetGpsLatMap(double v)	{}
+//pozycja referencyjna
+void CDriver::SetRLon(double v)			{}
+void CDriver::SetRLat(double v)			{}
+void CDriver::SetRLonMap(double v)		{}
+void CDriver::SetRLatMap(double v)		{}
 
 
 //GET

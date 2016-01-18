@@ -9,7 +9,7 @@
 #include "db.h"
 
 CCommandDialog::CCommandDialog(void *db,wxWindow *parent, CSymbol *ptr)
-	:wxDialog(NULL,wxID_ANY, ptr->GetName())
+	:wxDialog(NULL,wxID_ANY, wxEmptyString)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	m_CommandPanel = new CCommandPanel(db,this);

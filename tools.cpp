@@ -892,14 +892,12 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, in
 	{
 		ptr->Append(GetMsg(MSG_ALL));
 		ptr->SetClientData(0,(int*)-1);
-		//i = 1;
 	}
 
 	if(empty)
 	{
 		ptr->Append(GetMsg(MSG_EMPTY));
 		ptr->SetClientData(0,(int*)0);
-		//i = 1;
 	}
 
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);

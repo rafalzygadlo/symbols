@@ -62,12 +62,13 @@ void CNew::GetPanel(int type)
 		case CONTROL_SYMBOL:			EditSymbolPanel();			break;
 		case CONTROL_BASE_STATION:		EditBaseStationPanel();		break;
 		case CONTROL_CHARACTERISTIC:	EditCharacteristicPanel();	break;
-		
+		case CONTROL_SBMS:				EditSBMSPanel();			break;
+
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_AREA:
 		case CONTROL_SYMBOL_GROUP:
 		case CONTROL_SEAWAY:
-		case CONTROL_SBMS:
+		
 			EditNamePanel(); break;
 	}
 }
@@ -217,28 +218,6 @@ wxPanel *CNew::GetLightPanel(wxWindow *Parent)
 
 }
 
-wxPanel *CNew::GetDriverPanel(wxWindow *Parent)
-{
-	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
-	wxBoxSizer *HSizer = new wxBoxSizer(wxHORIZONTAL);
-
-	m_DriverList = new wxListBox(Panel,wxID_ANY);
-	HSizer->Add(m_DriverList,1,wxALL|wxEXPAND,5);
-
-	wxBoxSizer *VSizer = new wxBoxSizer(wxVERTICAL);
-	HSizer->Add(VSizer);
-
-	wxButton *ButtonAdd = new wxButton(Panel,ID_ADD_DRIVER,GetMsg(MSG_ADD));
-	VSizer->Add(ButtonAdd,0,wxALL,2);
-
-	wxButton *ButtonDelete = new wxButton(Panel,ID_DELETE_DRIVER,GetMsg(MSG_DELETE));
-	VSizer->Add(ButtonDelete,0,wxALL,2);
-		
-	Panel->SetSizer(HSizer);
-
-	return Panel;
-}
-
 wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 {
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
@@ -258,7 +237,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 
 	m_MonitoringCombo->SetSelection(m_Monitoring);
 	FlexGridSizer->Add(m_MonitoringCombo,0,wxALL|wxEXPAND,5);
-	
+	/*
 	wxStaticText *LabelDriverType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_DRIVER));
 	FlexGridSizer->Add(LabelDriverType,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_DriverTypeCombo = GetDriverTypeCombo(Panel,ID_DRIVER_TYPE);
@@ -270,7 +249,7 @@ wxPanel *CNew::GetSymbolPanel(wxWindow *Parent)
 	m_SBMSCombo = GetCombo(m_DB,Panel,TABLE_SBMS,m_SBMSId,FI_SBMS_ID,FI_SBMS_NAME,false,true);
 	FlexGridSizer->Add(m_SBMSCombo,0,wxALL|wxEXPAND,5);
 	m_SBMSCombo->SetSelection(0);
-		
+	*/	
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
 	FlexGridSizer->Add(LabelArea,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
 	m_AreaCombo = GetCombo(m_DB,Panel,TABLE_AREA,m_AreaID,FI_AREA_ID,FI_AREA_NAME);
@@ -491,7 +470,7 @@ void CNew::EditSymbolPanel()
 	wxNotebook *Notebook = new wxNotebook(Panel,wxID_ANY);
 	PanelSizer->Add(Notebook,1,wxALL|wxEXPAND,0);
 	Notebook->AddPage(GetSymbolPanel(Notebook),GetMsg(MSG_SYMBOL));
-	Notebook->AddPage(GetDriverPanel(Notebook),GetMsg(MSG_DRIVER));
+	//Notebook->AddPage(GetDriverPanel(Notebook),GetMsg(MSG_DRIVER));
 	Notebook->AddPage(GetLightPanel(Notebook),GetMsg(MSG_LIGHT));
 	Notebook->AddPage(GetPicturePanel(Notebook),GetMsg(MSG_PICTURE));
 	Notebook->AddPage(GetItemPanel(Notebook),GetMsg(MSG_ITEMS));
@@ -557,6 +536,52 @@ void CNew::EditBaseStationPanel()
 	
 }
 
+void CNew::EditSBMSPanel()
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+	
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,0,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);
+
+	wxStaticText *LabelSymbol = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL));
+	FlexGridSizer->Add(LabelSymbol,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_SymbolCombo = GetCombo(m_DB,Panel,TABLE_SYMBOL,m_IdSymbol,FI_SYMBOL_ID,FI_SYMBOL_NAME,false,true);
+	FlexGridSizer->Add(m_SymbolCombo,0,wxALL|wxEXPAND,5);
+	
+	
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
+	m_TextName->SetValue(m_Name);
+	m_TextName->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
+		
+	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
+	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
+	m_TextInfo->SetValue(m_Info);
+	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
+
+	wxPanel *Panel1 = new wxPanel(this);
+	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+	
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+
+	GetSizer()->SetSizeHints(this);
+
+}
 
 void CNew::EditCharacteristicPanel()
 {
@@ -956,12 +981,10 @@ void CNew::SetColor(wxString v)
 	m_Color;
 }
 
-/*
-void CNew::SetColor(wxColor *color)
+void CNew::SetIdSymbol(wxString id)
 {	
-	m_Color.Add(color);
+	m_IdSymbol = id;	
 }
-*/
 
 void CNew::SetLon(double v)
 {
@@ -997,11 +1020,6 @@ void CNew::SetCharacteristic(wxString v)
 void CNew::SetMonitoring(int  v)
 {
 	m_Monitoring = v;
-}
-
-void CNew::SetSBMS(wxString v)
-{
-	m_SBMSId = v;
 }
 
 void CNew::SetHost(wxString v)
@@ -1067,15 +1085,6 @@ int CNew::GetSymbolTypeId()
 		return (int)m_SymbolTypeCombo->GetClientData(m_SymbolTypeCombo->GetSelection());
 }
 
-int CNew::GetSBMSId()
-{
-	int id = m_SymbolTypeCombo->GetSelection();
-	if(id < 0)
-		return 0;
-	else
-		return (int)m_SBMSCombo->GetClientData(m_SBMSCombo->GetSelection());
-}
-
 double CNew::GetLon()
 {
 	return m_Lon;
@@ -1094,6 +1103,16 @@ wxString CNew::GetNumber()
 wxString CNew::GetName()
 {
 	return m_TextName->GetValue();
+}
+
+int CNew::GetIdSymbol()
+{
+	int id = m_SymbolCombo->GetSelection();
+	if(id < 0)
+		return 0;
+	else
+		return (int)m_SymbolCombo->GetClientData(m_SymbolCombo->GetSelection());
+
 }
 
 wxString CNew::GetInfo()

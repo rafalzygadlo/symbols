@@ -578,10 +578,7 @@ void CSBMS::RenderRestricted()
 }
 
 void CSBMS::RenderGPS()
-{
-	if(!m_ValidGPS)
-		return;
-	/*
+{	
 	glColor4f(1.0f,1.0f,1.0f,0.6f);
 
 	glPointSize(2);
@@ -596,7 +593,6 @@ void CSBMS::RenderGPS()
 	glEnd();
 
 	glPointSize(1);
-	*/
 	
 }
 
@@ -715,40 +711,31 @@ void CSBMS::Render()
 
 }
 
-void CSBMS::ShowManagement(CSymbol *v)
+void CSBMS::ShowManagement()
 {
-	if(v == NULL)
-		return;
-/*	
-	if(!v->GetNoSBMS())
-	{
-		CCommandDialog *CommandDialog = new CCommandDialog(m_DB,NULL,v);
-		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+	CCommandDialog *CommandDialog = new CCommandDialog(m_DB,NULL,NULL);
+	CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
 		//ptr->SetForcedOff(v->GetForcedOff());
 		//ptr->SetAuto(v->GetAuto());
 			
 		CommandDialog->ShowModal();
 		delete CommandDialog;
-	
-	}else{
-			wxMessageBox(GetMsg(MSG_NO_SBMS_RECORD));
-	}
-*/
+
 }
 
 void CSBMS::ShowGraph()
 {
-	/*
+	
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
 	
 	if(m_GraphDialog == NULL)
-		m_GraphDialog = new CGraphDialog(NULL,this);
+		m_GraphDialog = new CGraphDialog(NULL);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 
-	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_SBMS_STANDARD_REPORT,GetIdSBMS());
+	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_SBMS_STANDARD_REPORT,GetId());
 	my_query(db,sql);
 			
 	void *result = db_result(db);
@@ -816,7 +803,7 @@ void CSBMS::ShowGraph()
 	m_GraphDialog->Show();
 
 	DBClose(db);
-	*/
+	
 }
 
 void CSBMS::Read()
@@ -1225,12 +1212,9 @@ wxString CSBMS::GetText()
 {
 
 	wxString str;
-	str << "<hr>";
 	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetName());
-	//str << wxString::Format(_("<tr><td><font size=3>%d</font></td></tr>"),GetBaseStationId());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetInputVoltAsString());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetName());
+	str << wxString::Format(_("<tr><td><font size=3>%4.2f V</font></td></tr>"), GetInputVolt());
 	str.Append(_("</table>"));
 
 	return str;
@@ -1286,6 +1270,7 @@ wxString CSBMS::GetFullText()
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+
 /*		
 		bool alarm = false;
 		for(int i = 0; i < ptr->GetAlarmCount();i++)

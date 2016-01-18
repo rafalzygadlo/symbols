@@ -19,7 +19,7 @@ class CGraphDialog: public wxDialog
 
 public:
 
-	CGraphDialog(wxWindow *parent,CSymbol *ptr);
+	CGraphDialog(wxWindow *parent);
 	~CGraphDialog();
 	CGraph *GetGraph();
 	void SetTitle(wxString v);

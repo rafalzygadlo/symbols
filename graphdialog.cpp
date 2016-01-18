@@ -8,7 +8,7 @@
 #include "options.h"
 
 
-CGraphDialog::CGraphDialog(wxWindow *parent, CSymbol *ptr)
+CGraphDialog::CGraphDialog(wxWindow *parent)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);

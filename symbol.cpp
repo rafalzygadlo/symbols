@@ -168,8 +168,8 @@ void CSymbol::Render()
 wxString CSymbol::GetText()
 {
 	wxString str;
-	str.Append(_("<table border=1 cellpadding=2 cellspacing=0 width=100%>"));
-	str << wxString::Format(_("<tr><td><font size=3><b>%s(%s)</b></font></td></tr>"),GetName(),GetNumber());
+	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	str << wxString::Format(_("<tr><td><font size=3>%s(%s)</font></td></tr>"),GetName(),GetNumber());
 	str.Append(_("</table>"));
 
 	return str;
@@ -206,6 +206,20 @@ void CSymbol::RemoveDriver(CDriver *ptr)
 		{
 			m_DriverList.Remove(i);
 		}
+	}
+}
+
+void CSymbol::ShowGraph()
+{
+
+}
+
+void CSymbol::LightOn()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_LIGHT_ON,Driver->GetId(),Driver->GetMMSI,Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
 	}
 }
 

@@ -34,10 +34,9 @@ class CNew: public wxDialog
 	wxComboBox *m_SeawayCombo;
 	wxComboBox *m_AreaCombo;
 	wxComboBox *m_SymbolTypeCombo;
-	wxComboBox *m_SBMSCombo;
 	wxComboBox *m_MonitoringCombo;
-	wxComboBox *m_DriverTypeCombo;
-
+	wxComboBox *m_SymbolCombo;
+	
 	bool m_LonValid,m_LatValid;
 	int m_DegreeFormat;
 
@@ -56,7 +55,7 @@ class CNew: public wxDialog
 	wxString m_SeawayID;
 	wxString m_AreaID;
 	wxString m_SymbolTypeID;
-	wxString m_SBMSId;
+	wxString m_IdSymbol;
 	int m_PictureId;
 	CPicturePanel *m_PicturePanel;
 
@@ -86,6 +85,7 @@ class CNew: public wxDialog
 	void EditSymbolPanel();
 	void EditBaseStationPanel();
 	void EditCharacteristicPanel();
+	void EditSBMSPanel();
 	void SymbolItem();
 	void _SetPosition(double lon, double lat);
 	
@@ -93,7 +93,6 @@ class CNew: public wxDialog
 	void GetItemFeaturePanel(wxWindow *Parent);
 	wxPanel *GetPicturePanel(wxWindow *Parent);
 	wxPanel *GetSymbolPanel(wxWindow *Parent);
-	wxPanel *GetDriverPanel(wxWindow *Parent);
 	wxPanel *GetLightPanel(wxWindow *Parent);
 	wxPanel *GetItemPanel(wxWindow *Parent);
 	void OnLat(wxCommandEvent &event);
@@ -122,8 +121,7 @@ public:
 	int GetSeawayId();
 	int GetAreaId();
 	int GetSymbolTypeId();
-	int GetSBMSId();
-	//int GetBaseStationId();
+	int GetIdSymbol();
 	double GetLon();
 	double GetLat();
 	wxString GetNumber();
@@ -152,6 +150,7 @@ public:
 	void SetSymbolType(wxString id);
 	void SetSBMS(wxString v);
 	void SetColor(wxString v);
+	void SetIdSymbol(wxString id);
 	void SetLon(double v);
 	void SetLat(double v);
 	void SetNumber(wxString v);

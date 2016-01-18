@@ -713,10 +713,9 @@ void CMapPlugin::ReadDrivers()
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
-		{
 			ReadSBMS(m_DBTicker, ptr);
-			SetPosition(ptr);
-		}
+		
+		SetPosition(ptr);
 	}
 }
 
@@ -822,6 +821,10 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetGpsLonMap(to_x);		
 		Driver->SetGpsLatMap(-to_y);
 		
+		Driver->SetRLat(ptr->GetRLat());
+		Driver->SetRLon(ptr->GetRLon());
+		Driver->SetRLatMap(ptr->GetRLatMap());
+		Driver->SetRLonMap(ptr->GetRLonMap());
 	}
 	
 	db_free_result(result);
@@ -1432,10 +1435,11 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	return NULL;
 }
 
-void CMapPlugin::SetSelectedPtr(CSymbol *v)
+void CMapPlugin::SetSelectedPtr(CSymbol *v,bool send)
 {
 	SelectedPtr = v;
-	SendSelectSignal();
+	if(send)
+		SendSelectSignal();
 }
 
 void CMapPlugin::ShowFrameWindow(bool show)

@@ -1,5 +1,5 @@
-#ifndef __SYMBOLLIST
-#define __SYMBOLLIST
+#ifndef __SYMBOLLISTHTML
+#define __SYMBOLLISTHTML
 
 #include <wx/wx.h>
 #include <wx/htmllbox.h>
@@ -7,24 +7,20 @@
 #include "display.h"
 
 class CMapPlugin;
-class CSymbolList: public wxListCtrl
+class CSymbolListHtml: public wxHtmlListBox
 {	
 	CMapPlugin *m_MapPlugin;
 	int m_Count;
 	wxArrayPtrVoid *m_List;
-	long m_SelectedItem;
-	CSymbol *m_Symbol;
-
-	//void OnLinkClicked(wxHtmlLinkEvent &event);
+	void OnLinkClicked(wxHtmlLinkEvent &event);
 	void OnSetItem(wxCommandEvent &event);
-	void OnSelected(wxListEvent &event);
+	void OnSelect(wxCommandEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);
-	void OnGraph(wxCommandEvent &event);
-	void OnLightOn(wxCommandEvent &event);
-	void OnLightOff(wxCommandEvent &event);
-		
-	wxString OnGetItemText(long item, long column) const;
-	//virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
+	void ShowManagement(CSymbol *v);
+	void ShowGraph(CSymbol *v);
+	
+	virtual wxString OnGetItem(size_t item) const;
+	virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;
 	//virtual wxColour GetSelectedTextColour(const wxColour& colFg) const;
 	//virtual void OnDrawItem(wxDC &dc, wxRect & 	rect,size_t n)	const;
 	//virtual wxString OnGetItemMarkup(size_t  n) const; 
@@ -32,8 +28,8 @@ class CSymbolList: public wxListCtrl
 
 public:
 	
-	CSymbolList(wxWindow *Parent, int style);
-	~CSymbolList();
+	CSymbolListHtml(wxWindow *Parent);
+	~CSymbolListHtml();
 		
 	void SetList(wxArrayPtrVoid *ptr);
 	void ClearList();
@@ -48,15 +44,12 @@ public:
 
 	enum
 	{
-		ID_LIST = 1500,
+		ID_LIST,
 		ID_PROPERTIES,
+		ID_DELETE_FROM_QUEUE,
+		ID_DELETE_FROM_INSTALLED,
 		ID_SET_ITEM,
-		ID_GRAPH,
-		ID_MANAGEMENT,
-		ID_LIGHT_ON,
-		ID_LIGHT_OFF,
-		ID_AUTO,
-	
+		ID_HTML,
 	};
 
 };

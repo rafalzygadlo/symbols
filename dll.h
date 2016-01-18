@@ -226,7 +226,7 @@ public:
 	int GetDisplaySignal();
 	void OnTick();
 	void OnTickExit();
-	void SetSelectedPtr(CSymbol *v);
+	void SetSelectedPtr(CSymbol *v, bool send);
 	void RenderInfo(CSymbol *ptr);
 
 	virtual void Run(void *Params);
