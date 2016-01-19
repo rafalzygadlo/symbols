@@ -26,6 +26,7 @@ class CSBMS :public CDriver
 	CNaviArray <SOnOff> m_OnList;
 	CNaviArray <nvPoint3f> m_PosBuffer;
 	CNaviArray <CAlarm*> m_AlarmList;
+	CNaviArray <CCommand*> m_CommandList;
 	
 	CSBMSPanel *m_SBMSPanel;
 	CGraphDialog *m_GraphDialog;
@@ -175,8 +176,11 @@ public:
 	//GET
 	int GetIdSBMS();
 	int GetSBMSID();
-	wxString GetText();
-	wxString GetFullText();
+	wxString GetDriverHtml();
+	wxString GetDriverFullHtml();
+	wxString GetAlarmHtml();
+	wxMenu *GetMenu();
+
 	int GetBaseStationId();
 	//pozycja referencyjna
 	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();

@@ -121,7 +121,8 @@ public:
 	int GetId();
 	wxString GetName();
 	wxString GetNumber();
-	wxString GetText();
+	wxString GetHtml();
+	wxString GetFullHtml();
 	int GetMonitoring();
 	int GetDriverCount();
 	bool GetExists();
@@ -129,6 +130,7 @@ public:
 	void RemoveDriver(CDriver *ptr);
 	void ShowGraph();
 	void LightOn();
+	void LightOff();
 	
 };
 

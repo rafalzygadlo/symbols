@@ -32,7 +32,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 	wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
-	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_INFO));
+	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
 	
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);

@@ -147,6 +147,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void SendSelectSignal();
 	void SendSynchroSignal();
 	void SetDisplaySignal(int type);
+	void SetDriver();
 		
 	void RenderSymbols();
 	void RenderSelected();
@@ -226,7 +227,7 @@ public:
 	int GetDisplaySignal();
 	void OnTick();
 	void OnTickExit();
-	void SetSelectedPtr(CSymbol *v, bool send);
+	void SetSelectedPtr(CSymbol *v);
 	void RenderInfo(CSymbol *ptr);
 
 	virtual void Run(void *Params);

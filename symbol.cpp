@@ -165,13 +165,37 @@ void CSymbol::Render()
 
 }
 
-wxString CSymbol::GetText()
+wxString CSymbol::GetHtml()
 {
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 	str << wxString::Format(_("<tr><td><font size=3>%s(%s)</font></td></tr>"),GetName(),GetNumber());
 	str.Append(_("</table>"));
 
+	return str;
+}
+
+wxString CSymbol::GetFullHtml()
+{
+	wxString str;
+	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%%>"));
+	
+#ifdef WEBVIEW
+	char *b64 = NULL;
+	if(GetPictureAsBase64(db,ptr->GetId(),b64))
+	{
+		str.Append(wxString::Format(_("<tr><td><center><img src=\"data:image/png;base64,%s\"></center></td></tr>"),b64));
+		free(b64);
+	}
+#endif	
+
+	str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(GetMonitoring())));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetName()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetNumber()));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(GetRLat(),DEFAULT_DEGREE_FORMAT)));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(GetRLon(),DEFAULT_DEGREE_FORMAT)));
+	
+	str.Append(_("</table>"));
 	return str;
 }
 
@@ -211,7 +235,11 @@ void CSymbol::RemoveDriver(CDriver *ptr)
 
 void CSymbol::ShowGraph()
 {
-
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		Driver->ShowGraph();
+	}
 }
 
 void CSymbol::LightOn()
@@ -219,7 +247,16 @@ void CSymbol::LightOn()
 	for(int i = 0; i < GetDriverCount(); i++)
 	{
 		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_LIGHT_ON,Driver->GetId(),Driver->GetMMSI,Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
+		_SetCommand(COMMAND_LIGHT_ON,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
+	}
+}
+
+void CSymbol::LightOff()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_LIGHT_OFF,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
 	}
 }
 
@@ -377,7 +414,10 @@ int CSymbol::GetDriverCount()
 
 CDriver *CSymbol::GetDriver(int v)
 {
-	return m_DriverList.Get(v);
+	if(m_DriverList.Length() < 0)
+		return NULL;
+	else
+		return m_DriverList.Get(v);
 }
 
 bool CSymbol::GetExists()

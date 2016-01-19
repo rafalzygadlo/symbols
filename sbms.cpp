@@ -35,7 +35,6 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_BusyOn = false;
 	m_Alarm = false;
 	m_AlarmOn = false;
-	m_IdSBMS = 0;
 	m_SBMSID = 0;
 	m_IdBaseStation = 0;
 	m_RenderRestricted = false;
@@ -203,7 +202,7 @@ bool CSBMS::CheckAlarm()
 	//if(m_AlarmTick <= CHECK_ALARM_TICK)
 		//return false;
 	m_AlarmOn = !m_AlarmOn;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id"),TABLE_SBMS_ALARM,TABLE_ALARM, m_IdSBMS,ALARM_ACTIVE,TABLE_ALARM);
+	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id ORDER BY set_local_utc_time DESC"),TABLE_SBMS_ALARM,TABLE_ALARM,GetId(),ALARM_ACTIVE,TABLE_ALARM);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -234,9 +233,11 @@ bool CSBMS::CheckAlarm()
 				
 		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
 		Alarm->SetIdAlarm(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
-		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
+		Alarm->SetAlarmOnDate(Convert(row[FI_SBMS_ALARM_SET_LOCAL_UTC_TIME]));
 		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
+		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
 		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));
+		
 		
 		if(add)
 		{
@@ -274,7 +275,7 @@ bool  CSBMS::CheckCommand()
 		return false;
 	
 	wxString sql;
-	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_COMMAND,m_IdSBMS,COMMAND_STATUS_NEW,COMMAND_ACTIVE);
+	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_COMMAND,GetId(),COMMAND_STATUS_NEW,COMMAND_ACTIVE);
 	
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -282,8 +283,7 @@ bool  CSBMS::CheckCommand()
     char **row = NULL;
 	if(result == NULL)
 		return false;
-	
-	
+		
 	while(row = (char**)db_fetch_row(result))
 		sscanf(row[0],"%d",&m_CommandCount);
 		
@@ -308,7 +308,7 @@ bool CSBMS::SetPositions()
 	}
 	
 	m_PosBuffer.Clear();
-	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 10"),TABLE_SBMS_STANDARD_REPORT,VALID_LON_LAT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT lon,lat FROM `%s` WHERE valid_lon_lat='%d' AND id_sbms='%d' ORDER BY local_utc_time_stamp DESC LIMIT 10"),TABLE_SBMS_STANDARD_REPORT,VALID_LON_LAT,GetId());
 		
 	my_query(m_DB,sql);
 
@@ -348,7 +348,7 @@ bool CSBMS::CheckReport()
 	if(m_ReportTick <= CHECK_REPORT_TICK)
 		return false;
 			
-	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_SBMS_STANDARD_REPORT,m_IdSBMS);
+	wxString sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d'"),TABLE_SBMS_STANDARD_REPORT,GetId());
 
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -468,9 +468,7 @@ void CSBMS::RenderLightOn()
 #endif
 void CSBMS::RenderAlarm()
 {
-	if(m_NoSBMS)
-		return; 
-	
+		
 	if(!m_Alarm)
 		return;
 		
@@ -1013,11 +1011,6 @@ void CSBMS::SetNewAlarmCount(int v)
 }
 
 //GET
-int CSBMS::GetIdSBMS()
-{
-	return m_IdSBMS;
-}
-
 int CSBMS::GetSBMSID()
 {
 	return m_SBMSID;
@@ -1092,6 +1085,7 @@ int CSBMS::GetAlarmCount()
 {
 	return m_AlarmList.Length();
 }
+
 CAlarm *CSBMS::GetAlarm(int v)
 {
 	return m_AlarmList.Get(v);
@@ -1208,11 +1202,27 @@ void CSBMS::SetAlarm(bool v)
 	m_Alarm = v;
 }
 
-wxString CSBMS::GetText()
+wxMenu *CSBMS::GetMenu()
+{
+	CMenu *Menu = new CMenu();
+	Menu->SetTitle(GetName());
+	Menu->Append(ID_GRAPH,GetMsg(MSG_GRAPH));
+	Menu->AppendSeparator();
+	Menu->Append(ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	Menu->Append(ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	Menu->Append(ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
+	Menu->Append(ID_TIME,GetMsg(MSG_GET_TIME));
+	Menu->Append(ID_UPTIME,GetMsg(MSG_GET_UPTIME));
+	Menu->Append(ID_RESET,GetMsg(MSG_RESET));
+	
+	return Menu;
+}
+
+wxString CSBMS::GetDriverHtml()
 {
 
 	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
+	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetName());
 	str << wxString::Format(_("<tr><td><font size=3>%4.2f V</font></td></tr>"), GetInputVolt());
 	str.Append(_("</table>"));
@@ -1221,7 +1231,30 @@ wxString CSBMS::GetText()
 
 }
 
-wxString CSBMS::GetFullText()
+wxString CSBMS::GetAlarmHtml()
+{
+	wxString str;
+	
+	if(m_AlarmList.Length() > 0)
+	{
+		str.Append(_("<hr>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s(%d)</b></font><br><br>"), GetMsg(MSG_ALARM),m_AlarmList.Length()));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+		
+		for(int i = 0; i < m_AlarmList.Length();i++)
+		{
+			CAlarm *Alarm = m_AlarmList.Get(i);
+			nvRGBA c = GetAlarmTypeColor(Alarm->GetType());
+			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=2>%s</font></td><td><font size=2>%s</font></td></tr>"),c.R,c.G,c.B,Alarm->GetName(),Alarm->GetAlarmOnDate());
+		}
+	
+		str.Append(_("</table>"));
+	}
+	
+	return str;
+}
+
+wxString CSBMS::GetDriverFullHtml()
 {
 	void *db = DBConnect();
 
@@ -1242,7 +1275,8 @@ wxString CSBMS::GetFullText()
 	if(row)
 	{
 		str.Append(_("<hr>"));
-		str.Append(_("<table border=0 cellpadding=2 cellspacing=2 width=100%>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_DRIVER)));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
 		
 		int phone = atoi(row[FI_SBMS_PHONE]);
@@ -1292,3 +1326,4 @@ wxString CSBMS::GetFullText()
 	return str;
 
 }
+

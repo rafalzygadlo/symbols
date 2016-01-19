@@ -16,6 +16,8 @@ BEGIN_EVENT_TABLE(CSymbolList,wxListCtrl)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 	EVT_CONTEXT_MENU(OnContextMenu)
 	EVT_MENU(ID_GRAPH,OnGraph)
+	EVT_MENU(ID_LIGHT_ON,OnLightOn)
+	EVT_MENU(ID_LIGHT_OFF,OnLightOff)
 END_EVENT_TABLE()
 
 CSymbolList *HtmlListPtr = NULL;
@@ -47,7 +49,7 @@ void CSymbolList::OnSelected(wxListEvent &event)
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 	m_Symbol = (CSymbol*)m_List->Item(m_SelectedItem);
-	m_MapPlugin->SetSelectedPtr(m_Symbol,false);
+	m_MapPlugin->SetSelectedPtr(m_Symbol);
 }
 
 void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
@@ -56,17 +58,23 @@ void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 	long n_item = -1;
 	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 		
-	CMenu *Menu = new CMenu();
-		
 	m_Symbol = (CSymbol*)m_List->Item(m_SelectedItem);
-
+		
+	CMenu *Menu = new CMenu();
+	
 	for(int i = 0; i < m_Symbol->GetDriverCount(); i++)
 	{
-		wxMenuItem *item = Menu->Append(ID_GRAPH,GetMsg(MSG_GRAPH));
+		CDriver *Driver = m_Symbol->GetDriver(i);
+		Menu->SetTitle(Driver->GetName());
+		Menu->Append(ID_GRAPH,GetMsg(MSG_GRAPH));
+		Menu->AppendSeparator();
 		Menu->Append(ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
 		Menu->Append(ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
 		Menu->Append(ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
-	}	
+		Menu->Append(ID_TIME,GetMsg(MSG_GET_TIME));
+		Menu->Append(ID_UPTIME,GetMsg(MSG_GET_UPTIME));
+		Menu->Append(ID_RESET,GetMsg(MSG_RESET));
+	}
 		
 	PopupMenu(Menu);
 	delete Menu;
@@ -80,6 +88,11 @@ void CSymbolList::OnGraph(wxCommandEvent &event)
 void CSymbolList::OnLightOn(wxCommandEvent &event)
 {
 	m_Symbol->LightOn();
+}
+
+void CSymbolList::OnLightOff(wxCommandEvent &event)
+{
+	m_Symbol->LightOff();
 }
 
 void CSymbolList::ClearList()
@@ -127,8 +140,10 @@ void CSymbolList::_SetSelection(CSymbol *ptr)
 		
 			if(Symbol == ptr)
 			{
-				SetItemState(i,wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+
+				SetItemState(i,wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 				EnsureVisible(i);
+				Refresh();
 				//this->SetSelection(i);
 			}
 		}
@@ -144,12 +159,20 @@ wxString CSymbolList::OnGetItemText(long item, long column) const
 
 	wxString str;
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
-	str = ptr->GetText();
 	
+	wxString input_volt;
+	
+	for(int i = 0; i < ptr->GetDriverCount();i++)
+	{
+		CDriver *Driver = ptr->GetDriver(i);
+		input_volt << wxString::Format(_("%4.2f"),Driver->GetInputVolt());
+	}
+		
 	switch(column)
 	{
-		case 0: return ptr->GetName();	
-		case 1: return ptr->GetNumber();
+		case 0: return input_volt;
+		case 1: return ptr->GetName();	
+		case 2: return ptr->GetNumber();
 	}
 
 	return wxEmptyString;

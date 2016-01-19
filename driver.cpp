@@ -32,6 +32,10 @@ void CDriver::SetInputVolt(float v)		{}
 void CDriver::SetIdSymbol(int v)		{}
 void CDriver::SetFont(nvFastFont *v)	{}
 void CDriver::SetDB(void *v)			{}
+void CDriver::SetSBMSID(int v)			{}
+void CDriver::SetAge(int v)				{}
+void CDriver::SetAge(wxString v)		{}
+void CDriver::SetTimestamp(int v)		{}
 
 //pozycja ustalana ze względu na opcje
 void CDriver::SetLon(double v)			{}
@@ -58,9 +62,13 @@ wxString CDriver::GetName()				{ return m_Name; }
 
 //virtual
 int CDriver::GetBaseStationId()			{ return 0; }
-wxString  CDriver::GetText()			{ return wxEmptyString; }
-wxString CDriver::GetFullText()			{ return wxEmptyString; }
+wxString  CDriver::GetDriverHtml()		{ return wxEmptyString; }
+wxString CDriver::GetDriverFullHtml()	{ return wxEmptyString; }
+wxString CDriver::GetAlarmHtml()		{ return wxEmptyString;	}
 float CDriver::GetInputVolt()			{ return 0; }
+int CDriver::GetMMSI()					{ return 0; }
+int CDriver::GetSBMSID()				{ return 0; }
+wxMenu *CDriver::GetMenu()				{ return NULL; }
 
 
 double CDriver::GetGpsLon()				{ return 0; }

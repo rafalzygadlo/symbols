@@ -36,6 +36,8 @@ class CSymbolPanel : public wxPanel
 	void SetGui();
 	void PictureInfo(void *db,CSymbol *ptr);
 	void SymbolInfo(void *db,CSymbol *ptr);
+	void LightInfo(void *db,CSymbol *ptr);
+	void DriverInfo(CSymbol *ptr);
 
 public:
 

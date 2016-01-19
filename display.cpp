@@ -206,8 +206,9 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	
 	m_SymbolList = new  CSymbolList(Panel, wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL);
 	wxListItem item;
-	item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_SymbolList->InsertColumn(0,item);
-	item.SetWidth(100); item.SetText(GetMsg(MSG_NUMBER)); m_SymbolList->InsertColumn(1,item);
+	item.SetWidth(80);	item.SetText(GetMsg(MSG_INPUT_VOLT));	m_SymbolList->InsertColumn(0,item);
+	item.SetWidth(280); item.SetText(GetMsg(MSG_NAME));			m_SymbolList->InsertColumn(1,item);
+	item.SetWidth(100); item.SetText(GetMsg(MSG_NUMBER));		m_SymbolList->InsertColumn(2,item);
 	Sizer->Add(m_SymbolList,1,wxALL|wxEXPAND,0);
 	
 

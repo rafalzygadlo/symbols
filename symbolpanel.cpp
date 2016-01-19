@@ -69,13 +69,9 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 	m_HtmlString.Append("<html><body style='font-family:Tahoma'>");
 	PictureInfo(db,ptr);
 	SymbolInfo(db,ptr);
+	DriverInfo(ptr);
+	LightInfo(db,ptr);
 	m_HtmlString.Append("</html>");
-	
-	for(int i = 0; i < ptr->GetDriverCount();i++)
-	{
-		m_HtmlString.Append(ptr->GetDriver(i)->GetFullText());
-		//this->GetSizer()->Add(Panel,0,wxALL|wxEXPAND,5);
-	}
 
 #ifdef WEBVIEW	
 	m_Html->SetPage(m_HtmlString,wxEmptyString);
@@ -90,30 +86,55 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 
 void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 {
-	
-	wxString str;
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%%>"));
-	
-#ifdef WEBVIEW
-	char *b64 = NULL;
-	if(GetPictureAsBase64(db,ptr->GetId(),b64))
-	{
-		str.Append(wxString::Format(_("<tr><td><center><img src=\"data:image/png;base64,%s\"></center></td></tr>"),b64));
-		free(b64);
-	}
-#endif	
-
-	str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
-	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetName()));
-	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),ptr->GetNumber()));
-	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLatitude(ptr->GetRLat(),DEFAULT_DEGREE_FORMAT)));
-	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),FormatLongitude(ptr->GetRLon(),DEFAULT_DEGREE_FORMAT)));
-	
-	str.Append(_("</table>"));
-	m_HtmlString.Append(str);
-	
+	m_HtmlString.Append(ptr->GetFullHtml());
 }
 
+void CSymbolPanel::DriverInfo(CSymbol *ptr) 
+{
+	for(int i = 0; i < ptr->GetDriverCount();i++)
+	{	
+		m_HtmlString.Append(ptr->GetDriver(i)->GetAlarmHtml());
+		m_HtmlString.Append(ptr->GetDriver(i)->GetDriverFullHtml());
+	}
+}
+
+void CSymbolPanel::LightInfo(void *db,CSymbol *ptr)
+{
+	wxString sql = wxString::Format(_("SELECT color,coverage,sector_from,sector_to,code,iala,name FROM `%s`,`%s` WHERE id_symbol ='%d' AND id_characteristic=id"), TABLE_SYMBOL_LIGHT,TABLE_CHARACTERISTIC, ptr->GetId());
+	my_query(db,sql);
+			
+	void *result = db_result(db);	
+	char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	//row = (char**)db_fetch_row(result);
+	while(row = (char**)db_fetch_row(result))
+	{
+		wxString str;
+		wxColor BgColor(atoi(row[0]));
+		
+		str.Append(_("<hr>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_LIGHT) ));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%%><tr><td><font size=4><b><br></b></font></td></tr></table></td></tr>"));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[1]), GetDistanceName(nvDistanceMeter)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[2])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[3])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[4])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[5])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[6])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
+		str.Append(_("</table>"));
+		
+		m_HtmlString.Append(str);
+
+	}
+
+	db_free_result(result);
+
+}
 
 void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 {

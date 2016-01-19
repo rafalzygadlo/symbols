@@ -51,11 +51,6 @@ public:
 		ID_LIST = 1500,
 		ID_PROPERTIES,
 		ID_SET_ITEM,
-		ID_GRAPH,
-		ID_MANAGEMENT,
-		ID_LIGHT_ON,
-		ID_LIGHT_OFF,
-		ID_AUTO,
 	
 	};
 

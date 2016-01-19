@@ -51,6 +51,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Alarm = NULL;
 	m_Command = NULL;
 	m_SelectedOn = false;
+	m_ConfirmCounter = 0;
 
 	m_On = false;
 	m_AnimMarkerSize = 5.0f;
@@ -659,8 +660,11 @@ void CMapPlugin::SetSql(wxString &sql)
 void CMapPlugin::ReadSymbol(void *db, wxString sql)
 {	
 		
-	if(GetSortChanged() || GetFilterChanged())
+	if(GetSortChanged() || GetFilterChanged() || GetSearchTextChanged())
 	{
+		SetSearchTextChanged(false);
+		SetSortChanged(false);
+		SetFilterChanged(false);
 		ClearSymbols();
 	}
 
@@ -713,7 +717,9 @@ void CMapPlugin::ReadDrivers()
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
 		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
+		{
 			ReadSBMS(m_DBTicker, ptr);
+		}
 		
 		SetPosition(ptr);
 	}
@@ -787,17 +793,17 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		Driver->SetExists(true);
-		//SBMS->SetSBMSID(atoi(row[FI_VIEW_SYMBOL_SBMSID]));
+		Driver->SetSBMSID(atoi(row[FI_SBMS_SBMSID]));
+		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		//SBMS->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
-
-
+		
 		//if(SBMS->GetCharging() == CHARGING_TRUE)			SBMS->SetChargingAsString(GetMsg(MSG_CHARGING));
 		//if(SBMS->GetCharging() == CHARGING_FALSE)			SBMS->SetChargingAsString(GetMsg(MSG_DISCHARGING));
 		//if(SBMS->GetCharging() == CHARGING_NOT_AVAILABLE)	SBMS->SetChargingAsString(GetMsg(MSG_NA));
 
-		int timestamp = atoi(row[FI_VIEW_SYMBOL_LOCAL_UTC_TIME_STAMP]);
-		//SBMS->SetTimestamp(timestamp);
-		//SBMS->SetAge(GetLocalTimestamp() - timestamp);
+		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
+		Driver->SetTimestamp(timestamp);
+		Driver->SetAge(GetLocalTimestamp() - timestamp);
 				
 		int seconds = GetLocalTimestamp() - timestamp;
 		if(seconds < 0)
@@ -808,7 +814,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		div_t _divs = div(seconds,60);
 		div_t _divm = div(minutes,60);
 				
-		//SBMS->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
+		Driver->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
 
 		//gps
 		sscanf(row[FI_SBMS_LON],"%lf",&lon);
@@ -1291,6 +1297,25 @@ CNaviBroker *CMapPlugin::GetBroker()
 	return m_Broker;
 }
 
+void CMapPlugin::SetDriver()
+{
+	wxString sql = _("SELECT id,id_sbms FROM symbol");
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		sql  = wxString::Format(_("UPDATE sbms SET id_symbol='%s' WHERE id='%s'"),row[0],row[1]);
+		my_query(m_DB,sql);
+	}
+	
+	db_free_result(result);
+}
+
 void CMapPlugin::Run(void *Params)
 {
 	ReadDBConfig();
@@ -1301,18 +1326,7 @@ void CMapPlugin::Run(void *Params)
 		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
-	/*
-	CAlter Alter;
-	
-	int version = GetDBVersion(m_DB);
-	if(version < Alter.GetSQLVersion())
-	{
-		CAlterDialog *AlterDialog = new CAlterDialog();
-		AlterDialog->ShowModal();
-		delete AlterDialog;
-		return;
-	}
-	*/
+	//SetDriver();
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
@@ -1435,11 +1449,10 @@ CSymbol *CMapPlugin::SetSelection(double x, double y)
 	return NULL;
 }
 
-void CMapPlugin::SetSelectedPtr(CSymbol *v,bool send)
+void CMapPlugin::SetSelectedPtr(CSymbol *v)
 {
 	SelectedPtr = v;
-	if(send)
-		SendSelectSignal();
+	SendSelectSignal();
 }
 
 void CMapPlugin::ShowFrameWindow(bool show)

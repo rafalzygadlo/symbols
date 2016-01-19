@@ -132,7 +132,7 @@ void CListCtrl::SetSelection(CSymbol *ptr)
 				//Refresh();
 				
 			}else{
-				SetItemState(i,0, wxLIST_STATE_SELECTED| wxLIST_STATE_SELECTED);
+				SetItemState(i,0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 
 			}
 		}

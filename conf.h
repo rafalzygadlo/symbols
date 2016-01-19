@@ -962,6 +962,19 @@
 #define SYMBOL_OFF					3
 #define SYMBOL_WINTER				4
 
+//global enum for events
+enum
+{
+		ID_GRAPH = 1800,
+		ID_MANAGEMENT,
+		ID_LIGHT_ON,
+		ID_LIGHT_OFF,
+		ID_AUTO,
+		ID_RESET,
+		ID_TIME,
+		ID_UPTIME,
+
+};
 
 typedef struct Column
 {

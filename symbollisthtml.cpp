@@ -169,7 +169,7 @@ void CSymbolListHtml::OnSelect(wxCommandEvent &event)
 	
 	int a = GetSelection();
 	CSymbol *ptr = (CSymbol*)m_List->Item(GetSelection());
-	m_MapPlugin->SetSelectedPtr(ptr,true);
+	m_MapPlugin->SetSelectedPtr(ptr);
 
 }
 
@@ -187,12 +187,12 @@ wxString CSymbolListHtml::OnGetItem(size_t item) const
 
 	wxString str;
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
-	str = ptr->GetText();
+	str = ptr->GetHtml();
 	
 	for(int i = 0; i < ptr->GetDriverCount();i++)
 	{
 		CDriver *Driver = ptr->GetDriver(i);
-		str << Driver->GetText();
+		str << Driver->GetDriverHtml();
 	}
 
 	/*	

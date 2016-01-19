@@ -41,7 +41,8 @@ public:
 	virtual void SetInputVolt(float v);
 	virtual void SetIdSymbol(int v);
 	virtual void SetFont(nvFastFont *v);
-	
+	virtual void SetSBMSID(int v);
+
 	virtual void SetLon(double v);
 	virtual void SetLat(double v);
 	virtual void SetLonMap(double v);
@@ -58,17 +59,25 @@ public:
 	virtual void SetRLatMap(double v);
 		
 	virtual void SetDB(void *v);
+	virtual void SetAge(int v);
+	virtual void SetAge(wxString v);
+	virtual void SetTimestamp(int v);
 
 	//GET
 	virtual int GetBaseStationId();
-	virtual wxString GetText();
-	virtual wxString GetFullText();
+	virtual wxString GetDriverHtml();
+	virtual wxString GetDriverFullHtml();
+	virtual wxString GetAlarmHtml();
+	
 	virtual float GetInputVolt();
 	virtual double GetGpsLon();
 	virtual double GetGpsLat();
 	virtual double GetGpsLonMap();
 	virtual double GetGpsLatMap();
-	
+	virtual int GetMMSI();
+	virtual int GetSBMSID();
+	virtual wxMenu *GetMenu();
+		
 	
 	virtual void ShowGraph();
 	virtual void ShowManagement();
