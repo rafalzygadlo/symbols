@@ -22,14 +22,14 @@ void ExportAlarm(void *db,wxString from, wxString to)
 	
 	int counter = 0;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE set_local_utc_time BETWEEN '%s' AND '%s' ORDER BY symbol_name"),VIEW_ALARM,from,to);
-	my_query(db,sql);
+//	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE set_local_utc_time BETWEEN '%s' AND '%s' ORDER BY symbol_name"),VIEW_ALARM,from,to);
+//	my_query(db,sql);
 	
 	void *result = db_result(db);
 
 	while(row = (char**)db_fetch_row(result))
 	{
-		fprintf(f,"%s,%s,%s,%s,%s,%s\r\n",row[FI_VIEW_ALARM_SYMBOL_NAME],row[FI_VIEW_ALARM_ALARM_NAME],row[FI_VIEW_ALARM_USER_FIRST_NAME],row[FI_VIEW_ALARM_USER_LAST_NAME],row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME],row[FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME]);
+//		fprintf(f,"%s,%s,%s,%s,%s,%s\r\n",row[FI_VIEW_ALARM_SYMBOL_NAME],row[FI_VIEW_ALARM_ALARM_NAME],row[FI_VIEW_ALARM_USER_FIRST_NAME],row[FI_VIEW_ALARM_USER_LAST_NAME],row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME],row[FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME]);
 		counter++;
 	}
 

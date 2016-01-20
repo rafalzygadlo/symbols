@@ -106,8 +106,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadGroup(void *db);
 	void ReadDrivers();
 	void ReadSBMS(void *db,CSymbol *ptr);
-	void ReadAlarm(void *db);
-	void ReadCommand(void *db);
+	void ReadSBMSAlarm(void *db);
+	void ReadSBMSCommand(void *db);
 	//void ReadGroup(void *db);
 	void SetSql(wxString &sql);
 	void ReadSymbolValues(void *db);

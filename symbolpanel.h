@@ -38,6 +38,7 @@ class CSymbolPanel : public wxPanel
 	void SymbolInfo(void *db,CSymbol *ptr);
 	void LightInfo(void *db,CSymbol *ptr);
 	void DriverInfo(CSymbol *ptr);
+	void OnContextMenu(wxContextMenuEvent &event);
 
 public:
 
@@ -47,7 +48,8 @@ public:
 	void SetPage(CSymbol *ptr);
 	void SetPageEmpty();
 	void SetSBMS();
-			
+	
+	DECLARE_EVENT_TABLE();
 	
 };
 

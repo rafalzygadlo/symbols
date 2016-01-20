@@ -1113,7 +1113,7 @@ void DeactivateAlarm(int id)
 
 void DeactivateCommand(int id)
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_COMMAND,COMMAND_NOT_ACTIVE,id);
+	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_COMMAND,COMMAND_NOT_ACTIVE,id);
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);
@@ -1122,7 +1122,7 @@ void DeactivateCommand(int id)
 //COMMANDS . . . . . . . . . . . . . . . .
 int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
 {
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d',local_utc_time=utc_timestamp()"),TABLE_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d',local_utc_time=utc_timestamp()"),TABLE_SBMS_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
 	void *db = DBConnect();
 	my_query(db,sql);
 	int last_id = db_last_insert_id(db);
@@ -1132,7 +1132,7 @@ int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_com
 
 void UpdateDBCommand(int id,wxString cmd)
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET command='%s' WHERE id='%d'"),TABLE_COMMAND,cmd.wc_str(),id);
+	wxString sql = wxString::Format(_("UPDATE `%s` SET command='%s' WHERE id='%d'"),TABLE_SBMS_COMMAND,cmd.wc_str(),id);
 	void *db = DBConnect();
 	my_query(db,sql);
 	int last_id = db_last_insert_id(db);

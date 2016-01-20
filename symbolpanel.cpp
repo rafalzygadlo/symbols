@@ -15,6 +15,10 @@
 #include "options.h"
 
 
+BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
+	EVT_CONTEXT_MENU(OnContextMenu)
+END_EVENT_TABLE();
+
 CSymbolPanel::CSymbolPanel(wxWindow *parent)
 :wxPanel(parent,wxID_ANY)
 {
@@ -59,7 +63,6 @@ void CSymbolPanel::SetPageEmpty()
 
 void CSymbolPanel::SetPage(CSymbol *ptr)
 {
-	
 	m_Symbol = ptr;
 	void *db = DBConnect();
 	if(db == NULL)
@@ -78,8 +81,7 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 #else
 	m_Html->SetPage(m_HtmlString);
 #endif
-
-
+	
 	DBClose(db);
 
 }
@@ -92,7 +94,7 @@ void CSymbolPanel::SymbolInfo(void *db,CSymbol *ptr)
 void CSymbolPanel::DriverInfo(CSymbol *ptr) 
 {
 	for(int i = 0; i < ptr->GetDriverCount();i++)
-	{	
+	{
 		m_HtmlString.Append(ptr->GetDriver(i)->GetAlarmHtml());
 		m_HtmlString.Append(ptr->GetDriver(i)->GetDriverFullHtml());
 	}
@@ -164,6 +166,20 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	this->Layout();
 	db_free_result(result);
 #endif
+}
+
+void CSymbolPanel::OnContextMenu(wxContextMenuEvent &event)
+{
+	if(m_Symbol == NULL)
+		return;
+	
+	for(int i = 0; i < m_Symbol->GetDriverCount();i++)
+	{
+		CDriver *Driver = m_Symbol->GetDriver(i);
+		CMenu *Menu = Driver->GetMenu();
+		PopupMenu(Menu);
+		delete Menu;
+	}
 }
 
 #ifdef WEBVIEW

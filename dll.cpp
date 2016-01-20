@@ -623,7 +623,7 @@ void CMapPlugin::SetSql(wxString &sql)
 	//if(id_alarm >= 0)
 		//sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND `%s`.id_sbms > 0 AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm,VIEW_SYMBOL);
 
-	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_VIEW_SYMBOL_NAME,GetSearchText(),FN_VIEW_SYMBOL_NUMBER,GetSearchText());
+	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
 	m_OldSearchText = GetSearchText();
 	
 	int in_monitoring = GetMonitoring();
@@ -789,7 +789,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		Driver->SetLightOn(!atoi(row[FI_VIEW_SYMBOL_AUTO]));
+		Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		Driver->SetExists(true);
@@ -837,10 +837,14 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		
 }
 
-void CMapPlugin::ReadAlarm(void *db)
+void CMapPlugin::ReadSBMSAlarm(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT * FROM `%s` WHERE active='%d' ORDER BY set_local_utc_time"),VIEW_ALARM,ALARM_ACTIVE);
-
+	//wxString sql = wxString::Format(_("SELECT "TABLE_SYMBOL".name,"TABLE_SBMS". FROM `"TABLE_SBMS_ALARM"`,`"TABLE_SBMS"`,`"TABLE_SYMBOL"` WHERE "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id AND id_symbol="TABLE_SYMBOL".id AND active=%d"));
+	wxString sql = wxString::Format(_("SELECT "TABLE_SBMS_ALARM".id,"TABLE_SYMBOL".name,"TABLE_ALARM".name,"TABLE_SBMS_ALARM".confirmed,"TABLE_SBMS_ALARM".id_sbms FROM `"TABLE_SYMBOL"` "
+	"INNER JOIN `"TABLE_SBMS"` ON `"TABLE_SBMS"`.id_symbol=`"TABLE_SYMBOL"`.id "
+	"INNER JOIN "TABLE_SBMS_ALARM" ON "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id "
+	"LEFT JOIN "TABLE_ALARM" ON "TABLE_SBMS_ALARM".id_alarm="TABLE_ALARM".id WHERE active='%d'"),ALARM_ACTIVE);
+	
 	my_query(db,sql);
 	void *result = db_result(db);
 		
@@ -853,7 +857,7 @@ void CMapPlugin::ReadAlarm(void *db)
 	{
 		CAlarm *ptr = NULL;
 		int id;
-		sscanf(row[FI_VIEW_ALARM_ID],"%d",&id);
+		sscanf(row[0],"%d",&id);
 		ptr = ExistsAlarm(id);
 		bool add = false;
 		
@@ -864,18 +868,18 @@ void CMapPlugin::ReadAlarm(void *db)
 		}
 		
 		ptr->SetId(id);
-		ptr->SetSymbolName(Convert(row[FI_VIEW_ALARM_SYMBOL_NAME]));
-		ptr->SetName(Convert(row[FI_VIEW_ALARM_ALARM_NAME]));
-		ptr->SetConfirmed(atoi(row[FI_VIEW_ALARM_CONFIRMED]));
-		ptr->SetType(atoi(row[FI_VIEW_ALARM_ALARM_TYPE]));
-		ptr->SetAlarmOnDate(Convert(row[FI_VIEW_ALARM_SET_LOCAL_UTC_TIME]));
+		ptr->SetSymbolName(Convert(row[1]));
+		ptr->SetName(Convert(row[2]));
+		ptr->SetConfirmed(atoi(row[3]));
+		//ptr->SetType(atoi(row[FI_SBMS_ALARM_ TYPE]));
+		//ptr->SetAlarmOnDate(Convert(row[FI_SBMS_ALARM_SET_LOCAL_UTC_TIME]));
 		ptr->SetExists(true);
 				
-		if(atoi(row[FI_VIEW_ALARM_ID_USER]) > 0)
-		{
-			ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
-			ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_LAST_NAME]));
-		}
+		//if(atoi(row[FI_SBMS_ALARM_ID_USER]) > 0)
+		//{
+			//ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
+			//ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_LAST_NAME]));
+		//}
 
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
@@ -885,11 +889,11 @@ void CMapPlugin::ReadAlarm(void *db)
 	}
 }
 
-void CMapPlugin::ReadCommand(void *db)
+void CMapPlugin::ReadSBMSCommand(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status,first_name,last_name,local_utc_time FROM `%s`"),TABLE_COMMAND,TABLE_COMMAND);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_COMMAND);
+	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status,first_name,last_name,local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_SBMS_COMMAND,TABLE_SYMBOL);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
 	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d' ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_ACTIVE);
 
 	my_query(db,sql);
@@ -2005,7 +2009,7 @@ void CMapPlugin::OnTick()
 	RemoveDriver();					//usuń
 
 	SetExistsAlarm();
-	//ReadAlarm(m_DBTicker);		//przeczytaj alarmy
+	ReadSBMSAlarm(m_DBTicker);		//przeczytaj alarmy
 	RemoveAlarm();					//usuń
 	
 	SetExistsCommand();				//przeczytaj komendy

@@ -176,10 +176,10 @@ public:
 	//GET
 	int GetIdSBMS();
 	int GetSBMSID();
-	wxString GetDriverHtml();
-	wxString GetDriverFullHtml();
-	wxString GetAlarmHtml();
-	wxMenu *GetMenu();
+	wxString GetDriverHtml() override;
+	wxString GetDriverFullHtml() override;
+	wxString GetAlarmHtml() override;
+	CMenu *GetMenu() override;
 
 	int GetBaseStationId();
 	//pozycja referencyjna

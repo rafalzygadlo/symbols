@@ -478,8 +478,8 @@
 #define TABLE_USER_GROUP_RIGHT		"user_group_right"
 #define TABLE_USER_TO_GROUP			"user_to_group"
 #define TABLE_BASE_STATION			"base_station"
-#define TABLE_COMMAND				"command"
-#define TABLE_COMMAND_ANSWER		"command_answer"
+#define TABLE_SBMS_COMMAND			"sbms_command"
+#define TABLE_SBMS_COMMAND_ANSWER	"sbms_command_answer"
 
 #define TABLE_SBMS					"sbms"
 #define TABLE_SBMS_STANDARD_REPORT	"sbms_standard_report"
@@ -494,9 +494,9 @@
 #define TABLE_VALUE					"value"
 
 //WIDOKI
-#define VIEW_SYMBOL		"_view_symbol"
-#define VIEW_ALARM		"_view_alarm"
-#define VIEW_LIGHT		"_view_light"
+//#define VIEW_SYMBOL		"_view_symbol"
+//#define VIEW_ALARM		"_view_alarm"
+//#define VIEW_LIGHT		"_view_light"
 
 // pola tabeli SYMBOL
 // tabela staw,pław, itp
@@ -817,6 +817,7 @@
 #define	FN_ALARM_NAME		"name"
 #define FN_ALARM_TYPE		"type"
 
+/*
 // pola widoku _VIEW_SYMBOL
 #define FI_VIEW_SYMBOL_ID					0
 #define FI_VIEW_SYMBOL_ID_SBMS				1
@@ -846,6 +847,7 @@
 #define FN_VIEW_SYMBOL_NUMBER				"number"
 
 // pola widoku _VIEW_ALARM
+
 #define FI_VIEW_ALARM_ID						0
 #define FI_VIEW_ALARM_ID_SYMBOL					1
 #define FI_VIEW_ALARM_ID_SBMS					2
@@ -876,6 +878,7 @@
 #define FN_VIEW_ALARM_ALARM_NAME			"alarm_name"
 #define FN_VIEW_ALARM_SET_LOCAL_UTC_TIME	"set_local_utc_time"
 #define FN_VIEW_ALARM_UNSET_LOCAL_UTC_TIME	"unset_local_utc_time"
+*/
 
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera

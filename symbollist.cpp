@@ -60,24 +60,14 @@ void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 		
 	m_Symbol = (CSymbol*)m_List->Item(m_SelectedItem);
 		
-	CMenu *Menu = new CMenu();
-	
 	for(int i = 0; i < m_Symbol->GetDriverCount(); i++)
 	{
 		CDriver *Driver = m_Symbol->GetDriver(i);
-		Menu->SetTitle(Driver->GetName());
-		Menu->Append(ID_GRAPH,GetMsg(MSG_GRAPH));
-		Menu->AppendSeparator();
-		Menu->Append(ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
-		Menu->Append(ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
-		Menu->Append(ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
-		Menu->Append(ID_TIME,GetMsg(MSG_GET_TIME));
-		Menu->Append(ID_UPTIME,GetMsg(MSG_GET_UPTIME));
-		Menu->Append(ID_RESET,GetMsg(MSG_RESET));
+		CMenu *Menu = Driver->GetMenu();
+		PopupMenu(Menu);
+		delete Menu;
 	}
 		
-	PopupMenu(Menu);
-	delete Menu;
 }
 
 void CSymbolList::OnGraph(wxCommandEvent &event)

@@ -275,7 +275,7 @@ bool  CSBMS::CheckCommand()
 		return false;
 	
 	wxString sql;
-	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_COMMAND,GetId(),COMMAND_STATUS_NEW,COMMAND_ACTIVE);
+	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_SBMS_COMMAND,GetId(),COMMAND_STATUS_NEW,COMMAND_ACTIVE);
 	
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -1202,7 +1202,7 @@ void CSBMS::SetAlarm(bool v)
 	m_Alarm = v;
 }
 
-wxMenu *CSBMS::GetMenu()
+CMenu *CSBMS::GetMenu()
 {
 	CMenu *Menu = new CMenu();
 	Menu->SetTitle(GetName());
@@ -1214,7 +1214,7 @@ wxMenu *CSBMS::GetMenu()
 	Menu->Append(ID_TIME,GetMsg(MSG_GET_TIME));
 	Menu->Append(ID_UPTIME,GetMsg(MSG_GET_UPTIME));
 	Menu->Append(ID_RESET,GetMsg(MSG_RESET));
-	
+		
 	return Menu;
 }
 
@@ -1277,8 +1277,9 @@ wxString CSBMS::GetDriverFullHtml()
 		str.Append(_("<hr>"));
 		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_DRIVER)));
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME]).wc_str()));
-		
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetLightOnAsString(GetLightOn())));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME])));
+						
 		int phone = atoi(row[FI_SBMS_PHONE]);
 		if(phone)
 			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),phone));
@@ -1304,17 +1305,16 @@ wxString CSBMS::GetDriverFullHtml()
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
-
-/*		
+		
 		bool alarm = false;
-		for(int i = 0; i < ptr->GetAlarmCount();i++)
+		for(int i = 0; i < GetAlarmCount();i++)
 		{
-			if (ptr->GetAlarm(i)->GetIdAlarm() == ALARM_COMMUNICATION_TIMEOUT)
+			if (GetAlarm(i)->GetIdAlarm() == ALARM_COMMUNICATION_TIMEOUT)
 				alarm = true;
 		}
 		
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SYNC),GetOnOff(!alarm)));
-*/
+
 		str.Append(_("</table>"));
 		
 	}

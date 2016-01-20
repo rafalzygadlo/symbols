@@ -1,6 +1,7 @@
 #ifndef __DRIVER_H
 #define __DRIVER_H
 #include <wx/wx.h>
+#include "control.h"
 #include "nvfastfont.h"
 
 #define DRIVER_TYPE_SBMS	0
@@ -76,7 +77,7 @@ public:
 	virtual double GetGpsLatMap();
 	virtual int GetMMSI();
 	virtual int GetSBMSID();
-	virtual wxMenu *GetMenu();
+	virtual CMenu *GetMenu();
 		
 	
 	virtual void ShowGraph();
