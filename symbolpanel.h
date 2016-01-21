@@ -16,8 +16,10 @@
 #include "symbol.h"
 #include "graphdialog.h"
 #include "icon.h"
+#include "actionpanel.h"
 
 class CGraphDialog;
+class CActionPanel;
 class CSymbolPanel : public wxPanel
 {
 #ifndef WEBVIEW

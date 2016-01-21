@@ -77,7 +77,6 @@ public:
 	virtual double GetGpsLatMap();
 	virtual int GetMMSI();
 	virtual int GetSBMSID();
-	virtual CMenu *GetMenu();
 		
 	
 	virtual void ShowGraph();

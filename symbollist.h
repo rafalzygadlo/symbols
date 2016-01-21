@@ -19,9 +19,6 @@ class CSymbolList: public wxListCtrl
 	void OnSetItem(wxCommandEvent &event);
 	void OnSelected(wxListEvent &event);
 	void OnContextMenu(wxContextMenuEvent &event);
-	void OnGraph(wxCommandEvent &event);
-	void OnLightOn(wxCommandEvent &event);
-	void OnLightOff(wxCommandEvent &event);
 		
 	wxString OnGetItemText(long item, long column) const;
 	//virtual void OnDrawSeparator(wxDC& dc, wxRect& rect, size_t n) const;

@@ -260,6 +260,43 @@ void CSymbol::LightOff()
 	}
 }
 
+void CSymbol::AutoManagement()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_AUTO_MANAGEMENT,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
+	}
+}
+
+void CSymbol::Reset()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_RESET,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
+	}
+}
+
+void CSymbol::GetTime()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_GET_TIME,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
+	}
+}
+
+void CSymbol::GetUptime()
+{
+	for(int i = 0; i < GetDriverCount(); i++)
+	{
+		CDriver *Driver = GetDriver(i);
+		_SetCommand(COMMAND_GET_UPTIME,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
+	}
+}
+
+
 //SET
 void CSymbol::SetColor(int id)
 {

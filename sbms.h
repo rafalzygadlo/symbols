@@ -179,8 +179,7 @@ public:
 	wxString GetDriverHtml() override;
 	wxString GetDriverFullHtml() override;
 	wxString GetAlarmHtml() override;
-	CMenu *GetMenu() override;
-
+	
 	int GetBaseStationId();
 	//pozycja referencyjna
 	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();

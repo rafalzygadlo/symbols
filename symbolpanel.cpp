@@ -16,7 +16,7 @@
 
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
-	EVT_CONTEXT_MENU(OnContextMenu)
+	//EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE();
 
 CSymbolPanel::CSymbolPanel(wxWindow *parent)
@@ -38,18 +38,20 @@ CSymbolPanel::~CSymbolPanel()
 void CSymbolPanel::SetGui()
 {
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-		
 #ifndef WEBVIEW
 	m_PicturePanel = new CPicturePanel(NULL,this);
 	Sizer->Add(m_PicturePanel,0,wxALL|wxEXPAND,0);
 #endif
-			
+		
+	
 #ifndef WEBVIEW
 	m_Html = new wxHtmlWindow(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 #else
 	m_Html = wxWebView::New(this,ID_HTML,wxEmptyString);
 	
 #endif
+
+
 	m_Html->SetMinSize(wxSize(200,300));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 		
@@ -57,9 +59,6 @@ void CSymbolPanel::SetGui()
 			
 }
 
-void CSymbolPanel::SetPageEmpty()
-{
-}
 
 void CSymbolPanel::SetPage(CSymbol *ptr)
 {
@@ -67,7 +66,7 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 	void *db = DBConnect();
 	if(db == NULL)
 		return;
-		
+
 	m_HtmlString.Clear();
 	m_HtmlString.Append("<html><body style='font-family:Tahoma'>");
 	PictureInfo(db,ptr);
@@ -166,20 +165,6 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 	this->Layout();
 	db_free_result(result);
 #endif
-}
-
-void CSymbolPanel::OnContextMenu(wxContextMenuEvent &event)
-{
-	if(m_Symbol == NULL)
-		return;
-	
-	for(int i = 0; i < m_Symbol->GetDriverCount();i++)
-	{
-		CDriver *Driver = m_Symbol->GetDriver(i);
-		CMenu *Menu = Driver->GetMenu();
-		PopupMenu(Menu);
-		delete Menu;
-	}
 }
 
 #ifdef WEBVIEW

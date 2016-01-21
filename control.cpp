@@ -8,6 +8,19 @@ BEGIN_EVENT_TABLE(CMenu,wxMenu)
 	EVT_MENU(wxID_ANY,OnMenu)
 END_EVENT_TABLE();
 
+//Panel
+CPanel::CPanel(wxWindow *parent)
+	:wxPanel(parent)
+{
+	//Hide();
+	SetBackgroundColour(*wxRED);
+}
+
+bool CPanel::CheckRight(int id_module,int id_action)
+{
+	return true;
+}
+
 //Menu
 CMenu::CMenu()
 {
@@ -28,15 +41,15 @@ bool CMenu::CheckRight(int id_module,int id_action,wxMenuItem *item)
 	return true;
 }
 
-//Panel
-CPanel::CPanel(wxWindow *parent)
-	:wxPanel(parent)
+//Button
+CButton::CButton(wxWindow *parent, int id, wxString name)
+	:wxButton(parent,id,name)
 {
-	//Hide();
-	SetBackgroundColour(*wxRED);
+	//Disable();
+	SetMinSize(wxSize(-1,64));
 }
 
-bool CPanel::CheckRight(int id_module,int id_action)
+bool CButton::CheckRight(int id_module,int id_action)
 {
 	return true;
 }

@@ -68,8 +68,6 @@ wxString CDriver::GetAlarmHtml()		{ return wxEmptyString;	}
 float CDriver::GetInputVolt()			{ return 0; }
 int CDriver::GetMMSI()					{ return 0; }
 int CDriver::GetSBMSID()				{ return 0; }
-CMenu *CDriver::GetMenu()				{ return NULL; }
-
 
 double CDriver::GetGpsLon()				{ return 0; }
 double CDriver::GetGpsLat()				{ return 0; }

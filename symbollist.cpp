@@ -15,9 +15,6 @@ BEGIN_EVENT_TABLE(CSymbolList,wxListCtrl)
 	EVT_LIST_ITEM_SELECTED(ID_LIST,OnSelected)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
 	EVT_CONTEXT_MENU(OnContextMenu)
-	EVT_MENU(ID_GRAPH,OnGraph)
-	EVT_MENU(ID_LIGHT_ON,OnLightOn)
-	EVT_MENU(ID_LIGHT_OFF,OnLightOff)
 END_EVENT_TABLE()
 
 CSymbolList *HtmlListPtr = NULL;
@@ -54,35 +51,8 @@ void CSymbolList::OnSelected(wxListEvent &event)
 
 void CSymbolList::OnContextMenu(wxContextMenuEvent &event)
 {
-	
-	long n_item = -1;
-	m_SelectedItem = GetNextItem(n_item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-		
-	m_Symbol = (CSymbol*)m_List->Item(m_SelectedItem);
-		
-	for(int i = 0; i < m_Symbol->GetDriverCount(); i++)
-	{
-		CDriver *Driver = m_Symbol->GetDriver(i);
-		CMenu *Menu = Driver->GetMenu();
-		PopupMenu(Menu);
-		delete Menu;
-	}
-		
-}
 
-void CSymbolList::OnGraph(wxCommandEvent &event)
-{
-	m_Symbol->ShowGraph();
-}
-
-void CSymbolList::OnLightOn(wxCommandEvent &event)
-{
-	m_Symbol->LightOn();
-}
-
-void CSymbolList::OnLightOff(wxCommandEvent &event)
-{
-	m_Symbol->LightOff();
+		
 }
 
 void CSymbolList::ClearList()
@@ -130,7 +100,6 @@ void CSymbolList::_SetSelection(CSymbol *ptr)
 		
 			if(Symbol == ptr)
 			{
-
 				SetItemState(i,wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 				EnsureVisible(i);
 				Refresh();
@@ -161,7 +130,7 @@ wxString CSymbolList::OnGetItemText(long item, long column) const
 	switch(column)
 	{
 		case 0: return input_volt;
-		case 1: return ptr->GetName();	
+		case 1: return ptr->GetName();
 		case 2: return ptr->GetNumber();
 	}
 

@@ -2013,7 +2013,7 @@ void CMapPlugin::OnTick()
 	RemoveAlarm();					//usuń
 	
 	SetExistsCommand();				//przeczytaj komendy
-	//ReadCommand(m_DBTicker);		//usuń
+	ReadSBMSCommand(m_DBTicker);	//usuń
 	RemoveCommand();
 
 	SetExistsGroup();

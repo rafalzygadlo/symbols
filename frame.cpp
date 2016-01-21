@@ -33,6 +33,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
+	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
 	
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
@@ -94,14 +95,15 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
+	m_ActionPanel = new CActionPanel(Panel);
+	Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
 	return Panel;
 }
-
 
 void CMyFrame::OnMouseMove(wxMouseEvent& event)
 {
     wxPoint pt = event.GetPosition();
-    if (event.Dragging() && event.LeftIsDown())
+	if (event.Dragging() && event.LeftIsDown())
     {
         wxPoint pos = ClientToScreen(pt);
 		Move(wxPoint(pos.x , pos.y ));
@@ -232,6 +234,7 @@ void CMyFrame::ShowWindow(bool show)
 
 
 		m_SymbolPanel->SetPage(SelectedPtr);
+		m_ActionPanel->SetSymbol(SelectedPtr);
 		this->SetPosition(pt);
 		
 				

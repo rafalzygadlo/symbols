@@ -12,6 +12,14 @@ public:
 	bool CheckRight(int id_module, int id_action);		
 };
 
+class CButton: public wxButton
+{
+	
+public:
+	CButton(wxWindow *parent, int id, wxString name);
+	bool CheckRight(int id_module,int id_action);
+};
+
 class CMenu: public wxMenu
 {
 	void OnMenu(wxCommandEvent &event);

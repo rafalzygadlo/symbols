@@ -17,6 +17,7 @@
 #include "alarmlist.h"
 #include "grouplist.h"
 #include "commandlist.h"
+#include "actionpanel.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -47,6 +48,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CAlarmList *m_AlarmList;
 	CCommandList *m_CommandList;
 	CGroupList *m_GroupList;
+	CActionPanel *m_ActionPanel;
 
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
@@ -81,6 +83,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *GetPage4(wxWindow *parent);
 	wxPanel *GetPage5(wxWindow *parent);
 	wxPanel *GetPage6(wxWindow *parent);
+	wxPanel *GetPage7(wxWindow *parent);
 
 	void ShowInfoPanel(bool show);
 	void OnMenuRange(wxCommandEvent &event);

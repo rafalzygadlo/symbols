@@ -71,10 +71,10 @@
 
 #define DEFAULT_EXPORT_DIRECTORY "export"
 
-#define PAGE_ALL		1
-#define PAGE_ALARM		2
-#define PAGE_COMMAND	3
-#define PAGE_GROUP		4
+#define PAGE_ALL		2
+#define PAGE_ALARM		3
+#define PAGE_COMMAND	4
+#define PAGE_GROUP		5
 
 #define COLUMN_NUMBER	0
 #define COLUMN_NAME		1
@@ -964,20 +964,6 @@
 #define SYMBOL_REMOVED				2
 #define SYMBOL_OFF					3
 #define SYMBOL_WINTER				4
-
-//global enum for events
-enum
-{
-		ID_GRAPH = 1800,
-		ID_MANAGEMENT,
-		ID_LIGHT_ON,
-		ID_LIGHT_OFF,
-		ID_AUTO,
-		ID_RESET,
-		ID_TIME,
-		ID_UPTIME,
-
-};
 
 typedef struct Column
 {

@@ -3,12 +3,10 @@
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
-#include <wx/fileconf.h>
-#include <wx/mstream.h>
 #include "conf.h"
 #include "dll.h"
-#include <vector>
 #include "symbolpanel.h"
+#include "actionpanel.h"
 
 class CMyFrame: public wxDialog
 {
@@ -19,6 +17,7 @@ class CMyFrame: public wxDialog
 	wxPanel *m_Panel;
 		
 	CSymbolPanel *m_SymbolPanel;
+	CActionPanel *m_ActionPanel;
 	wxNotebook *m_Notebook;
 	
 	wxButton *ButtonClose;

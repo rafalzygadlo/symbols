@@ -47,7 +47,6 @@ CDisplayPlugin::CDisplayPlugin(wxWindow* parent, wxWindowID id, const wxPoint& p
 CDisplayPlugin::~CDisplayPlugin()
 {
 	WriteConfig();
-	delete m_SymbolPanel;
 }
 
 CNaviBroker *CDisplayPlugin::GetBroker()
@@ -289,7 +288,18 @@ wxPanel *CDisplayPlugin::GetPage6(wxWindow *parent)
 	return Panel;
 }
 
+wxPanel *CDisplayPlugin::GetPage7(wxWindow *parent)
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
+	
+	m_ActionPanel = new CActionPanel(Panel);
+	Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
 
+	Panel->SetSizer(Sizer);
+
+	return Panel;
+}
 
 void CDisplayPlugin::ShowControls()
 {
@@ -299,6 +309,7 @@ void CDisplayPlugin::ShowControls()
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
+	m_Notebook->AddPage(GetPage7(m_Notebook),GetMsg(MSG_MANAGEMENT));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
 	m_Notebook->AddPage(GetPage4(m_Notebook),GetMsg(MSG_ALARM));
 	m_Notebook->AddPage(GetPage5(m_Notebook),GetMsg(MSG_COMMAND));
@@ -460,6 +471,9 @@ void CDisplayPlugin::SignalInsert()
 
 	m_GroupList->SetList(ptr);
 
+	
+
+
 	wxCommandEvent evt(EVT_SET_NIGHT_TIME,ID_NIGHT_TIME);
 	wxPostEvent(this,evt);
 }	
@@ -478,11 +492,11 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;	
-	m_SymbolList->_SetSelection(m_Selected);	
+	m_SymbolList->_SetSelection(m_Selected);
+	m_ActionPanel->SetSymbol(m_Selected);
 	
 	if(m_Selected)
 	{	
-
 		m_SymbolPanel->SetPage(m_Selected);
 
 	//	if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
