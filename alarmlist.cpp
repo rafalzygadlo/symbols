@@ -150,18 +150,12 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	CAlarm *ptr = (CAlarm*)m_List->Item(item);
 	wxString str;
 		
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	int fsize = 0;
-	if(ptr->GetConfirmed())
-		fsize = 3;
-	else
-		fsize = 6;
-	
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetSymbolName());
+	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
 	nvRGBA c = GetAlarmTypeColor(ptr->GetType());
-	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetAlarmOnDate());
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s %s</b></font></td></tr>"),fsize,ptr->GetUserFirstName(),ptr->GetUserLastName());
+	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAlarmOnDate());
+	str << wxString::Format(_("<tr><td><font size=3>%s %s</font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
 		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));

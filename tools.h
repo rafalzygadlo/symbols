@@ -6,6 +6,9 @@
 #include "geometryconfig.h"
 
 
+void FreeMutex();
+void InitMutex();
+wxMutex *GetMutex();
 const wchar_t *GetMsg(int id);
 void SetLangId(int id);
 wxString ConvertDegree(double degree,int type);

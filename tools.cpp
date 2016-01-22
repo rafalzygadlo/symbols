@@ -285,6 +285,24 @@ int nvCommandMSG[COMMAND_COUNT] =
 		
 };
 
+void FreeMutex()
+{
+	if(mutex)
+		delete mutex;
+	mutex = NULL;
+}
+
+void InitMutex()
+{
+	mutex = new wxMutex();
+}
+
+wxMutex *GetMutex()
+{
+	return mutex;
+}
+
+
 const char *GetCommand(int id)
 {
     return nvCommand[id];

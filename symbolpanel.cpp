@@ -120,13 +120,13 @@ void CSymbolPanel::LightInfo(void *db,CSymbol *ptr)
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%%><tr><td><font size=4><b><br></b></font></td></tr></table></td></tr>"));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[1]), GetDistanceName(nvDistanceMeter)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[1]), GetDistanceName(nvDistanceNauticMile)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[2])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[3])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[4])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[5])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[6])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [Sekundy]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY)));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>0.00 [%s]</b></font></td></tr>"),GetMsg(MSG_LIGHT_RIPLE_DELAY),GetMsg(MSG_SECONDS)));
 		str.Append(_("</table>"));
 		
 		m_HtmlString.Append(str);

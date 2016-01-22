@@ -291,7 +291,7 @@ CDialogPanel::CDialogPanel(void *db,int control_type, wxWindow *parent,bool slav
 	Read();
 
 	m_Ticker = new wxTimer(this,ID_TICK_SEARCH);	//frequency
-	m_Ticker->Start(1000);
+	m_Ticker->Start(1);
 	
 
 	ReadConfig();

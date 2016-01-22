@@ -27,6 +27,7 @@ CSymbol::CSymbol(CNaviBroker *broker)
 	m_Monitoring = SYMBOL_NOT_IN_MONITORING;
 	m_DB = NULL;
 	m_NameFont = NULL;
+	m_Render = false;
 }
 
 CSymbol::~CSymbol()

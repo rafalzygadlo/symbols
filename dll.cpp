@@ -150,6 +150,8 @@ CMapPlugin::~CMapPlugin()
 	DBClose(m_DB);
 	DBClose(m_DBTicker);
 
+	FreeMutex();
+
 }
 
 void CMapPlugin::ReadConfig()
@@ -839,11 +841,14 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 
 void CMapPlugin::ReadSBMSAlarm(void *db)
 {	
-	//wxString sql = wxString::Format(_("SELECT "TABLE_SYMBOL".name,"TABLE_SBMS". FROM `"TABLE_SBMS_ALARM"`,`"TABLE_SBMS"`,`"TABLE_SYMBOL"` WHERE "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id AND id_symbol="TABLE_SYMBOL".id AND active=%d"));
-	wxString sql = wxString::Format(_("SELECT "TABLE_SBMS_ALARM".id,"TABLE_SYMBOL".name,"TABLE_ALARM".name,"TABLE_SBMS_ALARM".confirmed,"TABLE_SBMS_ALARM".id_sbms FROM `"TABLE_SYMBOL"` "
-	"INNER JOIN `"TABLE_SBMS"` ON `"TABLE_SBMS"`.id_symbol=`"TABLE_SYMBOL"`.id "
-	"INNER JOIN "TABLE_SBMS_ALARM" ON "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id "
-	"LEFT JOIN "TABLE_ALARM" ON "TABLE_SBMS_ALARM".id_alarm="TABLE_ALARM".id WHERE active='%d'"),ALARM_ACTIVE);
+	
+	wxString sql = wxString::Format(_("SELECT "TABLE_SBMS_ALARM".id, "TABLE_SYMBOL".name, "TABLE_ALARM".name, "TABLE_SBMS_ALARM".confirmed, "TABLE_ALARM".type, "TABLE_SBMS_ALARM".set_local_utc_time , "
+	""TABLE_SBMS_ALARM".id_user, "TABLE_USER".first_name, "TABLE_USER".last_name FROM `"TABLE_SYMBOL"`"
+	"LEFT JOIN `"TABLE_SBMS"` ON `"TABLE_SBMS"`.id_symbol=`"TABLE_SYMBOL"`.id "
+	"LEFT JOIN "TABLE_SBMS_ALARM" ON "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id "
+	"LEFT JOIN "TABLE_ALARM" ON "TABLE_SBMS_ALARM".id_alarm="TABLE_ALARM".id "
+	"LEFT JOIN "TABLE_USER" ON "TABLE_SBMS_ALARM".id_user = "TABLE_USER".id "
+	"WHERE active='%d'"),ALARM_ACTIVE);
 	
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -871,15 +876,15 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 		ptr->SetSymbolName(Convert(row[1]));
 		ptr->SetName(Convert(row[2]));
 		ptr->SetConfirmed(atoi(row[3]));
-		//ptr->SetType(atoi(row[FI_SBMS_ALARM_ TYPE]));
-		//ptr->SetAlarmOnDate(Convert(row[FI_SBMS_ALARM_SET_LOCAL_UTC_TIME]));
+		ptr->SetType(atoi(row[4]));
+		ptr->SetAlarmOnDate(Convert(row[5]));
 		ptr->SetExists(true);
 				
-		//if(atoi(row[FI_SBMS_ALARM_ID_USER]) > 0)
-		//{
-			//ptr->SetUserFirstName(Convert(row[FI_VIEW_ALARM_USER_FIRST_NAME]));
-			//ptr->SetUserLastName(Convert(row[FI_VIEW_ALARM_USER_LAST_NAME]));
-		//}
+		if(atoi(row[6]) > 0)
+		{
+			ptr->SetUserFirstName(Convert(row[7]));
+			ptr->SetUserLastName(Convert(row[8]));
+		}
 
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
@@ -1035,6 +1040,7 @@ void CMapPlugin::ReadDriverValues(void *db)
 //SYMBOL
 void CMapPlugin::ClearSymbols()
 {
+	GetMutex()->Lock();
 	for(size_t i = 0; i < m_SymbolList->size(); i++)
 	{
 		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
@@ -1042,6 +1048,8 @@ void CMapPlugin::ClearSymbols()
 	}
 	
 	m_SymbolList->Clear();
+
+	GetMutex()->Unlock();
 }
 
 void CMapPlugin::RemoveSymbol()
@@ -1322,6 +1330,7 @@ void CMapPlugin::SetDriver()
 
 void CMapPlugin::Run(void *Params)
 {
+	InitMutex();
 	ReadDBConfig();
 	m_DB = DBConnect();
 	if(m_DB == NULL)
@@ -1943,7 +1952,9 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::Render(void)
 {
-
+	fprintf(stderr,"Render start\n");
+	GetMutex()->Lock();
+		
 	m_NameFont->Clear();
 	
 	glEnable(GL_POINT_SMOOTH);
@@ -1966,7 +1977,8 @@ void CMapPlugin::Render(void)
 	}
 	
 	glDisable(GL_POINT_SMOOTH);
-		
+	GetMutex()->Unlock();
+	fprintf(stderr,"Render stop\n");
 }
 
 void CMapPlugin::SetMouseXY(int x, int y)

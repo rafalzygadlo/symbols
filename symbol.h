@@ -25,6 +25,7 @@ class CSymbol
 	CNaviArray <CDriver*> m_DriverList;
 	
 	bool m_Exists;
+	bool m_Render;
 	int m_Id;
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
@@ -98,7 +99,7 @@ public:
 	void SetFont(nvFastFont *ptr);
 	void SetExists(bool v);
 	void SetMonitoring(int v);
-			
+				
 	//GET
 	//pozycja referencyjna
 	double GetRLon();	
@@ -127,6 +128,7 @@ public:
 	int GetDriverCount();
 	bool GetExists();
 	CDriver *GetDriver(int v);
+		
 	void RemoveDriver(CDriver *ptr);
 	
 	//akcje
