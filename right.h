@@ -33,8 +33,7 @@
 #define ACTION_TIME				11	//"time"
 #define ACTION_LIGHT			12	//"light"
 #define ACTION_SEASON_CONTROL	13	//"season_control"
-#define ACTION_LIGHT_TIME		14
-#define ACTION_RIPLE_DELAY		15
+#define ACTION_LIGHT_TIME		14#define ACTION_RIPLE_DELAY		15
 
 
 class CRight

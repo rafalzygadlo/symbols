@@ -1,11 +1,11 @@
 #include <wx/wx.h>
 #include <wx/statline.h>
 #include "conf.h"
-#include "actionpanel.h"
+#include "sbmsactionpanel.h"
 #include "control.h"
 #include "tools.h"
 
-BEGIN_EVENT_TABLE(CActionPanel,wxPanel)
+BEGIN_EVENT_TABLE(CSBMSActionPanel,wxPanel)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
 	EVT_BUTTON(ID_LIGHT_ON,OnLightOn)
 	EVT_BUTTON(ID_LIGHT_OFF,OnLightOff)
@@ -15,13 +15,13 @@ BEGIN_EVENT_TABLE(CActionPanel,wxPanel)
 	EVT_BUTTON(ID_RESET,OnReset)
 END_EVENT_TABLE();
 
-CActionPanel::CActionPanel(wxWindow *parent)
+CSBMSActionPanel::CSBMSActionPanel(wxWindow *parent)
 :wxPanel(parent,wxID_ANY)
 {
 	SetGui();
 }
 
-void CActionPanel::SetGui()
+void CSBMSActionPanel::SetGui()
 {
 	wxFlexGridSizer *Sizer = new wxFlexGridSizer(3);
 	Sizer->AddGrowableCol(0,1);
@@ -56,7 +56,7 @@ void CActionPanel::SetGui()
 			
 }
 
-void CActionPanel::EnableControls(bool v)
+void CSBMSActionPanel::EnableControls(bool v)
 {
 	m_ButtonGraph->Enable(v);
 	m_ButtonOn->Enable(v);
@@ -67,7 +67,7 @@ void CActionPanel::EnableControls(bool v)
 	m_ButtonReset->Enable(v);
 }
 
-void CActionPanel::SetSymbol(CSymbol *ptr)
+void CSBMSActionPanel::SetSymbol(CSymbol *ptr)
 {
 	if(ptr)
 		EnableControls(true);
@@ -77,37 +77,37 @@ void CActionPanel::SetSymbol(CSymbol *ptr)
 	m_Symbol = ptr;
 }
 
-void CActionPanel::OnGraph(wxCommandEvent &event)
+void CSBMSActionPanel::OnGraph(wxCommandEvent &event)
 {
 	m_Symbol->ShowGraph();
 }
 
-void CActionPanel::OnLightOn(wxCommandEvent &event)
+void CSBMSActionPanel::OnLightOn(wxCommandEvent &event)
 {
 	m_Symbol->LightOn();
 }
 
-void CActionPanel::OnLightOff(wxCommandEvent &event)
+void CSBMSActionPanel::OnLightOff(wxCommandEvent &event)
 {
 	m_Symbol->LightOff();
 }
 
-void CActionPanel::OnAutoManagement(wxCommandEvent &event)
+void CSBMSActionPanel::OnAutoManagement(wxCommandEvent &event)
 {
 	m_Symbol->AutoManagement();
 }
 
-void CActionPanel::OnGetTime(wxCommandEvent &event)
+void CSBMSActionPanel::OnGetTime(wxCommandEvent &event)
 {
 	m_Symbol->GetTime();
 }
 
-void CActionPanel::OnGetUptime(wxCommandEvent &event)
+void CSBMSActionPanel::OnGetUptime(wxCommandEvent &event)
 {
 	m_Symbol->GetUptime();
 }
 
-void CActionPanel::OnReset(wxCommandEvent &event)
+void CSBMSActionPanel::OnReset(wxCommandEvent &event)
 {
 	m_Symbol->Reset();
 }

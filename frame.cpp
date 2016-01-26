@@ -23,7 +23,7 @@ END_EVENT_TABLE()
 //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 //FRAME
 CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
-:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,wxNO_BORDER| wxRESIZE_BORDER)
+:wxDialog(ParentPtr,wxID_ANY, GetMsg(MSG_MANAGER), wxDefaultPosition, wxDefaultSize,wxNO_BORDER | wxRESIZE_BORDER)
 {
 	m_SymbolPanel = NULL;
 	m_DLL = (CMapPlugin*)Parent;
@@ -33,7 +33,7 @@ CMyFrame::CMyFrame(void *Parent, wxWindow *ParentPtr)
 
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_SYMBOL));
-	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
+	//m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_MANAGEMENT));
 	
 	//Other
 	MainSizer->Add(m_Notebook,1,wxALL|wxEXPAND,0);
@@ -95,8 +95,8 @@ wxPanel *CMyFrame::GetPage2(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	Panel->SetSizer(Sizer);
-	m_ActionPanel = new CActionPanel(Panel);
-	Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
+	//m_ActionPanel = new CActionPanel(Panel);
+	//Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
 	return Panel;
 }
 
@@ -207,8 +207,8 @@ void CMyFrame::ShowWindow(bool show)
 		
 		float scale = m_DLL->GetBroker()->GetMapScale();
 		wxPoint pt;
-		pt.x = (int)((-vm[0] + SelectedPtr->GetRLonMap()) * scale) + ParentX;
-		pt.y = (int)((-vm[1] + SelectedPtr->GetRLatMap()) * scale) + ParentY;
+		pt.x = (int)((-vm[0] + SelectedPtr->GetLonMap()) * scale) + ParentX;
+		pt.y = (int)((-vm[1] + SelectedPtr->GetLatMap()) * scale) + ParentY;
 		
 		wxPoint p2,p4;
 		wxSize size = this->GetSize();
@@ -234,7 +234,7 @@ void CMyFrame::ShowWindow(bool show)
 
 
 		m_SymbolPanel->SetPage(SelectedPtr);
-		m_ActionPanel->SetSymbol(SelectedPtr);
+		//m_ActionPanel->SetSymbol(SelectedPtr);
 		this->SetPosition(pt);
 		
 				

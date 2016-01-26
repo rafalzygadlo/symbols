@@ -170,7 +170,8 @@ wxString CSymbol::GetHtml()
 {
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-	str << wxString::Format(_("<tr><td><font size=3>%s(%s)</font></td></tr>"),GetName(),GetNumber());
+	str << wxString::Format(_("<tr><td><font size=3><b>%s</b> (%s)</font></td></tr>"),GetName(),GetNumber());
+	str << wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(GetMonitoring()));
 	str.Append(_("</table>"));
 
 	return str;

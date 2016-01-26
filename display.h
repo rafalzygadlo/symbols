@@ -13,11 +13,10 @@
 #include "navimapioapi.h"
 #include "navidisplayapi.h"
 #include "symbolpanel.h"
-#include "symbollist.h"
+#include "symbollisthtml.h"
 #include "alarmlist.h"
 #include "grouplist.h"
 #include "commandlist.h"
-#include "actionpanel.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -29,11 +28,11 @@ extern "C" {
 #endif
 
 class CMapPlugin;
-class CSymbolList;
 class CAlarmList;
 class CSymbolPanel;
 class CCommandList;
 class CGroupList;
+class CSymbolListHtml;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
 {
 	void *m_DB;
@@ -44,12 +43,11 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	wxPanel *m_ControlPanel;
 	CSymbol *m_Selected;
 	CSymbol *m_OldSelected;
-	CSymbolList *m_SymbolList;
+	CSymbolListHtml *m_SymbolListHtml;
 	CAlarmList *m_AlarmList;
 	CCommandList *m_CommandList;
 	CGroupList *m_GroupList;
-	CActionPanel *m_ActionPanel;
-
+	
 	wxSearchCtrl *m_SearchText;
 	wxStaticText *m_NightTime;
 	int m_OldSymbolCount;

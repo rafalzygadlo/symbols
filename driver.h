@@ -13,6 +13,7 @@ class CDriver
 	int m_Type;
 	bool m_Exists;
 	wxString m_Name;
+	wxString m_SymbolName;
 
 public:
 
@@ -20,12 +21,14 @@ public:
 	virtual ~CDriver();
 	//SET
 	void SetName(wxString v);
+	void SetSymbolName(wxString v);
 	void SetType(int v);
 	void SetId(int v);
 	void SetExists(bool v);
 	
 	//GET
 	wxString GetName();
+	wxString GetSymbolName();
 	int GetType();
 	int GetId();
 	bool GetExists();
@@ -63,10 +66,12 @@ public:
 	virtual void SetAge(int v);
 	virtual void SetAge(wxString v);
 	virtual void SetTimestamp(int v);
+	virtual void SetAuto(bool v);
+	virtual void SetCharging(bool v);
 
 	//GET
 	virtual int GetBaseStationId();
-	virtual wxString GetDriverHtml();
+	virtual wxString GetDriverHtml(int v);
 	virtual wxString GetDriverFullHtml();
 	virtual wxString GetAlarmHtml();
 	
@@ -77,10 +82,10 @@ public:
 	virtual double GetGpsLatMap();
 	virtual int GetMMSI();
 	virtual int GetSBMSID();
+	virtual int GetCharging();
 		
-	
 	virtual void ShowGraph();
-	virtual void ShowManagement();
+	virtual void ShowAction();
 };
 
 #endif

@@ -195,24 +195,24 @@ wxPanel *CDisplayPlugin::GetPage1(wxWindow *parent)
 	wxButton *BFilter = new wxButton(Panel,ID_FILTER,GetMsg(MSG_FILTER_DOT),wxDefaultPosition,wxSize(20,-1));
 	hSizer->Add(BFilter,0,wxALL,0);
 	
-	//m_HtmlCtrl = new CHtmlCtrl(Panel,wxLC_REPORT |  wxLC_VIRTUAL);
-		
+	m_SymbolListHtml = new CSymbolListHtml(Panel);
+	Sizer->Add(m_SymbolListHtml,1,wxALL|wxEXPAND,0);
+
 	//item.SetWidth(80); item.SetText(GetMsg(MSG_NUMBER)); m_HtmlCtrl->InsertColumn(0,item);
 	//item.SetWidth(280); item.SetText(GetMsg(MSG_NAME)); m_HtmlCtrl->InsertColumn(1,item);
 	
 	//m_HtmlCtrl->SetColumnImage(GetSortColumnId(),GetSortOrder());
-	//Sizer->Add(m_HtmlCtrl,1,wxALL|wxEXPAND,0);
-	
+		
+	/*
 	m_SymbolList = new  CSymbolList(Panel, wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL);
 	wxListItem item;
 	item.SetWidth(80);	item.SetText(GetMsg(MSG_INPUT_VOLT));	m_SymbolList->InsertColumn(0,item);
 	item.SetWidth(280); item.SetText(GetMsg(MSG_NAME));			m_SymbolList->InsertColumn(1,item);
 	item.SetWidth(100); item.SetText(GetMsg(MSG_NUMBER));		m_SymbolList->InsertColumn(2,item);
 	Sizer->Add(m_SymbolList,1,wxALL|wxEXPAND,0);
-	
+	*/
 
 	//m_List->SetColumnImage(ais_get_sort_column(), ais_get_sort_order());
-
 	//m_Html = new wxHtmlWindow(Panel,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	//m_Page1Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
 	//m_Html->Hide();
@@ -293,8 +293,8 @@ wxPanel *CDisplayPlugin::GetPage7(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	
-	m_ActionPanel = new CActionPanel(Panel);
-	Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
+//	m_ActionPanel = new CActionPanel(Panel);
+//	Sizer->Add(m_ActionPanel,1,wxALL|wxEXPAND,0);
 
 	Panel->SetSizer(Sizer);
 
@@ -309,7 +309,6 @@ void CDisplayPlugin::ShowControls()
 	m_Notebook = new wxNotebook(this,wxID_ANY,wxDefaultPosition,wxDefaultSize,wxNB_NOPAGETHEME);
 	
 	m_Notebook->AddPage(GetPage2(m_Notebook),GetMsg(MSG_SYMBOL));
-	m_Notebook->AddPage(GetPage7(m_Notebook),GetMsg(MSG_MANAGEMENT));
 	m_Notebook->AddPage(GetPage1(m_Notebook),GetMsg(MSG_ALL));
 	m_Notebook->AddPage(GetPage4(m_Notebook),GetMsg(MSG_ALARM));
 	m_Notebook->AddPage(GetPage5(m_Notebook),GetMsg(MSG_COMMAND));
@@ -438,8 +437,8 @@ void CDisplayPlugin::SignalInsert()
 		m_Notebook->SetPageText(PAGE_ALL,wxString::Format(GetMsg(MSG_SYMBOLS),count));
 	m_OldSymbolCount = count;
 
-	m_SymbolList->SetList(ptr);
-	m_SymbolList->SetMapPlugin(m_MapPlugin);
+	m_SymbolListHtml->SetList(ptr);
+	m_SymbolListHtml->SetMapPlugin(m_MapPlugin);
 	
 	//ALARM LIST
 	ptr = m_MapPlugin->GetAlarmListPtr();
@@ -492,8 +491,8 @@ void CDisplayPlugin::SignalSelect()
 		return;
 
 	m_OldSelected = m_Selected;	
-	m_SymbolList->_SetSelection(m_Selected);
-	m_ActionPanel->SetSymbol(m_Selected);
+	m_SymbolListHtml->_SetSelection(m_Selected);
+//	m_ActionPanel->SetSymbol(m_Selected);
 	
 	if(m_Selected)
 	{	

@@ -6,7 +6,7 @@
 #include "conf.h"
 #include "dll.h"
 #include "symbolpanel.h"
-#include "actionpanel.h"
+#include "sbmsactionpanel.h"
 
 class CMyFrame: public wxDialog
 {
@@ -17,7 +17,6 @@ class CMyFrame: public wxDialog
 	wxPanel *m_Panel;
 		
 	CSymbolPanel *m_SymbolPanel;
-	CActionPanel *m_ActionPanel;
 	wxNotebook *m_Notebook;
 	
 	wxButton *ButtonClose;

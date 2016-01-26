@@ -758,7 +758,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
 		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
 		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
-//		case CONTROL_SBMS_ALARM:		m_Table = VIEW_ALARM;			break;
+		case CONTROL_SBMS_ALARM:		m_Table = TABLE_ALARM;			break;
 		case CONTROL_SYMBOL_ALARM:		m_Table = TABLE_SYMBOL;			break;
 		case CONTROL_SYMBOL_COMMAND:	m_Table = TABLE_SYMBOL;			break;
 		//case CONTROL_COMMAND:			m_Table = TABLE_COMMAND;		break;

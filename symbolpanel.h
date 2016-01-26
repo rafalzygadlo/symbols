@@ -16,12 +16,13 @@
 #include "symbol.h"
 #include "graphdialog.h"
 #include "icon.h"
-#include "actionpanel.h"
+#include "sbmsactionpanel.h"
 
 class CGraphDialog;
 class CActionPanel;
 class CSymbolPanel : public wxPanel
 {
+	wxButton *m_ButtonAction;
 #ifndef WEBVIEW
 	CPicturePanel *m_PicturePanel;
 #endif
@@ -40,7 +41,7 @@ class CSymbolPanel : public wxPanel
 	void SymbolInfo(void *db,CSymbol *ptr);
 	void LightInfo(void *db,CSymbol *ptr);
 	void DriverInfo(CSymbol *ptr);
-	void OnContextMenu(wxContextMenuEvent &event);
+	void OnButtonAction(wxCommandEvent &event);
 
 public:
 
@@ -51,6 +52,13 @@ public:
 	void SetPageEmpty();
 	void SetSBMS();
 	
+	enum
+	{
+		ID_ACTION	= 3421,
+		ID_GRAPH,
+	};
+
+
 	DECLARE_EVENT_TABLE();
 	
 };

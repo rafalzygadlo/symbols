@@ -709,16 +709,16 @@ void CSBMS::Render()
 
 }
 
-void CSBMS::ShowManagement()
+void CSBMS::ShowAction()
 {
-	CCommandDialog *CommandDialog = new CCommandDialog(m_DB,NULL,NULL);
-	CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+//	CSBMSActionDialog *SBMSActionDialog = new CCommandDialog(m_DB,NULL,NULL);
+//	CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
 
-		//ptr->SetForcedOff(v->GetForcedOff());
-		//ptr->SetAuto(v->GetAuto());
+	//ptr->SetForcedOff(v->GetForcedOff());
+	//ptr->SetAuto(v->GetAuto());
 			
-		CommandDialog->ShowModal();
-		delete CommandDialog;
+//	CommandDialog->ShowModal();
+//	delete CommandDialog;
 
 }
 
@@ -796,7 +796,7 @@ void CSBMS::ShowGraph()
 	Graph->Refresh();
 	db_free_result(result);
 	
-	m_GraphDialog->SetTitle(wxString::Format(_("%s"),GetName()));
+	m_GraphDialog->SetTitle(wxString::Format(_("%s"),GetSymbolName()));
 	m_GraphDialog->Layout();
 	m_GraphDialog->Show();
 
@@ -1000,11 +1000,6 @@ void CSBMS::SetCharging(int v)
 	m_Charging = v;
 }
 
-void CSBMS::SetChargingAsString(wxString v)
-{
-	m_ChargingString = v;
-}
-
 void CSBMS::SetNewAlarmCount(int v)
 {
 	m_NewAlarmCount = v;
@@ -1020,7 +1015,7 @@ int CSBMS::GetBaseStationId()
 {
 	return m_IdBaseStation;
 }
-
+/*
 double CSBMS::GetRLon()
 {		
 	return m_RLon;
@@ -1040,7 +1035,7 @@ double CSBMS::GetRLatMap()
 {	
 	return m_RLatMap;
 }
-
+*/
 double CSBMS::GetGpsLon()
 {	
 	return m_GpsLon;
@@ -1179,7 +1174,14 @@ wxString CSBMS::GetBaseStationName()
 
 wxString CSBMS::GetChargingAsString()
 {
-	return m_ChargingString;
+	switch(m_Charging)
+	{
+		case CHARGING_TRUE:			return  GetMsg(MSG_CHARGING);
+		case CHARGING_FALSE:		return	GetMsg(MSG_DISCHARGING);
+		case CHARGING_NOT_AVAILABLE:return  GetMsg(MSG_NA);
+	}
+	
+	return GetMsg(MSG_NA);
 }
 
 int CSBMS::GetNewAlarmCount()
@@ -1202,15 +1204,38 @@ void CSBMS::SetAlarm(bool v)
 	m_Alarm = v;
 }
 
-wxString CSBMS::GetDriverHtml()
+wxString CSBMS::GetDriverHtml(int v)
 {
 
 	wxString str;
+	//str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+	//str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetName());
+	//str << wxString::Format(_("<tr><td><font size=3>%4.2f V</font></td></tr>"), GetInputVolt());
+	//str.Append(_("</table>"));
+	
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetName());
-	str << wxString::Format(_("<tr><td><font size=3>%4.2f V</font></td></tr>"), GetInputVolt());
+	
+	for(int i = 0; i < GetAlarmCount();i++)
+	{
+		CAlarm *alarm = GetAlarm(i);
+		nvRGBA c = GetAlarmTypeColor(alarm->GetType());
+		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
+	}
+		
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td>"),GetLightOnAsString(GetLightOn())));
+	str.Append(_("<td rowspan=2 align=right width=80>"));
+	if(GetInputVolt() > GetUpperThreshold() || GetInputVolt() < GetLowerThreshold())
+		str.Append(wxString::Format(_("<a target=0 href='%d'><font size=4 color=red>%s</font></a>"),v,GetInputVoltAsString()));
+	else
+		str.Append(wxString::Format(_("<a target=0 href='%d'><font size=4>%s</font></a>"),v, GetInputVoltAsString()));
+		
+	str.Append(_("</td>"));
+	str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetAutoAsString(GetAuto())));
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetChargingAsString());
+	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetAgeAsString());
+	
+	str << wxString::Format(_("<tr><td> </td></tr>"),GetBaseStationName());
 	str.Append(_("</table>"));
-
 	return str;
 
 }

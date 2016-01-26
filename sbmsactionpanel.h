@@ -1,11 +1,11 @@
-#ifndef __ACTIONPANEL_H
-#define __ACTIONPANEL_H
+#ifndef __SBMSACTIONPANEL_H
+#define __SBMSACTIONPANEL_H
 
 #include "conf.h"
 #include "symbol.h"
 #include "control.h"
 
-class CActionPanel : public wxPanel
+class CSBMSActionPanel : public wxPanel
 {
 	CButton *m_ButtonGraph;
 	CButton *m_ButtonOn;
@@ -29,7 +29,7 @@ class CActionPanel : public wxPanel
 
 public:
 
-	CActionPanel(wxWindow *parent);
+	CSBMSActionPanel(wxWindow *parent);
 	void SetSymbol(CSymbol *ptr);
 	
 

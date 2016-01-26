@@ -72,7 +72,6 @@ class CSBMS :public CDriver
 	int m_ReportCount;
 	wxString m_BaseStationName;
 	wxString m_AgeString;
-	wxString m_ChargingString;
 	bool m_Exists;
 	int m_ForcedOff;
 	bool m_PhotoCellNightTime;
@@ -131,7 +130,7 @@ public:
 	void Read();
 	void OnTickExit();
 	void ShowGraph();
-	void ShowManagement();
+	void ShowAction();
 
 	//SET
 	//pozycja referencyjna
@@ -176,13 +175,12 @@ public:
 	//GET
 	int GetIdSBMS();
 	int GetSBMSID();
-	wxString GetDriverHtml() override;
+	wxString GetDriverHtml(int v) override;
 	wxString GetDriverFullHtml() override;
 	wxString GetAlarmHtml() override;
-	
-	int GetBaseStationId();
+	int GetBaseStationId() override;
 	//pozycja referencyjna
-	double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
+	//double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
 	//pozycja GPS
 	double GetGpsLon();	double GetGpsLat();	double GetGpsLonMap();	double GetGpsLatMap();
 	//referencyjna lub Gps

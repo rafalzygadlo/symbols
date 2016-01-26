@@ -16,7 +16,8 @@
 
 
 BEGIN_EVENT_TABLE(CSymbolPanel,wxPanel)
-	//EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_BUTTON(ID_ACTION,OnButtonAction)
+//	EVT_BUTTON(ID_GRAPH,OnButtonGraph)
 END_EVENT_TABLE();
 
 CSymbolPanel::CSymbolPanel(wxWindow *parent)
@@ -50,10 +51,12 @@ void CSymbolPanel::SetGui()
 	m_Html = wxWebView::New(this,ID_HTML,wxEmptyString);
 	
 #endif
-
-
 	m_Html->SetMinSize(wxSize(200,300));
 	Sizer->Add(m_Html,1,wxALL|wxEXPAND,0);
+		
+	m_ButtonAction = new wxButton(this,ID_ACTION,_("..."));
+	Sizer->Add(m_ButtonAction,0,wxALL|wxEXPAND,0);
+	m_ButtonAction->Show(false);
 		
 	SetSizer(Sizer);
 			
@@ -81,6 +84,10 @@ void CSymbolPanel::SetPage(CSymbol *ptr)
 	m_Html->SetPage(m_HtmlString);
 #endif
 	
+	m_ButtonAction->Show(ptr->GetDriverCount());
+	
+	this->Layout();
+
 	DBClose(db);
 
 }
@@ -161,10 +168,21 @@ void CSymbolPanel::PictureInfo(void *db,CSymbol *ptr)
 		
 		m_PicturePanel->SetPictureId(-1);
 	}
-	
-	this->Layout();
+		
 	db_free_result(result);
 #endif
+}
+
+void CSymbolPanel::OnButtonAction(wxCommandEvent &event)
+{
+	
+	for(int i = 0; i < m_Symbol->GetDriverCount();i++)
+	{
+		CDriver *Driver = m_Symbol->GetDriver(i);
+		Driver->ShowAction();
+		
+	}
+	
 }
 
 #ifdef WEBVIEW

@@ -608,43 +608,46 @@ void CMapPlugin::SetSql(wxString &sql)
 	
 	int id_alarm = GetSelectedAlarmId();
 	int id_group = GetSelectedGroupId();
+	int area_id = GetSelectedAreaId();	
+	int symbol_type_id = GetSelectedSymbolTypeId();
+	int seaway_id = GetSelectedSeawayId();
+	int light = GetLight();
+	int in_monitoring = GetMonitoring();
+	int base_station_id = GetSelectedBaseStationId();
 	
-	/*
-	SELECT * FROM symbol 
-	left join sbms on id_sbms=sbms.id
-	left join sbms_alarm on sbms.id=sbms_alarm.id_sbms
-	where sbms_alarm.id_alarm =128 and sbms_alarm.id_alarm=131
-	group by symbol.id
-	*/
-	
-	sql = wxString::Format(_("SELECT id,name,number,in_monitoring,lon,lat FROM %s WHERE "),TABLE_SYMBOL);
-
+	sql =   wxString::Format(_("SELECT "TABLE_SYMBOL".id,"TABLE_SYMBOL".name,number,in_monitoring,"TABLE_SYMBOL".lon,"TABLE_SYMBOL".lat FROM `"TABLE_SYMBOL"` "));
+	sql <<	wxString::Format(_("LEFT JOIN `"TABLE_SBMS"` ON "TABLE_SYMBOL".id=id_symbol "));
+	sql <<  wxString::Format(_("LEFT JOIN `"TABLE_BASE_STATION"` ON id_base_station="TABLE_BASE_STATION".id "));
+	sql <<	wxString::Format(_("LEFT JOIN `"TABLE_SBMS_ALARM"` ON "TABLE_SBMS".id="TABLE_SBMS_ALARM".id_sbms "));
+		
 	//if(id_group > 0)
 		//sql = wxString::Format(_("SELECT * FROM %s,%s WHERE id=id_symbol AND id_group='%d' AND "),VIEW_SYMBOL,TABLE_SYMBOL_TO_GROUP,id_group);
+		
+	sql << wxString::Format(_(" WHERE ("TABLE_SYMBOL".name LIKE '%%%s%%' OR number LIKE '%%%s%%')"),GetSearchText(),GetSearchText());
 	
-	//if(id_alarm >= 0)
-		//sql = wxString::Format(_("SELECT * FROM %s,%s WHERE `%s`.id_sbms=`%s`.id_sbms AND active='%d' AND id_alarm='%d' AND `%s`.id_sbms > 0 AND "),VIEW_SYMBOL,TABLE_SBMS_ALARM,VIEW_SYMBOL,TABLE_SBMS_ALARM,ALARM_ACTIVE,id_alarm,VIEW_SYMBOL);
+	if(area_id > 0)	
+		sql << wxString::Format(_(" AND id_area='%d'"),area_id);
+		
+	if(symbol_type_id > 0) 
+		sql << wxString::Format(_(" AND id_symbol_type='%d'"),symbol_type_id);
+	
+	if(seaway_id > 0) 
+		sql << wxString::Format(_(" AND id_seaway='%d'"),seaway_id);
+		
+	if(light > -1)
+		sql << wxString::Format(_(" AND mode_forced_off='%d'"),!light);
+		
+	if(in_monitoring > -1)	
+		sql << wxString::Format(_(" AND in_monitoring='%d'"),in_monitoring);
 
-	sql << wxString::Format(_(" (%s LIKE '%%%s%%' OR %s LIKE '%%%s%%')"),FN_SYMBOL_NAME,GetSearchText(),FN_SYMBOL_NUMBER,GetSearchText());
+	if(base_station_id > 0)	
+		sql << wxString::Format(_(" AND id_base_station = '%d'"),base_station_id);
+	
+	if(id_alarm >= 0)
+		sql << wxString::Format(_(" AND id_alarm='%d' AND active=1"),id_alarm);
+
+	
 	m_OldSearchText = GetSearchText();
-	
-	int in_monitoring = GetMonitoring();
-	if(in_monitoring > -1)	sql << wxString::Format(_(" AND in_monitoring = '%d'"),in_monitoring);
-	
-	//int light = GetLight();
-	//if(light > -1)	sql << wxString::Format(_(" AND forced_off = '%d'"),!light);
-
-	//int base_station_id = GetSelectedBaseStationId();
-	//if(base_station_id > 0)	sql << wxString::Format(_(" AND id_base_station = '%d'"),base_station_id);
-
-	//int area_id = GetSelectedAreaId();
-	//if(area_id > 0)	sql << wxString::Format(_(" AND id_area = '%d'"),area_id);
-	
-	//int symbol_type_id = GetSelectedSymbolTypeId();
-	//if(symbol_type_id > 0) sql << wxString::Format(_(" AND id_symbol_type = '%d'"),symbol_type_id);
-
-	//int seaway_id = GetSelectedSeawayId();
-	//if(seaway_id > 0) sql << wxString::Format(_(" AND id_seaway = '%d'"),seaway_id);
 		
 	if(GetSortColumn() != wxEmptyString)
 	{
@@ -792,17 +795,14 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		//SBMS->SetAuto(atoi(row[FI_VIEW_SYMBOL_AUTO]));
+		Driver->SetAuto(atoi(row[FI_SBMS_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		Driver->SetExists(true);
 		Driver->SetSBMSID(atoi(row[FI_SBMS_SBMSID]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
-		//SBMS->SetCharging(atoi(row[FI_VIEW_SYMBOL_CHARGING]));
+		Driver->SetCharging(atoi(row[FI_SBMS_CHARGING]));
+		Driver->SetSymbolName(ptr->GetName());
 		
-		//if(SBMS->GetCharging() == CHARGING_TRUE)			SBMS->SetChargingAsString(GetMsg(MSG_CHARGING));
-		//if(SBMS->GetCharging() == CHARGING_FALSE)			SBMS->SetChargingAsString(GetMsg(MSG_DISCHARGING));
-		//if(SBMS->GetCharging() == CHARGING_NOT_AVAILABLE)	SBMS->SetChargingAsString(GetMsg(MSG_NA));
-
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
 		Driver->SetTimestamp(timestamp);
 		Driver->SetAge(GetLocalTimestamp() - timestamp);

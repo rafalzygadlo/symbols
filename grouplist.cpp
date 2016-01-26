@@ -25,7 +25,7 @@ CGroupList::CGroupList( wxWindow *Parent)
 	m_MapPlugin = NULL;
 	m_List = NULL;
 	SetItemCount(0);
-	SetMargins(10,10);
+	SetMargins(5,5);
 }
 
 CGroupList::~CGroupList()

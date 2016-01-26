@@ -28,7 +28,7 @@ CSymbolListHtml::CSymbolListHtml( wxWindow *Parent)
 	m_MapPlugin = NULL;
 	m_List = NULL;
 	SetItemCount(0);
-	SetMargins(2,2);
+	SetMargins(5,5);
 		
 	//SetSelectionBackground(wxColor(200,200,200));
 }
@@ -65,7 +65,7 @@ void CSymbolListHtml::OnLinkClicked(wxHtmlLinkEvent &event)
 
 void CSymbolListHtml::ShowGraph(CSymbol *v)
 {
-	//v->ShowGraph();
+	v->ShowGraph();
 }
 
 void CSymbolListHtml::ShowManagement(CSymbol *v)
@@ -192,7 +192,7 @@ wxString CSymbolListHtml::OnGetItem(size_t item) const
 	for(int i = 0; i < ptr->GetDriverCount();i++)
 	{
 		CDriver *Driver = ptr->GetDriver(i);
-		str << Driver->GetDriverHtml();
+		str << Driver->GetDriverHtml(item);
 	}
 
 	/*	
