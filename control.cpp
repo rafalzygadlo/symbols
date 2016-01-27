@@ -47,7 +47,7 @@ CButton::CButton(wxWindow *parent, int id, wxString name)
 {
 	Disable();
 	SetName(name + " [" +GetMsg(MSG_NO_PERMISSION) +"]");
-	SetMinSize(wxSize(-1,64));
+	SetMinSize(wxSize(-1,32));
 }
 
 bool CButton::CheckRight(int id_module,int id_action)

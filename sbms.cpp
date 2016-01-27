@@ -12,6 +12,7 @@
 #include "commanddialog.h"
 
 
+
 CSBMS::CSBMS(CNaviBroker *broker)
 {
 	m_Broker = broker;
@@ -54,6 +55,7 @@ CSBMS::CSBMS(CNaviBroker *broker)
 	m_NewAlarmCount = 0;
 	m_ProtocolVersion = 0;
 	m_NameFont = NULL;
+	m_SBMSActionDialog = NULL;
 	
 }
 
@@ -64,6 +66,8 @@ CSBMS::~CSBMS()
 	
 	if(m_GraphDialog)
 		delete m_GraphDialog;
+	//if(m_SBMSActionDialog)
+	//	delete m_SBMSActionDialog;
 	
 }
 
@@ -711,15 +715,10 @@ void CSBMS::Render()
 
 void CSBMS::ShowAction()
 {
-//	CSBMSActionDialog *SBMSActionDialog = new CCommandDialog(m_DB,NULL,NULL);
-//	CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
-
-	//ptr->SetForcedOff(v->GetForcedOff());
-	//ptr->SetAuto(v->GetAuto());
-			
-//	CommandDialog->ShowModal();
-//	delete CommandDialog;
-
+	//if(m_SBMSActionDialog == NULL)
+		m_SBMSActionDialog = new CSBMSActionDialog(this);
+	m_SBMSActionDialog->ShowModal();
+	delete m_SBMSActionDialog;
 }
 
 void CSBMS::ShowGraph()
@@ -806,7 +805,7 @@ void CSBMS::ShowGraph()
 
 void CSBMS::Read()
 {
-	fprintf(stderr,"SBMS\n");
+	//fprintf(stderr,"SBMS\n");
 	
 	if(m_Broker == NULL)
 		return;
@@ -1233,8 +1232,7 @@ wxString CSBMS::GetDriverHtml(int v)
 	str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetAutoAsString(GetAuto())));
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetChargingAsString());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetAgeAsString());
-	
-	str << wxString::Format(_("<tr><td> </td></tr>"),GetBaseStationName());
+	//str << wxString::Format(_("<tr><td> </td></tr>"),GetBaseStationName());
 	str.Append(_("</table>"));
 	return str;
 
@@ -1336,3 +1334,32 @@ wxString CSBMS::GetDriverFullHtml()
 
 }
 
+void CSBMS::LightOn()
+{
+	_SetCommand(COMMAND_LIGHT_ON,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+}
+
+void CSBMS::LightOff()
+{
+	_SetCommand(COMMAND_LIGHT_OFF,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+}
+
+void CSBMS::AutoManagement()
+{
+	_SetCommand(COMMAND_AUTO_MANAGEMENT,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+}
+
+void CSBMS::Reset()
+{
+	_SetCommand(COMMAND_RESET,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+}
+
+void CSBMS::GetTime()
+{
+	_SetCommand(COMMAND_GET_TIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+}
+
+void CSBMS::GetUptime()
+{
+	_SetCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+}

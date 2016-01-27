@@ -67,7 +67,7 @@ void CSBMSActionPanel::EnableControls(bool v)
 	m_ButtonReset->Enable(v);
 }
 
-void CSBMSActionPanel::SetSymbol(CSymbol *ptr)
+void CSBMSActionPanel::SetSBMS(CSBMS *ptr)
 {
 	if(ptr)
 		EnableControls(true);

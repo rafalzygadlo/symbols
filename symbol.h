@@ -131,14 +131,7 @@ public:
 		
 	void RemoveDriver(CDriver *ptr);
 	
-	//akcje
-	void ShowGraph();
-	void LightOn();
-	void LightOff();
-	void AutoManagement();
-	void GetUptime();
-	void GetTime();
-	void Reset();
+	
 	
 };
 

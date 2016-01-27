@@ -486,6 +486,11 @@
 #define TABLE_SBMS_ALARM			"sbms_alarm"
 #define TABLE_SBMS_ALARM_REPORT		"sbms_alarm_report"
 
+#define TABLE_GE64					"ge64"
+#define TABLE_GE64_STANDARD_REPORT	"ge64_standard_report"
+#define TABLE_GE64_ALARM			"ge64_alarm"
+#define TABLE_GE64_ALARM_REPORT		"ge64_alarm_report"
+
 #define TABLE_CHARACTERISTIC		"characteristic"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
 #define TABLE_USER_OPTION			"user_option"

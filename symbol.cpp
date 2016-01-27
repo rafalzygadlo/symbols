@@ -220,7 +220,7 @@ CDriver *CSymbol::ExistsDriver(int id, int type)
 
 void CSymbol::Read(void *db)
 {
-	fprintf(stderr,"SYMBOL %d\n",m_Id);
+	//fprintf(stderr,"SYMBOL %d\n",m_Id);
 }
 
 void CSymbol::RemoveDriver(CDriver *ptr)
@@ -234,70 +234,6 @@ void CSymbol::RemoveDriver(CDriver *ptr)
 		}
 	}
 }
-
-void CSymbol::ShowGraph()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		Driver->ShowGraph();
-	}
-}
-
-void CSymbol::LightOn()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_LIGHT_ON,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
-	}
-}
-
-void CSymbol::LightOff()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_LIGHT_OFF,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
-	}
-}
-
-void CSymbol::AutoManagement()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_AUTO_MANAGEMENT,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
-	}
-}
-
-void CSymbol::Reset()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_RESET,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), false);
-	}
-}
-
-void CSymbol::GetTime()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_GET_TIME,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
-	}
-}
-
-void CSymbol::GetUptime()
-{
-	for(int i = 0; i < GetDriverCount(); i++)
-	{
-		CDriver *Driver = GetDriver(i);
-		_SetCommand(COMMAND_GET_UPTIME,Driver->GetId(),Driver->GetMMSI(),Driver->GetSBMSID(),Driver->GetBaseStationId(), true);
-	}
-}
-
 
 //SET
 void CSymbol::SetColor(int id)

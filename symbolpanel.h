@@ -19,7 +19,6 @@
 #include "sbmsactionpanel.h"
 
 class CGraphDialog;
-class CActionPanel;
 class CSymbolPanel : public wxPanel
 {
 	wxButton *m_ButtonAction;

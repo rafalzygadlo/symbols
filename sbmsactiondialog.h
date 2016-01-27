@@ -1,13 +1,11 @@
-#ifndef __SBMSACTIONPANEL_H
-#define __SBMSACTIONPANEL_H
+#ifndef __ACTIONDIALOG_H
+#define __ACTIONDIALOG_H
 
 #include "conf.h"
-#include "symbol.h"
-#include "control.h"
 #include "sbms.h"
 
 class CSBMS;
-class CSBMSActionPanel : public wxPanel
+class CSBMSActionDialog : public wxDialog
 {
 	CButton *m_ButtonGraph;
 	CButton *m_ButtonOn;
@@ -16,9 +14,15 @@ class CSBMSActionPanel : public wxPanel
 	CButton *m_ButtonTime;
 	CButton *m_ButtonUpTime;
 	CButton *m_ButtonReset;
+	wxStaticText *m_Title;
 		
 	CSBMS *m_Symbol;
-	void SetGui();
+	
+	wxPanel *GetTopPanel(wxWindow *parent);
+	wxPanel *GetActionPanel(wxWindow *parent);
+	wxPanel *GetButtonPanel(wxWindow *parent);
+	
+	void SetTitle(wxString str);
 	void EnableControls(bool v);
 	void OnGraph(wxCommandEvent &event);
 	void OnLightOn(wxCommandEvent &event);
@@ -27,13 +31,12 @@ class CSBMSActionPanel : public wxPanel
 	void OnReset(wxCommandEvent &event);
 	void OnGetTime(wxCommandEvent &event);
 	void OnGetUptime(wxCommandEvent &event);
-	
 
 public:
 
-	CSBMSActionPanel(wxWindow *parent);
+	CSBMSActionDialog(CSBMS *ptr);
+	~CSBMSActionDialog();
 	void SetSBMS(CSBMS *ptr);
-	
 
 	enum
 	{
@@ -49,7 +52,6 @@ public:
 	};
 	
 	DECLARE_EVENT_TABLE();
-	
 };
 
 #endif

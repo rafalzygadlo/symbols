@@ -11,6 +11,7 @@
 #include "alter.h"
 #include "alterdialog.h"
 #include "sbms.h"
+#include "ge64.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -724,6 +725,7 @@ void CMapPlugin::ReadDrivers()
 		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
 		{
 			ReadSBMS(m_DBTicker, ptr);
+			ReadGE64(m_DBTicker, ptr);
 		}
 		
 		SetPosition(ptr);
@@ -838,6 +840,85 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 	db_free_result(result);
 		
 }
+
+void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
+{
+	double to_x,to_y;
+	double lon;
+	double lat;
+	
+	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol='%d'"),TABLE_GE64,ptr->GetId());
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		int id = atoi(row[0]);
+		CDriver *Driver = ptr->ExistsDriver(id,DRIVER_TYPE_GE64);
+		if(Driver == NULL)
+		{
+			Driver = new CGE64(m_Broker);
+			Driver->SetFont(m_NameFont);
+			Driver->SetDB(db);
+			ptr->AddDriver(Driver);
+		}
+		
+		Driver->SetId(id);
+		Driver->SetType(DRIVER_TYPE_GE64);
+		Driver->SetName(Convert(row[FI_SBMS_NAME]));
+		Driver->SetIdBaseStation(atoi(row[FI_SBMS_ID_BASE_STATION]));
+		Driver->SetIdSymbol(atoi(row[FI_SBMS_ID_SYMBOL]));
+		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
+		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		Driver->SetAuto(atoi(row[FI_SBMS_AUTO]));
+		//Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
+		Driver->SetExists(true);
+		//Driver->SetSBMSID(atoi(row[FI_SBMS_SBMSID]));
+		//Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
+		//Driver->SetCharging(atoi(row[FI_SBMS_CHARGING]));
+		//Driver->SetSymbolName(ptr->GetName());
+		
+		//int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
+		//Driver->SetTimestamp(timestamp);
+		//Driver->SetAge(GetLocalTimestamp() - timestamp);
+				
+		//int seconds = GetLocalTimestamp() - timestamp;
+		//if(seconds < 0)
+			//seconds = 0;
+
+		//int minutes = seconds/60;
+		//int hours = minutes/60;
+		//div_t _divs = div(seconds,60);
+		//div_t _divm = div(minutes,60);
+				
+		//Driver->SetAge(wxString::Format(_("%02d:%02d:%02d"),hours,_divm.rem,_divs.rem));
+
+		//gps
+		//sscanf(row[FI_SBMS_LON],"%lf",&lon);
+		//sscanf(row[FI_SBMS_LAT],"%lf",&lat);
+		
+		//m_Broker->Unproject(lon,lat,&to_x,&to_y);
+				
+		//Driver->SetGpsLon(lon);		
+		//Driver->SetGpsLat(lat);		
+		//Driver->SetGpsLonMap(to_x);		
+		//Driver->SetGpsLatMap(-to_y);
+		
+		//Driver->SetRLat(ptr->GetRLat());
+		//Driver->SetRLon(ptr->GetRLon());
+		//Driver->SetRLatMap(ptr->GetRLatMap());
+		//Driver->SetRLonMap(ptr->GetRLonMap());
+	}
+	
+	db_free_result(result);
+		
+}
+
 
 void CMapPlugin::ReadSBMSAlarm(void *db)
 {	
@@ -1952,7 +2033,7 @@ void CMapPlugin::RenderSymbols()
 
 void CMapPlugin::Render(void)
 {
-	fprintf(stderr,"Render start\n");
+	//fprintf(stderr,"Render start\n");
 	GetMutex()->Lock();
 		
 	m_NameFont->Clear();
@@ -1978,7 +2059,7 @@ void CMapPlugin::Render(void)
 	
 	glDisable(GL_POINT_SMOOTH);
 	GetMutex()->Unlock();
-	fprintf(stderr,"Render stop\n");
+	//fprintf(stderr,"Render stop\n");
 }
 
 void CMapPlugin::SetMouseXY(int x, int y)
@@ -1998,8 +2079,6 @@ void CMapPlugin::ShowAlarm()
 
 void CMapPlugin::OnTick()
 {
-	fprintf(stderr,"START\n");
-
 	wxString sql;
 	int t = GetTickCount();
 
@@ -2043,9 +2122,7 @@ void CMapPlugin::OnTick()
 	
 	SendInsertSignal();
 	ShowAlarm();
-	
-	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
-				
+					
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

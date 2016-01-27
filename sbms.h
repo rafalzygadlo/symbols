@@ -13,11 +13,15 @@
 #include "graphdialog.h"
 #include "alarm.h"
 #include "alarmdialog.h"
+#include "sbmsactiondialog.h"
 #include "sbmspanel.h"
+#include "driver.h"
+#include "command.h"
 
 class CGraphDialog;
 class CAlarmDialog;
 class CSBMSPanel;
+class CSBMSActionDialog;
 class CSBMS :public CDriver
 {
 	void *m_DB;
@@ -29,6 +33,7 @@ class CSBMS :public CDriver
 	CNaviArray <CCommand*> m_CommandList;
 	
 	CSBMSPanel *m_SBMSPanel;
+	CSBMSActionDialog *m_SBMSActionDialog;
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
@@ -129,7 +134,7 @@ public:
 
 	void Read();
 	void OnTickExit();
-	void ShowGraph();
+	//void ShowGraph();
 	void ShowAction();
 
 	//SET
@@ -212,6 +217,15 @@ public:
 	wxString GetCommandCountAsString();
 	wxString GetInputVoltAsString();
 	wxPanel *GetSBMSPanel(wxWindow *parent);
+	
+	//akcje
+	void ShowGraph();
+	void LightOn();
+	void LightOff();
+	void AutoManagement();
+	void GetUptime();
+	void GetTime();
+	void Reset();
 		
 
 };

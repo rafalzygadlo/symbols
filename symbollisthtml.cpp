@@ -65,7 +65,12 @@ void CSymbolListHtml::OnLinkClicked(wxHtmlLinkEvent &event)
 
 void CSymbolListHtml::ShowGraph(CSymbol *v)
 {
-	v->ShowGraph();
+	for(int i = 0; i < v->GetDriverCount();i++)
+	{
+		CDriver *Driver = v->GetDriver(i);
+		Driver->ShowGraph();
+	}
+	
 }
 
 void CSymbolListHtml::ShowManagement(CSymbol *v)

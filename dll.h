@@ -106,6 +106,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadGroup(void *db);
 	void ReadDrivers();
 	void ReadSBMS(void *db,CSymbol *ptr);
+	void ReadGE64(void *db,CSymbol *ptr);
 	void ReadSBMSAlarm(void *db);
 	void ReadSBMSCommand(void *db);
 	//void ReadGroup(void *db);
