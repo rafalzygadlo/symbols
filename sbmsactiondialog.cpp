@@ -24,7 +24,7 @@ CSBMSActionDialog::CSBMSActionDialog(CSBMS *ptr)
 	Sizer->Add(GetTopPanel(this),0,wxALL|wxEXPAND,5);
 	Sizer->Add(GetActionPanel(this),1,wxALL|wxEXPAND,5);
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
-	SetSizer(Sizer);		
+	SetSizer(Sizer);
 	Center();
 	SetSBMS(ptr);
 
@@ -112,25 +112,8 @@ wxPanel *CSBMSActionDialog::GetButtonPanel(wxWindow *parent)
 	return Panel;
 }
 
-
-void CSBMSActionDialog::EnableControls(bool v)
-{
-	m_ButtonGraph->Enable(v);
-	m_ButtonOn->Enable(v);
-	m_ButtonOff->Enable(v);
-	m_ButtonAuto->Enable(v);
-	m_ButtonTime->Enable(v);
-	m_ButtonUpTime->Enable(v);
-	m_ButtonReset->Enable(v);
-}
-
 void CSBMSActionDialog::SetSBMS(CSBMS *ptr)
 {
-	if(ptr)
-		EnableControls(true);
-	else
-		EnableControls(false);
-	
 	m_Symbol = ptr;
 }
 

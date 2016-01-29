@@ -35,7 +35,7 @@ wxString CGE64::GetDriverHtml(int v)
 {
 
 	wxString str;
-	
+
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 	
 	//for(int i = 0; i < GetAlarmCount();i++)

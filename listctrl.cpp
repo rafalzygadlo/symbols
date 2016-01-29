@@ -214,6 +214,7 @@ void CListCtrl::ClearColumns()
 	}
 	
 	m_Ids.Clear();
+	m_ColumnIds.Clear();
 	m_ColumnFields.Clear();
 	m_ColumnArray.Clear();
 	m_DataArray.Clear();

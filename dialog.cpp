@@ -57,10 +57,12 @@ SHeader Header[] =
 	{CONTROL_SBMS,180, {FI_SBMS_NAME  , FN_SBMS_NAME, MSG_NAME} },
 	{CONTROL_SBMS,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
 	
-
+	{CONTROL_GE64,180, {FI_GE64_NAME  , FN_GE64_NAME, MSG_NAME} },
+	{CONTROL_GE64,100, {FI_GE64_LOCAL_UTC_TIME  , FN_GE64_LOCAL_UTC_TIME, MSG_UTC_TIME} },
+	
 	//alarm master/slave
-	{CONTROL_SYMBOL_ALARM,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
-	{CONTROL_SYMBOL_ALARM,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_ALARM,150, {0 , TABLE_SYMBOL"."FN_SYMBOL_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_ALARM,250, {1 , TABLE_SYMBOL"."FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER } },
 	
 //	{CONTROL_SBMS_ALARM,80,  {FI_VIEW_ALARM_ALARM_NAME  , FN_VIEW_ALARM_ALARM_NAME, MSG_ALARM} },
 //	{CONTROL_SBMS_ALARM,180, {FI_VIEW_ALARM_SET_LOCAL_UTC_TIME  , FN_VIEW_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
@@ -68,8 +70,8 @@ SHeader Header[] =
 	//{CONTROL_SBMS_ALARM,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
 
 	//komendy master/slave
-	{CONTROL_SYMBOL_COMMAND,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER} },
-	{CONTROL_SYMBOL_COMMAND,250, {FI_SYMBOL_NAME , FN_SYMBOL_NAME, MSG_NAME} },
+	{CONTROL_SYMBOL_COMMAND,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NAME, MSG_SYMBOL_NUMBER} },
+	{CONTROL_SYMBOL_COMMAND,250, {FI_SYMBOL_NAME , FN_SYMBOL_NUMBER, MSG_NAME} },
 	
 	{CONTROL_COMMAND,80,  {FI_COMMAND_ID  , FN_COMMAND_ID, MSG_ID} },
 	{CONTROL_COMMAND,80,  {FI_COMMAND_COMMAND  , FN_COMMAND_COMMAND, MSG_COMMAND} },
@@ -90,8 +92,8 @@ SIds Id[] =
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_DRIVER},
-	//{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
-	//{CONTROL_SYMBOL_COMMAND, FI_SYMBOL_ID_SBMS, COLUMN_WITH_NAME,MSG_SYMBOL},
+	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID, COLUMN_WITH_NAME,MSG_SYMBOL},
+	{CONTROL_GE64, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_DRIVER},
 };
 
 BEGIN_EVENT_TABLE(CDialog,wxDialog)
@@ -494,8 +496,8 @@ wxPanel *CDialogPanel::GetDriverFilterPanel(wxWindow *Parent)
 	int id = m_ComboDriver->Append(GetMsg(MSG_SBMS));
 	m_ComboDriver->SetClientData(id,(int*)CONTROL_SBMS);
 	
-	//id = m_ComboDriver->Append(GetMsg(MSG_GE64));
-	//m_ComboDriver->SetClientData(id,(int*)CONTROL_PICTURE);
+	id = m_ComboDriver->Append(GetMsg(MSG_GE64));
+	m_ComboDriver->SetClientData(id,(int*)CONTROL_GE64);
 	
 	m_ComboDriver->SetSelection(0);
 	Sizer->Add(m_ComboDriver,0,wxALL|wxEXPAND,0);
@@ -758,6 +760,7 @@ void CDialogPanel::SetTable()
 		case CONTROL_BASE_STATION:		m_Table = TABLE_BASE_STATION;	break;
 		case CONTROL_CHARACTERISTIC:	m_Table = TABLE_CHARACTERISTIC; break;
 		case CONTROL_SBMS:				m_Table = TABLE_SBMS;			break;
+		case CONTROL_GE64:				m_Table = TABLE_GE64;			break;
 		case CONTROL_SBMS_ALARM:		m_Table = TABLE_ALARM;			break;
 		case CONTROL_SYMBOL_ALARM:		m_Table = TABLE_SYMBOL;			break;
 		case CONTROL_SYMBOL_COMMAND:	m_Table = TABLE_SYMBOL;			break;
@@ -782,26 +785,28 @@ void CDialogPanel::ReadData()
 	wxString sql;
 	switch(m_ControlType)
 	{
-		case CONTROL_PICTURE:		
+		case CONTROL_PICTURE:
 			sql = wxString::Format(_("SELECT %s,%s,%s FROM `%s` WHERE"),FN_PICTURE_ID,FN_PICTURE_NAME,FN_PICTURE_INFO,m_Table); //sql dla zdjêcia bez selektu bloba który spowalnia bo jest du¿ym polem danych
-		break;	
+		break;
 		case CONTROL_ITEM:
 			sql = ReadItems();
 		break;
 		
-		case CONTROL_COMMAND:
 		case CONTROL_SBMS_ALARM:
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_sbms='%d' AND"),m_Table,m_IDMaster);
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SBMS,m_IDMaster);
 		break;
 		case CONTROL_SYMBOL_ALARM:
-			sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_driver=`%s`.id_sbms AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
+
+			//sql = wxString::Format(_("SELECT * FROM `%s`,`%s`,`%s` WHERE `%s`.id=`%s`.id_symbol AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
+			//sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),TABLE_SYMBOL);
+			sql =_("SELECT symbol.name,alarm.name,concat(IFNULL(sbms.id,''),IFNULL(ge64.id,'')) as id from symbol left join sbms ON symbol.id = sbms.id_symbol left join sbms_alarm ON sbms_alarm.id_sbms = sbms.id left join ge64 ON symbol.id = ge64.id_symbol left join ge64_alarm ON ge64_alarm.id_ge64 = ge64.id left join alarm ON alarm.id = sbms_alarm.id_alarm OR alarm.id = ge64_alarm.id_alarm WHERE (sbms_alarm.active=0 OR ge64_alarm.active=0) AND ");
 		break;
 
 		//case CONTROL_SYMBOL_COMMAND:
 			//sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE `%s`.id_driver=`%s`.id_sbms AND"),TABLE_SYMBOL,TABLE_COMMAND,TABLE_SYMBOL,TABLE_COMMAND);
 		//break;
 
-		default :
+		default:
 			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),m_Table);
 		break;
 	}
@@ -844,7 +849,7 @@ void CDialogPanel::ReadData()
 	//group BY
 	switch(m_ControlType)
 	{
-		case CONTROL_SYMBOL_ALARM:
+		//case CONTROL_SYMBOL_ALARM:
 		case CONTROL_SYMBOL_COMMAND:
 			sql << wxString::Format(_(" GROUP BY `%s`.name"),TABLE_SYMBOL);
 		break;

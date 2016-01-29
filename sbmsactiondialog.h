@@ -23,7 +23,6 @@ class CSBMSActionDialog : public wxDialog
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	
 	void SetTitle(wxString str);
-	void EnableControls(bool v);
 	void OnGraph(wxCommandEvent &event);
 	void OnLightOn(wxCommandEvent &event);
 	void OnLightOff(wxCommandEvent &event);

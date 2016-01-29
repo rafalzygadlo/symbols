@@ -1650,7 +1650,7 @@ void CMapPlugin::SBMS()
 void CMapPlugin::Alarm()
 {
 	if(m_Alarm == NULL)
-		m_Alarm = new CDialog(m_DB,CONTROL_SYMBOL_ALARM,CONTROL_SBMS_ALARM);
+		m_Alarm = new CDialog(m_DB,CONTROL_SYMBOL_ALARM);
 	m_Alarm->Show();
 }
 
@@ -1763,7 +1763,7 @@ void *CMapPlugin::MenuOptions(void *NaviMapIOApiPtr, void *Input)
 void *CMapPlugin::MenuDbConfig(void *NaviMapIOApiPtr, void *Input)
 {	
 	CMapPlugin *ThisPtr = (CMapPlugin*)NaviMapIOApiPtr;
-	ThisPtr->Menu(CONTROL_DB_CONFIG);
+//	ThisPtr->Menu(CONTROL_DB_CONFIG);
 	
 	return NULL;	
 }
@@ -1849,7 +1849,7 @@ void CMapPlugin::Menu(int type)
 		case CONTROL_SBMS:				SBMS();				break;
 		case CONTROL_ALARM:				Alarm();			break;
 		case CONTROL_COMMAND:			Command();			break;
-		case CONTROL_DB_CONFIG:			DbConfig();			break;
+//		case CONTROL_DB_CONFIG:			DbConfig();			break;
 	}
 
 }

@@ -144,7 +144,7 @@ void CSBMS::SetAlarms()
 
 bool CSBMS::CheckCollision()
 {
-	/*
+	
 	if(m_Broker == NULL)
 		return false;
 	
@@ -187,7 +187,7 @@ bool CSBMS::CheckCollision()
 
 	m_Broker->ExecuteFunction(m_Broker->GetParentPtr(),"devmgr_MutexUnlock",NULL);
 	m_CollisionTick = 1;
-	*/	
+		
 	
 	return false;
 }
@@ -834,7 +834,7 @@ void CSBMS::Read()
 		//ClearAlarms();
 	//}
 	
-	CheckCollision();
+	//CheckCollision();
 			
 }
 

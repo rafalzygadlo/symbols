@@ -363,7 +363,8 @@
 #define CONTROL_SYMBOL_ALARM	19
 #define CONTROL_SYMBOL_COMMAND	20
 #define CONTROL_COMMAND			21
-#define CONTROL_DB_CONFIG		22
+#define CONTROL_GE64			22
+//#define CONTROL_DB_CONFIG		23
 
 #define ORDER_ASC	0
 #define ORDER_DESC	1
@@ -737,6 +738,16 @@
 #define FN_SBMS_SBMSID			"sbmsid"
 #define FN_SBMS_ID_BASE_STATION "id_base_station"
 #define FN_SBMS_NAME			"name"
+
+
+// pola tabeli GE64
+#define FI_GE64_ID					0
+#define FI_GE64_NAME				3
+#define FI_GE64_LOCAL_UTC_TIME		10
+
+#define FN_GE64_NAME				"name"
+#define FN_GE64_LOCAL_UTC_TIME		"local_utc_time"
+
 
 //pola tabeli STANDARD_REPORT
 #define FI_STANDARD_REPORT_ID							0
