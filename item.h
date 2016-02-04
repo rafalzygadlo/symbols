@@ -1,5 +1,5 @@
-#ifndef __ITEM_H
-#define __ITEM_H
+#ifndef __ITEM
+#define __ITEM
 
 #include <wx/wx.h>
 #include <wx/wrapsizer.h>

@@ -1,5 +1,5 @@
-#ifndef __NEW_H
-#define __NEW_H
+#ifndef __NEW
+#define __NEW
 
 #include <wx/wx.h>
 #include "picture.h"

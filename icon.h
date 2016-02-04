@@ -1,5 +1,5 @@
-#ifndef __ICON_H
-#define __ICON_H
+#ifndef __ICON
+#define __ICON
 
 #include <wx/wx.h>
 

@@ -5,7 +5,6 @@
 #include "display.h"
 #include "options.h"
 #include "filterdialog.h"
-#include "commanddialog.h"
 #include "db.h"
 
 

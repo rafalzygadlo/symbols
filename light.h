@@ -1,5 +1,5 @@
-#ifndef __LIGHT_H
-#define __LIGHT_H
+#ifndef __LIGHT
+#define __LIGHT
 
 #include <wx/wx.h>
 #include <wx/grid.h>

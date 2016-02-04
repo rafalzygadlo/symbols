@@ -1,5 +1,5 @@
-#ifndef __TOOLS_H
-#define __TOOLS_H
+#ifndef __TOOLS
+#define __TOOLS
 
 #include <wx/wx.h>
 #include "nvtime.h"

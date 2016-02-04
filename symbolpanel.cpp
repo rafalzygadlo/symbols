@@ -9,7 +9,6 @@
 #include "geometrytools.h"
 #include "ais.h"
 #include "nvtime.h"
-#include "commanddialog.h"
 #include "graphdialog.h"
 #include "alarmdialog.h"
 #include "options.h"

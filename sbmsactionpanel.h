@@ -1,9 +1,9 @@
-#ifndef __SBMSACTIONPANEL_H
-#define __SBMSACTIONPANEL_H
+#ifndef __SBMSACTIONPANEL
+#define __SBMSACTIONPANEL
 
 #include "conf.h"
 #include "symbol.h"
-#include "control.h"
+#include "controls.h"
 #include "sbms.h"
 
 class CSBMS;

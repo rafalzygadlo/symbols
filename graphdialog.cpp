@@ -80,7 +80,7 @@ CGraph *CGraphDialog::GetGraph()
 	return m_Graph;
 }
 
-void CGraphDialog::SetTitle(wxString v)
+void CGraphDialog::_SetTitle(wxString v)
 {
 	m_Title->SetLabel(v);
 }

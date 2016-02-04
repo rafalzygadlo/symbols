@@ -12,6 +12,7 @@
 #include "alterdialog.h"
 #include "sbms.h"
 #include "ge64.h"
+#include "right.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -782,9 +783,8 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		CDriver *Driver = ptr->ExistsDriver(id,DRIVER_TYPE_SBMS);
 		if(Driver == NULL)
 		{
-			Driver = new CSBMS(m_Broker);
+			Driver = new CSBMS(db,m_Broker);
 			Driver->SetFont(m_NameFont);
-			Driver->SetDB(db);
 			ptr->AddDriver(Driver);
 		}
 		
@@ -803,6 +803,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetSBMSID(atoi(row[FI_SBMS_SBMSID]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetCharging(atoi(row[FI_SBMS_CHARGING]));
+		Driver->SetNewReport(atoi(row[FI_SBMS_NEW_REPORT]));
 		Driver->SetSymbolName(ptr->GetName());
 		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
@@ -826,9 +827,9 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 				
-		Driver->SetGpsLon(lon);		
-		Driver->SetGpsLat(lat);		
-		Driver->SetGpsLonMap(to_x);		
+		Driver->SetGpsLon(lon);
+		Driver->SetGpsLat(lat);
+		Driver->SetGpsLonMap(to_x);
 		Driver->SetGpsLatMap(-to_y);
 		
 		Driver->SetRLat(ptr->GetRLat());
@@ -838,7 +839,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 	}
 	
 	db_free_result(result);
-		
+	
 }
 
 void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
@@ -861,9 +862,8 @@ void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
 		CDriver *Driver = ptr->ExistsDriver(id,DRIVER_TYPE_GE64);
 		if(Driver == NULL)
 		{
-			Driver = new CGE64(m_Broker);
+			Driver = new CGE64(db, m_Broker);
 			Driver->SetFont(m_NameFont);
-			Driver->SetDB(db);
 			ptr->AddDriver(Driver);
 		}
 		
@@ -977,8 +977,9 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 
 void CMapPlugin::ReadSBMSCommand(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT `%s`.id,name,id_command,command,status,first_name,last_name,local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id_sbms"),TABLE_SYMBOL,TABLE_SBMS_COMMAND,TABLE_SYMBOL);
+	wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,command,status,first_name,last_name,"TABLE_SBMS_COMMAND".local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id"),TABLE_SBMS,TABLE_SBMS_COMMAND,TABLE_SBMS);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_SBMS,TABLE_SYMBOL);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
 	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d' ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_ACTIVE);
 
@@ -1497,6 +1498,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		add = true;
 		((wxWindow*)m_Broker->GetParentPtr())->SetCursor(wxCURSOR_HAND);
 		HighlightedPtr = ptr;
+		
 	
 	}else{
 		HighlightedPtr = NULL;
@@ -1512,6 +1514,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 	{
 		FromLMB = true;
 		SelectedPtr = ptr;
+		ptr->UnsetNewReport();
 		SendSelectSignal();
 		//GetVoice()->Speak(ptr->GetName(),0,NULL);
 	}else{
@@ -1650,7 +1653,7 @@ void CMapPlugin::SBMS()
 void CMapPlugin::Alarm()
 {
 	if(m_Alarm == NULL)
-		m_Alarm = new CDialog(m_DB,CONTROL_SYMBOL_ALARM);
+		m_Alarm = new CDialog(m_DB,CONTROL_SYMBOL,CONTROL_SBMS_ALARM);
 	m_Alarm->Show();
 }
 

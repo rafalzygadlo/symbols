@@ -14,8 +14,7 @@ BEGIN_EVENT_TABLE(CSymbolListHtml,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
-	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)
-	EVT_CONTEXT_MENU(OnContextMenu)
+	EVT_HTML_LINK_CLICKED(ID_HTML, OnLinkClicked)	
 END_EVENT_TABLE()
 
 CSymbolListHtml *HtmlListPtr = NULL;
@@ -83,34 +82,6 @@ void CSymbolListHtml::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
-}
-
-void CSymbolListHtml::OnContextMenu(wxContextMenuEvent &event)
-{
-	//this->GetItemForCell()
-	//this->getr
-	
-	int id = event.GetSelection();
-	
-	CMenu *Menu = new CMenu();
-	
-	Menu->Append(wxID_ANY,GetMsg(MSG_NEW));
-//	if(!db_check_right(MODULE_SYMBOL ,ACTION_NEW,_GetUID()))
-		//Menu->FindItem(wxID_ANY)->Enable(false);
-			
-	if(id > -1)
-	{
-		Menu->Append(wxID_ANY,GetMsg(MSG_EDIT));
-	//	if(!db_check_right(MODULE_SYMBOL,ACTION_EDIT,_GetUID()))
-			//Menu->FindItem(wxID_ANY)->Enable(false);
-		
-		Menu->Append(wxID_ANY,GetMsg(MSG_DELETE));
-//		if(!db_check_right(MODULE_SYMBOL,ACTION_DELETE,_GetUID()))
-			//Menu->FindItem(wxID_ANY)->Enable(false);
-	}
-		
-	PopupMenu(Menu);
-	delete Menu;
 }
 
 void CSymbolListHtml::ClearList()

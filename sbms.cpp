@@ -9,12 +9,11 @@
 #include "ais.h"
 #include "options.h"
 #include "render.h"
-#include "commanddialog.h"
 
 
-
-CSBMS::CSBMS(CNaviBroker *broker)
+CSBMS::CSBMS(void *db,CNaviBroker *broker)
 {
+	m_DB = db;
 	m_Broker = broker;
 	m_Scale = 1;
 	m_SmoothScaleFactor = 1;
@@ -713,12 +712,30 @@ void CSBMS::Render()
 
 }
 
+void CSBMS::UnsetNewReport()
+{
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	wxString sql = wxString::Format(_("UPDATE "TABLE_SBMS" SET new_report='%d' WHERE id='%d'"),READED_REPORT_FLAG,GetId());
+	my_query(db,sql);
+		
+	DBClose(db);
+
+}
+
 void CSBMS::ShowAction()
 {
-	//if(m_SBMSActionDialog == NULL)
-		m_SBMSActionDialog = new CSBMSActionDialog(this);
-	m_SBMSActionDialog->ShowModal();
-	delete m_SBMSActionDialog;
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+	
+	CSBMSActionDialog *SBMSActionDialog = new CSBMSActionDialog(db,this);
+	SBMSActionDialog->ShowModal();
+	delete SBMSActionDialog;
+
+	DBClose(db);
 }
 
 void CSBMS::ShowGraph()
@@ -792,12 +809,13 @@ void CSBMS::ShowGraph()
 	Graph->SetMin(min);
 	Graph->SetMax(max);
 	
-	Graph->Refresh();
+	
 	db_free_result(result);
 	
-	m_GraphDialog->SetTitle(wxString::Format(_("%s"),GetSymbolName()));
+	m_GraphDialog->_SetTitle(wxString::Format(_("%s"),GetSymbolName()));
 	m_GraphDialog->Layout();
 	m_GraphDialog->Show();
+	Graph->Refresh();
 
 	DBClose(db);
 	
@@ -968,11 +986,6 @@ void CSBMS::SetAge(wxString v)
 void CSBMS::SetNewReport(bool v)
 {
 	m_NewReport = v;
-}
-
-void CSBMS::SetNoSBMS(bool v)
-{
-	m_NoSBMS = v;
 }
 
 void CSBMS::SetIdBaseStation(int v)

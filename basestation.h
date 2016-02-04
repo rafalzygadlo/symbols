@@ -1,5 +1,5 @@
-#ifndef __BASE_STATION_H
-#define __BASE_STATION_H
+#ifndef __BASE_STATION
+#define __BASE_STATION
 
 #include "ticker.h"
 #include <gl/gl.h>

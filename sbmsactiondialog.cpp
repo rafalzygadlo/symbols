@@ -4,6 +4,8 @@
 #include "sbmsactiondialog.h"
 #include "control.h"
 #include "tools.h"
+#include "module.h"
+#include "action.h"
 
 BEGIN_EVENT_TABLE(CSBMSActionDialog,wxDialog)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
@@ -15,9 +17,11 @@ BEGIN_EVENT_TABLE(CSBMSActionDialog,wxDialog)
 	EVT_BUTTON(ID_RESET,OnReset)
 END_EVENT_TABLE();
 
-CSBMSActionDialog::CSBMSActionDialog(CSBMS *ptr)
+CSBMSActionDialog::CSBMSActionDialog(void *db, CSBMS *ptr)
 	:wxDialog(NULL,wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize )
 {	
+	m_DB = db;
+
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 	
@@ -25,9 +29,10 @@ CSBMSActionDialog::CSBMSActionDialog(CSBMS *ptr)
 	Sizer->Add(GetActionPanel(this),1,wxALL|wxEXPAND,5);
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	SetSizer(Sizer);
-	Center();
 	SetSBMS(ptr);
-
+	Fit();
+	Center();
+		
 	SetTitle(wxString::Format(_("%s (%s)"),ptr->GetSymbolName(),ptr->GetName()));
 }
 
@@ -59,34 +64,45 @@ wxPanel *CSBMSActionDialog::GetTopPanel(wxWindow *parent)
 wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-		
-	wxFlexGridSizer *Sizer = new wxFlexGridSizer(3);
-	Sizer->AddGrowableCol(0,1);
-	Sizer->AddGrowableCol(1,1);
-	Sizer->AddGrowableCol(2,1);
-
-	m_ButtonGraph = new CButton(Panel,ID_GRAPH,GetMsg(MSG_GRAPH));
-	Sizer->Add(m_ButtonGraph,1,wxALL|wxEXPAND,2);
-	Sizer->AddSpacer(1);
-	Sizer->AddSpacer(1);
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	
-	m_ButtonOn = new CButton(Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
-	Sizer->Add(m_ButtonOn,1,wxALL|wxEXPAND,2);
+	m_ButtonGraph = new CButton(m_DB,_GetUID(),Panel,ID_GRAPH,GetMsg(MSG_GRAPH));
+	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_GRAPH);
+	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
+		
+	m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
+	Sizer->Add(m_ClearAlarm,0,wxALL|wxEXPAND,2);
 
-	m_ButtonOff = new CButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
-	Sizer->Add(m_ButtonOff,1,wxALL|wxEXPAND,2);
+	m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
+	Sizer->Add(m_ClearCommand,0,wxALL|wxEXPAND,2);
 
-	m_ButtonAuto = new CButton(Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
-	Sizer->Add(m_ButtonAuto,1,wxALL|wxEXPAND,2);
 
-	m_ButtonTime = new CButton(Panel,ID_TIME,GetMsg(MSG_GET_TIME));
-	Sizer->Add(m_ButtonTime,1,wxALL|wxEXPAND,2);
+	wxGridSizer *FlexSizer = new wxGridSizer(3);
+	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
+	
+	m_ButtonOn = new CButton(m_DB,_GetUID(), Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	m_ButtonOn->Right(MODULE_COMMAND,ACTION_LIGHT_ON);
+	FlexSizer->Add(m_ButtonOn,1,wxALL|wxEXPAND,2);
 
-	m_ButtonUpTime = new CButton(Panel,ID_UPTIME,GetMsg(MSG_GET_UPTIME));
-	Sizer->Add(m_ButtonUpTime,1,wxALL|wxEXPAND,2);
+	m_ButtonOff = new CButton(m_DB,_GetUID(),Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	m_ButtonOff->Right(MODULE_COMMAND,ACTION_LIGHT_OFF);
+	FlexSizer->Add(m_ButtonOff,1,wxALL|wxEXPAND,2);
 
-	m_ButtonReset = new CButton(this,ID_RESET,GetMsg(MSG_RESET));
-	Sizer->Add(m_ButtonReset,1,wxALL|wxEXPAND,2);
+	m_ButtonAuto = new CButton(m_DB,_GetUID(),Panel,ID_AUTO,GetMsg(MSG_AUTO_MANAGEMENT));
+	m_ButtonAuto->Right(MODULE_COMMAND,ACTION_AUTO);
+	FlexSizer->Add(m_ButtonAuto,1,wxALL|wxEXPAND,2);
+
+	m_ButtonTime = new CButton(m_DB,_GetUID(),Panel,ID_TIME,GetMsg(MSG_GET_TIME));
+	m_ButtonTime->Right(MODULE_COMMAND,ACTION_TIME);
+	FlexSizer->Add(m_ButtonTime,1,wxALL|wxEXPAND,2);
+
+	m_ButtonUpTime = new CButton(m_DB,_GetUID(),Panel,ID_UPTIME,GetMsg(MSG_GET_UPTIME));
+	m_ButtonUpTime->Right(MODULE_COMMAND,ACTION_UPTIME);
+	FlexSizer->Add(m_ButtonUpTime,1,wxALL|wxEXPAND,2);
+
+	m_ButtonReset = new CButton(m_DB,_GetUID(),Panel,ID_RESET,GetMsg(MSG_RESET));
+	m_ButtonReset->Right(MODULE_COMMAND,ACTION_RESET);
+	FlexSizer->Add(m_ButtonReset,1,wxALL|wxEXPAND,2);
 
 	Panel->SetSizer(Sizer);
 	

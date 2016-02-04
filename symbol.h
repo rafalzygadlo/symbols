@@ -1,5 +1,5 @@
-#ifndef __SYMBOL_H
-#define __SYMBOL_H
+#ifndef __SYMBOL
+#define __SYMBOL
 
 #include <wx/html/htmlwin.h>
 #include "ticker.h"
@@ -49,6 +49,7 @@ class CSymbol
 	int m_Monitoring;
 	nvFastFont *m_NameFont;
 	
+	
 	void SetColor(int id);
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
@@ -80,6 +81,7 @@ public:
 	void SetRLat(double v);
 	void SetRLonMap(double v);
 	void SetRLatMap(double v);
+	void UnsetNewReport();
 	
 	//pozycja Gps
 	void SetGpsLon(double v);

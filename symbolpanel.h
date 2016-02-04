@@ -1,5 +1,5 @@
-#ifndef __SYMBOLPANEL_H
-#define __SYMBOLPANEL_H
+#ifndef __SYMBOLPANEL
+#define __SYMBOLPANEL
 
 #include "conf.h"
 #include <wx/html/htmlwin.h>

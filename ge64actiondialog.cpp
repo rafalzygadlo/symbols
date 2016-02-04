@@ -4,15 +4,18 @@
 #include "ge64actiondialog.h"
 #include "control.h"
 #include "tools.h"
+#include "module.h"
+#include "action.h"
 
 BEGIN_EVENT_TABLE(CGE64ActionDialog,wxDialog)
 	EVT_BUTTON(ID_LIGHT_ON,OnLightOn)
 	EVT_BUTTON(ID_LIGHT_OFF,OnLightOff)
 END_EVENT_TABLE();
 
-CGE64ActionDialog::CGE64ActionDialog(CGE64 *ptr)
+CGE64ActionDialog::CGE64ActionDialog(void *db,CGE64 *ptr)
 	:wxDialog(NULL,wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize )
 {	
+	m_DB = db;
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
 	
@@ -60,10 +63,12 @@ wxPanel *CGE64ActionDialog::GetActionPanel(wxWindow *parent)
 	Sizer->AddGrowableCol(1,1);
 	Sizer->AddGrowableCol(2,1);
 	
-	m_ButtonOn = new CButton(Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	m_ButtonOn = new CButton(m_DB,_GetUID(),Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
+	m_ButtonOn->Right(MODULE_GE64,ACTION_LIGHT_ON);
 	Sizer->Add(m_ButtonOn,1,wxALL|wxEXPAND,2);
 
-	m_ButtonOff = new CButton(Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	m_ButtonOff = new CButton(m_DB,_GetUID(),Panel,ID_LIGHT_OFF,GetMsg(MSG_LIGHT_OFF));
+	m_ButtonOff->Right(MODULE_GE64,ACTION_LIGHT_OFF);
 	Sizer->Add(m_ButtonOff,1,wxALL|wxEXPAND,2);
 
 	Panel->SetSizer(Sizer);

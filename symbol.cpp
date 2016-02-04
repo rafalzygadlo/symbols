@@ -8,7 +8,6 @@
 #include "ais.h"
 #include "options.h"
 #include "render.h"
-#include "commanddialog.h"
 #include "sbms.h"
 
 
@@ -199,6 +198,15 @@ wxString CSymbol::GetFullHtml()
 	
 	str.Append(_("</table>"));
 	return str;
+}
+
+void CSymbol::UnsetNewReport()
+{
+	for(int i = 0; i < m_DriverList.Length();i++)
+	{
+		CDriver *Driver = m_DriverList.Get(i);
+		Driver->UnsetNewReport();
+	}
 }
 
 void CSymbol::AddDriver(CDriver *ptr)

@@ -62,39 +62,37 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	if(db == NULL)
 		return NULL;
 
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	wxGridSizer *Sizer = new wxGridSizer(2);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
-	wxStaticBoxSizer *BoxSizer = new wxStaticBoxSizer(wxVERTICAL,Panel,GetMsg(MSG_FILTER));
-	Sizer->Add(BoxSizer,1,wxALL|wxEXPAND,0);
-			
+				
 	//m_CheckInMonitoring = new wxCheckBox(Panel,wxID_ANY,GetMsg(MSG_IN_MONITORING));
 	//FlexSizer->AddSpacer(1);
 	//FlexSizer->Add(m_CheckInMonitoring,0,wxALL,5);
 
 	wxStaticText *LabelAlarm = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_ALARM));
-	BoxSizer->Add(LabelAlarm,0,wxALL,1);
+	Sizer->Add(LabelAlarm,0,wxALL,2);
 	m_ComboAlarm = GetCombo(db,Panel,TABLE_ALARM,wxEmptyString,FI_ALARM_ID,FI_ALARM_NAME, true);
 	m_ComboAlarm->SetSelection(0);
-	BoxSizer->Add(m_ComboAlarm,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboAlarm,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelGroup = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_GROUP));
-	BoxSizer->Add(LabelGroup,0,wxALL,1);
+	Sizer->Add(LabelGroup,0,wxALL,2);
 	m_ComboGroup = GetCombo(db,Panel,TABLE_SYMBOL_GROUP,wxEmptyString,FI_SYMBOL_GROUP_ID,FI_SYMBOL_GROUP_NAME, true);
 	m_ComboGroup->SetSelection(0);
-	BoxSizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,2);
 
 	wxStaticText *LabelLight = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LIGHT));
-	BoxSizer->Add(LabelLight,0,wxALL,1);
+	Sizer->Add(LabelLight,0,wxALL,2);
 	m_ComboLight = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
 	m_ComboLight->Append(GetMsg(MSG_ALL));
 	m_ComboLight->Append(GetMsg(MSG_LIGHT_OFF));
 	m_ComboLight->Append(GetMsg(MSG_LIGHT_ON));
 	m_ComboLight->SetSelection(0);
-	BoxSizer->Add(m_ComboLight,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboLight,0,wxALL|wxEXPAND,2);
 
 	wxStaticText *LabelInMonitoring = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_IN_MONITORING));
-	BoxSizer->Add(LabelInMonitoring,0,wxALL,1);
+	Sizer->Add(LabelInMonitoring,0,wxALL,2);
 	m_ComboMonitoring = new wxComboBox(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,NULL,0, wxCB_READONLY );
 	m_ComboMonitoring->Append(GetMsg(MSG_ALL));
 	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_NOT_IN_MONITORING));
@@ -104,31 +102,31 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboMonitoring->Append(GetMsg(MSG_SYMBOL_WINTER));
 	
 	m_ComboMonitoring->SetSelection(0);
-	BoxSizer->Add(m_ComboMonitoring,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboMonitoring,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelBaseStation = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_BASE_STATION));
-	BoxSizer->Add(LabelBaseStation,0,wxALL,1);
+	Sizer->Add(LabelBaseStation,0,wxALL,2);
 	m_ComboBaseStation = GetCombo(db,Panel,TABLE_BASE_STATION,wxEmptyString,FI_BASE_STATION_ID,FI_BASE_STATION_NAME, true);
 	m_ComboBaseStation->SetSelection(0);
-	BoxSizer->Add(m_ComboBaseStation,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboBaseStation,0,wxALL|wxEXPAND,2);
 
 	wxStaticText *LabelArea = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_AREA));
-	BoxSizer->Add(LabelArea,0,wxALL,1);
+	Sizer->Add(LabelArea,0,wxALL,2);
 	m_ComboArea = GetCombo(db,Panel,TABLE_AREA,wxEmptyString,FI_AREA_ID,FI_AREA_NAME, true);
 	m_ComboArea->SetSelection(0);
-	BoxSizer->Add(m_ComboArea,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboArea,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelSeaway = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SEAWAY));
-	BoxSizer->Add(LabelSeaway,0,wxALL,1);
+	Sizer->Add(LabelSeaway,0,wxALL,2);
 	m_ComboSeaway = GetCombo(db,Panel,TABLE_SEAWAY,wxEmptyString,FI_SEAWAY_ID,FI_SEAWAY_NAME, true);
 	m_ComboSeaway->SetSelection(0);
-	BoxSizer->Add(m_ComboSeaway,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboSeaway,0,wxALL|wxEXPAND,2);
 	
 	wxStaticText *LabelSymbolType = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_TYPE));
-	BoxSizer->Add(LabelSymbolType,0,wxALL,1);
+	Sizer->Add(LabelSymbolType,0,wxALL,2);
 	m_ComboSymbolType = GetCombo(db,Panel,TABLE_SYMBOL_TYPE,wxEmptyString,FI_SYMBOL_TYPE_ID,FI_SYMBOL_TYPE_NAME, true);
 	m_ComboSymbolType->SetSelection(0);
-	BoxSizer->Add(m_ComboSymbolType,0,wxALL|wxEXPAND,1);
+	Sizer->Add(m_ComboSymbolType,0,wxALL|wxEXPAND,2);
 
 	DBClose(db);
 

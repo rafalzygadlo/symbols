@@ -64,10 +64,9 @@ SHeader Header[] =
 	{CONTROL_SYMBOL_ALARM,150, {0 , TABLE_SYMBOL"."FN_SYMBOL_NAME, MSG_NAME} },
 	{CONTROL_SYMBOL_ALARM,250, {1 , TABLE_SYMBOL"."FN_SYMBOL_NUMBER, MSG_SYMBOL_NUMBER } },
 	
-//	{CONTROL_SBMS_ALARM,80,  {FI_VIEW_ALARM_ALARM_NAME  , FN_VIEW_ALARM_ALARM_NAME, MSG_ALARM} },
-//	{CONTROL_SBMS_ALARM,180, {FI_VIEW_ALARM_SET_LOCAL_UTC_TIME  , FN_VIEW_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
-//	{CONTROL_SBMS_ALARM,180, {FI_VIEW_ALARM_UNSET_LOCAL_UTC_TIME  , FN_VIEW_ALARM_UNSET_LOCAL_UTC_TIME, MSG_UNSET_TIME} },
-	//{CONTROL_SBMS_ALARM,100, {FI_SBMS_LOCAL_UTC_TIME  , FN_SBMS_LOCAL_UTC_TIME, MSG_UTC_TIME} },
+	{CONTROL_SBMS_ALARM,80,  {0  , TABLE_ALARM"."FN_ALARM_NAME, MSG_ALARM} },
+	{CONTROL_SBMS_ALARM,180, {1  , FN_SBMS_ALARM_SET_LOCAL_UTC_TIME, MSG_SET_TIME} },
+	{CONTROL_SBMS_ALARM,180, {2  , FN_SBMS_ALARM_UNSET_LOCAL_UTC_TIME, MSG_UNSET_TIME} },
 
 	//komendy master/slave
 	{CONTROL_SYMBOL_COMMAND,150, {FI_SYMBOL_NUMBER , FN_SYMBOL_NAME, MSG_SYMBOL_NUMBER} },
@@ -92,6 +91,7 @@ SIds Id[] =
 	{CONTROL_SYMBOL_GROUP,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_SYMBOL_GROUP},
 	{CONTROL_BASE_STATION,COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_BASE_STATION},
 	{CONTROL_SBMS,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_DRIVER},
+	{CONTROL_SBMS_ALARM,COLUMN_WITH_ID, COLUMN_SBMS_WITH_NAME,MSG_DRIVER},
 	{CONTROL_SYMBOL_ALARM, FI_SYMBOL_ID, COLUMN_WITH_NAME,MSG_SYMBOL},
 	{CONTROL_GE64, COLUMN_WITH_ID, COLUMN_WITH_NAME,MSG_DRIVER},
 };
@@ -793,13 +793,13 @@ void CDialogPanel::ReadData()
 		break;
 		
 		case CONTROL_SBMS_ALARM:
-			sql = wxString::Format(_("SELECT * FROM `%s` WHERE id_symbol='%d'"),TABLE_SBMS,m_IDMaster);
+			sql = wxString::Format(_("SELECT `"TABLE_ALARM"`.name,`"TABLE_SBMS_ALARM"`.set_local_utc_time,`"TABLE_SBMS_ALARM"`.unset_local_utc_time FROM `%s`,`%s`,`%s` WHERE `"TABLE_SBMS"`.id=`"TABLE_SBMS_ALARM"`.id_sbms AND `"TABLE_ALARM"`.id=`"TABLE_SBMS_ALARM"`.id_alarm AND id_symbol='%d' AND "),TABLE_SBMS_ALARM,TABLE_SBMS,TABLE_ALARM,m_IDMaster);
 		break;
 		case CONTROL_SYMBOL_ALARM:
 
 			//sql = wxString::Format(_("SELECT * FROM `%s`,`%s`,`%s` WHERE `%s`.id=`%s`.id_symbol AND `%s`.id_sbms > 0 AND"),TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL,TABLE_SBMS_ALARM,TABLE_SYMBOL);
-			//sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),TABLE_SYMBOL);
-			sql =_("SELECT symbol.name,alarm.name,concat(IFNULL(sbms.id,''),IFNULL(ge64.id,'')) as id from symbol left join sbms ON symbol.id = sbms.id_symbol left join sbms_alarm ON sbms_alarm.id_sbms = sbms.id left join ge64 ON symbol.id = ge64.id_symbol left join ge64_alarm ON ge64_alarm.id_ge64 = ge64.id left join alarm ON alarm.id = sbms_alarm.id_alarm OR alarm.id = ge64_alarm.id_alarm WHERE (sbms_alarm.active=0 OR ge64_alarm.active=0) AND ");
+			sql = wxString::Format(_("SELECT * FROM `%s` WHERE"),TABLE_SYMBOL);
+			//sql =_("SELECT symbol.name,alarm.name,concat(IFNULL(sbms.id,''),IFNULL(ge64.id,'')) as id from symbol left join sbms ON symbol.id = sbms.id_symbol left join sbms_alarm ON sbms_alarm.id_sbms = sbms.id left join ge64 ON symbol.id = ge64.id_symbol left join ge64_alarm ON ge64_alarm.id_ge64 = ge64.id left join alarm ON alarm.id = sbms_alarm.id_alarm OR alarm.id = ge64_alarm.id_alarm WHERE (sbms_alarm.active=0 OR ge64_alarm.active=0) AND ");
 		break;
 
 		//case CONTROL_SYMBOL_COMMAND:

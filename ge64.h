@@ -1,5 +1,5 @@
-#ifndef __GE64_H
-#define __GE64_H
+#ifndef __GE64
+#define __GE64
 
 #include <gl/gl.h>
 #include "geometrytools.h"
@@ -10,13 +10,14 @@
 
 class CGE64 :public CDriver
 {
+	void *m_DB;
 	int m_LightOn;
 	int GetLightOn();
 	
 	
 public:
 
-	CGE64(CNaviBroker *broker);
+	CGE64(void *db,CNaviBroker *broker);
 	~CGE64();
 
 	wxString GetDriverHtml(int v) override;

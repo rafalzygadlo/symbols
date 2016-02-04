@@ -6,8 +6,9 @@
 #include "ge64actiondialog.h"
 
 
-CGE64::CGE64(CNaviBroker *broker)
+CGE64::CGE64(void *db,CNaviBroker *broker)
 {
+	m_DB = db;
 	m_LightOn = false;
 	
 }
@@ -20,10 +21,15 @@ CGE64::~CGE64()
 
 void CGE64::ShowAction()
 {
-	//if(m_SBMSActionDialog == NULL)
-	CGE64ActionDialog *GE64ActionDialog = new CGE64ActionDialog(this);
+	void *db = DBConnect();
+	if(db == NULL)
+		return;
+
+	CGE64ActionDialog *GE64ActionDialog = new CGE64ActionDialog(db,this);
 	GE64ActionDialog->ShowModal();
 	delete GE64ActionDialog;
+	
+	DBClose(db);
 }
 
 int CGE64::GetLightOn()

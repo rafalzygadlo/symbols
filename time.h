@@ -1,5 +1,5 @@
-#ifndef __TIME_H
-#define __TIME_H
+#ifndef __TIME
+#define __TIME
 
 #include <wx/wx.h>
 #include <wx/wrapsizer.h>

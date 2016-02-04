@@ -1,5 +1,5 @@
-#ifndef __RENDER_H
-#define __RENDER_H
+#ifndef __RENDER
+#define __RENDER
 
 #include <windows.h>
 #include <gl/gl.h>

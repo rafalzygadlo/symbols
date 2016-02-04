@@ -1,5 +1,5 @@
-#ifndef __DIALOG_H
-#define __DIALOG_H
+#ifndef __DIALOG
+#define __DIALOG
 
 #include <wx/wx.h>
 #include "listctrl.h"

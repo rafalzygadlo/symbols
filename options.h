@@ -1,5 +1,6 @@
 #ifndef __OPTIONS
 #define __OPTIONS
+
 #include <wx/wx.h>
 #include <stdint.h>
 #include <sapi.h>

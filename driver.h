@@ -1,5 +1,6 @@
-#ifndef __DRIVER_H
-#define __DRIVER_H
+#ifndef __DRIVER
+#define __DRIVER
+
 #include <wx/wx.h>
 #include "control.h"
 #include "nvfastfont.h"
@@ -68,6 +69,8 @@ public:
 	virtual void SetTimestamp(int v);
 	virtual void SetAuto(bool v);
 	virtual void SetCharging(bool v);
+	virtual void SetNewReport(bool v);
+	virtual void UnsetNewReport();
 
 	//GET
 	virtual int GetBaseStationId();

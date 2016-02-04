@@ -1,5 +1,5 @@
-#ifndef __USER_GROUP_H
-#define __USER_GROUP_H
+#ifndef __USER_GROUP
+#define __USER_GROUP
 
 #include <wx/wx.h>
 

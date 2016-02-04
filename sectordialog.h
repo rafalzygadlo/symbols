@@ -1,5 +1,5 @@
-#ifndef __SECTOR_DIALOG_H
-#define __SECTOR_DIALOG_H
+#ifndef __SECTOR_DIALOG
+#define __SECTOR_DIALOG
 
 #include <wx/wx.h>
 #include <wx/clrpicker.h>

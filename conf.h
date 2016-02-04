@@ -330,6 +330,9 @@
 #define MSG_SBMS						188
 #define MSG_GE64						189
 #define MSG_ADD							190
+#define MSG_CLEAR_ALARM					191
+#define MSG_CLEAR_COMMAND				192
+
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -816,6 +819,7 @@
 #define FI_SBMS_ALARM_CONFIRMED				5
 #define FI_SBMS_ALARM_SET_LOCAL_UTC_TIME	6
 #define FI_SBMS_ALARM_UNSET_LOCAL_UTC_TIME	7
+
 
 #define FN_SBMS_ALARM_ID_ALARM				"id_alarm"
 #define FN_SBMS_ALARM_ACTIVE				"active"

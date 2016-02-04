@@ -1,5 +1,5 @@
-#ifndef __GRAPH_DIALOG_H
-#define __GRAPH_DIALOG_H
+#ifndef __GRAPH_DIALOG
+#define __GRAPH_DIALOG
 
 #include <wx/wx.h>
 #include <wx/hyperlink.h>
@@ -22,7 +22,7 @@ public:
 	CGraphDialog(wxWindow *parent);
 	~CGraphDialog();
 	CGraph *GetGraph();
-	void SetTitle(wxString v);
+	void _SetTitle(wxString v);
 	void SetMin(wxString v);
 	
 };

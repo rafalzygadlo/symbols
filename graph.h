@@ -1,5 +1,6 @@
-#ifndef __GRAPH_H
-#define __GRAPH_H
+#ifndef __GRAPH
+#define __GRAPH
+
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 #include "ticker.h"

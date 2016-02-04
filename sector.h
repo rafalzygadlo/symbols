@@ -1,5 +1,5 @@
-#ifndef __SECTOR_H
-#define __SECTOR_H
+#ifndef __SECTOR
+#define __SECTOR
 
 #include <wx/wx.h>
 

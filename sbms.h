@@ -1,5 +1,5 @@
-#ifndef __SBMS_H
-#define __SBMS_H
+#ifndef __SBMS
+#define __SBMS
 
 #include <wx/html/htmlwin.h>
 #include "ticker.h"
@@ -18,9 +18,6 @@
 #include "driver.h"
 #include "command.h"
 
-class CGraphDialog;
-class CAlarmDialog;
-class CSBMSPanel;
 class CSBMSActionDialog;
 class CSBMS :public CDriver
 {
@@ -31,8 +28,7 @@ class CSBMS :public CDriver
 	CNaviArray <nvPoint3f> m_PosBuffer;
 	CNaviArray <CAlarm*> m_AlarmList;
 	CNaviArray <CCommand*> m_CommandList;
-	
-	CSBMSPanel *m_SBMSPanel;
+		
 	CSBMSActionDialog *m_SBMSActionDialog;
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
@@ -129,7 +125,7 @@ class CSBMS :public CDriver
 
 public:
 
-	CSBMS(CNaviBroker *broker);
+	CSBMS(void *db,CNaviBroker *broker);
 	~CSBMS();
 
 	void Read();
@@ -157,13 +153,13 @@ public:
 	void SetMMSI(int v);
 	void SetNvTime(nvtime_t dt);
 	void SetTimestamp(int v);
-	void SetAge(int v);
-	void SetAge(wxString v);
-	void SetNewReport(bool v);
+	void SetAge(int v) override;
+	void SetAge(wxString v) override;
+	void SetNewReport(bool v) override;
 	void SetSBMSName(wxString v);
-	void SetNoSBMS(bool v);
-	void SetAuto(bool v);
-	void SetInputVolt(float v);
+	void SetAuto(bool v) override;
+	void SetInputVolt(float v) override;
+	void UnsetNewReport() override;
 	
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);

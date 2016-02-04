@@ -210,6 +210,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"SBMS",L"SBMS"},
 	{L"GE64",L"GE64"},
 	{L"Add",L"Dodaj"},
+	{L"Clear Alarms",L"Usuń Alarmy"},
+	{L"Clear Commands",L"Usuń Komendy"},
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

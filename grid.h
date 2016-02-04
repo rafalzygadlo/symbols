@@ -1,5 +1,6 @@
-#ifndef __GRID_H
-#define __GRID_H
+#ifndef __GRID
+#define __GRID
+
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 #include "ticker.h"

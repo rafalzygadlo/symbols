@@ -1,5 +1,5 @@
-#ifndef __OPTIONS_DIALOG_H
-#define __OPTIONS_DIALOG_H
+#ifndef __OPTIONS_DIALOG
+#define __OPTIONS_DIALOG
 
 #include <wx/wx.h>
 #include <wx/spinctrl.h>

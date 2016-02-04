@@ -1,13 +1,17 @@
-#ifndef __ACTIONDIALOG_H
-#define __ACTIONDIALOG_H
+#ifndef __ACTIONDIALOG
+#define __ACTIONDIALOG
 
 #include "conf.h"
 #include "sbms.h"
+#include "control.h"
 
 class CSBMS;
 class CSBMSActionDialog : public wxDialog
 {
+	void *m_DB;
 	CButton *m_ButtonGraph;
+	CButton *m_ClearAlarm;
+	CButton *m_ClearCommand;
 	CButton *m_ButtonOn;
 	CButton *m_ButtonOff;
 	CButton *m_ButtonAuto;
@@ -33,7 +37,7 @@ class CSBMSActionDialog : public wxDialog
 
 public:
 
-	CSBMSActionDialog(CSBMS *ptr);
+	CSBMSActionDialog(void *db,CSBMS *ptr);
 	~CSBMSActionDialog();
 	void SetSBMS(CSBMS *ptr);
 
@@ -47,6 +51,8 @@ public:
 		ID_RESET,
 		ID_TIME,
 		ID_UPTIME,
+		ID_CLEAR_COMMAND,
+		ID_CLEAR_ALARM,
 
 	};
 	

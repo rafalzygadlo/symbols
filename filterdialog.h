@@ -1,5 +1,5 @@
-#ifndef __FILTER_H
-#define __FILTER_H
+#ifndef __FILTER
+#define __FILTER
 
 #include "conf.h"
 

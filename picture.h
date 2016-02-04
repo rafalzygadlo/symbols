@@ -1,5 +1,5 @@
-#ifndef __PICTURE_H
-#define __PICTURE_H
+#ifndef __PICTURE
+#define __PICTURE
 
 #include <wx/wx.h>
 #include <wx/wrapsizer.h>

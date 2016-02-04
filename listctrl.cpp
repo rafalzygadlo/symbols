@@ -9,7 +9,8 @@
 #include "images/file.img"
 #include "db.h"
 #include "control.h"
-#include "right.h"
+#include "module.h"
+#include "action.h"
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
@@ -308,18 +309,18 @@ void CListCtrl::OnContextMenu(wxContextMenuEvent &event)
 
 wxMenu *CListCtrl::Menu(int id, int id_module)
 {
-	CMenu *Menu = new CMenu();
+	CMenu *Menu = new CMenu(m_DB,_GetUID());
 	
 	wxMenuItem *item = Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	Menu->CheckRight(id_module, ACTION_NEW, item);
+	Menu->Right(id_module, ACTION_NEW,item);
 				
 	if(id > -1)
 	{
 		item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		Menu->CheckRight(id_module,ACTION_EDIT,item);
+		Menu->Right(id_module,ACTION_EDIT,item);
 		
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->Right(id_module,ACTION_DELETE,item);
 	}
 	
 	return Menu;
@@ -328,15 +329,15 @@ wxMenu *CListCtrl::Menu(int id, int id_module)
 
 wxMenu *CListCtrl::MenuBaseStation(int id, int id_module)
 {
-	CMenu *Menu = new CMenu();
+	CMenu *Menu = new CMenu(m_DB,_GetUID());
 				
 	if(id > -1)
 	{
 		wxMenuItem *item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		Menu->CheckRight(id_module,ACTION_EDIT,item);
+		Menu->Right(id_module,ACTION_EDIT,item);
 				
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->Right(id_module,ACTION_DELETE,item);
 	}
 		
 	return Menu;
@@ -345,28 +346,28 @@ wxMenu *CListCtrl::MenuBaseStation(int id, int id_module)
 
 wxMenu *CListCtrl::MenuSymbol(int id, int id_module)
 {
-	CMenu *Menu = new CMenu();
+	CMenu *Menu = new CMenu(m_DB,_GetUID());
 	wxMenuItem *item = NULL;
 
 	if(id > -1)
 	{
 		item = Menu->Append(ID_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP));
-		Menu->CheckRight(id_module,ACTION_ADD_TO_GROUP,item);
+		Menu->Right(id_module,ACTION_GROUP,item);
 		Menu->AppendSeparator();
 	}
 	
 	item = Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	Menu->CheckRight(id_module,ACTION_NEW,item);
+	Menu->Right(id_module,ACTION_NEW,item);
 				
 	if(id > -1)
 	{
 		item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		Menu->CheckRight(id_module,ACTION_EDIT,item);
+		Menu->Right(id_module,ACTION_EDIT,item);
 				
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->Right(id_module,ACTION_DELETE,item);
 		
-#if 0		
+#if 0
 		Menu->AppendSeparator();
 		Menu->Append(ID_PROPERTIES,GetMsg(MSG_PROPERTIES));
 		if(!db_check_right(module,ACTION_PROPERTIES,_GetUID()))
@@ -380,16 +381,16 @@ wxMenu *CListCtrl::MenuSymbol(int id, int id_module)
 
 wxMenu *CListCtrl::MenuSBMS(int id, int id_module)
 {
-	CMenu *Menu = new CMenu();
+	CMenu *Menu = new CMenu(m_DB,_GetUID());
 	wxMenuItem *item = NULL;
 
 	if(id > -1)
 	{
 		item = Menu->Append(ID_EDIT,GetMsg(MSG_EDIT));
-		Menu->CheckRight(id_module,ACTION_EDIT,item);
+		Menu->Right(id_module,ACTION_EDIT,item);
 				
 		item = Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->Right(id_module,ACTION_DELETE,item);
 		 
 #if 0		
 		Menu->AppendSeparator();
@@ -405,15 +406,15 @@ wxMenu *CListCtrl::MenuSBMS(int id, int id_module)
 
 wxMenu *CListCtrl::MenuSymbolItem(int id, int id_module)
 {
-	CMenu *Menu = new CMenu();
+	CMenu *Menu = new CMenu(m_DB,_GetUID());
 	
 	wxMenuItem *item = Menu->Append(ID_NEW,GetMsg(MSG_NEW));
-	Menu->CheckRight(id_module,ACTION_NEW,item);
+	Menu->Right(id_module,ACTION_NEW,item);
 				
 	if(id > -1)
 	{
 		Menu->Append(ID_DELETE,GetMsg(MSG_DELETE));
-		Menu->CheckRight(id_module,ACTION_DELETE,item);
+		Menu->Right(id_module,ACTION_DELETE,item);
 	
 	}
 		
