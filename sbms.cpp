@@ -563,6 +563,39 @@ void CSBMS::RenderSBMS()
 	
 }
 
+void CSBMS::RenderHuman()
+{
+	if(m_Auto)
+		return;
+	
+	SetSymbolColor();
+	glPushMatrix();
+		
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth;
+		
+	glColor4f(0.0,0.0,0.0,0.5);
+	glLineWidth(1);
+	
+	glBegin(GL_LINES);
+		glVertex2f(m_RectWidth/2,m_RectWidth);
+		glVertex2f(m_RectWidth/2,-m_RectWidth);
+		glVertex2f(-m_RectWidth/2,-m_RectWidth);
+		glVertex2f(-m_RectWidth/2,m_RectWidth);
+		glVertex2f(m_RectWidth/2,0.0);
+		glVertex2f(-m_RectWidth/2,0.0);
+	glEnd();
+
+	glLineWidth(1);
+	//nvDrawCircle(&c);
+
+	glPopMatrix();
+}
+
 void CSBMS::RenderRestricted()
 {
 	/*
@@ -621,7 +654,7 @@ void CSBMS::RenderNewReport()
 	glPushMatrix();
 		
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
-	glTranslatef(-m_RectWidth/1.5,-m_RectWidth/1.5,0.0f);
+	glTranslatef(-m_RectWidth/1.7,-m_RectWidth/1.5,0.0f);
 	
 	//nvCircle c;
 	//c.Center.x = 0.0;
@@ -697,6 +730,7 @@ void CSBMS::Render()
 	glEnable(GL_LINE_SMOOTH);
 
 	SetValues();
+	RenderHuman();
 	RenderSBMS();
 	RenderRestricted();
 	RenderBusy();
@@ -1295,10 +1329,11 @@ wxString CSBMS::GetDriverFullHtml()
 	if(row)
 	{
 		str.Append(_("<hr>"));
-		str.Append(wxString::Format(_("<font size=2><b>%s</b></font><br><br>"), GetMsg(MSG_DRIVER)));
+		str.Append(wxString::Format(_("<font size=2><b>%s(%s)</b></font><br><br>"), GetMsg(MSG_DRIVER),Convert(row[FI_SBMS_NAME])));
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetLightOnAsString(GetLightOn())));
-		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),Convert(row[FI_SBMS_NAME])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetAutoAsString(GetAuto())));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetChargingAsString()));
 						
 		int phone = atoi(row[FI_SBMS_PHONE]);
 		if(phone)

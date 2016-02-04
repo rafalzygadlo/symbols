@@ -13,6 +13,7 @@
 #include "sbms.h"
 #include "ge64.h"
 #include "right.h"
+#include "basestation.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -1056,6 +1057,53 @@ void CMapPlugin::ReadGroup(void *db)
 	}
 	
 }
+
+void CMapPlugin::ReadBaseStation(void *db)
+{	
+	wxString sql = wxString::Format(_("SELECT id,name,ip,status FROM %s"),TABLE_BASE_STATION);
+	
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		double lon;
+		double lat;
+		int id;
+		sscanf(row[0],"%d",&id);
+		CBaseStation *ptr = NULL;
+		ptr = ExistsSymbol(id);
+				
+		if(ptr == NULL)
+		{
+			ptr = new CBaseStation(m_Broker);
+			//ptr->SetFont(m_NameFont);
+			m_SymbolList->Add(ptr);
+		}
+
+		sscanf(row[4],"%lf",&lon);
+		sscanf(row[5],"%lf",&lat);
+		//reference
+		double to_x,to_y;
+		m_Broker->Unproject(lon,lat,&to_x,&to_y);
+
+		ptr->SetRLon(lon);		ptr->SetRLat(lat);		ptr->SetRLonMap(to_x);		ptr->SetRLatMap(-to_y);
+		//ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(to_x);		ptr->SetLatMap(-to_y);
+				
+		ptr->SetId(id);
+		ptr->SetName(Convert(row[1]));
+		ptr->SetExists(true);
+	}
+	
+	db_free_result(result);
+
+}
+
+
 
 /*
 void CMapPlugin::ReadGroupItems(void *db)

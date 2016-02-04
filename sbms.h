@@ -120,7 +120,8 @@ class CSBMS :public CDriver
 	void RenderNoSBMS();
 	void RenderText();
 	void RenderSelected();
-	virtual void Render();
+	void RenderHuman();
+	void Render() override;
 	
 
 public:

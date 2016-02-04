@@ -29,6 +29,7 @@ class CBaseStation
 	double m_TranslationY;
 	double m_VisibleMap[4];
 	wxString m_Name;
+	bool m_Exists;
 	
 	void SetColor(int id);
 	void SetValues();
