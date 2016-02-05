@@ -946,12 +946,11 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 		int id;
 		sscanf(row[0],"%d",&id);
 		ptr = ExistsAlarm(id);
-		bool add = false;
-		
+			
 		if(ptr == NULL)
 		{
-			add = true;
 			ptr = new CAlarm();
+			m_AlarmList->Insert(ptr,0);
 		}
 		
 		ptr->SetId(id);
@@ -971,8 +970,7 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
 		
-		if(add)
-			m_AlarmList->Insert(ptr,0);
+				
 	}
 }
 
@@ -997,12 +995,11 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		int id;
 		sscanf(row[0],"%d",&id);
 		ptr = ExistsCommand(id);
-		bool add = false;
-
+		
 		if(ptr == NULL)
 		{
-			add = true;
 			ptr = new CCommand();
+			m_CommandList->Insert(ptr,0);
 		}
 
 		ptr->SetId(id);
@@ -1015,9 +1012,7 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		ptr->SetCommandDate(Convert(row[7]));
 		
 		ptr->SetExists(true);
-
-		if(add)
-			m_CommandList->Insert(ptr,0);
+			
 	}
 }
 
@@ -1060,6 +1055,7 @@ void CMapPlugin::ReadGroup(void *db)
 
 void CMapPlugin::ReadBaseStation(void *db)
 {	
+	/*
 	wxString sql = wxString::Format(_("SELECT id,name,ip,status FROM %s"),TABLE_BASE_STATION);
 	
 	my_query(db,sql);
@@ -1100,6 +1096,7 @@ void CMapPlugin::ReadBaseStation(void *db)
 	}
 	
 	db_free_result(result);
+	*/
 
 }
 
@@ -1221,6 +1218,21 @@ CSymbol *CMapPlugin::ExistsSymbol(int id)
 
 	return NULL;
 }
+
+/*
+CSymbol *CMapPlugin::ExistsBaseStation(int id)
+{
+	for(size_t i = 0; i < m_SymbolList->size(); i++)
+	{
+		CSymbol *ptr = (CSymbol*)m_SymbolList->Item(i);
+		if(id == ptr->GetId())
+			return ptr;
+	}
+
+	return NULL;
+}
+*/
+
 //DRIVER
 void CMapPlugin::SetExistsDriver()
 {
@@ -1439,25 +1451,6 @@ CNaviBroker *CMapPlugin::GetBroker()
 	return m_Broker;
 }
 
-void CMapPlugin::SetDriver()
-{
-	wxString sql = _("SELECT id,id_sbms FROM symbol");
-	my_query(m_DB,sql);
-	void *result = db_result(m_DB);
-		
-    char **row = NULL;
-	if(result == NULL)
-		return;
-		
-	while(row = (char**)db_fetch_row(result))
-	{
-		sql  = wxString::Format(_("UPDATE sbms SET id_symbol='%s' WHERE id='%s'"),row[0],row[1]);
-		my_query(m_DB,sql);
-	}
-	
-	db_free_result(result);
-}
-
 void CMapPlugin::Run(void *Params)
 {
 	InitMutex();
@@ -1469,7 +1462,7 @@ void CMapPlugin::Run(void *Params)
 		wxMessageBox(GetMsg(MSG_DB_CONNECT_ERROR),GetMsg(MSG_ERROR),wxICON_ERROR);
 		return;
 	}
-	//SetDriver();
+	
 	CreateApiMenu(); // w SetUID sprawdza dla opcji uprawnienia
 	//ReadConfigDB();
 	ReadGlobalConfigDB();
@@ -2173,7 +2166,8 @@ void CMapPlugin::OnTick()
 	
 	SendInsertSignal();
 	ShowAlarm();
-					
+	
+	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

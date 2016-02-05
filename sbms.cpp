@@ -870,8 +870,8 @@ void CSBMS::Read()
 		result = true;
 	if(CheckAlarm())
 		result = true;
-	if(SetPositions())
-		result = true;
+	//if(SetPositions()) //wolne ale index dodany i idzie szybciej
+		//result = true;
 			
 	AlarmRemove();
 	

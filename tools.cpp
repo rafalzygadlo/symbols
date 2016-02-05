@@ -919,7 +919,7 @@ wxComboBox *GetCombo(void *db,wxWindow *Parent, wxString table, wxString sel, in
 		ptr->Append(GetMsg(MSG_EMPTY));
 		ptr->SetClientData(0,(int*)0);
 	}
-
+	
 	wxString sql = wxString::Format(_("SELECT * FROM `%s` ORDER BY name"),table);
 	if(!my_query(db,sql))
 		return ptr;

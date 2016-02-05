@@ -146,8 +146,8 @@ void CBaseStation::SetName(wxString v)
 	m_Name = v;
 }
 
-void CBaseStation::SetExists(bool v)
-{
-	m_Exists = v;
-}
+//void CBaseStation::SetExists(bool v)
+//{
+	//m_Exists = v;
+//}
 //GET

@@ -43,7 +43,12 @@ class CMapPlugin :public CNaviMapIOApi
 	CDialog *m_Alarm;
 	CDialog *m_Command;
 	CAlarmDialog *m_AlarmDialog;
-	
+
+	wxArrayPtrVoid *m_SymbolList;
+	wxArrayPtrVoid *m_AlarmList;
+	wxArrayPtrVoid *m_CommandList;
+	wxArrayPtrVoid *m_GroupList;
+		
 	bool m_On;
 	bool m_SelectedOn;
 	bool m_Reading;
@@ -88,10 +93,6 @@ class CMapPlugin :public CNaviMapIOApi
 	nvFastFont *m_NameFont;
 	CDisplaySignal *DisplaySignal;
 	int DisplaySignalType;
-	wxArrayPtrVoid *m_SymbolList;
-	wxArrayPtrVoid *m_AlarmList;
-	wxArrayPtrVoid *m_CommandList;
-	wxArrayPtrVoid *m_GroupList;
 	float m_AnimMarkerSize;
 	wxString m_OldSearchText;
 	int m_ConfirmCounter;
