@@ -70,13 +70,12 @@ wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_GRAPH);
 	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
 		
-	m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
-	Sizer->Add(m_ClearAlarm,0,wxALL|wxEXPAND,2);
+	//m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
+	//Sizer->Add(m_ClearAlarm,0,wxALL|wxEXPAND,2);
 
-	m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
-	Sizer->Add(m_ClearCommand,0,wxALL|wxEXPAND,2);
-
-
+	//m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
+	//Sizer->Add(m_ClearCommand,0,wxALL|wxEXPAND,2);
+	
 	wxGridSizer *FlexSizer = new wxGridSizer(3);
 	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
 	

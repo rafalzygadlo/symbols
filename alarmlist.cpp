@@ -151,7 +151,11 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	wxString str;
 		
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+	if(ptr->GetConfirmed())
+		str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetSymbolName());
+	else
+		str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
+	
 	nvRGBA c = GetAlarmTypeColor(ptr->GetType());
 	str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,ptr->GetName());
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetAlarmOnDate());

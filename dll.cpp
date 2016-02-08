@@ -83,6 +83,10 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_CommandList = new wxArrayPtrVoid();
 	m_GroupList = new wxArrayPtrVoid();
 
+	m_BaseStationList = new CList();
+
+
+
 	m_NameFont = NULL;
 	
 	m_NameFont = new nvFastFont();
@@ -147,6 +151,9 @@ CMapPlugin::~CMapPlugin()
 
 	ClearGroup();
 	delete m_GroupList;
+
+	m_BaseStationList->_Clear();
+	delete m_BaseStationList;
 
 	delete m_NameFont;
 
@@ -932,6 +939,10 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 	"LEFT JOIN "TABLE_USER" ON "TABLE_SBMS_ALARM".id_user = "TABLE_USER".id "
 	"WHERE active='%d'"),ALARM_ACTIVE);
 	
+	if(SelectedPtr)
+		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
+
+
 	my_query(db,sql);
 	void *result = db_result(db);
 		
@@ -980,7 +991,13 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id"),TABLE_SBMS,TABLE_SBMS_COMMAND,TABLE_SBMS);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_SBMS,TABLE_SYMBOL);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
-	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d' ORDER BY local_utc_time"),TABLE_SYMBOL,COMMAND_ACTIVE);
+	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d'"),TABLE_SYMBOL,COMMAND_ACTIVE);
+
+	if(SelectedPtr)
+		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
+
+	sql << _(" ORDER BY local_utc_time");
+
 
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -1041,22 +1058,21 @@ void CMapPlugin::ReadGroup(void *db)
 		{
 			add = true;
 			ptr = new CGroup();
+			m_GroupList->Add(ptr);
 		}
 		
 		ptr->SetId(id);
 		ptr->SetName(Convert(row[FI_SYMBOL_GROUP_NAME]));
 		ptr->SetExists(true);
-		
-		if(add)
-			m_GroupList->Add(ptr);
+					
 	}
 	
 }
 
 void CMapPlugin::ReadBaseStation(void *db)
 {	
-	/*
-	wxString sql = wxString::Format(_("SELECT id,name,ip,status FROM %s"),TABLE_BASE_STATION);
+	
+	wxString sql = wxString::Format(_("SELECT id,name,ip,status,lon,lat FROM %s"),TABLE_BASE_STATION);
 	
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -1072,13 +1088,13 @@ void CMapPlugin::ReadBaseStation(void *db)
 		int id;
 		sscanf(row[0],"%d",&id);
 		CBaseStation *ptr = NULL;
-		ptr = ExistsSymbol(id);
+		ptr = (CBaseStation*)m_BaseStationList->_Exists(id);
 				
 		if(ptr == NULL)
 		{
 			ptr = new CBaseStation(m_Broker);
 			//ptr->SetFont(m_NameFont);
-			m_SymbolList->Add(ptr);
+			m_BaseStationList->Add(ptr);
 		}
 
 		sscanf(row[4],"%lf",&lon);
@@ -1087,7 +1103,7 @@ void CMapPlugin::ReadBaseStation(void *db)
 		double to_x,to_y;
 		m_Broker->Unproject(lon,lat,&to_x,&to_y);
 
-		ptr->SetRLon(lon);		ptr->SetRLat(lat);		ptr->SetRLonMap(to_x);		ptr->SetRLatMap(-to_y);
+		ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(lon);		ptr->SetLatMap(lat);
 		//ptr->SetLon(lon);		ptr->SetLat(lat);		ptr->SetLonMap(to_x);		ptr->SetLatMap(-to_y);
 				
 		ptr->SetId(id);
@@ -1096,10 +1112,8 @@ void CMapPlugin::ReadBaseStation(void *db)
 	}
 	
 	db_free_result(result);
-	*/
-
+	
 }
-
 
 
 /*
@@ -1556,6 +1570,8 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		ptr->UnsetNewReport();
+		ClearAlarms();
+		ClearCommands();
 		SendSelectSignal();
 		//GetVoice()->Speak(ptr->GetName(),0,NULL);
 	}else{
@@ -2086,6 +2102,7 @@ void CMapPlugin::Render(void)
 	
 	SetValues();
 	RenderSymbols();
+	m_BaseStationList->_Render();
 				
 	if(SelectedPtr != NULL)
 		RenderSelected();
@@ -2155,6 +2172,10 @@ void CMapPlugin::OnTick()
 	ReadGroup(m_DBTicker);
 	RemoveGroup();
 	
+	m_BaseStationList->_SetExists(false);
+	ReadBaseStation(m_DBTicker);
+	m_BaseStationList->_Remove();
+
 	ReadSymbolValues(m_DBTicker);	// wczytaj inne opcje
 	ReadDriverValues(m_DBTicker);
 		

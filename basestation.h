@@ -8,9 +8,10 @@
 #include "geometrytools.h"
 #include "nvfastfont.h"
 #include "nvtime.h"
+#include "listItem.h"
 
 
-class CBaseStation
+class CBaseStation: public CListItem
 {
 	void *m_DB;
 	CNaviBroker *m_Broker;
@@ -31,6 +32,7 @@ class CBaseStation
 	wxString m_Name;
 	bool m_Exists;
 	
+	void UpdateViewPort();
 	void SetColor(int id);
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
@@ -46,12 +48,7 @@ public:
 	void OnTick(void *db);
 	
 	//SET
-	void SetId(int v);
-	//pozycja referencyjna
-	void SetRLon(double v);	void SetRLat(double v);	void SetRLonMap(double v);	void SetRLatMap(double v);
-	
 	void SetName(wxString v);
-		
 	void SetDB(void *db);
 	void SetLon(double v);
 	void SetLat(double v);
@@ -59,7 +56,7 @@ public:
 	void SetLatMap(double v);
 	
 	
-	void Render();
+	void Render() override;
 
 };
 

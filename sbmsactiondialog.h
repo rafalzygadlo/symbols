@@ -10,8 +10,8 @@ class CSBMSActionDialog : public wxDialog
 {
 	void *m_DB;
 	CButton *m_ButtonGraph;
-	CButton *m_ClearAlarm;
-	CButton *m_ClearCommand;
+	//CButton *m_ClearAlarm;
+	//CButton *m_ClearCommand;
 	CButton *m_ButtonOn;
 	CButton *m_ButtonOff;
 	CButton *m_ButtonAuto;

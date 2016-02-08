@@ -1,5 +1,5 @@
-#ifndef __LIST
-#define __LIST
+#ifndef __LISTCTRL
+#define __LISTCTRL
 
 #include <wx/wx.h>
 #include <wx/listctrl.h>

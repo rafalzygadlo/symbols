@@ -231,6 +231,7 @@ bool CSBMS::CheckAlarm()
 			add = true;
 			Alarm = new CAlarm();
 			Alarm->SetNew(true);
+			m_AlarmList.Append(Alarm);
 			m_NewAlarmCount++;
 		}
 				
@@ -240,13 +241,6 @@ bool CSBMS::CheckAlarm()
 		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
 		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
 		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));
-		
-		
-		if(add)
-		{
-			m_AlarmList.Append(Alarm);
-		}
-		
 		Alarm->SetExists(true);
 
 	}	
@@ -874,17 +868,6 @@ void CSBMS::Read()
 		//result = true;
 			
 	AlarmRemove();
-	
-	//}else{
-		
-		//m_Alarm = false;
-		//m_Busy = false;
-		//m_NewReport = false;
-		//m_ValidGPS = false;
-		//m_LightOn = LIGHT_NOT_AVAILABLE;
-		//ClearPositions();
-		//ClearAlarms();
-	//}
 	
 	//CheckCollision();
 			

@@ -62,7 +62,7 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	if(db == NULL)
 		return NULL;
 
-	wxGridSizer *Sizer = new wxGridSizer(2);
+	wxFlexGridSizer *Sizer = new wxFlexGridSizer(2);
 	wxPanel *Panel = new wxPanel(Parent,wxID_ANY,wxDefaultPosition);
 	Panel->SetSizer(Sizer);
 				
@@ -76,11 +76,11 @@ wxPanel *CFilterDialog::GetPanel(wxWindow *Parent)
 	m_ComboAlarm->SetSelection(0);
 	Sizer->Add(m_ComboAlarm,0,wxALL|wxEXPAND,2);
 	
-	wxStaticText *LabelGroup = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_GROUP));
-	Sizer->Add(LabelGroup,0,wxALL,2);
-	m_ComboGroup = GetCombo(db,Panel,TABLE_SYMBOL_GROUP,wxEmptyString,FI_SYMBOL_GROUP_ID,FI_SYMBOL_GROUP_NAME, true);
-	m_ComboGroup->SetSelection(0);
-	Sizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,2);
+	//wxStaticText *LabelGroup = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_SYMBOL_GROUP));
+	//Sizer->Add(LabelGroup,0,wxALL,2);
+	//m_ComboGroup = GetCombo(db,Panel,TABLE_SYMBOL_GROUP,wxEmptyString,FI_SYMBOL_GROUP_ID,FI_SYMBOL_GROUP_NAME, true);
+	//m_ComboGroup->SetSelection(0);
+	//Sizer->Add(m_ComboGroup,0,wxALL|wxEXPAND,2);
 
 	wxStaticText *LabelLight = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_LIGHT));
 	Sizer->Add(LabelLight,0,wxALL,2);
@@ -160,7 +160,6 @@ int CFilterDialog::GetBaseStationId()
 	return (int)m_ComboBaseStation->GetClientData(m_ComboBaseStation->GetSelection());
 }
 
-
 int CFilterDialog::GetMonitoring()
 {
 	return m_ComboMonitoring->GetSelection() - 1; 
@@ -171,11 +170,12 @@ int CFilterDialog::GetLight()
 	return m_ComboLight->GetSelection() - 1; 
 }
 
+/*
 int CFilterDialog::GetGroupId()
 {
 	return (int)m_ComboGroup->GetClientData(m_ComboGroup->GetSelection());
 }
-
+*/
 //SET
 
 void CFilterDialog::SetAlarmId(int v)
@@ -212,8 +212,9 @@ void CFilterDialog::SetLight(int v)
 {
 	m_ComboLight->SetSelection(v + 1);
 }
-
+/*
 void CFilterDialog::SetGroupId(int v)
 {
 	ComboSetSelection(m_ComboGroup,v);
 }
+*/

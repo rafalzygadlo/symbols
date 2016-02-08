@@ -7,7 +7,7 @@ class CFilterDialog: public wxDialog
 {
 	wxButton *m_ButtonSelect;
 	//wxCheckBox *m_CheckInMonitoring;
-	wxComboBox *m_ComboGroup;
+	//wxComboBox *m_ComboGroup;
 	wxComboBox *m_ComboLight;
 	wxComboBox *m_ComboArea;
 	wxComboBox *m_ComboSeaway;
@@ -29,7 +29,7 @@ public:
 	int GetSymbolTypeId();
 	int GetSeawayId();
 	int GetMonitoring();
-	int GetGroupId();
+	//int GetGroupId();
 	int GetLight();
 	int GetBaseStationId();
 	int GetAlarmId();
@@ -40,7 +40,7 @@ public:
 	void SetBaseStationId(int v);
 	void SetMonitoring(int v);
 	void SetLight(int v);
-	void SetGroupId(int v);
+	//void SetGroupId(int v);
 	void SetAlarmId(int v);
 	
 	DECLARE_EVENT_TABLE();

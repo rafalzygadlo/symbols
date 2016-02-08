@@ -18,6 +18,7 @@
 #include "optionsdialog.h"
 #include "alarmdialog.h"
 #include "group.h"
+#include "list.h"
 
 #ifdef _WIN32
 	#include <windows.h>
@@ -48,6 +49,8 @@ class CMapPlugin :public CNaviMapIOApi
 	wxArrayPtrVoid *m_AlarmList;
 	wxArrayPtrVoid *m_CommandList;
 	wxArrayPtrVoid *m_GroupList;
+
+	CList *m_BaseStationList;
 		
 	bool m_On;
 	bool m_SelectedOn;
