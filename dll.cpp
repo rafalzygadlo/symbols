@@ -856,7 +856,7 @@ void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
 	double lon;
 	double lat;
 	
-	wxString sql = wxString::Format(_("SELECT * FROM %s WHERE id_symbol='%d'"),TABLE_GE64,ptr->GetId());
+	wxString sql = wxString::Format(_("SELECT id,name,id_base_station,id_symbol FROM %s WHERE id_symbol='%d'"),TABLE_GE64,ptr->GetId());
 	my_query(db,sql);
 	void *result = db_result(db);
 		
@@ -877,13 +877,13 @@ void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
 		
 		Driver->SetId(id);
 		Driver->SetType(DRIVER_TYPE_GE64);
-		Driver->SetName(Convert(row[FI_SBMS_NAME]));
-		Driver->SetIdBaseStation(atoi(row[FI_SBMS_ID_BASE_STATION]));
-		Driver->SetIdSymbol(atoi(row[FI_SBMS_ID_SYMBOL]));
+		Driver->SetName(Convert(row[1]));
+		Driver->SetIdBaseStation(atoi(row[2]));
+		Driver->SetIdSymbol(atoi(row[3]));
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
-		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		Driver->SetAuto(atoi(row[FI_SBMS_AUTO]));
+		//Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		//Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		//Driver->SetAuto(atoi(row[FI_SBMS_AUTO]));
 		//Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		Driver->SetExists(true);
 		//Driver->SetSBMSID(atoi(row[FI_SBMS_SBMSID]));

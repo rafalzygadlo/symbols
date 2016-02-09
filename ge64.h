@@ -21,6 +21,7 @@ public:
 	~CGE64();
 
 	wxString GetDriverHtml(int v) override;
+	wxString GetDriverFullHtml() override;
 	void ShowAction() override;
 
 		

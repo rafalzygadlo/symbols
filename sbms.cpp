@@ -1237,12 +1237,9 @@ wxString CSBMS::GetDriverHtml(int v)
 {
 
 	wxString str;
-	//str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-	//str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),GetName());
-	//str << wxString::Format(_("<tr><td><font size=3>%4.2f V</font></td></tr>"), GetInputVolt());
-	//str.Append(_("</table>"));
 	
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s(%s)</b></font></td></tr>"), GetMsg(MSG_DRIVER),GetName()));
 	
 	for(int i = 0; i < GetAlarmCount();i++)
 	{
