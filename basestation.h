@@ -31,6 +31,7 @@ class CBaseStation: public CListItem
 	double m_VisibleMap[4];
 	wxString m_Name;
 	bool m_Exists;
+	bool m_Selected;
 	
 	void UpdateViewPort();
 	void SetColor(int id);
@@ -38,6 +39,7 @@ class CBaseStation: public CListItem
 	void SetSmoothScaleFactor(double v);
 	//void Read();
 	//void SetSymbolColor();
+	void RenderSelected();
 	void RenderBaseStation();
 		
 public:
@@ -57,6 +59,7 @@ public:
 	
 	
 	void Render() override;
+	void Mouse(int x, int y, bool lmb, bool mmb, bool rmb) override;
 
 };
 

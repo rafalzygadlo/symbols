@@ -7,7 +7,7 @@
 class CList: public wxArrayPtrVoid
 {
 	void *m_DB;
-					
+
 public:
 
 	CList();
@@ -17,6 +17,7 @@ public:
 	void _Clear();
 	void _Remove();
 	void _Render();
+	void _Mouse(int x, int y, bool lmb, bool mmb, bool rmb);
 	CListItem *_Exists(int id);
 
 };

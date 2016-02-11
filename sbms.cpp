@@ -51,7 +51,6 @@ CSBMS::CSBMS(void *db,CNaviBroker *broker)
 	m_AgeString = "N/A";
 	m_GraphDialog = NULL;
 	m_Charging = false;
-	m_NewAlarmCount = 0;
 	m_ProtocolVersion = 0;
 	m_NameFont = NULL;
 	m_SBMSActionDialog = NULL;
@@ -212,8 +211,7 @@ bool CSBMS::CheckAlarm()
     char **row = NULL;
 	if(result == NULL)
 		return false;
-	
-	m_NewAlarmCount = 0;
+		
 	m_Alarm = false;
 	bool exists = false;
 	int offset = 9;
@@ -232,7 +230,6 @@ bool CSBMS::CheckAlarm()
 			Alarm = new CAlarm();
 			Alarm->SetNew(true);
 			m_AlarmList.Append(Alarm);
-			m_NewAlarmCount++;
 		}
 				
 		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
@@ -1029,11 +1026,6 @@ void CSBMS::SetCharging(int v)
 	m_Charging = v;
 }
 
-void CSBMS::SetNewAlarmCount(int v)
-{
-	m_NewAlarmCount = v;
-}
-
 //GET
 int CSBMS::GetSBMSID()
 {
@@ -1211,11 +1203,6 @@ wxString CSBMS::GetChargingAsString()
 	}
 	
 	return GetMsg(MSG_NA);
-}
-
-int CSBMS::GetNewAlarmCount()
-{
-	return m_NewAlarmCount;
 }
 
 int CSBMS::GetProtocolVersion()

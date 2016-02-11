@@ -69,7 +69,6 @@ class CSBMS :public CDriver
 	bool m_RenderRestricted;
 	bool m_Selected;
 	int m_AlarmCount;
-	int m_NewAlarmCount;
 	int m_ReportCount;
 	wxString m_BaseStationName;
 	wxString m_AgeString;
@@ -167,7 +166,6 @@ public:
 	void SetInit(bool v);
 	void SetCharging(int v);
 	void SetChargingAsString(wxString v);
-	void SetNewAlarmCount(int v);
 	void SetProtocolVersion(int v);
 	void SetFont(nvFastFont *v);
 	void SetBusy(bool v);
@@ -203,7 +201,6 @@ public:
 	int GetAlarmId(int v);
 	bool GetNoSBMS();
 	int GetCharging();
-	int GetNewAlarmCount();
 	int GetProtocolVersion();
 	CAlarm *GetAlarm(int v);
 	wxPanel *GetSBMSPanel();

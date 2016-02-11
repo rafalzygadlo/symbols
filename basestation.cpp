@@ -17,6 +17,7 @@ CBaseStation::CBaseStation(CNaviBroker *broker)
 	m_RectHeight = 0;
 	m_TranslationX = 0;
 	m_TranslationY = 0;
+	m_Selected = false;
 	m_DB = NULL;
 }
 
@@ -28,6 +29,19 @@ CBaseStation::~CBaseStation()
 void CBaseStation::SetDB(void *db)
 {
 	m_DB = db;
+}
+
+void CBaseStation::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
+{
+	double _x = m_LonMap;
+	double _y = m_LatMap;
+	
+	if(IsPointInsideBox(x, y, _x - (m_RectWidth) + m_TranslationX,_y - (m_RectHeight) + m_TranslationY,_x + (m_RectWidth) + m_TranslationX , _y + (m_RectHeight) + m_TranslationY))
+	{
+		((wxWindow*)m_Broker->GetParentPtr())->SetCursor(wxCURSOR_HAND);
+		if(lmb)
+			m_Selected = !m_Selected;
+	}
 }
 
 void CBaseStation::SetSmoothScaleFactor(double v) 
@@ -80,7 +94,39 @@ void CBaseStation::UpdateViewPort()
 }
 
 
+void CBaseStation::RenderSelected()
+{
+	if(!m_Selected)
+		return;
 
+	double x,y;
+
+	x = m_LonMap; 
+	y = m_LatMap;
+		
+	glEnable(GL_BLEND);
+	glPushMatrix();
+	
+	glColor4f(1.0f,1.0f,1.0f,0.5f);	
+	glTranslatef(x, y ,0.0f);
+	//glTranslatef(m_OffsetX, m_OffsetY,0.0f);
+	glLineWidth(2);
+	
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+		
+	//if(m_SelectedOn)
+		c.Radius = m_RectWidth/1.5;
+	//else
+		//c.Radius = RectWidth*4.0;
+
+	nvDrawCircleFilled(&c);
+	glLineWidth(1);
+	
+	glPopMatrix();
+	glDisable(GL_BLEND);
+}
 
 void CBaseStation::RenderBaseStation()
 {
@@ -90,13 +136,13 @@ void CBaseStation::RenderBaseStation()
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
 		
 	glBegin(GL_QUADS);
-		//glTexCoord2f(1.0f,1.0f); 
+		//glTexCoord2f(1.0f,1.0f);
 		glVertex2f(  m_RectWidth + m_TranslationX,  -m_RectHeight + m_TranslationY);
-		//glTexCoord2f(1.0f,0.0f); 
+		//glTexCoord2f(1.0f,0.0f);
 		glVertex2f(  m_RectWidth + m_TranslationX,   m_RectHeight + m_TranslationY);
-		//glTexCoord2f(0.0f,0.0f); 
+		//glTexCoord2f(0.0f,0.0f);
 		glVertex2f( -m_RectWidth + m_TranslationX,   m_RectHeight + m_TranslationY);
-		//glTexCoord2f(0.0f,1.0f); 
+		//glTexCoord2f(0.0f,1.0f);
 		glVertex2f( -m_RectWidth + m_TranslationX,  -m_RectHeight + m_TranslationY);
 	glEnd();
 	
@@ -140,6 +186,7 @@ void CBaseStation::Render()
 	UpdateViewPort();
 	SetValues();
 	RenderBaseStation();
+	RenderSelected();
 		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);

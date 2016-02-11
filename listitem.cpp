@@ -16,6 +16,11 @@ CListItem::~CListItem()
 
 }
 
+void CListItem::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
+{
+
+}
+
 void CListItem::Render()
 {
 

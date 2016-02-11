@@ -212,6 +212,12 @@ const wchar_t *nvLanguage[][2] =
 	{L"Add",L"Dodaj"},
 	{L"Clear Alarms",L"Usuń Alarmy"},
 	{L"Clear Commands",L"Usuń Komendy"},
+	{L"Night Mode",L"Night Mode"},
+	{L"Main Lamp On",L"Main Lamp On"},
+	{L"Second Lamp On",L"Second Lamp On"},
+	{L"Generator On",L"Generator On"},
+	{L"Manual On",L"Manual On"},
+
 };
 
 const wchar_t *nvDegreeFormat[2][2] = 

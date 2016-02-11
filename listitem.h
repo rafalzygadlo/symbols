@@ -22,8 +22,8 @@ public:
 	
 
 	virtual void Render();
+	virtual void Mouse(int x, int y, bool lmb, bool mmb, bool rmb);
 		
-	
 };
 
 #endif

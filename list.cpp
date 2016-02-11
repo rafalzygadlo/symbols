@@ -61,6 +61,15 @@ void CList::_Remove()
 
 }
 
+void CList::_Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
+{
+	for(size_t i = 0; i < size();i++)
+	{
+		CListItem *ptr = (CListItem*)Item(i);
+		ptr->Mouse(x,y,lmb,mmb,rmb);
+	}
+}
+
 void CList::_Render()
 {
 	for(size_t i = 0; i < size();i++)

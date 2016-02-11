@@ -917,10 +917,10 @@ void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
 		//Driver->SetGpsLonMap(to_x);		
 		//Driver->SetGpsLatMap(-to_y);
 		
-		//Driver->SetRLat(ptr->GetRLat());
-		//Driver->SetRLon(ptr->GetRLon());
-		//Driver->SetRLatMap(ptr->GetRLatMap());
-		//Driver->SetRLonMap(ptr->GetRLonMap());
+		Driver->SetLat(ptr->GetRLat());
+		Driver->SetLon(ptr->GetRLon());
+		Driver->SetLatMap(ptr->GetRLatMap());
+		Driver->SetLonMap(ptr->GetRLonMap());
 	}
 	
 	db_free_result(result);
@@ -1526,6 +1526,9 @@ void CMapPlugin::Kill(void)
 
 void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
+	
+	m_BaseStationList->_Mouse(x,y,lmb,mmb,rmb);
+	
 	// move marker RMB need this
 	// . . . . . . . . . . . . . . . . . . . . 
 		

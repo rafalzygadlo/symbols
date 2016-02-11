@@ -332,6 +332,11 @@
 #define MSG_ADD							190
 #define MSG_CLEAR_ALARM					191
 #define MSG_CLEAR_COMMAND				192
+#define MSG_NIGHT_MODE					193
+#define MSG_MAIN_LAMP_ON				194
+#define MSG_SECOND_LAMP_ON				195
+#define MSG_GENERATOR_ON				196
+#define MSG_MANUAL_ON					197
 
 
 #define HTML_ANCHOR_LAST_REPORT	0

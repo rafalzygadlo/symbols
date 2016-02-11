@@ -1,18 +1,7 @@
 ﻿#include "driver.h"
 
-CDriver::CDriver()
-{
-	m_Id = 0;
-	m_Type;
-	m_Exists = false;
-	wxString m_Name;
-}
-
-CDriver::~CDriver()
-{
-	
-}
-
+CDriver::CDriver()						{ m_Id = 0;	m_Type;	m_Exists = false;	wxString m_Name; }
+CDriver::~CDriver()						{}
 void CDriver::Render()					{}
 void CDriver::Read()					{}
 void CDriver::ShowGraph()				{}
@@ -59,24 +48,23 @@ void CDriver::SetRLonMap(double v)		{}
 void CDriver::SetRLatMap(double v)		{}
 
 //GET
-int CDriver::GetId()							{ return m_Id; }
-int CDriver::GetType()							{ return m_Type; }
-bool CDriver::GetExists()						{ return m_Exists; }
-wxString CDriver::GetName()						{ return m_Name; }
-wxString CDriver::GetSymbolName()				{ return m_SymbolName; }
+int CDriver::GetId()					{ return m_Id; }
+int CDriver::GetType()					{ return m_Type; }
+bool CDriver::GetExists()				{ return m_Exists; }
+wxString CDriver::GetName()				{ return m_Name; }
+wxString CDriver::GetSymbolName()		{ return m_SymbolName; }
 
 //virtual
-int CDriver::GetBaseStationId()					{ return 0; }
-wxString  CDriver::GetDriverHtml(int v)			{ return wxEmptyString; }
-wxString CDriver::GetDriverFullHtml()			{ return wxEmptyString; }
-wxString CDriver::GetAlarmHtml()				{ return wxEmptyString;	}
-float CDriver::GetInputVolt()					{ return 0; }
-int CDriver::GetMMSI()							{ return 0; }
-int CDriver::GetSBMSID()						{ return 0; }
-int CDriver::GetCharging()						{ return 0; }
+int CDriver::GetBaseStationId()			{ return 0; }
+wxString  CDriver::GetDriverHtml(int v)	{ return wxEmptyString; }
+wxString CDriver::GetDriverFullHtml()	{ return wxEmptyString; }
+wxString CDriver::GetAlarmHtml()		{ return wxEmptyString;	}
+float CDriver::GetInputVolt()			{ return 0; }
+int CDriver::GetMMSI()					{ return 0; }
+int CDriver::GetSBMSID()				{ return 0; }
+int CDriver::GetCharging()				{ return 0; }
 
-
-double CDriver::GetGpsLon()						{ return 0; }
-double CDriver::GetGpsLat()						{ return 0; }
-double CDriver::GetGpsLonMap()					{ return 0; }
-double CDriver::GetGpsLatMap()					{ return 0; }			
+double CDriver::GetGpsLon()				{ return 0; }
+double CDriver::GetGpsLat()				{ return 0; }
+double CDriver::GetGpsLonMap()			{ return 0; }
+double CDriver::GetGpsLatMap()			{ return 0; }			
