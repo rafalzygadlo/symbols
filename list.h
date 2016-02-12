@@ -13,7 +13,9 @@ public:
 	CList();
 	virtual ~CList();
 	
+	void *_Get(int id);
 	void _SetExists(bool v);
+	int _Length();
 	void _Clear();
 	void _Remove();
 	void _Render();

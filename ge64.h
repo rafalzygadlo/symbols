@@ -6,7 +6,8 @@
 #include "nvfastfont.h"
 #include "driver.h"
 #include "navibroker.h"
-
+#include "alarm.h"
+#include "list.h"
 
 class CGE64 :public CDriver
 {
@@ -25,16 +26,20 @@ class CGE64 :public CDriver
 	double m_TranslationX;
 	double m_TranslationY;
 	bool m_AlarmOn;
-
+	bool m_Alarm;
 	//pozycja gps lub referencyjna
 	double m_Lon, m_Lat, m_LonMap, m_LatMap;
+	CList m_AlarmList;
 
+	void ClearAlarms();
 	bool CheckAlarm();
+	void SetAlarms();
 	void SetSmoothScaleFactor(double v);
 	void SetValues();
 	void SetColor(int id);
 	void SetSymbolColor();
-	void RenderLightOn();
+	
+	void RenderAlarm();
 	void RenderGE64();
 	void Render() override;
 	
@@ -43,8 +48,6 @@ public:
 	CGE64(void *db,CNaviBroker *broker);
 	~CGE64();
 
-	wxString GetDriverHtml(int v) override;
-	wxString GetDriverFullHtml() override;
 	void ShowAction() override;
 	void Read() override;
 
@@ -54,6 +57,12 @@ public:
 	bool GetSecondLampOn();
 	bool GetGeneratorOn();
 	bool GetManualOn();
+	int GetAlarmCount();
+	CAlarm *GetAlarm(int v);
+	wxString GetDriverHtml(int v) override;
+	wxString GetDriverFullHtml() override;
+	wxString GetAlarmHtml() override;
+	
 	
 	//SET
 	void SetNightMode(bool v);
@@ -62,7 +71,10 @@ public:
 	void SetGeneratorOn(bool v);
 	void SetManualOn(bool v);
 	//referencyjna lub Gps
-	void SetLon(double v);		void SetLat(double v);		void SetLonMap(double v);		void SetLatMap(double v);
+	void SetLon(double v) override;		
+	void SetLat(double v) override;		
+	void SetLonMap(double v) override;		
+	void SetLatMap(double v) override;
 		
 
 };

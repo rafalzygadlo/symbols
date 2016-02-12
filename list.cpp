@@ -11,6 +11,16 @@ CList::~CList()
 {
 }
 
+int CList::_Length()
+{
+	return size();
+}
+
+void *CList::_Get(int id)
+{
+	return Item(id);
+}
+
 void CList::_Clear()
 {
 	for(int i = 0; i < size();i++)

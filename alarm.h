@@ -2,6 +2,7 @@
 #define __ALARM
 
 #include "conf.h"
+#include "listItem.h"
 
 //definicja ALARMÓW
 #define ALARM_OFFSET                            127     //dla alarmów z serwera
@@ -21,9 +22,8 @@
 #define ALARM_TYPE_ALARM	1
 
 
-class CAlarm
+class CAlarm : public CListItem
 {	
-	int m_Id;
 	int m_IdAlarm;
 	int m_Type;
 	wxString m_Name;
@@ -33,19 +33,17 @@ class CAlarm
 	wxString m_UserFirstName;
 	wxString m_UserLastName;
 	bool m_New;
-	bool m_Exists;
 	bool m_Confirmed;
 
 public:
 
 	CAlarm();
 	//SET
-	void SetId(int v);
 	void SetIdAlarm(int v);
 	void SetName(wxString v);
 	void SetSymbolName(wxString v);
 	void SetNew(bool v);
-	void SetExists(bool v);
+	//void SetExists(bool v);
 	void SetConfirmed(bool v);
 	void SetType(int v);
 	void SetAlarmOnDate(wxString v);
@@ -53,12 +51,11 @@ public:
 	void SetUserLastName(wxString v);
 			
 	//GET
-	int GetId();
 	int GetIdAlarm();
 	wxString GetName();
 	wxString GetSymbolName();
 	bool GetNew();
-	bool GetExists();
+	//bool GetExists();
 	bool GetConfirmed();
 	int GetType();
 	wxString GetAlarmOnDate();

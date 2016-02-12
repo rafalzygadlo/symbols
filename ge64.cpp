@@ -26,9 +26,15 @@ CGE64::CGE64(void *db,CNaviBroker *broker)
 
 CGE64::~CGE64()
 {
-	
+	ClearAlarms();
 	
 }
+
+void CGE64::ClearAlarms()
+{
+	m_AlarmList._Clear();
+}
+
 
 void CGE64::SetColor(int id)
 {
@@ -60,7 +66,7 @@ void CGE64::SetSymbolColor()
 bool CGE64::CheckAlarm()
 {	
 	m_AlarmOn = !m_AlarmOn;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id ORDER BY set_local_utc_time DESC"),TABLE_GE64_ALARM,TABLE_ALARM,GetId(),ALARM_ACTIVE,TABLE_ALARM);
+	wxString sql = wxString::Format(_("SELECT "TABLE_GE64_ALARM".id,id_alarm,set_local_utc_time,confirmed,name,type FROM `%s`,`%s` WHERE id_ge64='%d' AND active='%d' AND id_alarm=`%s`.id ORDER BY set_local_utc_time DESC"),TABLE_GE64_ALARM,TABLE_ALARM,GetId(),ALARM_ACTIVE,TABLE_ALARM);
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -68,39 +74,33 @@ bool CGE64::CheckAlarm()
 	if(result == NULL)
 		return false;
 	
-	
 	m_Alarm = false;
-	bool exists = false;
-	int offset = 9;
 	CAlarm *Alarm = NULL;
 	
 	while(row = (char**)db_fetch_row(result))
 	{
 		int id = atoi(row[FI_SBMS_ALARM_ID]);
-		Alarm = AlarmExists(id);
-		
-		bool add = false;
-		
+		Alarm = (CAlarm*)m_AlarmList._Exists(id);
+						
 		if(Alarm == NULL)
 		{
-			add = true;
 			Alarm = new CAlarm();
 			Alarm->SetNew(true);
-			m_AlarmList.Append(Alarm);
+			m_AlarmList.Add(Alarm);
 			
 		}
 				
-		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
-		Alarm->SetIdAlarm(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
-		Alarm->SetAlarmOnDate(Convert(row[FI_SBMS_ALARM_SET_LOCAL_UTC_TIME]));
-		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
-		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
-		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));
+		Alarm->SetId(atoi(row[0]));
+		Alarm->SetIdAlarm(atoi(row[1]));
+		Alarm->SetAlarmOnDate(Convert(row[2]));
+		Alarm->SetConfirmed(atoi(row[3]));
+		Alarm->SetName(Convert(row[4]));
+		Alarm->SetType(atoi(row[5]));
 		Alarm->SetExists(true);
 
 	}	
 	
-	if(m_AlarmList.Length() > 0)
+	if(m_AlarmList.size() > 0)
 	{
 		m_Alarm = true;
 		
@@ -110,7 +110,6 @@ bool CGE64::CheckAlarm()
 	}
 	
 	db_free_result(result);
-	m_AlarmTick = 1;
 	
 	return true;
 }
@@ -119,8 +118,12 @@ bool CGE64::CheckAlarm()
 void CGE64::Read()
 {
 	fprintf(stderr,"GE64\n");
-	CheckAlarm();	
-			
+
+	m_AlarmList._SetExists(false);
+	CheckAlarm();		
+	m_AlarmList._Remove();
+	
+		
 }
 
 
@@ -148,6 +151,31 @@ void CGE64::SetSmoothScaleFactor(double v)
 	else
 		m_SmoothScaleFactor = factor;
 }
+
+void CGE64::RenderAlarm()
+{
+		
+	if(!m_Alarm)
+		return;
+		
+	glPushMatrix();
+	if(m_AlarmOn)
+		SetColor(SYMBOL_ERROR_COLOR);
+	else
+		glColor4f(1.0f,1.0f,1.0f,0.3f);
+	
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	//glTranslatef(0.0,th/2,0.0f);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth * 1.5;
+	nvDrawCircleArcFilled(&c,270,0);
+		
+	glPopMatrix();
+		
+}
+
 
 
 void CGE64::RenderGE64()
@@ -186,6 +214,7 @@ void CGE64::Render()
 
 	SetValues();
 	RenderGE64();
+	RenderAlarm();
 	
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -219,7 +248,12 @@ bool CGE64::GetManualOn()
 {
 	return m_ManualOn;
 }
-	
+
+int CGE64::GetAlarmCount()
+{
+	return m_AlarmList.size();
+}
+
 //SET
 void CGE64::SetNightMode(bool v)
 {
@@ -266,18 +300,41 @@ void CGE64::SetLatMap(double v)
 	m_LatMap = v;
 }
 
+wxString CGE64::GetAlarmHtml()
+{
+	wxString str;
+	
+	if(m_AlarmList._Length() > 0)
+	{
+		str.Append(_("<hr>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s(%d)</b></font><br><br>"), GetMsg(MSG_ALARM),m_AlarmList._Length()));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+		
+		for(int i = 0; i < m_AlarmList._Length();i++)
+		{
+			CAlarm *Alarm = (CAlarm*)m_AlarmList._Get(i);
+			nvRGBA c = GetAlarmTypeColor(Alarm->GetType());
+			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=2>%s</font></td><td><font size=2>%s</font></td></tr>"),c.R,c.G,c.B,Alarm->GetName(),Alarm->GetAlarmOnDate());
+		}
+	
+		str.Append(_("</table>"));
+	}
+	
+	return str;
+}
+
 wxString CGE64::GetDriverHtml(int v)
 {
 
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s(%s)</b></font></td></tr>"), GetMsg(MSG_DRIVER),GetName()));
-	//for(int i = 0; i < GetAlarmCount();i++)
-	//{
-		//CAlarm *alarm = GetAlarm(i);
-		//nvRGBA c = GetAlarmTypeColor(alarm->GetType());
-		//str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
-	//}
+	for(int i = 0; i < m_AlarmList._Length();i++)
+	{
+		CAlarm *alarm = (CAlarm*)m_AlarmList._Get(i);
+		nvRGBA c = GetAlarmTypeColor(alarm->GetType());
+		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
+	}
 		
 	//str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td>"),GetLightOnAsString(GetLightOn())));
 	//str.Append(_("<td rowspan=2 align=right width=80>"));
@@ -319,7 +376,6 @@ wxString CGE64::GetDriverFullHtml()
 		str.Append(_("<hr>"));
 		str.Append(wxString::Format(_("<font size=2><b>%s(%s)</b></font><br><br>"), GetMsg(MSG_DRIVER),Convert(row[0])));
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-				
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DATE_TIME_UTC),Convert(row[1])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_NIGHT_MODE),GetOnOff(atoi(row[2]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MAIN_LAMP_ON),GetOnOff(atoi(row[3]))));
