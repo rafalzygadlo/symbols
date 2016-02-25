@@ -856,6 +856,7 @@ void CMapPlugin::ReadGE64(void *db,CSymbol *ptr)
 		Driver->SetName(Convert(row[1]));
 		Driver->SetIdBaseStation(atoi(row[2]));
 		Driver->SetIdSymbol(atoi(row[3]));
+		Driver->SetSymbolName(ptr->GetName());
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 		//Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		//Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
@@ -990,12 +991,14 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		CCommand *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = (CCommand*)m_CommandList->_Exists(id);
+		ptr = (CCommand*)m_CommandList->_Exists(id,DRIVER_TYPE_SBMS);
 		
 		if(ptr == NULL)
 		{
 			ptr = new CCommand();
+			ptr->SetType(DRIVER_TYPE_SBMS);
 			m_CommandList->Insert(ptr,0);
+
 		}
 
 		ptr->SetId(id);
@@ -1013,6 +1016,58 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 
 	db_free_result(result);
 }
+
+void CMapPlugin::ReadGE64Command(void *db)
+{	
+	wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,status,first_name,last_name,"TABLE_GE64_COMMAND".local_utc_time FROM `%s`"),TABLE_GE64_COMMAND,TABLE_GE64_COMMAND);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_ge64=`%s`.id"),TABLE_GE64,TABLE_GE64_COMMAND,TABLE_GE64);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_GE64,TABLE_SYMBOL);
+	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_GE64_COMMAND);
+	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d'"),TABLE_SYMBOL,COMMAND_ACTIVE);
+
+	if(SelectedPtr)
+		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
+
+	sql << _(" ORDER BY local_utc_time");
+
+
+	my_query(db,sql);
+	void *result = db_result(db);
+
+    char **row = NULL;
+	if(result == NULL)
+		return;
+		
+	while(row = (char**)db_fetch_row(result))
+	{
+		CCommand *ptr = NULL;
+		int id;
+		sscanf(row[0],"%d",&id);
+		ptr = (CCommand*)m_CommandList->_Exists(id,DRIVER_TYPE_GE64);
+		
+		if(ptr == NULL)
+		{
+			ptr = new CCommand();
+			ptr->SetType(DRIVER_TYPE_GE64);
+			m_CommandList->Insert(ptr,0);
+		}
+
+		ptr->SetId(id);
+		ptr->SetSymbolName(Convert(row[1]));
+		ptr->SetName(GetCommandName(atoi(row[2])));
+		ptr->SetStatus(atoi(row[3]));
+		ptr->SetStatusText(GetCommandStatus(atoi(row[3])));
+		ptr->SetUserFirstName(Convert(row[4]));
+		ptr->SetUserLastName(Convert(row[5]));
+		ptr->SetCommandDate(Convert(row[6]));
+		
+		ptr->SetExists(true);
+			
+	}
+
+	db_free_result(result);
+}
+
 
 
 void CMapPlugin::ReadGroup(void *db)
@@ -2052,6 +2107,7 @@ void CMapPlugin::OnTick()
 	
 	m_CommandList->_SetExists(false);
 	ReadSBMSCommand(m_DBTicker);
+	ReadGE64Command(m_DBTicker);
 	m_CommandList->_Remove();
 
 	m_GroupList->_SetExists(false);

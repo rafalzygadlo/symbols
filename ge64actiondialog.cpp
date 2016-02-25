@@ -114,10 +114,22 @@ void CGE64ActionDialog::SetDriver(CGE64 *ptr)
 
 void CGE64ActionDialog::OnLightOn(wxCommandEvent &event)
 {
-	//m_Driver->LightOn();
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_LIGHT_ON_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+    if(MessageDialog->ShowModal() == wxID_YES)
+	{
+		m_Driver->LightOn();
+	}
+
+	delete MessageDialog;
 }
 
 void CGE64ActionDialog::OnLightOff(wxCommandEvent &event)
 {
-	//m_Driver->LightOff();
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_LIGHT_OFF_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+    if(MessageDialog->ShowModal() == wxID_YES)
+	{
+		m_Driver->LightOff();
+	}
+
+	delete MessageDialog;
 }

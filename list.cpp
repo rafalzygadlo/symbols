@@ -54,6 +54,19 @@ CListItem *CList::_Exists(int id)
 	return NULL;
 }
 
+CListItem *CList::_Exists(int id, int type)
+{
+	for(size_t i = 0; i < size(); i++)
+	{
+		CListItem *ptr = (CListItem*)Item(i);
+		if(id == ptr->GetId() && type == ptr->GetType())
+			return ptr;
+	}
+
+	return NULL;
+}
+
+
 void CList::_Remove()
 {
 

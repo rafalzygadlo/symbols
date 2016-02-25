@@ -21,6 +21,7 @@ public:
 	void _Render();
 	void _Mouse(int x, int y, bool lmb, bool mmb, bool rmb);
 	CListItem *_Exists(int id);
+	CListItem *_Exists(int id, int type);
 
 };
 

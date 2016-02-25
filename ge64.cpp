@@ -22,19 +22,15 @@ CGE64::CGE64(void *db,CNaviBroker *broker)
 	m_TranslationX = 0;
 	m_TranslationY = 0;
 	m_AlarmOn = false;
+	m_CommandCount = 0;
+	m_BusyOn = false;
+	m_Busy = false;
 }
 
 CGE64::~CGE64()
 {
-	ClearAlarms();
-	
-}
-
-void CGE64::ClearAlarms()
-{
 	m_AlarmList._Clear();
 }
-
 
 void CGE64::SetColor(int id)
 {
@@ -114,6 +110,32 @@ bool CGE64::CheckAlarm()
 	return true;
 }
 
+bool CGE64::CheckCommand()
+{
+	m_BusyOn = !m_BusyOn;
+		
+	wxString sql;
+	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_ge64='%d' AND status='%d' AND active='%d'"),TABLE_GE64_COMMAND,GetId(),COMMAND_STATUS_NEW,COMMAND_ACTIVE);
+	
+	my_query(m_DB,sql);
+	void *result = db_result(m_DB);
+	
+    char **row = NULL;
+	if(result == NULL)
+		return false;
+		
+	while(row = (char**)db_fetch_row(result))
+		sscanf(row[0],"%d",&m_CommandCount);
+		
+	if(m_CommandCount > 0)
+		m_Busy = true;
+	else
+		m_Busy = false;
+	
+	db_free_result(result);
+	
+	return true;
+}
 
 void CGE64::Read()
 {
@@ -122,10 +144,8 @@ void CGE64::Read()
 	m_AlarmList._SetExists(false);
 	CheckAlarm();		
 	m_AlarmList._Remove();
-	
-		
+	CheckCommand();
 }
-
 
 void CGE64::SetValues()
 {
@@ -142,6 +162,12 @@ void CGE64::SetValues()
 	m_Broker->GetVisibleMap(m_VisibleMap);
 	
 }
+
+void CGE64::SetFont(nvFastFont *v)
+{
+	m_NameFont = v;
+}
+
 
 void CGE64::SetSmoothScaleFactor(double v) 
 {
@@ -176,6 +202,61 @@ void CGE64::RenderAlarm()
 		
 }
 
+void CGE64::RenderBusy()
+{
+	if(!m_Busy)
+		return;
+		
+	glPushMatrix();
+	
+	glTranslatef(m_LonMap,m_LatMap,0.0f);
+	//glTranslatef(m_RectWidth/3,- m_RectWidth/3,0.0f);
+
+	//glPointSize(10);
+	//glLineWidth(2);
+	nvCircle c;
+	c.Center.x = 0.0;
+	c.Center.y = 0.0;
+	c.Radius = m_RectWidth*1.5;
+	
+		
+	if(m_BusyOn)
+		SetColor(SYMBOL_ERROR_COLOR);
+	else
+		glColor4f(1.0f,1.0f,1.0f,0.3f);
+	
+	nvDrawCircleArcFilled(&c,90,180);
+	nvDrawPoint(0.0,0.0);
+		
+	glPopMatrix();
+
+}
+
+void CGE64::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
+{	
+	wchar_t buffer[128];
+	va_list args;
+	va_start(args,format);
+	//swprintf_s(buffer,format,args);
+	vswprintf ( buffer, 128, format, args );
+	va_end(args);
+	
+	m_NameFont->Print(x,y,GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
+
+}
+
+void CGE64::RenderText()
+{
+	if(!GetShowFontNames())
+		return;
+		
+	//RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
+	//RenderText(GetLonMap(),GetLatMap(),0.5f,6.6f,GetAgeAsString());
+					
+	if(GetBusy())
+		RenderText(m_LonMap,m_LatMap,-1.5f,-0.1f,GetCommandCountAsString());
+
+}
 
 
 void CGE64::RenderGE64()
@@ -215,7 +296,9 @@ void CGE64::Render()
 	SetValues();
 	RenderGE64();
 	RenderAlarm();
-	
+	RenderBusy();
+	RenderText();
+		
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
 	glDisable(GL_LINE_SMOOTH);
@@ -272,6 +355,17 @@ double CGE64::GetGpsLonMap()
 double CGE64::GetGpsLatMap()
 {	
 	return m_GpsLatMap;
+}
+
+bool CGE64::GetBusy()
+{
+	return m_Busy;
+}
+
+wxString CGE64::GetCommandCountAsString()
+{
+	return wxString::Format(_("%d"),m_CommandCount);
+
 }
 
 //SET
@@ -434,4 +528,14 @@ wxString CGE64::GetDriverFullHtml()
 
 	return str;
 
+}
+
+void CGE64::LightOn()
+{
+	_SetGE64Command(COMMAND_LIGHT_ON,GetId(), GetBaseStationId());
+}
+
+void CGE64::LightOff()
+{
+	_SetGE64Command(COMMAND_LIGHT_OFF,GetId(),GetBaseStationId());
 }

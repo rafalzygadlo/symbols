@@ -8,6 +8,7 @@ CListItem::CListItem()
 {
 	m_Exists = false;
 	m_Id = 0;
+	m_Type = 0;
 }
 
 CListItem::~CListItem()
@@ -37,6 +38,11 @@ void CListItem::SetId(int v)
 	m_Id = v;
 }
 
+void CListItem::SetType(int v)
+{
+	m_Type = v;
+}
+
 //GET
 int CListItem::GetId()
 {
@@ -46,4 +52,9 @@ int CListItem::GetId()
 bool CListItem::GetExists()
 {
 	return m_Exists;
+}
+
+int CListItem::GetType()
+{
+	return m_Type;
 }

@@ -218,6 +218,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Second Lamp On",L"Second Lamp On"},
 	{L"Generator On",L"Generator On"},
 	{L"Manual On",L"Manual On"},
+	{L"Light On ?",L"Włączyć Światło ?\nUpewnij się."},
+	{L"Light Off ?",L"Wyłączyć Światło ?\nUpewnij się."},
 
 };
 
@@ -1146,8 +1148,8 @@ void DeactivateCommand(int id)
 	DBClose(db);
 }
 
-//COMMANDS . . . . . . . . . . . . . . . .
-int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
+//SBMS COMMANDS BEGIN
+int SetSBMSCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
 {
 	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d',local_utc_time=utc_timestamp()"),TABLE_SBMS_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
 	void *db = DBConnect();
@@ -1157,7 +1159,7 @@ int SetDBCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_com
 	return last_id;
 }
 
-void UpdateDBCommand(int id,wxString cmd)
+void UpdateSBMSCommand(int id,wxString cmd)
 {
 	wxString sql = wxString::Format(_("UPDATE `%s` SET command='%s' WHERE id='%d'"),TABLE_SBMS_COMMAND,cmd.wc_str(),id);
 	void *db = DBConnect();
@@ -1166,12 +1168,12 @@ void UpdateDBCommand(int id,wxString cmd)
 	DBClose(db);
 }
 
-void _SetCommand(int cmd_id,int id_sbms,int mmsi,int SBMSID, int id_base_station, bool on)
+void _SetSBMSCommand(int cmd_id,int id_sbms,int mmsi,int SBMSID, int id_base_station, bool on)
 {
-	int id = SetDBCommand(id_sbms,mmsi,SBMSID,id_base_station,cmd_id);
+	int id = SetSBMSCommand(id_sbms,mmsi,SBMSID,id_base_station,cmd_id);
 	const char *cmd = GetCommand(cmd_id);
 	wxString _cmd = wxString::Format(_(cmd),SBMSID,on);
-	UpdateDBCommand(id,_cmd);
+	UpdateSBMSCommand(id,_cmd);
 }
 
 void GroupCommand(int cmd_id, int id_group, bool on)
@@ -1194,7 +1196,7 @@ void GroupCommand(int cmd_id, int id_group, bool on)
 			int mmsi = atoi(row[1]);
 			int id_base_station = atoi(row[2]);
 			int SBMSID = atoi(row[3]);
-			_SetCommand(cmd_id,id_sbms,mmsi,SBMSID,id_base_station,on);
+			_SetSBMSCommand(cmd_id,id_sbms,mmsi,SBMSID,id_base_station,on);
 		}
 	}
 	
@@ -1202,6 +1204,19 @@ void GroupCommand(int cmd_id, int id_group, bool on)
 	DBClose(db);
 
 }
+// SBMS COMMANDS END . . . . . . . . . . . . . . . . . . 
+
+// GE64 COMMANDS BEGIN . . . . . . . . . . . . . . . . . 
+
+void _SetGE64Command(int id_command, int id_ge64, int id_base_station)
+{
+	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_ge64='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d', local_utc_time=utc_timestamp()"),TABLE_GE64_COMMAND,id_ge64,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
+}
+// GE64 COMMANDS END . . . . . . . . . . . . . . . . . . 
+
 
 /*
 void SetAutoManagement()

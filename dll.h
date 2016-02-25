@@ -112,6 +112,7 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadGE64(void *db,CSymbol *ptr);
 	void ReadSBMSAlarm(void *db);
 	void ReadSBMSCommand(void *db);
+	void ReadGE64Command(void *db);
 	void ReadBaseStation(void *db);
 
 	//void ReadGroup(void *db);

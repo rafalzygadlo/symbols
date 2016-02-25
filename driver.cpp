@@ -67,4 +67,4 @@ int CDriver::GetCharging()				{ return 0; }
 double CDriver::GetGpsLon()				{ return 0; }
 double CDriver::GetGpsLat()				{ return 0; }
 double CDriver::GetGpsLonMap()			{ return 0; }
-double CDriver::GetGpsLatMap()			{ return 0; }			
+double CDriver::GetGpsLatMap()			{ return 0; }

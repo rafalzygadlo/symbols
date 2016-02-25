@@ -84,9 +84,13 @@ int GetDBVersion(void *db);
 void WriteDBConfig();
 void WritePasswordConfig(char *v);
 
-//COMMANDS
-void _SetCommand(int cmd_id,int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
+//SBMS COMMANDS
+void _SetSBMSCommand(int cmd_id, int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
 void GroupCommand(int cmd_id, int id_group,bool on);
+
+
+//GE64 COMMANDS
+void _SetGE64Command( int cmd_id, int id_ge64, int id_base_station);
 
 #endif
 

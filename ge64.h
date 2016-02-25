@@ -27,6 +27,10 @@ class CGE64 :public CDriver
 	double m_TranslationY;
 	bool m_AlarmOn;
 	bool m_Alarm;
+	bool m_BusyOn;
+	bool m_Busy;
+	int m_CommandCount;
+	nvFastFont *m_NameFont;
 	
 	//pozycja referencyjna
 	double m_RLon, m_RLat, m_RLonMap, m_RLatMap;
@@ -35,19 +39,21 @@ class CGE64 :public CDriver
 	//pozycja gps lub referencyjna
 	double m_Lon, m_Lat, m_LonMap, m_LatMap;
 	
-
 	CList m_AlarmList;
-
-	void ClearAlarms();
+		
 	bool CheckAlarm();
-	void SetAlarms();
+	bool CheckCommand();
+		
 	void SetSmoothScaleFactor(double v);
 	void SetValues();
 	void SetColor(int id);
 	void SetSymbolColor();
 	
 	void RenderAlarm();
+	void RenderBusy();
 	void RenderGE64();
+	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);
+	void RenderText();
 	void Render() override;
 	
 public:
@@ -57,7 +63,7 @@ public:
 
 	void ShowAction() override;
 	void Read() override;
-
+	
 	//GET
 	bool GetNightMode();
 	bool GetMainLampOn();
@@ -65,14 +71,16 @@ public:
 	bool GetGeneratorOn();
 	bool GetManualOn();
 	int GetAlarmCount();
+	bool GetBusy();
 	CAlarm *GetAlarm(int v);
+	wxString GetCommandCountAsString();
 	wxString GetDriverHtml(int v) override;
 	wxString GetDriverFullHtml() override;
 	wxString GetAlarmHtml() override;
 
-	double GetGpsLon() override;	
-	double GetGpsLat() override;	
-	double GetGpsLonMap() override;	
+	double GetGpsLon() override;
+	double GetGpsLat() override;
+	double GetGpsLonMap() override;
 	double GetGpsLatMap() override;
 	//referencyjna lub Gps
 	//double GetLon() override;	
@@ -88,18 +96,24 @@ public:
 	void SetGeneratorOn(bool v);
 	void SetManualOn(bool v);
 	
-	void SetGpsLon(double v) override;	
-	void SetGpsLat(double v) override;	
-	void SetGpsLonMap(double v) override;	
+	
+	void SetGpsLon(double v) override;
+	void SetGpsLat(double v) override;
+	void SetGpsLonMap(double v) override;
 	void SetGpsLatMap(double v) override;
 	
 	//referencyjna lub Gps
-	void SetLon(double v) override;		
-	void SetLat(double v) override;		
-	void SetLonMap(double v) override;		
+	void SetLon(double v) override;
+	void SetLat(double v) override;
+	void SetLonMap(double v) override;
 	void SetLatMap(double v) override;
-		
+	
+	void SetFont(nvFastFont *v) override;
 
+	//akcje
+	void LightOn();
+	void LightOff();
+	
 };
 
 #endif

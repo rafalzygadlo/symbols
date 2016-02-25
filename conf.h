@@ -338,6 +338,9 @@
 #define MSG_SECOND_LAMP_ON				195
 #define MSG_GENERATOR_ON				196
 #define MSG_MANUAL_ON					197
+#define MSG_LIGHT_ON_QUESTION			198
+#define MSG_LIGHT_OFF_QUESTION			199
+
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -488,18 +491,19 @@
 #define TABLE_USER_GROUP_RIGHT		"user_group_right"
 #define TABLE_USER_TO_GROUP			"user_to_group"
 #define TABLE_BASE_STATION			"base_station"
-#define TABLE_SBMS_COMMAND			"sbms_command"
-#define TABLE_SBMS_COMMAND_ANSWER	"sbms_command_answer"
 
 #define TABLE_SBMS					"sbms"
 #define TABLE_SBMS_STANDARD_REPORT	"sbms_standard_report"
 #define TABLE_SBMS_ALARM			"sbms_alarm"
 #define TABLE_SBMS_ALARM_REPORT		"sbms_alarm_report"
+#define TABLE_SBMS_COMMAND			"sbms_command"
+#define TABLE_SBMS_COMMAND_ANSWER	"sbms_command_answer"
 
 #define TABLE_GE64					"ge64"
 #define TABLE_GE64_STANDARD_REPORT	"ge64_standard_report"
 #define TABLE_GE64_ALARM			"ge64_alarm"
 #define TABLE_GE64_ALARM_REPORT		"ge64_alarm_report"
+#define TABLE_GE64_COMMAND			"ge64_command"
 
 #define TABLE_CHARACTERISTIC		"characteristic"
 #define TABLE_CHARACTERISTIC_ON_OFF "characteristic_on_off"
@@ -736,10 +740,11 @@
 #define FI_SBMS_NEW_REPORT					26 //new report has arived
 #define FI_SBMS_CHARGING					27
 #define FI_SBMS_PROTOCOL_VERSION			28
-#define FI_SBMS_INFO						29
-#define FI_SBMS_DATE_TIME_STAMP				30
-#define FI_SBMS_LOCAL_UTC_TIME_STAMP		31
-#define FI_SBMS_LOCAL_UTC_TIME				32
+#define Fi_SBMS_FLASHER_TYPE				29
+#define FI_SBMS_INFO						30
+#define FI_SBMS_DATE_TIME_STAMP				31
+#define FI_SBMS_LOCAL_UTC_TIME_STAMP		32
+#define FI_SBMS_LOCAL_UTC_TIME				33
 
 #define FN_SBMS_NAME			"name"
 #define FN_SBMS_MMSI			"mmsi"
@@ -752,7 +757,7 @@
 // pola tabeli GE64
 #define FI_GE64_ID					0
 #define FI_GE64_NAME				3
-#define FI_GE64_LOCAL_UTC_TIME		8
+#define FI_GE64_LOCAL_UTC_TIME		10
 
 #define FN_GE64_NAME				"name"
 #define FN_GE64_LOCAL_UTC_TIME		"local_utc_time"

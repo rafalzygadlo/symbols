@@ -1348,30 +1348,30 @@ wxString CSBMS::GetDriverFullHtml()
 
 void CSBMS::LightOn()
 {
-	_SetCommand(COMMAND_LIGHT_ON,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	_SetSBMSCommand(COMMAND_LIGHT_ON,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
 }
 
 void CSBMS::LightOff()
 {
-	_SetCommand(COMMAND_LIGHT_OFF,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	_SetSBMSCommand(COMMAND_LIGHT_OFF,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::AutoManagement()
 {
-	_SetCommand(COMMAND_AUTO_MANAGEMENT,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	_SetSBMSCommand(COMMAND_AUTO_MANAGEMENT,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::Reset()
 {
-	_SetCommand(COMMAND_RESET,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	_SetSBMSCommand(COMMAND_RESET,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::GetTime()
 {
-	_SetCommand(COMMAND_GET_TIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	_SetSBMSCommand(COMMAND_GET_TIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
 }
 
 void CSBMS::GetUptime()
 {
-	_SetCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	_SetSBMSCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
 }
