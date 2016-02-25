@@ -958,9 +958,10 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 
 		if(!ptr->GetConfirmed())
 			m_ConfirmCounter++;
-		
 				
 	}
+
+	db_free_result(result);
 }
 
 void CMapPlugin::ReadSBMSCommand(void *db)
@@ -1009,6 +1010,8 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		ptr->SetExists(true);
 			
 	}
+
+	db_free_result(result);
 }
 
 
@@ -1042,6 +1045,8 @@ void CMapPlugin::ReadGroup(void *db)
 		ptr->SetExists(true);
 		
 	}
+
+	db_free_result(result);
 	
 }
 

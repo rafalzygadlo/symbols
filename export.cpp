@@ -26,6 +26,8 @@ void ExportAlarm(void *db,wxString from, wxString to)
 //	my_query(db,sql);
 	
 	void *result = db_result(db);
+	if(result == NULL)
+		return;
 
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -46,4 +48,6 @@ void ExportAlarm(void *db,wxString from, wxString to)
 		wxSystem(wxString::Format(_("explorer %s"),fname));
 	 
 	}
+
+	db_free_result(result);
 }
