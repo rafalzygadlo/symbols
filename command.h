@@ -9,6 +9,7 @@ class CCommand :public CListItem
 	bool m_New;
 	int m_Type;
 	int m_Status;
+	int m_DriverType;
 	wxString m_StatusText;
 	wxString m_Name;
 	wxString m_SymbolName;
@@ -29,12 +30,14 @@ public:
 	void SetUserFirstName(wxString v);
 	void SetUserLastName(wxString v);
 	void SetStatusText(wxString v);
+	void SetDriverType(int v);
 				
 	//GET
 	
 	int GetType();
 	int GetIdCommand();
 	int GetStatus();
+	int GetDriverType();
 
 	wxString GetStatusText();
 	wxString GetName();

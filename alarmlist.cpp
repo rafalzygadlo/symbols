@@ -55,7 +55,7 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 	switch(action)
 	{
-		case HREF_ACTION_DELETE:	DeactivateAlarm(Alarm->GetId());	break;
+		case HREF_ACTION_DELETE:	DeactivateAlarm(Alarm->GetId(),Alarm->GetDriverType());	break;
 	}
 
 }
@@ -150,7 +150,7 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 	int a = GetSelection();
 	
 	CAlarm *ptr = (CAlarm*)m_List->Item(GetSelection());
-	ConfirmAlarm(ptr->GetId());
+	ConfirmAlarm(ptr->GetId(),ptr->GetDriverType());
 }
 
 

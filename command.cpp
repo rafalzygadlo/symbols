@@ -47,6 +47,12 @@ void CCommand::SetCommandDate(wxString v)
 {
 	m_CommandDate = v;
 }
+
+void CCommand::SetDriverType(int v)
+{
+	m_DriverType = v;
+}
+
 //GET
 wxString CCommand::GetName()
 {
@@ -68,6 +74,11 @@ int CCommand::GetStatus()
 	return m_Status;
 }
 
+int CCommand::GetDriverType()
+{
+	return m_DriverType;
+}
+
 wxString CCommand::GetStatusText()
 {
 	return m_StatusText;
@@ -82,3 +93,5 @@ wxString CCommand::GetUserLastName()
 {
 	return m_UserLastName;
 }
+
+

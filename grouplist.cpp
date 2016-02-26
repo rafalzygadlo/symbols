@@ -131,8 +131,8 @@ void CGroupList::OnSelect(wxCommandEvent &event)
 	
 	int a = GetSelection();
 	
-	CAlarm *ptr = (CAlarm*)m_List->Item(GetSelection());
-	ConfirmAlarm(ptr->GetId());
+	//CAlarm *ptr = (CAlarm*)m_List->Item(GetSelection());
+	//ConfirmAlarm(ptr->GetId());
 }
 
 void CGroupList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const

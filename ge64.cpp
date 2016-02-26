@@ -368,6 +368,7 @@ wxString CGE64::GetCommandCountAsString()
 
 }
 
+
 //SET
 void CGE64::SetNightMode(bool v)
 {
@@ -433,7 +434,6 @@ void CGE64::SetGpsLatMap(double v)
 {	
 	m_GpsLatMap = v;
 }
-
 
 wxString CGE64::GetAlarmHtml()
 {

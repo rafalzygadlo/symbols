@@ -55,7 +55,7 @@ void CCommandList::OnLinkClicked(wxHtmlLinkEvent &event)
 
 	switch(action)
 	{
-		case HREF_ACTION_DELETE:	DeactivateCommand(ptr->GetId());	break;
+		case HREF_ACTION_DELETE:	DeactivateCommand(ptr->GetId(),ptr->GetDriverType());	break;
 		
 	}
 

@@ -55,6 +55,11 @@ void CAlarm::SetUserLastName(wxString v)
 	m_UserLastName = v;
 }
 
+void CAlarm::SetDriverType(int v)
+{
+	m_DriverType = v;
+}
+
 //GET
 int CAlarm::GetIdAlarm()
 {
@@ -99,4 +104,9 @@ wxString CAlarm::GetUserFirstName()
 wxString CAlarm::GetUserLastName()
 {
 	return m_UserLastName;
+}
+
+int CAlarm::GetDriverType()
+{
+	return m_DriverType;
 }

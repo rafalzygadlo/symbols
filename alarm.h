@@ -34,6 +34,7 @@ class CAlarm : public CListItem
 	wxString m_UserLastName;
 	bool m_New;
 	bool m_Confirmed;
+	int m_DriverType;
 
 public:
 
@@ -43,7 +44,7 @@ public:
 	void SetName(wxString v);
 	void SetSymbolName(wxString v);
 	void SetNew(bool v);
-	//void SetExists(bool v);
+	void SetDriverType(int v);
 	void SetConfirmed(bool v);
 	void SetType(int v);
 	void SetAlarmOnDate(wxString v);
@@ -58,6 +59,7 @@ public:
 	//bool GetExists();
 	bool GetConfirmed();
 	int GetType();
+	int GetDriverType();
 	wxString GetAlarmOnDate();
 	wxString GetUserFirstName();
 	wxString GetUserLastName();

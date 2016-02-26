@@ -86,6 +86,7 @@ public:
 	virtual int GetMMSI();
 	virtual int GetSBMSID();
 	virtual int GetCharging();
+	
 		
 	virtual void ShowGraph();
 	virtual void ShowAction();

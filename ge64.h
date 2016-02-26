@@ -96,7 +96,6 @@ public:
 	void SetGeneratorOn(bool v);
 	void SetManualOn(bool v);
 	
-	
 	void SetGpsLon(double v) override;
 	void SetGpsLat(double v) override;
 	void SetGpsLonMap(double v) override;

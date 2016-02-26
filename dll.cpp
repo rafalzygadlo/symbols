@@ -78,7 +78,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_OldSearchText = wxEmptyString;
 
 	m_SymbolList = new wxArrayPtrVoid();
-	m_AlarmList = new wxArrayPtrVoid();
+	m_AlarmList = new CList();
 	m_CommandList = new CList();
 	m_GroupList = new CList();
 
@@ -143,7 +143,7 @@ CMapPlugin::~CMapPlugin()
 	ClearSymbols();
 	delete m_SymbolList;
 	
-	ClearAlarms();
+	m_AlarmList->_Clear();
 	delete m_AlarmList;
 	
 	m_CommandList->_Clear();
@@ -935,11 +935,12 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 		CAlarm *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = ExistsAlarm(id);
+		ptr = (CAlarm*)m_AlarmList->_Exists(id,DRIVER_TYPE_SBMS);
 			
 		if(ptr == NULL)
 		{
 			ptr = new CAlarm();
+			ptr->SetDriverType(DRIVER_TYPE_SBMS);
 			m_AlarmList->Insert(ptr,0);
 		}
 		
@@ -996,7 +997,7 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		if(ptr == NULL)
 		{
 			ptr = new CCommand();
-			ptr->SetType(DRIVER_TYPE_SBMS);
+			ptr->SetDriverType(DRIVER_TYPE_SBMS);
 			m_CommandList->Insert(ptr,0);
 
 		}
@@ -1016,6 +1017,68 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 
 	db_free_result(result);
 }
+
+void CMapPlugin::ReadGE64Alarm(void *db)
+{	
+	
+	wxString sql = wxString::Format(_("SELECT "TABLE_GE64_ALARM".id, "TABLE_SYMBOL".name, "TABLE_ALARM".name, "TABLE_GE64_ALARM".confirmed, "TABLE_ALARM".type, "TABLE_GE64_ALARM".set_local_utc_time , "
+	""TABLE_GE64_ALARM".id_user, "TABLE_USER".first_name, "TABLE_USER".last_name FROM `"TABLE_SYMBOL"`"
+	"LEFT JOIN `"TABLE_GE64"` ON `"TABLE_GE64"`.id_symbol=`"TABLE_SYMBOL"`.id "
+	"LEFT JOIN "TABLE_GE64_ALARM" ON "TABLE_GE64_ALARM".id_ge64="TABLE_GE64".id "
+	"LEFT JOIN "TABLE_ALARM" ON "TABLE_GE64_ALARM".id_alarm="TABLE_ALARM".id "
+	"LEFT JOIN "TABLE_USER" ON "TABLE_GE64_ALARM".id_user = "TABLE_USER".id "
+	"WHERE active='%d'"),ALARM_ACTIVE);
+	
+	if(SelectedPtr)
+		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
+
+	sql << _(" ORDER BY local_utc_time");
+
+
+	my_query(db,sql);
+	void *result = db_result(db);
+		
+    char **row = NULL;
+	if(result == NULL)
+		return;
+	
+	m_ConfirmCounter = 0;
+	while(row = (char**)db_fetch_row(result))
+	{
+		CAlarm *ptr = NULL;
+		int id;
+		sscanf(row[0],"%d",&id);
+		ptr = (CAlarm*)m_AlarmList->_Exists(id,DRIVER_TYPE_GE64);
+			
+		if(ptr == NULL)
+		{
+			ptr = new CAlarm();
+			m_AlarmList->Insert(ptr,0);
+			ptr->SetDriverType(DRIVER_TYPE_GE64);
+		}
+		
+		ptr->SetId(id);
+		ptr->SetSymbolName(Convert(row[1]));
+		ptr->SetName(Convert(row[2]));
+		ptr->SetConfirmed(atoi(row[3]));
+		ptr->SetType(atoi(row[4]));
+		ptr->SetAlarmOnDate(Convert(row[5]));
+		ptr->SetExists(true);
+				
+		if(atoi(row[6]) > 0)
+		{
+			ptr->SetUserFirstName(Convert(row[7]));
+			ptr->SetUserLastName(Convert(row[8]));
+		}
+
+		if(!ptr->GetConfirmed())
+			m_ConfirmCounter++;
+				
+	}
+
+	db_free_result(result);
+}
+
 
 void CMapPlugin::ReadGE64Command(void *db)
 {	
@@ -1048,7 +1111,7 @@ void CMapPlugin::ReadGE64Command(void *db)
 		if(ptr == NULL)
 		{
 			ptr = new CCommand();
-			ptr->SetType(DRIVER_TYPE_GE64);
+			ptr->SetDriverType(DRIVER_TYPE_GE64);
 			m_CommandList->Insert(ptr,0);
 		}
 
@@ -1319,56 +1382,6 @@ void CMapPlugin::RemoveDriver()
 }
 
 
-//ALARM
-void CMapPlugin::SetExistsAlarm()
-{
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
-	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
-		ptr->SetExists(false);
-	}
-		
-}
-
-CAlarm *CMapPlugin::ExistsAlarm(int id)
-{
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
-	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
-		if(id == ptr->GetId())
-			return ptr;
-	}
-
-	return NULL;
-}
-
-void CMapPlugin::ClearAlarms()
-{
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
-	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
-		delete ptr;
-	}
-	
-	m_AlarmList->Clear();
-}
-
-void CMapPlugin::RemoveAlarm()
-{
-	
-	for(size_t i = 0; i < m_AlarmList->size(); i++)
-	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList->Item(i);
-		
-		if(!ptr->GetExists())
-		{
-			m_AlarmList->Remove(ptr);
-			delete ptr;
-			i = 0;
-		}
-	}
-}
-
 void CMapPlugin::SendInsertSignal()
 {
 	SetDisplaySignal(SIGNAL_INSERT);
@@ -1509,7 +1522,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 		FromLMB = true;
 		SelectedPtr = ptr;
 		ptr->UnsetNewReport();
-		ClearAlarms();
+		m_AlarmList->_Clear();
 		m_CommandList->_Clear();
 		SendSelectSignal();
 		//GetVoice()->Speak(ptr->GetName(),0,NULL);
@@ -2101,9 +2114,10 @@ void CMapPlugin::OnTick()
 	ReadDrivers();					//przeczytaj drivery
 	RemoveDriver();					//usuń
 
-	SetExistsAlarm();
+	m_AlarmList->_SetExists(false);
 	ReadSBMSAlarm(m_DBTicker);		//przeczytaj alarmy
-	RemoveAlarm();					//usuń
+	ReadGE64Alarm(m_DBTicker);
+	m_AlarmList->_Remove();			//usuń
 	
 	m_CommandList->_SetExists(false);
 	ReadSBMSCommand(m_DBTicker);

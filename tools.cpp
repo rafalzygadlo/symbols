@@ -11,6 +11,7 @@
 #include "naviencryption.h"
 #include "options.h"
 #include "alarm.h"
+#include "driver.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
 wxMutex *mutex = NULL;
@@ -1121,28 +1122,68 @@ void ConfirmAlarms()
 	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE active='%d' AND confirmed='%d' "),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,ALARM_ACTIVE,ALARM_NOT_CONFIRMED);
 	void *db = DBConnect();
 	my_query(db,sql);
+
+	sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE active='%d' AND confirmed='%d' "),TABLE_GE64_ALARM,_GetUID(),ALARM_CONFIRMED,ALARM_ACTIVE,ALARM_NOT_CONFIRMED);
+	my_query(db,sql);
+
 	DBClose(db);
 }
 
-void ConfirmAlarm(int id)
+void ConfirmAlarm(int id, int type)
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE id='%d' AND confirmed='%d'"),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,id,ALARM_NOT_CONFIRMED);
+	wxString sql;
+
+	switch(type)
+	{
+		case DRIVER_TYPE_SBMS:
+			sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE id='%d' AND confirmed='%d'"),TABLE_SBMS_ALARM,_GetUID(),ALARM_CONFIRMED,id,ALARM_NOT_CONFIRMED);
+		break;
+
+		case DRIVER_TYPE_GE64:
+			sql = wxString::Format(_("UPDATE `%s` SET id_user='%d',confirmed='%d',confirmed_local_utc_time=utc_timestamp() WHERE id='%d' AND confirmed='%d'"),TABLE_GE64_ALARM,_GetUID(),ALARM_CONFIRMED,id,ALARM_NOT_CONFIRMED);
+		break;
+	}
+		
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);
 }
 
-void DeactivateAlarm(int id)
+void DeactivateAlarm(int id, int type)
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id);
+	wxString sql;
+
+	switch(type)
+	{
+		case DRIVER_TYPE_SBMS:
+			sql	 = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id);
+		break;
+
+		case DRIVER_TYPE_GE64:
+			sql	 = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_GE64_ALARM,ALARM_NOT_ACTIVE,id);
+		break;
+	}
+
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);
 }
 
-void DeactivateCommand(int id)
+void DeactivateCommand(int id, int type)
 {
-	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_COMMAND,COMMAND_NOT_ACTIVE,id);
+	wxString sql;
+
+	switch(type)
+	{
+		case DRIVER_TYPE_SBMS:
+			sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_COMMAND,COMMAND_NOT_ACTIVE,id);
+		break;
+
+		case DRIVER_TYPE_GE64:
+			sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_GE64_COMMAND,COMMAND_NOT_ACTIVE,id);
+		break;
+	}
+
 	void *db = DBConnect();
 	my_query(db,sql);
 	DBClose(db);

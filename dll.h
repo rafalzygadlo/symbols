@@ -46,10 +46,10 @@ class CMapPlugin :public CNaviMapIOApi
 	CAlarmDialog *m_AlarmDialog;
 
 	wxArrayPtrVoid *m_SymbolList;
-	wxArrayPtrVoid *m_AlarmList;
+		
 	CList *m_CommandList;
-	
 	CList *m_GroupList;
+	CList *m_AlarmList;
 	CList *m_BaseStationList;
 		
 	bool m_On;
@@ -108,11 +108,15 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadSymbol(void *db,wxString sql);
 	void ReadGroup(void *db);
 	void ReadDrivers();
+	
 	void ReadSBMS(void *db,CSymbol *ptr);
-	void ReadGE64(void *db,CSymbol *ptr);
 	void ReadSBMSAlarm(void *db);
 	void ReadSBMSCommand(void *db);
+		
+	void ReadGE64(void *db,CSymbol *ptr);
+	void ReadGE64Alarm(void *db);
 	void ReadGE64Command(void *db);
+		
 	void ReadBaseStation(void *db);
 
 	//void ReadGroup(void *db);
@@ -121,14 +125,11 @@ class CMapPlugin :public CNaviMapIOApi
 	void ReadDriverValues(void *db);
 	
 	void ClearSymbols();
-	void ClearAlarms();
-		
+			
 	void RemoveSymbol();
 	void RemoveDriver();
-	void RemoveAlarm();
-			
+				
 	void SetExistsSymbol();
-	void SetExistsAlarm();
 	void SetExistsDriver();
 		
 	void ReadConfig();
@@ -168,8 +169,8 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowProperties();
 	void ShowInfo(int x, int y);
 	CSymbol *ExistsSymbol(int id);
-	CAlarm *ExistsAlarm(int id);
-	CCommand *ExistsCommand(int id);
+	
+	//CCommand *ExistsCommand(int id);
 	CGroup *ExistsGroup(int id);
 		
 	int Count();
