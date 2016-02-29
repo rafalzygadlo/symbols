@@ -131,7 +131,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Light On",L"Światło zapalone"},
 	{L"Standard Report",L"Raport standardowy"},
 	{L"No SBMS Record in database",L"Brak rekordu z ustawieniami SBMS"},
-	{L"Symbol Fonts",L"Czcionki Znaku"},
+	{L"Fonts",L"Czcionki"},
 	{L"Font",L"Czcionka"},
 	{L"Font Size",L"Rozmiar czcionki"},
 	{L"Font View",L"Widoczność czcionki"},

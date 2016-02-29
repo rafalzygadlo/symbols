@@ -166,4 +166,3 @@ void CSBMSActionDialog::OnReset(wxCommandEvent &event)
 {
 	m_Symbol->Reset();
 }
-

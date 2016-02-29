@@ -74,6 +74,11 @@ void CSymbolListHtml::ShowGraph(CSymbol *v)
 
 void CSymbolListHtml::ShowManagement(CSymbol *v)
 {
+	for(int i = 0; i < v->GetDriverCount();i++)
+	{
+		CDriver *Driver = v->GetDriver(i);
+		Driver->ShowAction();
+	}
 	//v->ShowManagement(v);
 }
 
@@ -163,7 +168,7 @@ wxString CSymbolListHtml::OnGetItem(size_t item) const
 
 	wxString str;
 	CSymbol *ptr = (CSymbol*)m_List->Item(item);
-	str = ptr->GetHtml();
+	str = ptr->GetHtml(item);
 	
 	for(int i = 0; i < ptr->GetDriverCount();i++)
 	{

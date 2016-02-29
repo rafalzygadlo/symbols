@@ -124,7 +124,7 @@ public:
 	int GetId();
 	wxString GetName();
 	wxString GetNumber();
-	wxString GetHtml();
+	wxString GetHtml(int v);
 	wxString GetFullHtml();
 	int GetMonitoring();
 	int GetDriverCount();

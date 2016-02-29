@@ -165,11 +165,11 @@ void CSymbol::Render()
 
 }
 
-wxString CSymbol::GetHtml()
+wxString CSymbol::GetHtml(int v)
 {
 	wxString str;
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b> (%s)</font></td></tr>"),GetName(),GetNumber());
+	str << wxString::Format(_("<tr><td><font size=3><a href='%d' target='%d'>%s</a> (%s)</font></td></tr>"),v,HREF_ACTION_MANAGEMENT,GetName(),GetNumber());
 	str << wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(GetMonitoring()));
 	str.Append(_("</table>"));
 

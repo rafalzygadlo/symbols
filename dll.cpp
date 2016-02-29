@@ -611,7 +611,7 @@ void CMapPlugin::SetSql(wxString &sql)
 		
 	sql << wxString::Format(_(" WHERE ("TABLE_SYMBOL".name LIKE '%%%s%%' OR number LIKE '%%%s%%')"),GetSearchText(),GetSearchText());
 	
-	if(area_id > 0)	
+	if(area_id > 0)
 		sql << wxString::Format(_(" AND id_area='%d'"),area_id);
 		
 	if(symbol_type_id > 0) 
@@ -623,7 +623,7 @@ void CMapPlugin::SetSql(wxString &sql)
 	if(light > -1)
 		sql << wxString::Format(_(" AND mode_forced_off='%d'"),!light);
 		
-	if(in_monitoring > -1)	
+	if(in_monitoring > -1)
 		sql << wxString::Format(_(" AND in_monitoring='%d'"),in_monitoring);
 
 	if(base_station_id > 0)	

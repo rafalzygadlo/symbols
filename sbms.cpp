@@ -601,6 +601,8 @@ void CSBMS::RenderRestricted()
 
 void CSBMS::RenderGPS()
 {	
+	glEnable(GL_LINE_STIPPLE);
+	glLineStipple( 5, 0xAAAA );
 	glColor4f(1.0f,1.0f,1.0f,0.6f);
 
 	glPointSize(2);
@@ -615,6 +617,7 @@ void CSBMS::RenderGPS()
 	glEnd();
 
 	glPointSize(1);
+	glDisable(GL_LINE_STIPPLE);
 	
 }
 
@@ -1231,14 +1234,14 @@ wxString CSBMS::GetDriverHtml(int v)
 		nvRGBA c = GetAlarmTypeColor(alarm->GetType());
 		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 	}
-		
+	
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td>"),GetLightOnAsString(GetLightOn())));
 	str.Append(_("<td rowspan=2 align=right width=80>"));
 	if(GetInputVolt() > GetUpperThreshold() || GetInputVolt() < GetLowerThreshold())
-		str.Append(wxString::Format(_("<a target=0 href='%d'><font size=4 color=red>%s</font></a>"),v,GetInputVoltAsString()));
+		str.Append(wxString::Format(_("<a target=%d href='%d'><font size=4 color=red>%s</font></a>"),HREF_ACTION_GRAPH, v, GetInputVoltAsString()));
 	else
-		str.Append(wxString::Format(_("<a target=0 href='%d'><font size=4>%s</font></a>"),v, GetInputVoltAsString()));
-		
+		str.Append(wxString::Format(_("<a target=%d href='%d'><font size=4>%s</font></a>"),HREF_ACTION_GRAPH, v, GetInputVoltAsString()));
+	
 	str.Append(_("</td>"));
 	str.Append(wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetAutoAsString(GetAuto())));
 	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),GetChargingAsString());
