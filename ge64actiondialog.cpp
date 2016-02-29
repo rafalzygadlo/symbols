@@ -23,6 +23,7 @@ CGE64ActionDialog::CGE64ActionDialog(void *db,CGE64 *ptr)
 	Sizer->Add(GetActionPanel(this),1,wxALL|wxEXPAND,5);
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	SetSizer(Sizer);		
+	Fit();
 	Center();
 	SetDriver(ptr);
 
