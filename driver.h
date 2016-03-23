@@ -71,6 +71,7 @@ public:
 	virtual void SetCharging(bool v);
 	virtual void SetNewReport(bool v);
 	virtual void UnsetNewReport();
+	virtual void SetFlasherType(int v);
 
 	//GET
 	virtual int GetBaseStationId();

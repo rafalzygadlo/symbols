@@ -12,7 +12,9 @@ class CGraphDialog: public wxDialog
 {
 	CGraph *m_Graph;
 	wxStaticText *m_Title;
-	//wxStaticText *m_Min;
+	
+	void OnClose(wxCloseEvent &event);
+	void OnButtonClose(wxCommandEvent &event);
 	wxPanel *GetButtonPanel(wxWindow *parent);
 	wxPanel *GetGraphPanel(wxWindow *parent);
 	wxPanel *GetTopPanel(wxWindow *parent);
@@ -24,6 +26,14 @@ public:
 	CGraph *GetGraph();
 	void _SetTitle(wxString v);
 	void SetMin(wxString v);
+
+
+	enum
+	{
+		ID_CLOSE = 3214,
+	};
+
+	DECLARE_EVENT_TABLE();
 	
 };
 

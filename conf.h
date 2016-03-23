@@ -340,7 +340,7 @@
 #define MSG_MANUAL_ON					197
 #define MSG_LIGHT_ON_QUESTION			198
 #define MSG_LIGHT_OFF_QUESTION			199
-
+#define MSG_NOT_MONITORED_CHANNELS		200
 
 
 #define HTML_ANCHOR_LAST_REPORT	0
@@ -740,7 +740,7 @@
 #define FI_SBMS_NEW_REPORT					26 //new report has arived
 #define FI_SBMS_CHARGING					27
 #define FI_SBMS_PROTOCOL_VERSION			28
-#define Fi_SBMS_FLASHER_TYPE				29
+#define FI_SBMS_FLASHER_TYPE				29
 #define FI_SBMS_INFO						30
 #define FI_SBMS_DATE_TIME_STAMP				31
 #define FI_SBMS_LOCAL_UTC_TIME_STAMP		32
@@ -995,6 +995,11 @@
 #define SYMBOL_REMOVED				2
 #define SYMBOL_OFF					3
 #define SYMBOL_WINTER				4
+
+//typy świateł
+#define FLASHER_TYPE_AM6	0
+#define FLASHER_TYPE_VEGA	1
+
 
 typedef struct Column
 {

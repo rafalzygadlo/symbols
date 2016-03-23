@@ -7,6 +7,10 @@
 #include "db.h"
 #include "options.h"
 
+BEGIN_EVENT_TABLE(CGraphDialog, wxDialog)
+	EVT_BUTTON(ID_CLOSE,OnButtonClose)
+	EVT_CLOSE(OnClose)
+END_EVENT_TABLE()
 
 CGraphDialog::CGraphDialog(wxWindow *parent)
 	:wxDialog(NULL,wxID_ANY,wxEmptyString,wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
@@ -23,6 +27,16 @@ CGraphDialog::CGraphDialog(wxWindow *parent)
 CGraphDialog::~CGraphDialog()
 {
 	
+}
+
+void CGraphDialog::OnClose(wxCloseEvent &event)
+{
+
+}
+
+void CGraphDialog::OnButtonClose(wxCommandEvent &event)
+{
+	Destroy();
 }
 
 wxPanel *CGraphDialog::GetTopPanel(wxWindow *parent)
@@ -68,7 +82,7 @@ wxPanel *CGraphDialog::GetButtonPanel(wxWindow *parent)
 	Sizer->Add(LabelProductInfo,0,wxALL,5);
 	Sizer->AddStretchSpacer(1);
 
-	wxButton *ButtonClose = new wxButton(Panel,wxID_CANCEL,GetMsg(MSG_CLOSE));
+	wxButton *ButtonClose = new wxButton(Panel,ID_CLOSE,GetMsg(MSG_CLOSE));
 	Sizer->AddStretchSpacer();
 	Sizer->Add(ButtonClose,0,wxALL,2);
 	

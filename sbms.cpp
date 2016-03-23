@@ -49,22 +49,19 @@ CSBMS::CSBMS(void *db,CNaviBroker *broker)
 	m_ValidGPS = false;
 	m_NoSBMS = true;
 	m_AgeString = "N/A";
-	m_GraphDialog = NULL;
 	m_Charging = false;
 	m_ProtocolVersion = 0;
 	m_NameFont = NULL;
 	m_SBMSActionDialog = NULL;
 	m_PositionsTick = 0;
-	
+	m_FlasherType = FLASHER_TYPE_AM6;
 }
 
 CSBMS::~CSBMS()
 {	
 	ClearAlarms();
 	m_Broker = NULL;
-	
-	if(m_GraphDialog)
-		delete m_GraphDialog;
+		
 	//if(m_SBMSActionDialog)
 	//	delete m_SBMSActionDialog;
 	
@@ -770,8 +767,7 @@ void CSBMS::ShowGraph()
 	if(db == NULL)
 		return;
 	
-	if(m_GraphDialog == NULL)
-		m_GraphDialog = new CGraphDialog(NULL);
+	m_GraphDialog = new CGraphDialog(NULL);
 	CGraph *Graph = m_GraphDialog->GetGraph();
 
 	wxString sql = wxString::Format(_("SELECT input_volt,local_utc_time_stamp FROM `%s` WHERE id_sbms='%d' ORDER BY local_utc_time_stamp"),TABLE_SBMS_STANDARD_REPORT,GetId());
@@ -834,14 +830,15 @@ void CSBMS::ShowGraph()
 	Graph->SetMin(min);
 	Graph->SetMax(max);
 	
-	
 	db_free_result(result);
 	
 	m_GraphDialog->_SetTitle(wxString::Format(_("%s"),GetSymbolName()));
 	m_GraphDialog->Layout();
-	m_GraphDialog->Show();
 	Graph->Refresh();
+	m_GraphDialog->ShowModal();
 
+	delete m_GraphDialog;
+		
 	DBClose(db);
 	
 }
@@ -1024,6 +1021,21 @@ void CSBMS::SetSBMSID(int v)
 void CSBMS::SetCharging(int v)
 {
 	m_Charging = v;
+}
+
+void CSBMS::SetFlasherType(int v)
+{
+	m_FlasherType = v;
+}
+
+void CSBMS::SetBusy(bool v)
+{
+	m_Busy = v;
+}
+
+void CSBMS::SetAlarm(bool v)
+{
+	m_Alarm = v;
 }
 
 //GET
@@ -1210,14 +1222,9 @@ int CSBMS::GetProtocolVersion()
 	return m_ProtocolVersion;
 }
 
-void CSBMS::SetBusy(bool v)
+int CSBMS::GetFlasherType()
 {
-	m_Busy = v;
-}
-
-void CSBMS::SetAlarm(bool v)
-{
-	m_Alarm = v;
+	return m_FlasherType;
 }
 
 wxString CSBMS::GetDriverHtml(int v)
@@ -1318,8 +1325,9 @@ wxString CSBMS::GetDriverFullHtml()
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_DOWN_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_NOT_MONITORED_CHANNELS),GetNotMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]), atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]),atoi(row[FI_SBMS_DOWN_CHANNELS]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));

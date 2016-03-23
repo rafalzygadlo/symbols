@@ -176,60 +176,7 @@ wxString CSymbolListHtml::OnGetItem(size_t item) const
 		str << Driver->GetDriverHtml(item);
 	}
 
-	/*	
 	
-	str.Append(_("<table border=0 cellpadding=2 cellspacing=0 width=100%>"));
-	
-	if(ptr->GetNoSBMS())
-	{
-		//str.Append(wxString::Format(_("<tr><td><font color=red size=2>%s</font></td></tr>"),GetMsg(MSG_NO_SBMS)));	
-		str.Append(wxString::Format(_("<tr><td><font color=red><font size=2>%s</font></td></tr>"),GetMsg(MSG_SYMBOL_NOT_IN_MONITORING)));	// taka g³upata dla UM
-	
-	}else{
-		
-		for(int i = 0; i < ptr->GetAlarmCount();i++)
-		{
-			CAlarm *alarm = ptr->GetAlarm(i);
-			nvRGBA c = GetAlarmTypeColor(alarm->GetType());
-			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=4>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
-		}
-		
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetMonitoringAsString(ptr->GetMonitoring())));
-			
-		if(ptr->GetMonitoring() == SYMBOL_IN_MONITORING)
-		{
-			if(GetSelection() == item)
-			{
-				//if(db_check_right(MODULE_SYMBOL,ACTION_MANAGEMENT,_GetUID()))
-					str << wxString::Format(_("<a target=%d href='%d'>%s</a>"),HREF_ACTION_MANAGEMENT, item,GetMsg(MSG_MANAGEMENT));
-			}
-		
-			str.Append(wxString::Format(_("<tr><td><font size=5><b>%s</b></font></td>"),GetLightOnAsString(ptr->GetLightOn())));
-			str.Append(_("<td rowspan=7 align=right width=80>"));
-			if(ptr->GetInputVolt() > GetUpperThreshold() || ptr->GetInputVolt() < GetLowerThreshold())
-				str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7 color=red>%4.2fV</font></a>"),item,ptr->GetInputVolt()));
-			else
-				str.Append(wxString::Format(_("<a target=0 href='%d'><font size=7>%4.2fV</font></a>"),item, ptr->GetInputVolt()));
-		
-			str.Append(_("</td>"));
-
-			str.Append(wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),GetAutoAsString(ptr->GetAuto())));
-			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetBaseStationName());
-			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetAgeAsString());
-			str << wxString::Format(_("<tr><td><font size=4>%s</font></td></tr>"),ptr->GetChargingAsString());
-			
-		}
-
-	
-	}
-	
-	
-	//str << wxString::Format(_("<tr><td><font size=5>%s(%d)</font></td></tr>"),ptr->GetName(),ptr->GetProtocolVersion());
-	str << wxString::Format(_("<tr><td><font size=3>%s</font></td></tr>"),ptr->GetName());
-	str << wxString::Format(_("<tr><td><font size=3><b>%s</b></font></td></tr>"),ptr->GetNumber());
-	str.Append(_("</table>"));
-	*/
-
 	return str;
 
 }

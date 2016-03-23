@@ -30,6 +30,7 @@ void CDriver::SetAuto(bool v)			{}
 void CDriver::SetCharging(bool v)		{}
 void CDriver::SetNewReport(bool v)		{}
 void CDriver::UnsetNewReport()			{}
+void CDriver::SetFlasherType(int v)		{}
 
 //pozycja ustalana ze względu na opcje
 void CDriver::SetLon(double v)			{}

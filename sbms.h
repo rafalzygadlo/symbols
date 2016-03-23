@@ -88,6 +88,7 @@ class CSBMS :public CDriver
 	float m_InputVolt;
 	int m_Charging;
 	int m_ProtocolVersion;
+	int m_FlasherType;
 	nvFastFont *m_NameFont;
 		
 	CAlarm *AlarmExists(int id);
@@ -160,7 +161,9 @@ public:
 	void SetAuto(bool v) override;
 	void SetInputVolt(float v) override;
 	void UnsetNewReport() override;
-	
+	void SetFlasherType(int v) override;
+
+
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
 	void SetInit(bool v);
@@ -202,6 +205,7 @@ public:
 	bool GetNoSBMS();
 	int GetCharging();
 	int GetProtocolVersion();
+	int GetFlasherType();
 	CAlarm *GetAlarm(int v);
 	wxPanel *GetSBMSPanel();
 	wxString GetChargingAsString();

@@ -221,6 +221,7 @@ const wchar_t *nvLanguage[][2] =
 	{L"Manual On",L"Manual On"},
 	{L"Light On ?",L"Włączyć Światło ?\nUpewnij się."},
 	{L"Light Off ?",L"Wyłączyć Światło ?\nUpewnij się."},
+	{L"Not Monitored Channels",L"Nie monitorowane kanały"},
 
 };
 
@@ -1077,24 +1078,37 @@ wxString GetMonitoredChannels(int v)
 	return str;
 }
 
-wxString GetOverloadChannels(int v)
+wxString GetNotMonitoredChannels(int v)
 {
 	wxString str;
-	for(int i = 0; i < OVERLOAD_CHANNELS;i++)
+	for(int i = 0; i < MONITORED_CHANNELS;i++)
 	{
-		if(IS_BIT_SET(v,i))
+		if(!IS_BIT_SET(v,i))
 			str.Append(wxString::Format(_("[ %d ]"),i+1));
 	}
 
 	return str;
 }
 
-wxString GetDownChannels(int v)
+
+wxString GetOverloadChannels(int vm, int v)
+{
+	wxString str;
+	for(int i = 0; i < OVERLOAD_CHANNELS;i++)
+	{
+		if(IS_BIT_SET(v,i) && IS_BIT_SET(vm,i))
+			str.Append(wxString::Format(_("[ %d ]"),i+1));
+	}
+
+	return str;
+}
+
+wxString GetDownChannels(int vm, int v)
 {
 	wxString str;
 	for(int i = 0; i < DOWN_CHANNELS;i++)
 	{
-		if(IS_BIT_SET(v,i))
+		if(IS_BIT_SET(v,i) && IS_BIT_SET(vm,i))
 			str.Append(wxString::Format(_("[ %d ]"),i+1));
 	}
 
@@ -1524,14 +1538,16 @@ void WriteDBConfig()
     FileConfig->Write(KEY_DB_HOST,GetDBHost());
 	FileConfig->Write(KEY_DB_PORT,GetDBPort());
     FileConfig->Write(KEY_DB_NAME,GetDBName());
-	
-	char * pass = (char*)GetDBPassword().mb_str().data();
+	delete FileConfig;
+
+	wxString str = GetDBPassword();
+	char * pass = (char*)str.mb_str(wxConvUTF8).data();
 	int len = strlen(pass);
 	char *_pass = Base64Encode((unsigned char*)pass,len);
 	WritePasswordConfig(_pass);
 	free(_pass);
 
-	delete FileConfig;
+	
 
 }
 

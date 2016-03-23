@@ -631,6 +631,7 @@ void COptionsDialog::OnDbConfig(wxCommandEvent &event)
 		SetDBHost(DBConfig->GetHost());
 		SetDBName(DBConfig->GetDatabaseName());
 		SetDBUser(DBConfig->GetUser());
+		wxMessageBox(DBConfig->GetPassword());
 		SetDBPassword(DBConfig->GetPassword());
 		SetDBPort(DBConfig->GetPort());
 		WriteDBConfig();

@@ -439,6 +439,7 @@ void CMapPlugin::ReadDBConfig()
 	SetDBName(m_DBName);
     
 	FileConfig->Read(KEY_DB_PASSWORD,&val);
+	delete FileConfig;
 	
 	char * pass = (char*)val.mb_str().data();
 	int len = strlen(pass);
@@ -459,7 +460,6 @@ void CMapPlugin::ReadDBConfig()
     m_DBPassword = val;
 	SetDBPassword(m_DBPassword);
      
-	delete FileConfig;
 	
 }
 
@@ -788,6 +788,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetCharging(atoi(row[FI_SBMS_CHARGING]));
 		Driver->SetNewReport(atoi(row[FI_SBMS_NEW_REPORT]));
+		Driver->SetFlasherType(atoi(row[FI_SBMS_FLASHER_TYPE]));
 		Driver->SetSymbolName(ptr->GetName());
 		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
@@ -1415,6 +1416,7 @@ CNaviBroker *CMapPlugin::GetBroker()
 
 void CMapPlugin::Run(void *Params)
 {
+		
 	InitMutex();
 	ReadDBConfig();
 	m_DB = DBConnect();
@@ -2094,6 +2096,7 @@ void CMapPlugin::ShowAlarm()
 
 void CMapPlugin::OnTick()
 {
+	
 	wxString sql;
 	int t = GetTickCount();
 
@@ -2103,7 +2106,7 @@ void CMapPlugin::OnTick()
 		m_DBTicker = DBConnect();
 	if(m_DBTicker == NULL)
 		return;
-
+	
 	SetSql(sql);
 	
 	SetExistsSymbol();
@@ -2113,7 +2116,7 @@ void CMapPlugin::OnTick()
 	SetExistsDriver();
 	ReadDrivers();					//przeczytaj drivery
 	RemoveDriver();					//usuń
-
+	
 	m_AlarmList->_SetExists(false);
 	ReadSBMSAlarm(m_DBTicker);		//przeczytaj alarmy
 	ReadGE64Alarm(m_DBTicker);
@@ -2123,7 +2126,7 @@ void CMapPlugin::OnTick()
 	ReadSBMSCommand(m_DBTicker);
 	ReadGE64Command(m_DBTicker);
 	m_CommandList->_Remove();
-
+	
 	m_GroupList->_SetExists(false);
 	ReadGroup(m_DBTicker);
 	m_GroupList->_Remove();
@@ -2131,7 +2134,7 @@ void CMapPlugin::OnTick()
 	m_BaseStationList->_SetExists(false);
 	ReadBaseStation(m_DBTicker);
 	m_BaseStationList->_Remove();
-
+	
 	ReadSymbolValues(m_DBTicker);	// wczytaj inne opcje
 	ReadDriverValues(m_DBTicker);
 		
