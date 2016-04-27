@@ -6,10 +6,11 @@
 #include "tools.h"
 #include "info.h"
 #include "options.h"
+#include "command.h"
 
 DEFINE_EVENT_TYPE(EVT_SET_ITEM)
 
-BEGIN_EVENT_TABLE(CCommandList,wxHtmlListBox)
+BEGIN_EVENT_TABLE(CCommandModelList,wxHtmlListBox)
 	//EVT_HTML_CELL_CLICKED(ID_HTML,OnCellClicked)
 	EVT_LISTBOX(ID_HTML, OnSelect)
 	EVT_COMMAND(ID_SET_ITEM,EVT_SET_ITEM,OnSetItem)
@@ -17,8 +18,8 @@ BEGIN_EVENT_TABLE(CCommandList,wxHtmlListBox)
 	EVT_CONTEXT_MENU(OnContextMenu)
 END_EVENT_TABLE()
 
-CCommandList *HtmlListPtr = NULL;
-CCommandList::CCommandList( wxWindow *Parent)
+CCommandModelList *HtmlListPtr = NULL;
+CCommandModelList::CCommandModelList( wxWindow *Parent)
 :wxHtmlListBox( Parent,ID_HTML,wxDefaultPosition,wxDefaultSize)
 {
 	//Plugin = DspPlugin;
@@ -28,15 +29,16 @@ CCommandList::CCommandList( wxWindow *Parent)
 	m_List = NULL;
 	SetItemCount(0);
 	SetMargins(5,5);
+	m_Command = new CCommand();
 	//SetSelectionBackground(wxColor(200,200,200));
 }
 
-CCommandList::~CCommandList()
+CCommandModelList::~CCommandModelList()
 {
-
+	delete m_Command;
 }
 
-void CCommandList::OnLinkClicked(wxHtmlLinkEvent &event)
+void CCommandModelList::OnLinkClicked(wxHtmlLinkEvent &event)
 {
 	int id =  event.GetSelection();
 	id = event.GetId();
@@ -51,38 +53,38 @@ void CCommandList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CCommand *ptr = (CCommand*)m_List->Item(item);
+	CCommandModel *ptr = (CCommandModel*)m_List->Item(item);
 
 	switch(action)
 	{
-		case HREF_ACTION_DELETE:	DeactivateCommand(ptr->GetId(),ptr->GetDriverType());	break;
+		case HREF_ACTION_DELETE:	m_Command->DeactivateCommand(ptr->GetId(),ptr->GetDriverType());	break;
 		
 	}
 
 }
 
-void CCommandList::OnSetItem(wxCommandEvent &event)
+void CCommandModelList::OnSetItem(wxCommandEvent &event)
 {
 	SetItemCount(m_List->size());
 	Refresh();
 }
 
-void CCommandList::OnContextMenu(wxContextMenuEvent &event)
+void CCommandModelList::OnContextMenu(wxContextMenuEvent &event)
 {
 	
 }
 
-void CCommandList::ClearList()
+void CCommandModelList::ClearList()
 {
 	SetItemCount(0);
 }
 
-void CCommandList::SetMapPlugin(CMapPlugin *v)
+void CCommandModelList::SetMapPlugin(CMapPlugin *v)
 {
 	m_MapPlugin = v;
 }
 
-void CCommandList::SetList(CList *v)
+void CCommandModelList::SetList(CList *v)
 {
 	if(v == NULL)
 		return;
@@ -98,7 +100,7 @@ void CCommandList::SetList(CList *v)
 	
 }
 
-void CCommandList::_SetSelection(CCommand *ptr)
+void CCommandModelList::_SetSelection(CCommandModel *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -112,7 +114,7 @@ void CCommandList::_SetSelection(CCommand *ptr)
 	
 	for(size_t i = 0; i < m_List->size();i++)
 	{ 
-		CCommand *_ptr = (CCommand*)m_List->Item(i);
+		CCommandModel *_ptr = (CCommandModel*)m_List->Item(i);
 		if(_ptr != NULL)
 		{
 			if(_ptr == ptr)
@@ -125,7 +127,7 @@ void CCommandList::_SetSelection(CCommand *ptr)
 	Refresh();
 }
 
-void CCommandList::OnSelect(wxCommandEvent &event)
+void CCommandModelList::OnSelect(wxCommandEvent &event)
 {
 	RefreshAll();
 	if(GetSelection() < 0)
@@ -137,19 +139,19 @@ void CCommandList::OnSelect(wxCommandEvent &event)
 	//ConfirmAlarm(ptr->GetId());
 }
 
-void CCommandList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
+void CCommandModelList::OnDrawSeparator(wxDC& dc, wxRect& rect, size_t) const
 {
 	dc.SetPen(*wxGREY_PEN);
 	dc.DrawLine(rect.x, rect.y, rect.GetRight(), rect.y);
     dc.DrawLine(rect.x, rect.GetBottom(), rect.GetRight(), rect.GetBottom());
 }
 
-wxString CCommandList::OnGetItem(size_t item) const
+wxString CCommandModelList::OnGetItem(size_t item) const
 {
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CCommand *ptr = (CCommand*)m_List->Item(item);
+	CCommandModel *ptr = (CCommandModel*)m_List->Item(item);
 	wxString str;
 	
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
@@ -161,7 +163,8 @@ wxString CCommandList::OnGetItem(size_t item) const
 		
 	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetName());
 	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetStatusText());
-	//str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetAlarmOnDate());
+	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateAdd());
+	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateSend());
 	str << wxString::Format(_("<tr><td>%s %s</font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
@@ -173,9 +176,9 @@ wxString CCommandList::OnGetItem(size_t item) const
 
 }
 /*
-wxString CCommandList::OnGetItemMarkup(size_t  n) const
+wxString CCommandModelList::OnGetItemMarkup(size_t  n) const
 {
-	CCommand *ptr = (CCommand*)m_List->Item(n);
+	CCommandModel *ptr = (CCommandModel*)m_List->Item(n);
 	
 	//wxString str = HtmlListPtr->geti
 	//if(ptr->GetAlarmCount() > 0)

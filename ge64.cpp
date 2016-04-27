@@ -71,16 +71,16 @@ bool CGE64::CheckAlarm()
 		return false;
 	
 	m_Alarm = false;
-	CAlarm *Alarm = NULL;
+	CAlarmModel *Alarm = NULL;
 	
 	while(row = (char**)db_fetch_row(result))
 	{
 		int id = atoi(row[FI_SBMS_ALARM_ID]);
-		Alarm = (CAlarm*)m_AlarmList._Exists(id);
+		Alarm = (CAlarmModel*)m_AlarmList._Exists(id);
 						
 		if(Alarm == NULL)
 		{
-			Alarm = new CAlarm();
+			Alarm = new CAlarmModel();
 			Alarm->SetNew(true);
 			m_AlarmList.Add(Alarm);
 			
@@ -447,7 +447,7 @@ wxString CGE64::GetAlarmHtml()
 		
 		for(int i = 0; i < m_AlarmList._Length();i++)
 		{
-			CAlarm *Alarm = (CAlarm*)m_AlarmList._Get(i);
+			CAlarmModel *Alarm = (CAlarmModel*)m_AlarmList._Get(i);
 			nvRGBA c = GetAlarmTypeColor(Alarm->GetType());
 			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=2>%s</font></td><td><font size=2>%s</font></td></tr>"),c.R,c.G,c.B,Alarm->GetName(),Alarm->GetAlarmOnDate());
 		}
@@ -466,7 +466,7 @@ wxString CGE64::GetDriverHtml(int v)
 	str.Append(wxString::Format(_("<tr><td><font size=2><b>%s(%s)</b></font></td></tr>"), GetMsg(MSG_DRIVER),GetName()));
 	for(int i = 0; i < m_AlarmList._Length();i++)
 	{
-		CAlarm *alarm = (CAlarm*)m_AlarmList._Get(i);
+		CAlarmModel *alarm = (CAlarmModel*)m_AlarmList._Get(i);
 		nvRGBA c = GetAlarmTypeColor(alarm->GetType());
 		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 	}

@@ -1,112 +1,19 @@
 #include <wx/wx.h>
 #include "alarm.h"
-#include "conf.h"
+#include "tools.h"
+#include "db.h"
 
 
 CAlarm::CAlarm()
 {
-	m_New = false;
-	m_Confirmed = false;
+	
 }
 
 //SET
-void CAlarm::SetIdAlarm(int v)
+void CAlarm::ClearAll(int id_sbms)
 {
-	m_IdAlarm = v;
-}
-
-void CAlarm::SetSymbolName(wxString v)
-{
-	m_SymbolName = v;
-}
-
-void CAlarm::SetName(wxString v)
-{
-	m_Name = v;
-}
-
-void CAlarm::SetNew(bool v)
-{
-	m_New = v;
-}
-
-void CAlarm::SetConfirmed(bool v)
-{
-	m_Confirmed = v;
-}
-
-void CAlarm::SetType(int v)
-{
-	m_Type = v;
-}
-
-void CAlarm::SetAlarmOnDate(wxString v)
-{
-	m_AlarmOnDate = v;
-}
-
-void CAlarm::SetUserFirstName(wxString v)
-{
-	m_UserFirstName = v;
-}
-
-void CAlarm::SetUserLastName(wxString v)
-{
-	m_UserLastName = v;
-}
-
-void CAlarm::SetDriverType(int v)
-{
-	m_DriverType = v;
-}
-
-//GET
-int CAlarm::GetIdAlarm()
-{
-	return m_IdAlarm;
-}
-
-wxString CAlarm::GetName()
-{
-	return m_Name;
-}
-
-wxString CAlarm::GetSymbolName()
-{
-	return m_SymbolName;
-}
-
-bool CAlarm::GetNew()
-{
-	return m_New;
-}
-
-bool CAlarm::GetConfirmed()
-{
-	return m_Confirmed;
-}
-
-int CAlarm::GetType()
-{
-	return m_Type;
-}
-
-wxString CAlarm::GetAlarmOnDate()
-{
-	return m_AlarmOnDate;
-}
-
-wxString CAlarm::GetUserFirstName()
-{
-	return m_UserFirstName;
-}
-
-wxString CAlarm::GetUserLastName()
-{
-	return m_UserLastName;
-}
-
-int CAlarm::GetDriverType()
-{
-	return m_DriverType;
+	wxString sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id_sbms='%d'"),TABLE_SBMS_ALARM,ALARM_NOT_ACTIVE,id_sbms);
+	void *db = DBConnect();
+	my_query(db,sql);
+	DBClose(db);
 }

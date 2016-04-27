@@ -10,7 +10,7 @@
 #include <wx/fileconf.h>
 #include "naviencryption.h"
 #include "options.h"
-#include "alarm.h"
+#include "alarmmodel.h"
 #include "driver.h"
 
 #define CONVERTED_DEGREE_LENGTH	15
@@ -222,6 +222,10 @@ const wchar_t *nvLanguage[][2] =
 	{L"Light On ?",L"Włączyć Światło ?\nUpewnij się."},
 	{L"Light Off ?",L"Wyłączyć Światło ?\nUpewnij się."},
 	{L"Not Monitored Channels",L"Nie monitorowane kanały"},
+	{L"Destination MMSI",L"Docelowy MMSI"},
+	{L"Confirm All Alarms ?",L"Potwierdzić wszystkie alarmy ?"},
+	{L"Clear Alarms ?",L"Wyczyścić wszystkie alarmy ?"},
+	{L"Clear Commands ?",L"Wyczyścić wszystkie komendy ?"},
 
 };
 
@@ -259,19 +263,18 @@ const char *nvCommand[COMMAND_COUNT] =
 	{"PhotoCellResistance(%d)"},
 	{"RipleDelay(%d)"},
 	{"PowerOff(%d)"},
-    {"gt(%d)"},				//get time
-	{"sr(%d)"},				//standard report
-	{"gut(%d)"},			//get uptime
-	{"l(%d,1)"},			//light on
-	{"l(%d,0)"},			//light off
-	{"m(%d,%d)"},			//zmiana mmsi
-	{"r(%d)"},				//reset
-	{"s(%d)"},				//save
-	{"h(%d,%d)"},			//human management tylko OFF (0,0)
-	{"p(%d,%d)"},			//ais power 1W itd.
-	{"g(%d,%d)"},			//akcelarator próg
+    {"gt(%s)"},				//get time
+	{"sr(%s)"},				//standard report
+	{"gut(%s)"},			//get uptime
+	{"l(%s,1)"},			//light on
+	{"l(%s,0)"},			//light off
+	{"m(%s,%d)"},			//zmiana mmsi
+	{"r(%s)"},				//reset
+	{"s(%s)"},				//save
+	{"h(%s,%d)"},			//human management tylko OFF (0,0)
+	{"p(%s,%d)"},			//ais power 1W itd.
+	{"g(%s,%d)"},			//akcelarator próg
 
-		
 };
 
 int nvCommandMSG[COMMAND_COUNT] =
@@ -1183,83 +1186,6 @@ void DeactivateAlarm(int id, int type)
 	DBClose(db);
 }
 
-void DeactivateCommand(int id, int type)
-{
-	wxString sql;
-
-	switch(type)
-	{
-		case DRIVER_TYPE_SBMS:
-			sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_SBMS_COMMAND,COMMAND_NOT_ACTIVE,id);
-		break;
-
-		case DRIVER_TYPE_GE64:
-			sql = wxString::Format(_("UPDATE `%s` SET active='%d' WHERE id='%d'"),TABLE_GE64_COMMAND,COMMAND_NOT_ACTIVE,id);
-		break;
-	}
-
-	void *db = DBConnect();
-	my_query(db,sql);
-	DBClose(db);
-}
-
-//SBMS COMMANDS BEGIN
-int SetSBMSCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command)
-{
-	wxString sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms='%d',mmsi='%d',SBMSID='%d',id_base_station='%d',id_command='%d',id_user='%d',active='%d',local_utc_time=utc_timestamp()"),TABLE_SBMS_COMMAND,id_sbms,mmsi,SBMSID,id_base_station,id_command,_GetUID(),COMMAND_ACTIVE);
-	void *db = DBConnect();
-	my_query(db,sql);
-	int last_id = db_last_insert_id(db);
-	DBClose(db);
-	return last_id;
-}
-
-void UpdateSBMSCommand(int id,wxString cmd)
-{
-	wxString sql = wxString::Format(_("UPDATE `%s` SET command='%s' WHERE id='%d'"),TABLE_SBMS_COMMAND,cmd.wc_str(),id);
-	void *db = DBConnect();
-	my_query(db,sql);
-	int last_id = db_last_insert_id(db);
-	DBClose(db);
-}
-
-void _SetSBMSCommand(int cmd_id,int id_sbms,int mmsi,int SBMSID, int id_base_station, bool on)
-{
-	int id = SetSBMSCommand(id_sbms,mmsi,SBMSID,id_base_station,cmd_id);
-	const char *cmd = GetCommand(cmd_id);
-	wxString _cmd = wxString::Format(_(cmd),SBMSID,on);
-	UpdateSBMSCommand(id,_cmd);
-}
-
-void GroupCommand(int cmd_id, int id_group, bool on)
-{
-	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi,id_base_station,SBMSID from `%s`"),TABLE_SYMBOL_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on id=id_group"),TABLE_SYMBOL_TO_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id=`%s`.id_symbol"),TABLE_SYMBOL,TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id_sbms=`%s`.id WHERE id_group='%d' AND id_sbms > 0"),TABLE_SBMS,TABLE_SYMBOL,TABLE_SBMS,id_group);
-	
-	void *db = DBConnect();
-	my_query(db,sql);
-		
-	void *result = db_result(db);
-	if(result)
-	{
-		char **row = NULL;
-		while(row = (char**)db_fetch_row(result))
-		{
-			int id_sbms = atoi(row[0]);
-			int mmsi = atoi(row[1]);
-			int id_base_station = atoi(row[2]);
-			int SBMSID = atoi(row[3]);
-			_SetSBMSCommand(cmd_id,id_sbms,mmsi,SBMSID,id_base_station,on);
-		}
-	}
-	
-	db_free_result(result);
-	DBClose(db);
-
-}
-// SBMS COMMANDS END . . . . . . . . . . . . . . . . . . 
 
 // GE64 COMMANDS BEGIN . . . . . . . . . . . . . . . . . 
 

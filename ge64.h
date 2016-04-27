@@ -6,7 +6,7 @@
 #include "nvfastfont.h"
 #include "driver.h"
 #include "navibroker.h"
-#include "alarm.h"
+#include "alarmmodel.h"
 #include "list.h"
 
 class CGE64 :public CDriver
@@ -72,7 +72,7 @@ public:
 	bool GetManualOn();
 	int GetAlarmCount();
 	bool GetBusy();
-	CAlarm *GetAlarm(int v);
+	CAlarmModel *GetAlarm(int v);
 	wxString GetCommandCountAsString();
 	wxString GetDriverHtml(int v) override;
 	wxString GetDriverFullHtml() override;

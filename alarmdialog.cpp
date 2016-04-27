@@ -44,8 +44,14 @@ CAlarmDialog::~CAlarmDialog()
 
 void CAlarmDialog::OnOk(wxCommandEvent &event)
 {
-	ConfirmAlarms();
-	Hide();
+	wxMessageDialog *MessageDialog = new wxMessageDialog(this,GetMsg(MSG_CONFIRM_QUESTION),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+    if(MessageDialog->ShowModal() == wxID_YES)
+	{
+		ConfirmAlarms();
+		Hide();
+	}
+
+	delete MessageDialog;
 }
 
 wxPanel *CAlarmDialog::GetPanel(wxWindow *parent)

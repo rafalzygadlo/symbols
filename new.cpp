@@ -62,15 +62,15 @@ void CNew::GetPanel(int type)
 		case CONTROL_SYMBOL:			EditSymbolPanel();			break;
 		case CONTROL_BASE_STATION:		EditBaseStationPanel();		break;
 		case CONTROL_CHARACTERISTIC:	EditCharacteristicPanel();	break;
+		//case CONTROL_SYMBOL_GROUP:		EditSymbolGroupPanel();		break; 
 		
 		case CONTROL_GE64:
 		case CONTROL_SBMS:				EditSBMSPanel();			break;
 		
 		case CONTROL_SYMBOL_TYPE:
 		case CONTROL_AREA:
-		case CONTROL_SYMBOL_GROUP:
-		case CONTROL_SEAWAY:
 		
+		case CONTROL_SEAWAY:
 			EditNamePanel(); break;
 	}
 }

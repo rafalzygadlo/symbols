@@ -48,14 +48,18 @@ void CGroupList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CGroup *ptr = (CGroup*)m_List->Item(item);
+	CGroupModel *ptr = (CGroupModel*)m_List->Item(item);
+
+	CCommand *Command = new CCommand();
 
 	switch(action)
 	{
-		case HREF_ACTION_LIGHT_ON:			GroupCommand(COMMAND_LIGHT_ON, ptr->GetId(),true);			break;
-		case HREF_ACTION_LIGHT_OFF:			GroupCommand(COMMAND_LIGHT_OFF, ptr->GetId(),false);		break;
-		case HREF_ACTION_AUTO_MANAGEMENT:	GroupCommand(COMMAND_AUTO_MANAGEMENT, ptr->GetId(),false);	break;
+		case HREF_ACTION_LIGHT_ON:			Command->SetGroupCommand(COMMAND_LIGHT_ON, ptr->GetCode(),ptr->GetId(),true);				break;
+		case HREF_ACTION_LIGHT_OFF:			Command->SetGroupCommand(COMMAND_LIGHT_OFF, ptr->GetCode(),ptr->GetId(),false);				break;
+		case HREF_ACTION_AUTO_MANAGEMENT:	Command->SetGroupCommand(COMMAND_AUTO_MANAGEMENT, ptr->GetCode(),ptr->GetId(),false);		break;
 	}
+
+	delete Command;
 
 }
 
@@ -96,7 +100,7 @@ void CGroupList::SetList(CList *v)
 	
 }
 
-void CGroupList::_SetSelection(CAlarm *ptr)
+void CGroupList::_SetSelection(CAlarmModel *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -110,7 +114,7 @@ void CGroupList::_SetSelection(CAlarm *ptr)
 	
 	for(size_t i = 0; i < m_List->size();i++)
 	{ 
-		CAlarm *Alarm = (CAlarm*)m_List->Item(i);
+		CAlarmModel *Alarm = (CAlarmModel*)m_List->Item(i);
 		if(Alarm != NULL)
 		{
 			if(Alarm == ptr)
@@ -147,21 +151,19 @@ wxString CGroupList::OnGetItem(size_t item) const
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CGroup *ptr = (CGroup*)m_List->Item(item);
+	CGroupModel *ptr = (CGroupModel*)m_List->Item(item);
 	wxString str;
 		
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
 	int fsize = 3;
 		
-	str << wxString::Format(_("<tr><td><font size=%d><b>%s</b></font></td></tr>"),fsize,ptr->GetName());
-		
-	if(GetSelection() == item)
+	str << wxString::Format(_("<tr><td><font size=%d><b>%s (%d)</b></font></td></tr>"),fsize,ptr->GetName(),ptr->GetItemCount());
+			
+	if((GetSelection() == item) && (ptr->GetItemCount() > 0))
 	{
-		str << wxString::Format(_("<tr><td>"));
-		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_ON,item,GetMsg(MSG_LIGHT_ON));
-		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_LIGHT_OFF,item,GetMsg(MSG_LIGHT_OFF));
-		str << wxString::Format(_(" <a target=%d href='%d'>%s</a> "),HREF_ACTION_AUTO_MANAGEMENT,item,GetMsg(MSG_AUTO_MANAGEMENT));
-		str << wxString::Format(_("</td></tr>"));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_LIGHT_ON,item,GetMsg(MSG_LIGHT_ON));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_LIGHT_OFF,item,GetMsg(MSG_LIGHT_OFF));
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_AUTO_MANAGEMENT,item,GetMsg(MSG_AUTO_MANAGEMENT));	
 	}
 
 	str.Append(_("</table>"));

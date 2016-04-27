@@ -9,18 +9,20 @@ class CSBMS;
 class CSBMSActionDialog : public wxDialog
 {
 	void *m_DB;
+	CButton *m_ButtonAddToGroup;
 	CButton *m_ButtonGraph;
-	//CButton *m_ClearAlarm;
-	//CButton *m_ClearCommand;
+	CButton *m_ClearAlarm;
+	CButton *m_ClearCommand;
 	CButton *m_ButtonOn;
 	CButton *m_ButtonOff;
 	CButton *m_ButtonAuto;
 	CButton *m_ButtonTime;
 	CButton *m_ButtonUpTime;
 	CButton *m_ButtonReset;
+	CButton *m_ButtonDestinationMMSI;
 	wxStaticText *m_Title;
 		
-	CSBMS *m_Symbol;
+	CSBMS *m_SBMS;
 	
 	wxPanel *GetTopPanel(wxWindow *parent);
 	wxPanel *GetActionPanel(wxWindow *parent);
@@ -34,13 +36,16 @@ class CSBMSActionDialog : public wxDialog
 	void OnReset(wxCommandEvent &event);
 	void OnGetTime(wxCommandEvent &event);
 	void OnGetUptime(wxCommandEvent &event);
+	void OnDestinationMMSI(wxCommandEvent &event);
+	void OnClearAlarm(wxCommandEvent &event);
+	void OnClearCommand(wxCommandEvent &event);
+	void OnAddToGroup(wxCommandEvent &event);
 
 public:
 
 	CSBMSActionDialog(void *db,CSBMS *ptr);
 	~CSBMSActionDialog();
-	void SetSBMS(CSBMS *ptr);
-
+	
 	enum
 	{
 		ID_GRAPH = 1800,
@@ -53,6 +58,8 @@ public:
 		ID_UPTIME,
 		ID_CLEAR_COMMAND,
 		ID_CLEAR_ALARM,
+		ID_DESTINATION_MMSI,
+		ID_ADD_TO_GROUP,
 
 	};
 	

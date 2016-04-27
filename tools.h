@@ -77,17 +77,12 @@ void ConfirmAlarm(int id, int type);
 bool GetSBMSExists(void *db,int id);
 nvRGBA GetAlarmTypeColor(int id);
 void DeactivateAlarm(int id, int type);
-void DeactivateCommand(int id, int type);
 wxString GetProgramDir();
 bool GetPictureAsBase64(void *db, int id, char *&base64);
 wxString GetPhotoCellValue(  int _Mask, int _Value );
 int GetDBVersion(void *db);
 void WriteDBConfig();
 void WritePasswordConfig(char *v);
-
-//SBMS COMMANDS
-void _SetSBMSCommand(int cmd_id, int id_sbms, int mmsi,int SBMSID, int id_base_station, bool on);
-void GroupCommand(int cmd_id, int id_group,bool on);
 
 
 //GE64 COMMANDS

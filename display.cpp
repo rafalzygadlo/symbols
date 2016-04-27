@@ -151,8 +151,8 @@ void CDisplayPlugin::OnManagement(wxCommandEvent &event)
 /*	
 	if(!m_Selected->GetNoSBMS())
 	{
-		CCommandDialog *CommandDialog = new CCommandDialog(m_DB,this,m_Selected); 
-		CCommandPanel *ptr =  CommandDialog->GetCommandPanel();
+		CCommandModelDialog *CommandDialog = new CCommandModelDialog(m_DB,this,m_Selected); 
+		CCommandModelPanel *ptr =  CommandDialog->GetCommandPanel();
 
 		ptr->SetForcedOff(m_Selected->GetForcedOff());
 		ptr->SetAuto(m_Selected->GetAuto());
@@ -261,7 +261,7 @@ wxPanel *CDisplayPlugin::GetPage5(wxWindow *parent)
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
 	
-	m_CommandList = new CCommandList(Panel);
+	m_CommandList = new CCommandModelList(Panel);
 	Sizer->Add(m_CommandList,1,wxALL|wxEXPAND,0);
 
 	Panel->SetSizer(Sizer);

@@ -36,7 +36,7 @@ public:
 	//wxString GetItemValue(long item, long column);
 	const char *GetSelectedColumn();
 	bool GetSortOrder();
-	void _SetSelection(CAlarm *ptr);
+	void _SetSelection(CAlarmModel *ptr);
 	void SetMapPlugin(CMapPlugin *v);
 	
 	DECLARE_EVENT_TABLE();

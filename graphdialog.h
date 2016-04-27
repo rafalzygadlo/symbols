@@ -26,15 +26,7 @@ public:
 	CGraph *GetGraph();
 	void _SetTitle(wxString v);
 	void SetMin(wxString v);
-
-
-	enum
-	{
-		ID_CLOSE = 3214,
-	};
-
-	DECLARE_EVENT_TABLE();
-	
+		
 };
 
 

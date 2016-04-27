@@ -29,19 +29,27 @@ class CBaseStation: public CListItem
 	double m_TranslationX;
 	double m_TranslationY;
 	double m_VisibleMap[4];
+	nvFastFont *m_NameFont;
+	TTexture *m_TextureTGA_0;
+	GLuint m_TextureID_0;
+	
 	wxString m_Name;
+	int m_Status;
 	bool m_Exists;
 	bool m_Selected;
 	
+	void CreateSymbol(void *MemoryBlock,long MemoryBlockSize);
+	void CreateTexture(TTexture *Texture, GLuint *TextureID);
+	void CreateTextures(void);
 	void UpdateViewPort();
 	void SetColor(int id);
 	void SetValues();
 	void SetSmoothScaleFactor(double v);
-	//void Read();
-	//void SetSymbolColor();
 	void RenderSeconds();
 	void RenderSelected();
 	void RenderBaseStation();
+	void RenderText();
+	void RenderText(float x, float y, float vx, float vy, const wchar_t *format ...);
 		
 public:
 
@@ -57,7 +65,8 @@ public:
 	void SetLat(double v);
 	void SetLonMap(double v);
 	void SetLatMap(double v);
-	
+	void SetStatus(int v);
+	void SetFont(nvFastFont *v);
 	
 	void Render() override;
 	void Mouse(int x, int y, bool lmb, bool mmb, bool rmb) override;

@@ -31,6 +31,36 @@ void CBaseStation::SetDB(void *db)
 	m_DB = db;
 }
 
+void CBaseStation::SetFont(nvFastFont *v)
+{
+	m_NameFont = v;
+}
+
+void CBaseStation::CreateSymbol(void *MemoryBlock,long MemoryBlockSize)
+{
+	TMemoryBlock BlockTGA_0;
+	BlockTGA_0.Ptr = MemoryBlock;
+	BlockTGA_0.Size = MemoryBlockSize;
+	m_TextureTGA_0 = LoadFromMemoryBlockTGA( &BlockTGA_0 );
+}
+
+void CBaseStation::CreateTexture(TTexture *Texture, GLuint *TextureID)
+{
+	glGenTextures(1, TextureID );
+	glBindTexture(GL_TEXTURE_2D, *TextureID );
+	glTexImage2D(GL_TEXTURE_2D, 0, Texture->Bpp / 8, Texture->Width, Texture->Height, 0, Texture->Type, GL_UNSIGNED_BYTE, Texture->Data );
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	FreeTexture( Texture );
+}
+
+void CBaseStation::CreateTextures(void) 
+{
+	//CreateSymbol(icon, icon_size);
+	CreateTexture( m_TextureTGA_0,  &m_TextureID_0 );
+}
+
+
 void CBaseStation::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
 	double _x = m_LonMap;
@@ -61,7 +91,7 @@ void CBaseStation::SetValues()
 	m_Scale  = m_Broker->GetMapScale();
 	SetSmoothScaleFactor( m_Scale );
 	
-	m_RectWidth = RECT_WIDTH;// m_SmoothScaleFactor;
+	m_RectWidth = RECT_WIDTH; // m_SmoothScaleFactor;
 	m_RectHeight = RECT_HEIGHT; // m_SmoothScaleFactor;
 	m_TranslationX = 0.0; //(RECT_WIDTH /2)/SmoothScaleFactor; 
 	//m_TranslationY = -(RECT_HEIGHT /2)/m_SmoothScaleFactor; 
@@ -72,7 +102,6 @@ void CBaseStation::SetValues()
 void CBaseStation::UpdateViewPort()
 {
 	
-
 	//glViewport(0, 0, (GLint)  m_Broker->GetViewportWidth(m_Broker->GetParentPtr()), (GLint) m_Broker->GetViewportHeight(m_Broker->GetParentPtr()));
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -113,9 +142,33 @@ void CBaseStation::RenderSeconds()
 	}
 	
 	glPopMatrix();
-		
+	
 }
 
+void CBaseStation::RenderText(float x, float y, float vx, float vy, const wchar_t *format ...)
+{	
+	wchar_t buffer[128];
+	va_list args;
+	va_start(args,format);
+	//swprintf_s(buffer,format,args);
+	vswprintf ( buffer, 128, format, args );
+	va_end(args);
+	
+	m_NameFont->Print(x,y,GetFontSize()/m_SmoothScaleFactor/DEFAULT_FONT_FACTOR,0,buffer,vx,vy);
+
+}
+
+void CBaseStation::RenderText()
+{
+		
+	RenderText(m_LonMap,m_LatMap,0.5f,3.3f,m_Name);
+//	RenderText(GetLonMap(),m_LatMap,0.5f,6.6f,GetName());
+//	RenderText(GetLonMap(),GetLatMap(),0.5f,7.7f,GetAgeAsString());
+					
+//	if(GetBusy())
+//		RenderText(GetLonMap(),GetLatMap(),-1.5f,-0.1f,GetCommandCountAsString());
+
+}
 
 void CBaseStation::RenderSelected()
 {
@@ -154,10 +207,14 @@ void CBaseStation::RenderSelected()
 void CBaseStation::RenderBaseStation()
 {
 	glPushMatrix();
-	glColor4f(0.0,0.0,0.0,0.5);
+	if(m_Status == 0)
+		glColor4f(0.0,0.0,0.0,0.1);
+	if(m_Status == 1)
+		glColor4f(1.0,0.0,0.0,0.8);
 		//glBindTexture( GL_TEXTURE_2D, m_TextureID_0);
 	glTranslatef(m_LonMap,m_LatMap,0.0f);
-		
+
+	/*
 	glBegin(GL_QUADS);
 		//glTexCoord2f(1.0f,1.0f);
 		glVertex2f(  m_RectWidth + m_TranslationX,  -m_RectHeight + m_TranslationY);
@@ -168,7 +225,7 @@ void CBaseStation::RenderBaseStation()
 		//glTexCoord2f(0.0f,1.0f);
 		glVertex2f( -m_RectWidth + m_TranslationX,  -m_RectHeight + m_TranslationY);
 	glEnd();
-	
+	*/
 	
 	glDisable(GL_TEXTURE_2D);
 
@@ -182,15 +239,14 @@ void CBaseStation::RenderBaseStation()
 	c.Radius = m_RectWidth;
 	
 	nvDrawCircleFilled(&c);
-	
-	
+		
 	glLineWidth(1);
-	glBegin(GL_LINES);
-		glVertex2f(0.0f,m_RectWidth);
-		glVertex2f(0.0f,-m_RectWidth);
-		glVertex2f(m_RectWidth,0.0);
-		glVertex2f(-m_RectWidth,0.0);
-	glEnd();
+	//glBegin(GL_LINES);
+		//glVertex2f(0.0f,m_RectWidth);
+		//glVertex2f(0.0f,-m_RectWidth);
+		//glVertex2f(m_RectWidth,0.0);
+		//glVertex2f(-m_RectWidth,0.0);
+	//glEnd();
 	nvDrawCircle(&c);
 
 	glPopMatrix();
@@ -200,7 +256,7 @@ void CBaseStation::RenderBaseStation()
 
 void CBaseStation::Render()
 {
-	return;
+	//return;
 	glPushMatrix();
 	
 	glEnable(GL_BLEND);
@@ -212,6 +268,7 @@ void CBaseStation::Render()
 	RenderBaseStation();
 	RenderSelected();
 	RenderSeconds();
+	RenderText();
 
 	glDisable(GL_BLEND);
 	glDisable(GL_POINT_SMOOTH);
@@ -248,8 +305,7 @@ void CBaseStation::SetName(wxString v)
 	m_Name = v;
 }
 
-//void CBaseStation::SetExists(bool v)
-//{
-	//m_Exists = v;
-//}
-//GET
+void CBaseStation::SetStatus(int v)
+{
+	m_Status = v;
+}

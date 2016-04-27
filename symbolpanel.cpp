@@ -101,6 +101,7 @@ void CSymbolPanel::DriverInfo(CSymbol *ptr)
 	for(int i = 0; i < ptr->GetDriverCount();i++)
 	{
 		m_HtmlString.Append(ptr->GetDriver(i)->GetAlarmHtml());
+		m_HtmlString.append(ptr->GetDriver(i)->GetCommandHtml());
 		m_HtmlString.Append(ptr->GetDriver(i)->GetDriverFullHtml());
 	}
 }
@@ -127,8 +128,8 @@ void CSymbolPanel::LightInfo(void *db,CSymbol *ptr)
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td bgcolor=#%02X%02X%02X>"), GetMsg(MSG_COLOR), BgColor.Red(), BgColor.Green(), BgColor.Blue() ));
 		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%%><tr><td><font size=4><b><br></b></font></td></tr></table></td></tr>"));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s [%s]</b></font></td></tr>"),GetMsg(MSG_COVERAGE),Convert(row[1]), GetDistanceName(nvDistanceNauticMile)));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[2])));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[3])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s°</b></font></td></tr>"),GetMsg(MSG_SECTOR_FROM),Convert(row[2])));
+		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s°</b></font></td></tr>"),GetMsg(MSG_SECTOR_TO),Convert(row[3])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FLASH_CODE),Convert(row[4])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_IALA),Convert(row[5])));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CHARACTERISTIC),Convert(row[6])));

@@ -6,16 +6,19 @@
 #include "NaviBroker.h"
 #include "display.h"
 #include "dll.h"
-#include "command.h"
+#include "commandmodel.h"
 #include "list.h"
+#include "command.h"
 
 class CMapPlugin;
-class CCommandList: public wxHtmlListBox
+class CCommand;
+class CCommandModelList: public wxHtmlListBox
 {
 	CMapPlugin *m_MapPlugin;
 	int m_Count;
 	wxArrayPtrVoid *m_List;
-	
+	CCommand *m_Command;
+
 	void OnLinkClicked(wxHtmlLinkEvent &event);
 	void OnSetItem(wxCommandEvent &event);
 	void OnSelect(wxCommandEvent &event);
@@ -26,15 +29,15 @@ class CCommandList: public wxHtmlListBox
 	
 public:
 	
-	CCommandList(wxWindow *Parent);
-	~CCommandList();
+	CCommandModelList(wxWindow *Parent);
+	~CCommandModelList();
 		
 	void SetList(CList *v);
 	void ClearList();
 	//wxString GetItemValue(long item, long column);
 	const char *GetSelectedColumn();
 	bool GetSortOrder();
-	void _SetSelection(CCommand *ptr);
+	void _SetSelection(CCommandModel *ptr);
 	void SetMapPlugin(CMapPlugin *v);
 	
 	DECLARE_EVENT_TABLE();

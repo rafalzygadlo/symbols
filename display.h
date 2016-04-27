@@ -30,7 +30,7 @@ extern "C" {
 class CMapPlugin;
 class CAlarmList;
 class CSymbolPanel;
-class CCommandList;
+class CCommandModelList;
 class CGroupList;
 class CSymbolListHtml;
 class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi 
@@ -45,7 +45,7 @@ class NAVIDISPLAYAPI CDisplayPlugin: public CNaviDiaplayApi
 	CSymbol *m_OldSelected;
 	CSymbolListHtml *m_SymbolListHtml;
 	CAlarmList *m_AlarmList;
-	CCommandList *m_CommandList;
+	CCommandModelList *m_CommandList;
 	CGroupList *m_GroupList;
 	
 	wxSearchCtrl *m_SearchText;

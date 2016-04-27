@@ -341,7 +341,10 @@
 #define MSG_LIGHT_ON_QUESTION			198
 #define MSG_LIGHT_OFF_QUESTION			199
 #define MSG_NOT_MONITORED_CHANNELS		200
-
+#define MSG_DESTINATION_MMSI			201
+#define MSG_CONFIRM_QUESTION			202
+#define MSG_CLEAR_ALARMS				203
+#define MSG_CLEAR_COMMANDS				204
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -511,6 +514,7 @@
 #define TABLE_GLOBAL_OPTION			"global_option"
 #define TABLE_ALARM					"alarm"
 #define TABLE_VALUE					"value"
+#define TABLE_SBMS_COMMAND_ANSWER	"sbms_command_answer"
 
 //WIDOKI
 //#define VIEW_SYMBOL		"_view_symbol"
@@ -594,9 +598,11 @@
 //pola tabeli SYMBOL_GROUP
 #define FI_SYMBOL_GROUP_ID			0
 #define FI_SYMBOL_GROUP_NAME		1
-#define FI_SYMBOL_GROUP_INFO		2
+#define FI_SYMBOL_GROUP_CODE		2
+#define FI_SYMBOL_GROUP_INFO		3
 #define FN_SYMBOL_GROUP_ID			"id"
 #define FN_SYMBOL_GROUP_NAME		"name"
+#define FN_SYMBOL_GROUP_CODE		"code"
 #define FN_SYMBOL_GROUP_INFO		"info"
 
 //pola tabeli SYMBOL_TO_GROUP
@@ -926,7 +932,7 @@
 #define COMMAND_GET_UPTIME				10	//uptime
 #define COMMAND_LIGHT_ON				11	//light on off
 #define COMMAND_LIGHT_OFF				12	//light on off
-#define COMMAND_MMSI					13	//mmsi change
+#define COMMAND_DESTINATION_MMSI		13	//mmsi change
 #define COMMAND_RESET					14	//reset
 #define COMMAND_SAVE					15	//save
 #define COMMAND_AUTO_MANAGEMENT			16	//człowiek coś tam
@@ -976,11 +982,12 @@
 #define HREF_ACTION_LIGHT_ON		3
 #define HREF_ACTION_LIGHT_OFF		4
 #define HREF_ACTION_AUTO_MANAGEMENT	5
+#define HREF_ACTION_CONFIRM			6
 
 //statusy światła
 #define LIGHT_NOT_AVAILABLE     -1
-#define LIGHT_OFF               0
-#define LIGHT_ON                1
+#define LIGHT_OFF               1
+#define LIGHT_ON                0
 
 #define nvDistanceNauticMile			0
 #define nvDistanceKilometer				1

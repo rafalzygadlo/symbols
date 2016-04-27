@@ -11,14 +11,17 @@
 #include "nvfastfont.h"
 #include "nvtime.h"
 #include "graphdialog.h"
-#include "alarm.h"
+#include "alarmmodel.h"
 #include "alarmdialog.h"
 #include "sbmsactiondialog.h"
 #include "sbmspanel.h"
 #include "driver.h"
+#include "commandmodel.h"
 #include "command.h"
+#include "alarm.h"
 
 class CSBMSActionDialog;
+class CCommand;
 class CSBMS :public CDriver
 {
 	void *m_DB;
@@ -26,10 +29,12 @@ class CSBMS :public CDriver
 	CNaviBroker *m_Broker;
 	CNaviArray <SOnOff> m_OnList;
 	CNaviArray <nvPoint3f> m_PosBuffer;
-	CNaviArray <CAlarm*> m_AlarmList;
-	CNaviArray <CCommand*> m_CommandList;
+	CNaviArray <CAlarmModel*> m_AlarmList;
+	CNaviArray <CCommandModel*> m_CommandList;
 		
 	CSBMSActionDialog *m_SBMSActionDialog;
+	CCommand *m_Command;
+	CAlarm *m_Alarm;
 	CGraphDialog *m_GraphDialog;
 	TTexture *m_TextureTGA_0;
 	GLuint m_TextureID_0;
@@ -38,7 +43,7 @@ class CSBMS :public CDriver
 	int m_LightOn;
 	bool m_BusyOn;
 	bool m_Busy;
-	bool m_Alarm;
+	bool m_IsAlarm;
 	bool m_AlarmOn;
 	
 	//pozycja referencyjna
@@ -89,9 +94,10 @@ class CSBMS :public CDriver
 	int m_Charging;
 	int m_ProtocolVersion;
 	int m_FlasherType;
+	int m_IdSymbol;
 	nvFastFont *m_NameFont;
 		
-	CAlarm *AlarmExists(int id);
+	CAlarmModel *AlarmExists(int id);
 	void AlarmRemove();
 	void SetAlarms();
 	void ShowAlarm();
@@ -162,7 +168,8 @@ public:
 	void SetInputVolt(float v) override;
 	void UnsetNewReport() override;
 	void SetFlasherType(int v) override;
-
+	void SetIdSBMS(int v) override;
+	void SetIdSymbol(int v) override;
 
 	void SetBaseStationName(wxString v);
 	void SetValidGPS(bool v);
@@ -176,12 +183,13 @@ public:
 			
 
 	//GET
-	int GetIdSBMS();
 	int GetSBMSID();
 	wxString GetDriverHtml(int v) override;
 	wxString GetDriverFullHtml() override;
 	wxString GetAlarmHtml() override;
+	wxString GetCommandHtml() override;
 	int GetBaseStationId() override;
+	int GetIdSymbol() override;
 	//pozycja referencyjna
 	//double GetRLon();	double GetRLat();	double GetRLonMap();	double GetRLatMap();
 	//pozycja GPS
@@ -206,7 +214,7 @@ public:
 	int GetCharging();
 	int GetProtocolVersion();
 	int GetFlasherType();
-	CAlarm *GetAlarm(int v);
+	CAlarmModel *GetAlarm(int v);
 	wxPanel *GetSBMSPanel();
 	wxString GetChargingAsString();
 	wxString GetAlarmName(int v);
@@ -216,15 +224,18 @@ public:
 	wxString GetInputVoltAsString();
 	wxPanel *GetSBMSPanel(wxWindow *parent);
 	
+	
 	//akcje
 	void ShowGraph();
 	void LightOn();
 	void LightOff();
 	void AutoManagement();
 	void GetUptime();
+	void SetDestinationMMSI(int mmsi);
 	void GetTime();
 	void Reset();
-		
+	void ClearAlarm();
+	void ClearCommands();
 
 };
 

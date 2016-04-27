@@ -46,6 +46,7 @@ public:
 	virtual void SetInputVolt(float v);
 	virtual void SetIdSymbol(int v);
 	virtual void SetFont(nvFastFont *v);
+	virtual void SetIdSBMS(int v);
 	virtual void SetSBMSID(int v);
 
 	virtual void SetLon(double v);
@@ -78,6 +79,7 @@ public:
 	virtual wxString GetDriverHtml(int v);
 	virtual wxString GetDriverFullHtml();
 	virtual wxString GetAlarmHtml();
+	virtual wxString GetCommandHtml();
 	
 	virtual float GetInputVolt();
 	virtual double GetGpsLon();
@@ -87,6 +89,7 @@ public:
 	virtual int GetMMSI();
 	virtual int GetSBMSID();
 	virtual int GetCharging();
+	virtual int GetIdSymbol();
 	
 		
 	virtual void ShowGraph();

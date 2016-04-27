@@ -12,12 +12,12 @@
 #include "positiondialog.h"
 #include "nvfastfont.h"
 #include "dialog.h"
-#include "command.h"
+#include "commandmodel.h"
 #include "ticker.h"
 #include "symbol.h"
 #include "optionsdialog.h"
 #include "alarmdialog.h"
-#include "group.h"
+#include "groupmodel.h"
 #include "list.h"
 
 #ifdef _WIN32
@@ -169,15 +169,14 @@ class CMapPlugin :public CNaviMapIOApi
 	void ShowProperties();
 	void ShowInfo(int x, int y);
 	CSymbol *ExistsSymbol(int id);
-	
-	//CCommand *ExistsCommand(int id);
-	CGroup *ExistsGroup(int id);
+		
 		
 	int Count();
 	CSymbol *Get(int id);
 	CSymbol *SetSelection(double x, double y);
 	void SetPosition(double x, double y);
 	void SetPosition(CSymbol *ptr);
+	int GetItemsInGroupCount(void *db,int id_group);
 
 	void Items();
 	void Symbol();
@@ -229,7 +228,7 @@ public:
 	void OnTick();
 	void OnTickExit();
 	void SetSelectedPtr(CSymbol *v);
-	void RenderInfo(CSymbol *ptr);
+	//void RenderInfo(CSymbol *ptr);
 
 	virtual void Run(void *Params);
 	virtual void Kill(void);

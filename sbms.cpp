@@ -33,7 +33,7 @@ CSBMS::CSBMS(void *db,CNaviBroker *broker)
 	m_ReportTick = CHECK_REPORT_TICK;
 	m_Busy = false;
 	m_BusyOn = false;
-	m_Alarm = false;
+	m_IsAlarm = false;
 	m_AlarmOn = false;
 	m_SBMSID = 0;
 	m_IdBaseStation = 0;
@@ -55,13 +55,20 @@ CSBMS::CSBMS(void *db,CNaviBroker *broker)
 	m_SBMSActionDialog = NULL;
 	m_PositionsTick = 0;
 	m_FlasherType = FLASHER_TYPE_AM6;
+	m_IdSymbol = 0;
+
+	m_Command = new CCommand();
+	m_Alarm = new CAlarm();
+
 }
 
 CSBMS::~CSBMS()
 {	
 	ClearAlarms();
 	m_Broker = NULL;
-		
+	
+	delete m_Command;
+	delete m_Alarm;
 	//if(m_SBMSActionDialog)
 	//	delete m_SBMSActionDialog;
 	
@@ -91,7 +98,7 @@ void CSBMS::ClearAlarms()
 {
 	for(size_t i = 0; i < m_AlarmList.Length(); i++)
 	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		CAlarmModel *ptr = (CAlarmModel*)m_AlarmList.Get(i);
 		delete ptr;
 		
 	}
@@ -100,11 +107,11 @@ void CSBMS::ClearAlarms()
 
 }
 
-CAlarm *CSBMS::AlarmExists(int id)
+CAlarmModel *CSBMS::AlarmExists(int id)
 {
 	for(size_t i = 0; i < m_AlarmList.Length(); i++)
 	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		CAlarmModel *ptr = (CAlarmModel*)m_AlarmList.Get(i);
 		if(id == ptr->GetId())
 			return ptr;
 	}
@@ -116,7 +123,7 @@ void CSBMS::AlarmRemove()
 {
 	for(size_t i = 0; i < m_AlarmList.Length(); i++)
 	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		CAlarmModel *ptr = (CAlarmModel*)m_AlarmList.Get(i);
 		
 		if(!ptr->GetExists())
 		{
@@ -133,7 +140,7 @@ void CSBMS::SetAlarms()
 {
 	for(size_t i = 0; i < m_AlarmList.Length(); i++)
 	{
-		CAlarm *ptr = (CAlarm*)m_AlarmList.Get(i);
+		CAlarmModel *ptr = (CAlarmModel*)m_AlarmList.Get(i);
 		ptr->SetExists(false);
 	}
 }
@@ -210,10 +217,10 @@ bool CSBMS::CheckAlarm()
 	if(result == NULL)
 		return false;
 		
-	m_Alarm = false;
+	m_IsAlarm = false;
 	bool exists = false;
 	int offset = 9;
-	CAlarm *Alarm = NULL;
+	CAlarmModel *Alarm = NULL;
 	
 	while(row = (char**)db_fetch_row(result))
 	{
@@ -225,7 +232,7 @@ bool CSBMS::CheckAlarm()
 		if(Alarm == NULL)
 		{
 			add = true;
-			Alarm = new CAlarm();
+			Alarm = new CAlarmModel();
 			Alarm->SetNew(true);
 			m_AlarmList.Append(Alarm);
 		}
@@ -242,10 +249,10 @@ bool CSBMS::CheckAlarm()
 	
 	if(m_AlarmList.Length() > 0)
 	{
-		m_Alarm = true;
+		m_IsAlarm = true;
 		
 	}else{
-		m_Alarm = false;
+		m_IsAlarm = false;
 	}
 	
 	db_free_result(result);
@@ -457,7 +464,7 @@ void CSBMS::RenderLightOn()
 void CSBMS::RenderAlarm()
 {
 		
-	if(!m_Alarm)
+	if(!m_IsAlarm)
 		return;
 		
 	glPushMatrix();
@@ -702,7 +709,8 @@ void CSBMS::RenderText()
 		return;
 		
 	RenderText(GetLonMap(),GetLatMap(),0.5f,-3.3f,GetInputVoltAsString());
-	RenderText(GetLonMap(),GetLatMap(),0.5f,6.6f,GetAgeAsString());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,6.6f,GetName());
+	RenderText(GetLonMap(),GetLatMap(),0.5f,7.7f,GetAgeAsString());
 					
 	if(GetBusy())
 		RenderText(GetLonMap(),GetLatMap(),-1.5f,-0.1f,GetCommandCountAsString());
@@ -1018,6 +1026,12 @@ void CSBMS::SetSBMSID(int v)
 {
 	m_SBMSID = v;
 }
+
+void CSBMS::SetIdSBMS(int v)
+{
+	m_IdSBMS = v;
+}
+
 void CSBMS::SetCharging(int v)
 {
 	m_Charging = v;
@@ -1035,7 +1049,12 @@ void CSBMS::SetBusy(bool v)
 
 void CSBMS::SetAlarm(bool v)
 {
-	m_Alarm = v;
+	m_IsAlarm = v;
+}
+
+void CSBMS::SetIdSymbol(int v)
+{
+	m_IdSymbol = v;
 }
 
 //GET
@@ -1114,7 +1133,7 @@ int CSBMS::GetAlarmCount()
 	return m_AlarmList.Length();
 }
 
-CAlarm *CSBMS::GetAlarm(int v)
+CAlarmModel *CSBMS::GetAlarm(int v)
 {
 	return m_AlarmList.Get(v);
 }
@@ -1209,9 +1228,9 @@ wxString CSBMS::GetChargingAsString()
 {
 	switch(m_Charging)
 	{
-		case CHARGING_TRUE:			return  GetMsg(MSG_CHARGING);
-		case CHARGING_FALSE:		return	GetMsg(MSG_DISCHARGING);
-		case CHARGING_NOT_AVAILABLE:return  GetMsg(MSG_NA);
+		case CHARGING_TRUE:				return  GetMsg(MSG_CHARGING);
+		case CHARGING_FALSE:			return	GetMsg(MSG_DISCHARGING);
+		case CHARGING_NOT_AVAILABLE:	return  GetMsg(MSG_NA);
 	}
 	
 	return GetMsg(MSG_NA);
@@ -1227,6 +1246,11 @@ int CSBMS::GetFlasherType()
 	return m_FlasherType;
 }
 
+int CSBMS::GetIdSymbol()
+{
+	return m_IdSymbol;
+}
+
 wxString CSBMS::GetDriverHtml(int v)
 {
 
@@ -1237,7 +1261,7 @@ wxString CSBMS::GetDriverHtml(int v)
 	
 	for(int i = 0; i < GetAlarmCount();i++)
 	{
-		CAlarm *alarm = GetAlarm(i);
+		CAlarmModel *alarm = GetAlarm(i);
 		nvRGBA c = GetAlarmTypeColor(alarm->GetType());
 		str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=3>%s</font></td></tr>"),c.R,c.G,c.B,alarm->GetName());
 	}
@@ -1271,14 +1295,36 @@ wxString CSBMS::GetAlarmHtml()
 		
 		for(int i = 0; i < m_AlarmList.Length();i++)
 		{
-			CAlarm *Alarm = m_AlarmList.Get(i);
+			CAlarmModel *Alarm = m_AlarmList.Get(i);
 			nvRGBA c = GetAlarmTypeColor(Alarm->GetType());
 			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=2>%s</font></td><td><font size=2>%s</font></td></tr>"),c.R,c.G,c.B,Alarm->GetName(),Alarm->GetAlarmOnDate());
 		}
 	
 		str.Append(_("</table>"));
 	}
+		
+	return str;
+}
+
+wxString CSBMS::GetCommandHtml()
+{
+	wxString str;
 	
+	if(m_CommandList.Length() > 0)
+	{
+		str.Append(_("<hr>"));
+		str.Append(wxString::Format(_("<font size=2><b>%s(%d)</b></font><br><br>"), GetMsg(MSG_COMMAND),m_CommandList.Length()));
+		str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
+		
+		for(int i = 0; i < m_CommandList.Length();i++)
+		{
+			CCommandModel *ptr = m_CommandList.Get(i);	
+			str << wxString::Format(_("<tr><td><font color=#%02X%02X%02X size=2>%s</font></td></tr>"),ptr->GetName());
+		}
+	
+		str.Append(_("</table>"));
+	}
+		
 	return str;
 }
 
@@ -1359,30 +1405,45 @@ wxString CSBMS::GetDriverFullHtml()
 
 void CSBMS::LightOn()
 {
-	_SetSBMSCommand(COMMAND_LIGHT_ON,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	m_Command->SetCommand(COMMAND_LIGHT_ON,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);	
 }
 
 void CSBMS::LightOff()
 {
-	_SetSBMSCommand(COMMAND_LIGHT_OFF,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	m_Command->SetCommand(COMMAND_LIGHT_OFF,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::AutoManagement()
 {
-	_SetSBMSCommand(COMMAND_AUTO_MANAGEMENT,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	m_Command->SetCommand(COMMAND_AUTO_MANAGEMENT,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::Reset()
 {
-	_SetSBMSCommand(COMMAND_RESET,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
+	m_Command->SetCommand(COMMAND_RESET,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), false);
 }
 
 void CSBMS::GetTime()
 {
-	_SetSBMSCommand(COMMAND_GET_TIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	m_Command->SetCommand(COMMAND_GET_TIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
 }
 
 void CSBMS::GetUptime()
 {
-	_SetSBMSCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+	m_Command->SetCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
+}
+
+void CSBMS::SetDestinationMMSI(int mmsi)
+{
+	m_Command->SetCommand(COMMAND_DESTINATION_MMSI,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), mmsi);
+}
+
+void CSBMS::ClearAlarm()
+{
+	m_Alarm->ClearAll(m_IdSBMS);
+}
+
+void CSBMS::ClearCommands()
+{
+	m_Command->ClearAll(m_IdSBMS);
 }

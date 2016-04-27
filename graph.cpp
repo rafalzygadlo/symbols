@@ -167,7 +167,7 @@ void CGraph::OnMouse(wxMouseEvent &event)
 	m_OldX = m_MouseX;
 	m_OldY = m_MouseY;
 	
-	if(refresh)
+	//if(refresh)
 		Refresh();
 	
 	event.Skip();
@@ -373,6 +373,31 @@ void CGraph::RenderTitle()
 	
 }
 
+void CGraph::RenderSelected()
+{
+	glPushMatrix();
+	glTranslatef(m_MoveX*m_XScale ,m_MoveY*m_YScale,0.0);
+	glScalef(m_Scale,1.0,1.0);
+
+	glEnable(GL_BLEND);
+	glPointSize(8);
+	if(m_Buffer.Length() > 0)
+	{
+		nvPoint3f pt = m_Buffer.Get(m_Index);
+		glBegin(GL_POINTS);
+			glVertex2f(pt.x,pt.y);
+		glEnd();
+		
+//		RenderGeometry(GL_POINTS,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());
+//		RenderGeometry(GL_LINE_STRIP,m_Buffer.GetRawData(),m_Color.GetRawData(),m_Buffer.Length());
+	}
+	glPointSize(1);
+	glDisable(GL_BLEND);
+	glPopMatrix();
+
+
+}
+
 void CGraph::Render()
 {
 	if( !this->IsShownOnScreen() )
@@ -389,7 +414,10 @@ void CGraph::Render()
 	
 	RenderData();
 	RenderGrid();
+	//RenderSelected();
 	//RenderTitle();
+
+	
 
 	//GetMutex()->Unlock();
 
@@ -432,5 +460,9 @@ void CGraph::SetValues()
 	m_Hours = m_TimeTo / SECONDS_IN_HOUR;
 	m_Minutes = m_TimeTo / SECONDS_IN_MINUTE;
 	m_Seconds = m_TimeTo;
+	
+	float v =  m_GraphRight/m_Scale;
+
+	m_Index = m_MouseX * v;
 		
 }

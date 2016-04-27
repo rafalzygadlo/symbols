@@ -1,55 +1,32 @@
 #ifndef __COMMAND
 #define __COMMAND
 
-#include "conf.h"
-#include "listitem.h"
+#include <wx/wx.h>
+#include <wx/htmllbox.h>
+#include "display.h"
+#include "dll.h"
+#include "command.h"
 
-class CCommand :public CListItem
-{	
-	bool m_New;
-	int m_Type;
-	int m_Status;
-	int m_DriverType;
-	wxString m_StatusText;
-	wxString m_Name;
-	wxString m_SymbolName;
-	wxString m_UserFirstName;
-	wxString m_UserLastName;
-	wxString m_CommandDate;
+class CCommand
+{
 	
+	int SetCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command, wxString cmd);
+	int SetGroupCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command, wxString cmd);
+	
+	void UpdateSBMSCommand(int id,wxString cmd);
+	void SetAnswer(int id_command, int mmsi, int id_base_station);
+	void SetGroupAnswer(int cmd_id, int id_group);
+
 public:
-
+	
 	CCommand();
+	~CCommand();
 	
-	//SET
-	void SetName(wxString v);
-	void SetSymbolName(wxString v);
-	void SetType(int v);
-	void SetStatus(int v);
-	void SetCommandDate(wxString v);
-	void SetUserFirstName(wxString v);
-	void SetUserLastName(wxString v);
-	void SetStatusText(wxString v);
-	void SetDriverType(int v);
-				
-	//GET
-	
-	int GetType();
-	int GetIdCommand();
-	int GetStatus();
-	int GetDriverType();
-
-	wxString GetStatusText();
-	wxString GetName();
-	wxString GetSymbolName();
-	wxString GetAlarmOnDate();
-	wxString GetUserFirstName();
-	wxString GetUserLastName();
-
-	
+	void ClearAll(int id_sbms);
+	void DeactivateCommand(int id, int type);
+	void SetGroupCommand(int cmd_id, wxString code, int id_group, bool on);
+	void SetCommand(int cmd_id, int id_sbms, int mmsi,int SBMSID, int id_base_station, int param1);
 
 };
-
-
 
 #endif

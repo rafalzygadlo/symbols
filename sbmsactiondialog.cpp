@@ -6,6 +6,7 @@
 #include "tools.h"
 #include "module.h"
 #include "action.h"
+#include "symbolgroup.h"
 
 BEGIN_EVENT_TABLE(CSBMSActionDialog,wxDialog)
 	EVT_BUTTON(ID_GRAPH,OnGraph)
@@ -15,12 +16,17 @@ BEGIN_EVENT_TABLE(CSBMSActionDialog,wxDialog)
 	EVT_BUTTON(ID_TIME,OnGetTime)
 	EVT_BUTTON(ID_UPTIME,OnGetUptime)
 	EVT_BUTTON(ID_RESET,OnReset)
+	EVT_BUTTON(ID_DESTINATION_MMSI,OnDestinationMMSI)
+	EVT_BUTTON(ID_CLEAR_ALARM,OnClearAlarm)
+	EVT_BUTTON(ID_CLEAR_COMMAND,OnClearCommand)
+	EVT_BUTTON(ID_ADD_TO_GROUP,OnAddToGroup)
 END_EVENT_TABLE();
 
 CSBMSActionDialog::CSBMSActionDialog(void *db, CSBMS *ptr)
 	:wxDialog(NULL,wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize )
 {	
 	m_DB = db;
+	m_SBMS = ptr;
 
 	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(Sizer);
@@ -29,7 +35,6 @@ CSBMSActionDialog::CSBMSActionDialog(void *db, CSBMS *ptr)
 	Sizer->Add(GetActionPanel(this),1,wxALL|wxEXPAND,5);
 	Sizer->Add(GetButtonPanel(this),0,wxALL|wxEXPAND,5);
 	SetSizer(Sizer);
-	SetSBMS(ptr);
 	Fit();
 	Center();
 		
@@ -64,20 +69,27 @@ wxPanel *CSBMSActionDialog::GetTopPanel(wxWindow *parent)
 wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
-	
+	wxGridSizer *FlexSizer = new wxGridSizer(3);
+		
 	m_ButtonGraph = new CButton(m_DB,_GetUID(),Panel,ID_GRAPH,GetMsg(MSG_GRAPH));
 	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_GRAPH);
-	Sizer->Add(m_ButtonGraph,0,wxALL|wxEXPAND,2);
-		
-	//m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
-	//Sizer->Add(m_ClearAlarm,0,wxALL|wxEXPAND,2);
+	FlexSizer->Add(m_ButtonGraph,1,wxALL|wxEXPAND,2);
 
-	//m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
-	//Sizer->Add(m_ClearCommand,0,wxALL|wxEXPAND,2);
+	m_ButtonAddToGroup = new CButton(m_DB,_GetUID(),Panel,ID_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP));
+	m_ButtonAddToGroup->Right(MODULE_SYMBOL,ACTION_GROUP);
+	FlexSizer->Add(m_ButtonAddToGroup,1,wxALL|wxEXPAND,2);
+		
+	m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
+	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_CLEAR_ALARM);
+	FlexSizer->Add(m_ClearAlarm,1,wxALL|wxEXPAND,2);
+
+	m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
+	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_CLEAR_COMMAND);
+	FlexSizer->Add(m_ClearCommand,1,wxALL|wxEXPAND,2);
 	
-	wxGridSizer *FlexSizer = new wxGridSizer(3);
-	Sizer->Add(FlexSizer,1,wxALL|wxEXPAND,0);
+	FlexSizer->AddSpacer(1);
+	FlexSizer->AddSpacer(1);
+	FlexSizer->AddSpacer(1);
 	
 	m_ButtonOn = new CButton(m_DB,_GetUID(), Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
 	m_ButtonOn->Right(MODULE_COMMAND,ACTION_LIGHT_ON);
@@ -103,7 +115,14 @@ wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 	m_ButtonReset->Right(MODULE_COMMAND,ACTION_RESET);
 	FlexSizer->Add(m_ButtonReset,1,wxALL|wxEXPAND,2);
 
-	Panel->SetSizer(Sizer);
+	if(m_SBMS->GetMMSI())
+	{
+		m_ButtonDestinationMMSI = new CButton(m_DB,_GetUID(),Panel,ID_DESTINATION_MMSI,GetMsg(MSG_DESTINATION_MMSI));
+		m_ButtonDestinationMMSI->Right(MODULE_COMMAND,ACTION_DEST_MMSI);
+		FlexSizer->Add(m_ButtonDestinationMMSI,1,wxALL|wxEXPAND,2);
+	}
+
+	Panel->SetSizer(FlexSizer);
 	
 	return Panel;
 			
@@ -127,42 +146,80 @@ wxPanel *CSBMSActionDialog::GetButtonPanel(wxWindow *parent)
 	return Panel;
 }
 
-void CSBMSActionDialog::SetSBMS(CSBMS *ptr)
-{
-	m_Symbol = ptr;
-}
-
 void CSBMSActionDialog::OnGraph(wxCommandEvent &event)
 {
-	m_Symbol->ShowGraph();
+	m_SBMS->ShowGraph();
+}
+
+void CSBMSActionDialog::OnClearAlarm(wxCommandEvent &event)
+{
+	wxMessageDialog dlg(this, GetMsg(MSG_CLEAR_ALARMS),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+	
+	if (dlg.ShowModal() == wxID_YES)
+	{
+		m_SBMS->ClearAlarm();	
+	}
+}
+
+void CSBMSActionDialog::OnClearCommand(wxCommandEvent &event)
+{
+	wxMessageDialog dlg(this, GetMsg(MSG_CLEAR_COMMANDS),wxString::Format(wxT("%s %s"),wxT(PRODUCT_NAME),wxT(PRODUCT_VERSION)),wxYES_NO|wxICON_QUESTION);
+	
+	if (dlg.ShowModal() == wxID_YES)
+	{
+		m_SBMS->ClearCommands();
+	}
+}
+void CSBMSActionDialog::OnAddToGroup(wxCommandEvent &event)
+{
+	int v = m_SBMS->GetIdSymbol();
+	CSymbolGroup *SymbolGroup = new CSymbolGroup(m_DB,v);
+	SymbolGroup->ShowModal();
+	delete SymbolGroup;
 }
 
 void CSBMSActionDialog::OnLightOn(wxCommandEvent &event)
 {
-	m_Symbol->LightOn();
+	m_SBMS->LightOn();
 }
 
 void CSBMSActionDialog::OnLightOff(wxCommandEvent &event)
 {
-	m_Symbol->LightOff();
+	m_SBMS->LightOff();
 }
 
 void CSBMSActionDialog::OnAutoManagement(wxCommandEvent &event)
 {
-	m_Symbol->AutoManagement();
+	m_SBMS->AutoManagement();
 }
 
 void CSBMSActionDialog::OnGetTime(wxCommandEvent &event)
 {
-	m_Symbol->GetTime();
+	m_SBMS->GetTime();
 }
 
 void CSBMSActionDialog::OnGetUptime(wxCommandEvent &event)
 {
-	m_Symbol->GetUptime();
+	m_SBMS->GetUptime();
 }
 
 void CSBMSActionDialog::OnReset(wxCommandEvent &event)
 {
-	m_Symbol->Reset();
+	m_SBMS->Reset();
+}
+
+void CSBMSActionDialog::OnDestinationMMSI(wxCommandEvent &event)
+{
+	wxTextEntryDialog dlg(this, GetMsg(MSG_DESTINATION_MMSI),GetMsg(MSG_DESTINATION_MMSI));
+	dlg.SetTextValidator(wxTextValidator(wxFILTER_NUMERIC));
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		long mmsi;
+		dlg.GetValue().ToLong(&mmsi);
+
+		m_SBMS->SetDestinationMMSI(mmsi);
+	}
+    dlg.Close();
+
+
 }

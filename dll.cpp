@@ -721,9 +721,9 @@ void CMapPlugin::SetPosition(CSymbol *ptr)
 {
 	bool driver = false;
 
-	ptr->SetLon(ptr->GetRLon());			
-	ptr->SetLonMap(ptr->GetRLonMap());				
-	ptr->SetLat(ptr->GetRLat());			
+	ptr->SetLon(ptr->GetRLon());
+	ptr->SetLonMap(ptr->GetRLonMap());
+	ptr->SetLat(ptr->GetRLat());
 	ptr->SetLatMap(ptr->GetRLatMap());
 	
 	for(int i = 0; i < ptr->GetDriverCount();i++)
@@ -780,7 +780,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		//Driver->SetBaseStationName(Convert(row[FI_VIEW_SYMBOL_BASE_STATION_NAME]));
 		Driver->SetMMSI(atoi(row[FI_SBMS_MMSI]));
 		Driver->SetForcedOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
-		Driver->SetLightOn(!atoi(row[FI_SBMS_MODE_FORCED_OFF]));
+		Driver->SetLightOn(atoi(row[FI_SBMS_MODE_FORCED_OFF]));
 		Driver->SetAuto(atoi(row[FI_SBMS_AUTO]));
 		Driver->SetInputVolt(atof(row[FI_SBMS_INPUT_VOLT]));
 		Driver->SetExists(true);
@@ -789,6 +789,7 @@ void CMapPlugin::ReadSBMS(void *db,CSymbol *ptr)
 		Driver->SetCharging(atoi(row[FI_SBMS_CHARGING]));
 		Driver->SetNewReport(atoi(row[FI_SBMS_NEW_REPORT]));
 		Driver->SetFlasherType(atoi(row[FI_SBMS_FLASHER_TYPE]));
+		Driver->SetIdSBMS(atoi(row[FI_SBMS_ID]));
 		Driver->SetSymbolName(ptr->GetName());
 		
 		int timestamp = atoi(row[FI_SBMS_LOCAL_UTC_TIME_STAMP]);
@@ -930,17 +931,17 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 	if(result == NULL)
 		return;
 	
-	m_ConfirmCounter = 0;
+	
 	while(row = (char**)db_fetch_row(result))
 	{
-		CAlarm *ptr = NULL;
+		CAlarmModel *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = (CAlarm*)m_AlarmList->_Exists(id,DRIVER_TYPE_SBMS);
+		ptr = (CAlarmModel*)m_AlarmList->_Exists(id,DRIVER_TYPE_SBMS);
 			
 		if(ptr == NULL)
 		{
-			ptr = new CAlarm();
+			ptr = new CAlarmModel();
 			ptr->SetDriverType(DRIVER_TYPE_SBMS);
 			m_AlarmList->Insert(ptr,0);
 		}
@@ -969,7 +970,7 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 
 void CMapPlugin::ReadSBMSCommand(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,command,status,first_name,last_name,"TABLE_SBMS_COMMAND".local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
+	wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,command,status,first_name,last_name,"TABLE_SBMS_COMMAND".add_local_utc_time,"TABLE_SBMS_COMMAND".send_local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id"),TABLE_SBMS,TABLE_SBMS_COMMAND,TABLE_SBMS);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_SBMS,TABLE_SYMBOL);
 	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
@@ -978,7 +979,7 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 	if(SelectedPtr)
 		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
 
-	sql << _(" ORDER BY local_utc_time");
+	sql << _(" ORDER BY add_local_utc_time");
 
 
 	my_query(db,sql);
@@ -990,14 +991,14 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		CCommand *ptr = NULL;
+		CCommandModel *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = (CCommand*)m_CommandList->_Exists(id,DRIVER_TYPE_SBMS);
+		ptr = (CCommandModel*)m_CommandList->_Exists(id,DRIVER_TYPE_SBMS);
 		
 		if(ptr == NULL)
 		{
-			ptr = new CCommand();
+			ptr = new CCommandModel();
 			ptr->SetDriverType(DRIVER_TYPE_SBMS);
 			m_CommandList->Insert(ptr,0);
 
@@ -1010,8 +1011,9 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		ptr->SetStatusText(GetCommandStatus(atoi(row[4])));
 		ptr->SetUserFirstName(Convert(row[5]));
 		ptr->SetUserLastName(Convert(row[6]));
-		ptr->SetCommandDate(Convert(row[7]));
-		
+		ptr->SetDateAdd(Convert(row[7]));
+		ptr->SetDateSend(Convert(row[8]));
+
 		ptr->SetExists(true);
 			
 	}
@@ -1043,17 +1045,16 @@ void CMapPlugin::ReadGE64Alarm(void *db)
 	if(result == NULL)
 		return;
 	
-	m_ConfirmCounter = 0;
 	while(row = (char**)db_fetch_row(result))
 	{
-		CAlarm *ptr = NULL;
+		CAlarmModel *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = (CAlarm*)m_AlarmList->_Exists(id,DRIVER_TYPE_GE64);
+		ptr = (CAlarmModel*)m_AlarmList->_Exists(id,DRIVER_TYPE_GE64);
 			
 		if(ptr == NULL)
 		{
-			ptr = new CAlarm();
+			ptr = new CAlarmModel();
 			m_AlarmList->Insert(ptr,0);
 			ptr->SetDriverType(DRIVER_TYPE_GE64);
 		}
@@ -1104,14 +1105,14 @@ void CMapPlugin::ReadGE64Command(void *db)
 		
 	while(row = (char**)db_fetch_row(result))
 	{
-		CCommand *ptr = NULL;
+		CCommandModel *ptr = NULL;
 		int id;
 		sscanf(row[0],"%d",&id);
-		ptr = (CCommand*)m_CommandList->_Exists(id,DRIVER_TYPE_GE64);
+		ptr = (CCommandModel*)m_CommandList->_Exists(id,DRIVER_TYPE_GE64);
 		
 		if(ptr == NULL)
 		{
-			ptr = new CCommand();
+			ptr = new CCommandModel();
 			ptr->SetDriverType(DRIVER_TYPE_GE64);
 			m_CommandList->Insert(ptr,0);
 		}
@@ -1123,7 +1124,7 @@ void CMapPlugin::ReadGE64Command(void *db)
 		ptr->SetStatusText(GetCommandStatus(atoi(row[3])));
 		ptr->SetUserFirstName(Convert(row[4]));
 		ptr->SetUserLastName(Convert(row[5]));
-		ptr->SetCommandDate(Convert(row[6]));
+		ptr->SetDateAdd(Convert(row[6]));
 		
 		ptr->SetExists(true);
 			
@@ -1133,11 +1134,30 @@ void CMapPlugin::ReadGE64Command(void *db)
 }
 
 
+int CMapPlugin::GetItemsInGroupCount(void *db,int id_group)
+{
+
+	wxString sql = wxString::Format(_("SELECT count(*) FROM `symbol`, `symbol_to_group` WHERE `symbol`.id = `symbol_to_group`.id_symbol AND `symbol_to_group`.id_group = %d"),id_group);
+	my_query(db,sql);
+	void *result = db_result(db);
+
+    char **row = NULL;
+	if(result == NULL)
+		return 0;
+
+	row = (char**)db_fetch_row(result);
+	int count = atoi(row[0]);
+
+	db_free_result(result);
+
+	return count;
+
+}
 
 void CMapPlugin::ReadGroup(void *db)
 {
 
-	wxString sql = wxString::Format(_("SELECT * FROM %s"),TABLE_SYMBOL_GROUP);
+	wxString sql = wxString::Format(_("SELECT id,name,code FROM %s"),TABLE_SYMBOL_GROUP);
 
 	my_query(db,sql);
 	void *result = db_result(db);
@@ -1149,19 +1169,21 @@ void CMapPlugin::ReadGroup(void *db)
 	while(row = (char**)db_fetch_row(result))
 	{
 		int id;
-		sscanf(row[FI_SYMBOL_GROUP_ID],"%d",&id);
-		CGroup *ptr = NULL;
-		ptr = (CGroup*)m_GroupList->_Exists(id);
+		sscanf(row[0],"%d",&id);
+		CGroupModel *ptr = NULL;
+		ptr = (CGroupModel*)m_GroupList->_Exists(id);
 				
 		if(ptr == NULL)
 		{
-			ptr = new CGroup();
+			ptr = new CGroupModel();
 			m_GroupList->Add(ptr);
 		}
 		
 		ptr->SetId(id);
-		ptr->SetName(Convert(row[FI_SYMBOL_GROUP_NAME]));
+		ptr->SetName(Convert(row[1]));
 		ptr->SetExists(true);
+		ptr->SetCode(row[2]);
+		ptr->SetItemCount(GetItemsInGroupCount(db,id));
 		
 	}
 
@@ -1193,7 +1215,7 @@ void CMapPlugin::ReadBaseStation(void *db)
 		if(ptr == NULL)
 		{
 			ptr = new CBaseStation(m_Broker);
-			//ptr->SetFont(m_NameFont);
+			ptr->SetFont(m_NameFont);
 			m_BaseStationList->Add(ptr);
 		}
 
@@ -1208,6 +1230,7 @@ void CMapPlugin::ReadBaseStation(void *db)
 				
 		ptr->SetId(id);
 		ptr->SetName(Convert(row[1]));
+		ptr->SetStatus(atoi(row[3]));
 		ptr->SetExists(true);
 	}
 	
@@ -2117,6 +2140,7 @@ void CMapPlugin::OnTick()
 	ReadDrivers();					//przeczytaj drivery
 	RemoveDriver();					//usuń
 	
+	m_ConfirmCounter = 0;
 	m_AlarmList->_SetExists(false);
 	ReadSBMSAlarm(m_DBTicker);		//przeczytaj alarmy
 	ReadGE64Alarm(m_DBTicker);

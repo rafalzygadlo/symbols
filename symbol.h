@@ -11,7 +11,7 @@
 #include "nvfastfont.h"
 #include "nvtime.h"
 #include "graphdialog.h"
-#include "alarm.h"
+#include "alarmmodel.h"
 #include "alarmdialog.h"
 #include "driver.h"
 
@@ -104,21 +104,21 @@ public:
 				
 	//GET
 	//pozycja referencyjna
-	double GetRLon();	
-	double GetRLat();	
-	double GetRLonMap();	
+	double GetRLon();
+	double GetRLat();
+	double GetRLonMap();
 	double GetRLatMap();
 	
 	//pozycja GPS
-	double GetGpsLon();	
-	double GetGpsLat();	
-	double GetGpsLonMap();	
+	double GetGpsLon();
+	double GetGpsLat();
+	double GetGpsLonMap();
 	double GetGpsLatMap();
 	
 	//referencyjna lub Gps
-	double GetLon();	
-	double GetLat();	
-	double GetLonMap();	
+	double GetLon();
+	double GetLat();
+	double GetLonMap();
 	double GetLatMap();
 	
 	int GetId();

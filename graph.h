@@ -33,6 +33,7 @@ class CGraph : public wxGLCanvas
 	const wchar_t *m_Title;
 	float m_XScale,m_YScale;
 	int m_Seconds,m_Minutes,m_Hours;
+	int m_Index;
 	
 	float m_GraphTop;
 	float m_GraphBottom;
@@ -75,6 +76,7 @@ class CGraph : public wxGLCanvas
 	void RenderCube();
 	void RenderTitle();
 	void Render();
+	void RenderSelected();
 	void RenderDC(wxPaintDC &dc);
 	void SetValues();
 

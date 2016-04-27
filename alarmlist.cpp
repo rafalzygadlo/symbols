@@ -51,11 +51,12 @@ void CAlarmList::OnLinkClicked(wxHtmlLinkEvent &event)
 	long action = -1;
 	t.ToLong(&action);
 
-	CAlarm *Alarm = (CAlarm*)m_List->Item(item);
+	CAlarmModel *Alarm = (CAlarmModel*)m_List->Item(item);
 
 	switch(action)
 	{
 		case HREF_ACTION_DELETE:	DeactivateAlarm(Alarm->GetId(),Alarm->GetDriverType());	break;
+		case HREF_ACTION_CONFIRM:	ConfirmAlarm(Alarm->GetId(),Alarm->GetDriverType()); break;
 	}
 
 }
@@ -114,7 +115,7 @@ void CAlarmList::SetList(wxArrayPtrVoid *v)
 	
 }
 
-void CAlarmList::_SetSelection(CAlarm *ptr)
+void CAlarmList::_SetSelection(CAlarmModel *ptr)
 {
 	if(ptr == NULL || m_List == NULL)
 	{
@@ -128,7 +129,7 @@ void CAlarmList::_SetSelection(CAlarm *ptr)
 	
 	for(size_t i = 0; i < m_List->size();i++)
 	{ 
-		CAlarm *Alarm = (CAlarm*)m_List->Item(i);
+		CAlarmModel *Alarm = (CAlarmModel*)m_List->Item(i);
 		if(Alarm != NULL)
 		{
 			if(Alarm == ptr)
@@ -144,6 +145,7 @@ void CAlarmList::_SetSelection(CAlarm *ptr)
 void CAlarmList::OnSelect(wxCommandEvent &event)
 {
 	RefreshAll();
+	/*
 	if(GetSelection() < 0)
 		return;
 	
@@ -151,6 +153,7 @@ void CAlarmList::OnSelect(wxCommandEvent &event)
 	
 	CAlarm *ptr = (CAlarm*)m_List->Item(GetSelection());
 	ConfirmAlarm(ptr->GetId(),ptr->GetDriverType());
+	*/
 }
 
 
@@ -167,7 +170,7 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	if(m_List->size() <= item)
 		return wxEmptyString;
 
-	CAlarm *ptr = (CAlarm*)m_List->Item(item);
+	CAlarmModel *ptr = (CAlarmModel*)m_List->Item(item);
 	wxString str;
 		
 	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
@@ -182,8 +185,11 @@ wxString CAlarmList::OnGetItem(size_t item) const
 	str << wxString::Format(_("<tr><td><font size=3>%s %s</font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
 	
 	if(GetSelection() == item)
+	{
 		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));
-	
+		if(!ptr->GetConfirmed())
+			str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_CONFIRM,item,GetMsg(MSG_CONFIRM));
+	}
 	str.Append(_("</table>"));
 	
 	return str;
