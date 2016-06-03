@@ -1,4 +1,4 @@
-#ifndef __COMMAND
+﻿#ifndef __COMMAND
 #define __COMMAND
 
 #include <wx/wx.h>
@@ -13,9 +13,10 @@ class CCommand
 	int SetCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command, wxString cmd);
 	int SetGroupCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command, wxString cmd);
 	
+	wxArrayInt GetBaseStationIdsInGroup(int id_group);	//do których stacji bazowych należą sbmsy z grupy
 	void UpdateSBMSCommand(int id,wxString cmd);
-	void SetAnswer(int id_command, int mmsi, int id_base_station);
-	void SetGroupAnswer(int cmd_id, int id_group);
+	void SetAnswer(int id_command, int id_base_station, int mmsi , int SBMSID);
+	void SetGroupAnswer(int cmd_id, int id_group, int id_base_station);
 
 public:
 	

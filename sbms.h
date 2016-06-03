@@ -229,9 +229,10 @@ public:
 	void ShowGraph();
 	void LightOn();
 	void LightOff();
+	void CurrentDrive(int v);
 	void AutoManagement();
 	void GetUptime();
-	void SetDestinationMMSI(int mmsi);
+	void DestinationMMSI(int mmsi);
 	void GetTime();
 	void Reset();
 	void ClearAlarm();

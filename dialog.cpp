@@ -1011,8 +1011,11 @@ void CDialogPanel::New()
 			case CONTROL_AREA:
 			case CONTROL_SEAWAY:
 			case CONTROL_SYMBOL_TYPE:
-			case CONTROL_SYMBOL_GROUP:
 				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s'"),m_Table,ptr->GetName(),ptr->GetInfo());
+				query = true;
+			break;
+			case CONTROL_SYMBOL_GROUP:
+				sql = wxString::Format(_("INSERT INTO %s SET name='%s', info='%s', code='%s'"),m_Table,ptr->GetName(),ptr->GetInfo(),ptr->GetCode());
 				query = true;
 			break;
 		}
@@ -1230,9 +1233,10 @@ void CDialogPanel::OnEdit(int id)
 		case CONTROL_CHARACTERISTIC:	EditCharacteristic(id);	break;
 		case CONTROL_SBMS:				EditSBMS(id);			break;
 		case CONTROL_GE64:				EditGE64(id);			break;
+		case CONTROL_SYMBOL_GROUP:		EditGroup(id);			break;
 		case CONTROL_AREA:
 		case CONTROL_SEAWAY:
-		case CONTROL_SYMBOL_GROUP:
+		
 		case CONTROL_SYMBOL_TYPE:		EditName(id);			break;
 	}
 
@@ -1564,6 +1568,38 @@ void CDialogPanel::EditGE64(int id)
 
 	delete ptr;
 }
+
+void CDialogPanel::EditGroup(int id)
+{
+	wxString sql = wxString::Format(_("SELECT name,code,info FROM %s WHERE id = '%d'"),m_Table,id);
+	
+	if(!my_query(m_DB,sql))
+		return;
+		
+	CNew *ptr = new CNew(m_DB,m_ControlType);
+		
+	void *result = db_result(m_DB);
+	char **row = (char**)db_fetch_row(result);
+	
+	ptr->SetName(Convert(row[0]));
+	ptr->SetCode(Convert(row[1]));
+	ptr->SetInfo(Convert(row[2]));
+	db_free_result(result);	
+	
+	ptr->Create();	
+	
+	if(ptr->ShowModal() == wxID_OK)
+	{
+		wxString sql = wxString::Format	(_("UPDATE %s SET code='%s', name='%s', info ='%s' WHERE id = '%d'"),m_Table,ptr->GetCode(),ptr->GetName(),ptr->GetInfo(),id);
+		my_query(m_DB,sql);
+		Clear();
+		Read();
+		Select();
+	}
+
+	delete ptr;
+}
+
 
 
 void CDialogPanel::EditType(int id)

@@ -13,6 +13,7 @@
 #include "ge64.h"
 #include "right.h"
 #include "basestation.h"
+#include "toolbox.h"
 
 unsigned char PluginInfoBlock[] = {
 0x4a,0x0,0x0,0x0,0x9a,0x53,0x6,0xab,0x10,0x16,0x93,0x92,0x65,0x75,0x66,0x78,0xb8,0x7c,0x5e,0x3c,0xf4,0x4e,0x4d,0x9d,0x55,0xfa,0xa6,0xcf,0xd7,0xd,0xa,0x49,0xee,0x47,
@@ -83,8 +84,7 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_GroupList = new CList();
 
 	m_BaseStationList = new CList();
-
-
+	
 
 	m_NameFont = NULL;
 	
@@ -107,7 +107,16 @@ CMapPlugin::CMapPlugin(CNaviBroker *NaviBroker)	:CNaviMapIOApi(NaviBroker)
 	m_Ticker = NULL;
 	m_AlarmDialog = new CAlarmDialog();
 
-	
+
+	//Toolbox
+	m_ToolBoxList = new CList();
+	/*
+	CToolBox *ToolBox = new CToolBox(NaviBroker);	ToolBox->SetFont(m_NameFont);	ToolBox->SetName(GetMsg(MSG_LIGHT_ON)); ToolBox->SetId(0);
+	m_ToolBoxList->Add(ToolBox);
+	ToolBox = new CToolBox(NaviBroker);	ToolBox->SetFont(m_NameFont);	ToolBox->SetName(GetMsg(MSG_LIGHT_OFF)); ToolBox->SetId(1);
+	m_ToolBoxList->Add(ToolBox);
+	*/
+
 	//ReadConfig();
 	//m_Broker->StartAnimation(true,m_Broker->GetParentPtr());
 		
@@ -154,6 +163,9 @@ CMapPlugin::~CMapPlugin()
 
 	m_BaseStationList->_Clear();
 	delete m_BaseStationList;
+
+	m_ToolBoxList->_Clear();
+	delete m_ToolBoxList;
 
 	delete m_NameFont;
 
@@ -916,7 +928,7 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 	"LEFT JOIN "TABLE_SBMS_ALARM" ON "TABLE_SBMS_ALARM".id_sbms="TABLE_SBMS".id "
 	"LEFT JOIN "TABLE_ALARM" ON "TABLE_SBMS_ALARM".id_alarm="TABLE_ALARM".id "
 	"LEFT JOIN "TABLE_USER" ON "TABLE_SBMS_ALARM".id_user = "TABLE_USER".id "
-	"WHERE active='%d'"),ALARM_ACTIVE);
+	"WHERE active='%d' AND id_language='%d'"),ALARM_ACTIVE,GetLanguageId());
 	
 	if(SelectedPtr)
 		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
@@ -970,11 +982,18 @@ void CMapPlugin::ReadSBMSAlarm(void *db)
 
 void CMapPlugin::ReadSBMSCommand(void *db)
 {	
-	wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,command,status,first_name,last_name,"TABLE_SBMS_COMMAND".add_local_utc_time,"TABLE_SBMS_COMMAND".send_local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id"),TABLE_SBMS,TABLE_SBMS_COMMAND,TABLE_SBMS);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_SBMS,TABLE_SYMBOL);
-	sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
-	sql << wxString::Format(_(" WHERE `%s`.id IS NOT NULL AND active='%d'"),TABLE_SYMBOL,COMMAND_ACTIVE);
+	//wxString sql = wxString::Format(_("SELECT `%s`.id,"TABLE_SYMBOL".name,id_command,command,status,first_name,last_name,"TABLE_SBMS_COMMAND".add_local_utc_time,"TABLE_SBMS_COMMAND".send_local_utc_time FROM `%s`"),TABLE_SBMS_COMMAND,TABLE_SBMS_COMMAND);
+	//sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_sbms=`%s`.id"),TABLE_SBMS,TABLE_SBMS_COMMAND,TABLE_SBMS);
+	//sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id_symbol=`%s`.id"),TABLE_SYMBOL,TABLE_SBMS,TABLE_SYMBOL);
+	//sql << wxString::Format(_(" LEFT JOIN `%s` ON `%s`.id=`%s`.id_user"),TABLE_USER,TABLE_USER,TABLE_SBMS_COMMAND);
+	//sql << wxString::Format(_(" WHERE AND active='%d'"),TABLE_SYMBOL,COMMAND_ACTIVE);
+
+	wxString sql = 
+		wxString::Format(_("SELECT `sbms_command`.id,symbol.name,id_command,command,status,first_name,last_name,sbms_command.add_local_utc_time,sbms_command.send_local_utc_time FROM `sbms_command` \
+		LEFT JOIN `sbms` ON `sbms_command`.id_sbms=`sbms`.id \
+		LEFT JOIN `symbol` ON `sbms`.id_symbol=`symbol`.id \
+		LEFT JOIN `user` ON `user`.id=`sbms_command`.id_user WHERE active='%d'"),COMMAND_ACTIVE);
+
 
 	if(SelectedPtr)
 		sql << wxString::Format(_(" AND id_symbol='%d'"),SelectedPtr->GetId());
@@ -1005,7 +1024,10 @@ void CMapPlugin::ReadSBMSCommand(void *db)
 		}
 
 		ptr->SetId(id);
-		ptr->SetSymbolName(Convert(row[1]));
+		if(row[1] != NULL)
+			ptr->SetSymbolName(Convert(row[1]));
+		else
+			ptr->SetSymbolName(GetMsg(MSG_GROUP_COMMAND));
 		ptr->SetName(GetCommandName(atoi(row[2])));
 		ptr->SetStatus(atoi(row[4]));
 		ptr->SetStatusText(GetCommandStatus(atoi(row[4])));
@@ -1502,6 +1524,7 @@ void CMapPlugin::Mouse(int x, int y, bool lmb, bool mmb, bool rmb)
 {
 	
 	m_BaseStationList->_Mouse(x,y,lmb,mmb,rmb);
+	m_ToolBoxList->_Mouse(x,y,lmb,mmb,rmb);
 	
 	// move marker RMB need this
 	// . . . . . . . . . . . . . . . . . . . . 
@@ -2082,6 +2105,7 @@ void CMapPlugin::Render(void)
 	SetValues();
 	RenderSymbols();
 	m_BaseStationList->_Render();
+	m_ToolBoxList->_Render();
 				
 	if(SelectedPtr != NULL)
 		RenderSelected();
@@ -2171,7 +2195,7 @@ void CMapPlugin::OnTick()
 	SendInsertSignal();
 	ShowAlarm();
 	
-	fprintf(stderr,"DONE %d\n",GetTickCount() - t);
+	//fprintf(stderr,"DONE %d\n",GetTickCount() - t);
 	m_Broker->Refresh(m_Broker->GetParentPtr());
 
 }

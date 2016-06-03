@@ -226,6 +226,8 @@ const wchar_t *nvLanguage[][2] =
 	{L"Confirm All Alarms ?",L"Potwierdzić wszystkie alarmy ?"},
 	{L"Clear Alarms ?",L"Wyczyścić wszystkie alarmy ?"},
 	{L"Clear Commands ?",L"Wyczyścić wszystkie komendy ?"},
+	{L"Code",L"Kod grupy"},
+	{L"Group Command",L"Grupowa"},
 
 };
 
@@ -255,32 +257,32 @@ const wxChar *nvDistanceN[2][3] =
 
 const char *nvCommand[COMMAND_COUNT] =
 {
- 	{"FlashCode(%d)"},
-	{"DriveCurrent(%d)"},
-	{"PowerOfLight(%d)",},
-	{"AM6Off(%d,%d,%d)"},
-	{"SeasonControl(%d)"},
-	{"PhotoCellResistance(%d)"},
-	{"RipleDelay(%d)"},
-	{"PowerOff(%d)"},
-    {"gt(%s)"},				//get time
-	{"sr(%s)"},				//standard report
-	{"gut(%s)"},			//get uptime
-	{"l(%s,1)"},			//light on
-	{"l(%s,0)"},			//light off
-	{"m(%s,%d)"},			//zmiana mmsi
-	{"r(%s)"},				//reset
-	{"s(%s)"},				//save
-	{"h(%s,%d)"},			//human management tylko OFF (0,0)
-	{"p(%s,%d)"},			//ais power 1W itd.
-	{"g(%s,%d)"},			//akcelarator próg
+ 	{"q(%d)"},					//characteristic
+	{"w(%s,%d)"},				//drive current
+	{"PowerOfLight(%d)",},		//not used
+	{"AM6Off(%d,%d,%d)"},		//not used
+	{"SeasonControl(%d)"},		//not used
+	{"PhotoCellResistance(%d)"},//not used
+	{"RipleDelay(%d)"},			//not used
+	{"PowerOff(%d)"},			//not used
+    {"gt(%s)"},					//get time
+	{"sr(%s)"},					//standard report
+	{"gut(%s)"},				//get uptime
+	{"l(%s,1)"},				//light on
+	{"l(%s,0)"},				//light off
+	{"m(%s,%d)"},				//zmiana mmsi
+	{"r(%s)"},					//reset
+	{"s(%s)"},					//save
+	{"h(%s,%d)"},				//human management tylko OFF (0,0)
+	{"p(%s,%d)"},				//ais power 1W itd.
+	{"g(%s,%d)"},				//akcelarator próg
 
 };
 
 int nvCommandMSG[COMMAND_COUNT] =
 {
  	{MSG_FLASH_CODE},
-	{MSG_DRIVE_CURRENT},
+	{MSG_CURRENT_DRIVE},
 	{MSG_POWER_OF_LIGHT},
 	{MSG_POWER_OF_LIGHT},
 	{MSG_SEASON_CONTROL},
@@ -334,7 +336,7 @@ const wchar_t *GetCommandStatus(int id )
 	switch(id)
 	{
 		case COMMAND_STATUS_NEW:		return GetMsg(MSG_NEW);
-		case COMMAND_STATUS_OK:			return GetMsg(MSG_OK);
+		case COMMAND_STATUS_OK:			return GetMsg(MSG_COMMAND_SEND);
 		case COMMAND_STATUS_SEND:		return GetMsg(MSG_COMMAND_SEND);
 		case COMMAND_STATUS_TIMEOUT:	return GetMsg(MSG_TIMEOUT);
 		default: return GetMsg(MSG_NA);
@@ -1473,8 +1475,6 @@ void WriteDBConfig()
 	WritePasswordConfig(_pass);
 	free(_pass);
 
-	
-
 }
 
 void WritePasswordConfig(char *v)
@@ -1483,7 +1483,6 @@ void WritePasswordConfig(char *v)
 	FileConfig->Write(KEY_DB_PASSWORD,wxString::Format(_("%s"),v));
 	delete FileConfig;
 }
-
 
 
 #if 0

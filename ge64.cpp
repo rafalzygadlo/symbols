@@ -139,7 +139,7 @@ bool CGE64::CheckCommand()
 
 void CGE64::Read()
 {
-	fprintf(stderr,"GE64\n");
+	//fprintf(stderr,"GE64\n");
 
 	m_AlarmList._SetExists(false);
 	CheckAlarm();		

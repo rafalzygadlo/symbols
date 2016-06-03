@@ -114,8 +114,8 @@
 #define COLUMN_2_WIDTH	40
 #define POWER_OF_LIGHT_MIN 1
 #define POWER_OF_LIGHT_MAX 100
-#define DRIVE_CURRENT_MIN 1
-#define DRIVE_CURRENT_MAX 1000
+#define CURRENT_DRIVE_MIN 1
+#define CURRENT_DRIVE_MAX 1000
 
 #define ID_MENU_BEGIN 1000
 #define ID_MENU_END 1100
@@ -197,7 +197,7 @@
 #define MSG_COMMAND						54
 #define MSG_MANAGEMENT					55
 #define MSG_FLASH_CODE					56
-#define MSG_DRIVE_CURRENT				57
+#define MSG_CURRENT_DRIVE				57
 #define MSG_POWER_OF_LIGHT				58
 #define MSG_FORCED_OFF					59
 #define MSG_SEASON_CONTROL				60
@@ -345,6 +345,8 @@
 #define MSG_CONFIRM_QUESTION			202
 #define MSG_CLEAR_ALARMS				203
 #define MSG_CLEAR_COMMANDS				204
+#define MSG_GROUP_CODE					205
+#define MSG_GROUP_COMMAND				206
 
 #define HTML_ANCHOR_LAST_REPORT	0
 #define DEFAULT_FONT_SHOW 0
@@ -668,8 +670,8 @@
 #define FI_BASE_STATION_ID					0
 #define FI_BASE_STATION_NAME				1
 #define FI_BASE_STATION_IP					2
-#define FI_BASE_STATION_INFO				5
-#define FI_BASE_STATION_LOCAL_UTC_TIME		7
+#define FI_BASE_STATION_INFO				6
+#define FI_BASE_STATION_LOCAL_UTC_TIME		8
 
 #define FN_BASE_STATION_ID					"id"
 #define FN_BASE_STATION_HID					"hid"
@@ -847,8 +849,8 @@
 //pola tabeli ALARM
 
 #define FI_ALARM_ID			0
-#define	FI_ALARM_NAME		1
-#define FI_ALARM_TYPE		2
+#define	FI_ALARM_NAME		2
+#define FI_ALARM_TYPE		3
 
 #define FN_ALARM_ID			"id"
 #define	FN_ALARM_NAME		"name"
@@ -920,7 +922,7 @@
 // . . . . . . . . . . . . . . . . . . . .
 //komendy zmiany ustawień do schedulera
 #define COMMAND_FLASH_CODE				0	//charakterystyka świecenia
-#define COMMAND_DRIVE_CURRENT			1	//prąd podkładu
+#define COMMAND_CURRENT_DRIVE			1	//prąd podkładu
 #define COMMAND_POWER_OF_LIGHT			2	//moc
 #define COMMAND_FORCED_OFF				3	//serwisowe wyłączenie
 #define COMMAND_SEASON_CONTROL			4	//praca sezonowa ON/OFF

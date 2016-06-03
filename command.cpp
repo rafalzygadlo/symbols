@@ -53,13 +53,13 @@ int CCommand::SetCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, in
 	return last_id;
 }
 
-void CCommand::SetAnswer(int id_command, int mmsi, int id_base_station)
+void CCommand::SetAnswer(int id_command, int id_base_station, int mmsi , int SBMSID)
 {
 	void *db = DBConnect();
     if (db == NULL)
         return;
 		
-	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi FROM `%s`,`%s` WHERE id_symbol=`%s`.id AND mmsi='%d'"),TABLE_SBMS,TABLE_SYMBOL,TABLE_SYMBOL,mmsi);
+	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi FROM `%s`,`%s` WHERE id_symbol=`%s`.id AND mmsi='%d' AND SBMSID='%d'"),TABLE_SBMS,TABLE_SYMBOL,TABLE_SYMBOL,mmsi,SBMSID);
 		
 	my_query(db, sql);
     void *result = db_result(db);
@@ -76,7 +76,7 @@ void CCommand::SetAnswer(int id_command, int mmsi, int id_base_station)
         int id_sbms = atoi(row[0]);
         int mmsi = atoi(row[1]);
         
-		sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms_command='%d', mmsi='%d'"), TABLE_SBMS_COMMAND_ANSWER, id_command,mmsi);
+		sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms_command='%d', mmsi='%d', SBMSID='%d'"), TABLE_SBMS_COMMAND_ANSWER, id_command,mmsi,SBMSID);
         my_query(db, sql);
     }
  
@@ -91,19 +91,52 @@ void CCommand::SetCommand(int cmd_id,int id_sbms,int mmsi,int SBMSID, int id_bas
 	wxString _cmd = wxString::Format(_(cmd),sbmsid,param1);
 	int id = SetCommand(id_sbms,mmsi,SBMSID,id_base_station,cmd_id,_cmd);
 	
-	SetAnswer(id,mmsi,id_base_station);
+	SetAnswer(id,id_base_station,mmsi,SBMSID);
 }
 
 //..................................................................................
 
 // grupowe komendy
+
+wxArrayInt CCommand::GetBaseStationIdsInGroup(int id_group)
+{
+	wxArrayInt ids;
+	
+	wxString sql = wxString::Format(_("SELECT id_base_station FROM `symbol`, `sbms`, `symbol_to_group` WHERE `symbol`.id=`sbms`.id_symbol AND `symbol`.id=`symbol_to_group`.id_symbol AND `symbol_to_group`.id_group='%d' GROUP BY id_base_station"),id_group);
+	void *db = DBConnect();
+	my_query(db,sql);
+		
+	void *result = db_result(db);
+	if(result)
+	{
+		char **row = NULL;
+		while(row = (char**)db_fetch_row(result))
+		{
+			ids.Add(atoi(row[0]));		
+		}
+	}
+	
+	db_free_result(result);
+	DBClose(db);
+
+	return ids;
+
+}
+
 void CCommand::SetGroupCommand(int cmd_id, wxString code, int id_group, bool on)
 {
 	const char *cmd = GetCommand(cmd_id);
 	wxString _cmd = wxString::Format(_(cmd),code,on);
-	int id = SetGroupCommand(0,0,0,0,cmd_id,_cmd);
 	
-	SetGroupAnswer(id,id_group);
+	wxArrayInt ids = GetBaseStationIdsInGroup(id_group);
+	
+	for(int i = 0; i < ids.Count(); i++)
+	{
+
+		int id_base_station = ids.Item(i);
+		int id = SetGroupCommand(0,0,0,id_base_station,cmd_id,_cmd);
+		SetGroupAnswer(id,id_group,id_base_station);
+	}
 }
 
 int CCommand::SetGroupCommand(int id_sbms,int mmsi,int SBMSID,int id_base_station, int id_command,wxString cmd)
@@ -117,13 +150,11 @@ int CCommand::SetGroupCommand(int id_sbms,int mmsi,int SBMSID,int id_base_statio
 }
 
 
-void CCommand::SetGroupAnswer(int id_command, int id_group)
+void CCommand::SetGroupAnswer(int id_command, int id_group , int id_base_station)
 {
-	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi,id_base_station,SBMSID from `%s`"),TABLE_SYMBOL_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on id=id_group"),TABLE_SYMBOL_TO_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id=`%s`.id_symbol"),TABLE_SYMBOL,TABLE_SYMBOL,TABLE_SYMBOL_TO_GROUP);
-	sql << wxString::Format(_(" LEFT JOIN `%s` on `%s`.id=`%s`.id_symbol WHERE id_group='%d' AND sbms.id_symbol > 0"),TABLE_SBMS,TABLE_SYMBOL,TABLE_SBMS,id_group);
-	
+
+	wxString sql = wxString::Format(_("SELECT id_sbms,mmsi,SBMSID FROM `symbol`, `sbms`, `symbol_to_group` WHERE `symbol`.id=`sbms`.id_symbol AND `symbol`.id=`symbol_to_group`.id_symbol AND `symbol_to_group`.id_group='%d' AND id_base_station='%d'"),id_group,id_base_station);
+		
 	void *db = DBConnect();
 	my_query(db,sql);
 		
@@ -136,8 +167,9 @@ void CCommand::SetGroupAnswer(int id_command, int id_group)
 			
 			int id_sbms = atoi(row[0]);
 			int mmsi = atoi(row[1]);
+			int SBMSID = atoi(row[2]);
         
-			sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms_command='%d', mmsi='%d'"), TABLE_SBMS_COMMAND_ANSWER, id_command,mmsi);
+			sql = wxString::Format(_("INSERT INTO `%s` SET id_sbms_command='%d', mmsi='%d', SBMSID='%d'"), TABLE_SBMS_COMMAND_ANSWER, id_command,mmsi,SBMSID);
 			my_query(db, sql);
 			
 		}

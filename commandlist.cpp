@@ -154,7 +154,7 @@ wxString CCommandModelList::OnGetItem(size_t item) const
 	CCommandModel *ptr = (CCommandModel*)m_List->Item(item);
 	wxString str;
 	
-	str.Append(_("<table border=0 cellpadding=0 cellspacing=1 width=100%>"));
+	str.Append(_("<table border=0 cellpadding=0 cellspacing=0 width=100%>"));
 	
 	if(ptr->GetStatus() == COMMAND_STATUS_NEW)
 		str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetSymbolName());
@@ -163,13 +163,15 @@ wxString CCommandModelList::OnGetItem(size_t item) const
 		
 	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetName());
 	str << wxString::Format(_("<tr><td>%s</font></td></tr>"),ptr->GetStatusText());
-	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateAdd());
-	str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateSend());
-	str << wxString::Format(_("<tr><td>%s %s</font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
+	
 	
 	if(GetSelection() == item)
-		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));
-	
+	{
+		str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateAdd());
+		str << wxString::Format(_("<tr><td><b>%s</b></font></td></tr>"),ptr->GetDateSend());
+		str << wxString::Format(_("<tr><td>%s %s</font></td></tr>"),ptr->GetUserFirstName(),ptr->GetUserLastName());
+		str << wxString::Format(_("<tr><td><a target=%d href='%d'>%s</a></td></tr>"),HREF_ACTION_DELETE,item,GetMsg(MSG_DELETE));	
+	}
 	str.Append(_("</table>"));
 	
 	return str;

@@ -209,7 +209,7 @@ bool CSBMS::CheckAlarm()
 	//if(m_AlarmTick <= CHECK_ALARM_TICK)
 		//return false;
 	m_AlarmOn = !m_AlarmOn;
-	wxString sql = wxString::Format(_("SELECT * FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id ORDER BY set_local_utc_time DESC"),TABLE_SBMS_ALARM,TABLE_ALARM,GetId(),ALARM_ACTIVE,TABLE_ALARM);
+	wxString sql = wxString::Format(_("SELECT sbms_alarm.id,id_alarm,set_local_utc_time,confirmed,name,type FROM `%s`,`%s` WHERE id_sbms='%d' AND active='%d' AND id_alarm=`%s`.id AND id_language='%d' ORDER BY set_local_utc_time DESC"),TABLE_SBMS_ALARM,TABLE_ALARM,GetId(),ALARM_ACTIVE,TABLE_ALARM,GetLanguageId()); 
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
 	
@@ -237,12 +237,12 @@ bool CSBMS::CheckAlarm()
 			m_AlarmList.Append(Alarm);
 		}
 				
-		Alarm->SetId(atoi(row[FI_SBMS_ALARM_ID]));
-		Alarm->SetIdAlarm(atoi(row[FI_SBMS_ALARM_ID_ALARM]));
-		Alarm->SetAlarmOnDate(Convert(row[FI_SBMS_ALARM_SET_LOCAL_UTC_TIME]));
-		Alarm->SetConfirmed(atoi(row[FI_SBMS_ALARM_CONFIRMED]));
-		Alarm->SetName(Convert(row[FI_ALARM_NAME + offset]));
-		Alarm->SetType(atoi(row[FI_ALARM_TYPE + offset]));
+		Alarm->SetId(atoi(row[0]));
+		Alarm->SetIdAlarm(atoi(row[1]));
+		Alarm->SetAlarmOnDate(Convert(row[2]));
+		Alarm->SetConfirmed(atoi(row[3]));
+		Alarm->SetName(Convert(row[4]));
+		Alarm->SetType(atoi(row[5]));
 		Alarm->SetExists(true);
 
 	}	
@@ -274,7 +274,7 @@ bool  CSBMS::CheckCommand()
 		return false;
 	
 	wxString sql;
-	sql = wxString::Format(_("SELECT count(*) FROM %s WHERE id_sbms='%d' AND status='%d' AND active='%d'"),TABLE_SBMS_COMMAND,GetId(),COMMAND_STATUS_NEW,COMMAND_ACTIVE);
+	sql = wxString::Format(_("SELECT count(*) FROM `sbms_command`,`sbms_command_answer` WHERE `sbms_command`.id = `sbms_command_answer`.id_sbms_command AND `sbms_command`.id_sbms='%d' AND id_base_station='%d' AND active='%d' AND `sbms_command_answer`.status='%d'"),GetId(),GetBaseStationId(), COMMAND_ACTIVE, COMMAND_STATUS_NEW);
 	
 	my_query(m_DB,sql);
 	void *result = db_result(m_DB);
@@ -1354,10 +1354,7 @@ wxString CSBMS::GetDriverFullHtml()
 		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),GetLightOnAsString(GetLightOn())));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetAutoAsString(GetAuto())));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td></tr>"),GetChargingAsString()));
-						
-		int phone = atoi(row[FI_SBMS_PHONE]);
-		if(phone)
-			str.Append(wxString::Format(_("<tr><td><font size=2><b>%d</b></font></td></tr>"),phone));
+		str.Append(wxString::Format(_("<tr><td><font size=2><b>%s</b></font></td></tr>"),row[FI_SBMS_PHONE]));
 
 		int mmsi = atoi(row[FI_SBMS_MMSI]);
 		if(mmsi)
@@ -1369,18 +1366,22 @@ wxString CSBMS::GetDriverFullHtml()
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LATITUDE),FormatLatitude(atof(row[FI_SBMS_LAT]),DEFAULT_DEGREE_FORMAT)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_LONGITUDE),FormatLongitude(atof(row[FI_SBMS_LON]),DEFAULT_DEGREE_FORMAT)));
 		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_INPUT_VOLT),row[FI_SBMS_INPUT_VOLT]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_NOT_MONITORED_CHANNELS),GetNotMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]), atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]),atoi(row[FI_SBMS_DOWN_CHANNELS]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetPhotoCellValue(atoi(row[FI_SBMS_ANALOG_PIN]), atoi(row[FI_SBMS_ANALOG_VALUE]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
-		str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+		
+		if(m_FlasherType == FLASHER_TYPE_AM6)
+		{
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>100%%</b></font></td></tr>"),GetMsg(MSG_POWER_OF_LIGHT)));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_MONITORED_CHANNELS),GetMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_NOT_MONITORED_CHANNELS),GetNotMonitoredChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_OVERLOAD_CHANNELS),GetOverloadChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]), atoi(row[FI_SBMS_OVERLOAD_CHANNELS]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_DOWN_CHANNELS),GetDownChannels(atoi(row[FI_SBMS_MONITORED_CHANNELS]),atoi(row[FI_SBMS_DOWN_CHANNELS]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_ANALOG_VALUE),row[FI_SBMS_ANALOG_VALUE]));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_CALIBRATED),GetOnOff(atoi(row[FI_SBMS_MODE_CALIBRATED]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FORCED_OFF),GetOnOff(atoi(row[FI_SBMS_MODE_FORCED_OFF]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_PHOTOCELL_NIGHT_TIME),GetPhotoCellValue(atoi(row[FI_SBMS_ANALOG_PIN]), atoi(row[FI_SBMS_ANALOG_VALUE]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_FAULT_OUTPUT),GetOnOff(atoi(row[FI_SBMS_MODE_FAULT_OUTPUT]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SOLAR_CHARGER_ON),GetOnOff(atoi(row[FI_SBMS_MODE_SOLAR_CHARGER_ON]))));
+			str.Append(wxString::Format(_("<tr><td><font size=2>%s</font></td><td><font size=2><b>%s</b></font></td></tr>"),GetMsg(MSG_SEASON_CONTROL),GetOnOff(atoi(row[FI_SBMS_MODE_SEASON_CONTROL]))));
+		}
 		
 		bool alarm = false;
 		for(int i = 0; i < GetAlarmCount();i++)
@@ -1401,6 +1402,11 @@ wxString CSBMS::GetDriverFullHtml()
 
 	return str;
 
+}
+
+void CSBMS::CurrentDrive(int v)
+{
+	m_Command->SetCommand(COMMAND_CURRENT_DRIVE,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), v);	
 }
 
 void CSBMS::LightOn()
@@ -1433,7 +1439,7 @@ void CSBMS::GetUptime()
 	m_Command->SetCommand(COMMAND_GET_UPTIME,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), true);
 }
 
-void CSBMS::SetDestinationMMSI(int mmsi)
+void CSBMS::DestinationMMSI(int mmsi)
 {
 	m_Command->SetCommand(COMMAND_DESTINATION_MMSI,GetId(),GetMMSI(),GetSBMSID(),GetBaseStationId(), mmsi);
 }

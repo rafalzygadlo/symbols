@@ -424,7 +424,7 @@ void CDisplayPlugin::SwitchAction()
 void CDisplayPlugin::SignalInsert()
 {
 		
-	fprintf(stderr,"SignalInsert NOT NULL\n");
+	//fprintf(stderr,"SignalInsert NOT NULL\n");
 	wxArrayPtrVoid *ptr = m_MapPlugin->GetSymbolListPtr();
 	int count = ptr->size();
 

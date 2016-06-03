@@ -51,6 +51,7 @@ class CMapPlugin :public CNaviMapIOApi
 	CList *m_GroupList;
 	CList *m_AlarmList;
 	CList *m_BaseStationList;
+	CList *m_ToolBoxList;
 		
 	bool m_On;
 	bool m_SelectedOn;

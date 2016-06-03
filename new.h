@@ -86,6 +86,7 @@ class CNew: public wxDialog
 	void EditBaseStationPanel();
 	void EditCharacteristicPanel();
 	void EditSBMSPanel();
+	void EditSymbolGroupPanel();
 	void SymbolItem();
 	void _SetPosition(double lon, double lat);
 	

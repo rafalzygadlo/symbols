@@ -20,6 +20,7 @@ class CSBMSActionDialog : public wxDialog
 	CButton *m_ButtonUpTime;
 	CButton *m_ButtonReset;
 	CButton *m_ButtonDestinationMMSI;
+	CButton *m_CurrentDrive;
 	wxStaticText *m_Title;
 		
 	CSBMS *m_SBMS;
@@ -40,6 +41,7 @@ class CSBMSActionDialog : public wxDialog
 	void OnClearAlarm(wxCommandEvent &event);
 	void OnClearCommand(wxCommandEvent &event);
 	void OnAddToGroup(wxCommandEvent &event);
+	void OnCurrentDrive(wxCommandEvent &event);
 
 public:
 
@@ -55,6 +57,7 @@ public:
 		ID_AUTO,
 		ID_RESET,
 		ID_TIME,
+		ID_CURRENT_DRIVE,
 		ID_UPTIME,
 		ID_CLEAR_COMMAND,
 		ID_CLEAR_ALARM,

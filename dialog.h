@@ -87,6 +87,7 @@ class CDialogPanel: public wxPanel
 	void EditBaseStation(int id);
 	void EditSBMS(int id);
 	void EditGE64(int id);
+	void EditGroup(int id);
 			
 	void EditName(int id); // wszystkie tabele z polami [type]
 	void EditType(int id); // wszystkie tabele z polami [type]

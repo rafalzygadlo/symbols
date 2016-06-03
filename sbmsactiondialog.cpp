@@ -20,6 +20,7 @@ BEGIN_EVENT_TABLE(CSBMSActionDialog,wxDialog)
 	EVT_BUTTON(ID_CLEAR_ALARM,OnClearAlarm)
 	EVT_BUTTON(ID_CLEAR_COMMAND,OnClearCommand)
 	EVT_BUTTON(ID_ADD_TO_GROUP,OnAddToGroup)
+	EVT_BUTTON(ID_CURRENT_DRIVE,OnCurrentDrive)
 END_EVENT_TABLE();
 
 CSBMSActionDialog::CSBMSActionDialog(void *db, CSBMS *ptr)
@@ -69,7 +70,8 @@ wxPanel *CSBMSActionDialog::GetTopPanel(wxWindow *parent)
 wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 {
 	wxPanel *Panel = new wxPanel(parent,wxID_ANY,wxDefaultPosition,wxDefaultSize);
-	wxGridSizer *FlexSizer = new wxGridSizer(3);
+	wxGridSizer *FlexSizer = new wxGridSizer(4);
+	
 		
 	m_ButtonGraph = new CButton(m_DB,_GetUID(),Panel,ID_GRAPH,GetMsg(MSG_GRAPH));
 	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_GRAPH);
@@ -78,19 +80,17 @@ wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 	m_ButtonAddToGroup = new CButton(m_DB,_GetUID(),Panel,ID_ADD_TO_GROUP,GetMsg(MSG_ADD_TO_GROUP));
 	m_ButtonAddToGroup->Right(MODULE_SYMBOL,ACTION_GROUP);
 	FlexSizer->Add(m_ButtonAddToGroup,1,wxALL|wxEXPAND,2);
-		
+	
+	FlexSizer->SetItemMinSize(1,-1,50);
+
 	m_ClearAlarm = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_ALARM,GetMsg(MSG_CLEAR_ALARM));
-	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_CLEAR_ALARM);
+	m_ClearAlarm->Right(MODULE_COMMAND,ACTION_CLEAR_ALARM);
 	FlexSizer->Add(m_ClearAlarm,1,wxALL|wxEXPAND,2);
 
 	m_ClearCommand = new CButton(m_DB,_GetUID(),Panel,ID_CLEAR_COMMAND,GetMsg(MSG_CLEAR_COMMAND));
-	m_ButtonGraph->Right(MODULE_COMMAND,ACTION_CLEAR_COMMAND);
+	m_ClearCommand->Right(MODULE_COMMAND,ACTION_CLEAR_COMMAND);
 	FlexSizer->Add(m_ClearCommand,1,wxALL|wxEXPAND,2);
-	
-	FlexSizer->AddSpacer(1);
-	FlexSizer->AddSpacer(1);
-	FlexSizer->AddSpacer(1);
-	
+		
 	m_ButtonOn = new CButton(m_DB,_GetUID(), Panel,ID_LIGHT_ON,GetMsg(MSG_LIGHT_ON));
 	m_ButtonOn->Right(MODULE_COMMAND,ACTION_LIGHT_ON);
 	FlexSizer->Add(m_ButtonOn,1,wxALL|wxEXPAND,2);
@@ -114,6 +114,10 @@ wxPanel *CSBMSActionDialog::GetActionPanel(wxWindow *parent)
 	m_ButtonReset = new CButton(m_DB,_GetUID(),Panel,ID_RESET,GetMsg(MSG_RESET));
 	m_ButtonReset->Right(MODULE_COMMAND,ACTION_RESET);
 	FlexSizer->Add(m_ButtonReset,1,wxALL|wxEXPAND,2);
+
+	m_CurrentDrive = new CButton(m_DB,_GetUID(),Panel,ID_CURRENT_DRIVE,GetMsg(MSG_CURRENT_DRIVE));
+	m_CurrentDrive->Right(MODULE_COMMAND,ACTION_CURRENT_DRIVE);
+	FlexSizer->Add(m_CurrentDrive,1,wxALL|wxEXPAND,2);
 
 	if(m_SBMS->GetMMSI())
 	{
@@ -178,6 +182,8 @@ void CSBMSActionDialog::OnAddToGroup(wxCommandEvent &event)
 	delete SymbolGroup;
 }
 
+
+
 void CSBMSActionDialog::OnLightOn(wxCommandEvent &event)
 {
 	m_SBMS->LightOn();
@@ -208,6 +214,20 @@ void CSBMSActionDialog::OnReset(wxCommandEvent &event)
 	m_SBMS->Reset();
 }
 
+void CSBMSActionDialog::OnCurrentDrive(wxCommandEvent &event)
+{
+	wxTextEntryDialog dlg(this, GetMsg(MSG_CURRENT_DRIVE),GetMsg(MSG_CURRENT_DRIVE));
+	dlg.SetTextValidator(wxTextValidator(wxFILTER_NUMERIC));
+	if (dlg.ShowModal() == wxID_OK)
+	{
+		long v;
+		dlg.GetValue().ToLong(&v);
+
+		m_SBMS->CurrentDrive(v);
+	}
+	dlg.Close();
+}
+
 void CSBMSActionDialog::OnDestinationMMSI(wxCommandEvent &event)
 {
 	wxTextEntryDialog dlg(this, GetMsg(MSG_DESTINATION_MMSI),GetMsg(MSG_DESTINATION_MMSI));
@@ -217,9 +237,8 @@ void CSBMSActionDialog::OnDestinationMMSI(wxCommandEvent &event)
 		long mmsi;
 		dlg.GetValue().ToLong(&mmsi);
 
-		m_SBMS->SetDestinationMMSI(mmsi);
+		m_SBMS->DestinationMMSI(mmsi);
 	}
     dlg.Close();
-
 
 }

@@ -62,7 +62,7 @@ void CNew::GetPanel(int type)
 		case CONTROL_SYMBOL:			EditSymbolPanel();			break;
 		case CONTROL_BASE_STATION:		EditBaseStationPanel();		break;
 		case CONTROL_CHARACTERISTIC:	EditCharacteristicPanel();	break;
-		//case CONTROL_SYMBOL_GROUP:		EditSymbolGroupPanel();		break; 
+		case CONTROL_SYMBOL_GROUP:		EditSymbolGroupPanel();		break; 
 		
 		case CONTROL_GE64:
 		case CONTROL_SBMS:				EditSBMSPanel();			break;
@@ -415,6 +415,54 @@ void CNew::EditTypePanel()
 	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
 	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
 		
+}
+
+void CNew::EditSymbolGroupPanel()
+{
+	wxBoxSizer *Sizer = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(Sizer);
+			
+	wxPanel *Panel = new wxPanel(this,wxID_ANY,wxDefaultPosition);
+	Sizer->Add(Panel,1,wxALL|wxEXPAND,0);
+	wxFlexGridSizer *FlexGridSizer = new wxFlexGridSizer(2);
+	FlexGridSizer->AddGrowableCol(1);
+	Panel->SetSizer(FlexGridSizer);
+	
+	wxStaticText *LabelName = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_NAME));
+	FlexGridSizer->Add(LabelName,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextName = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextName->SetFocus();
+	m_TextName->SetValue(m_Name);
+	m_TextName->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextName,0,wxALL|wxEXPAND,5);
+	
+	wxStaticText *LabelCode = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_GROUP_CODE));
+	FlexGridSizer->Add(LabelCode,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextCode = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString);
+	m_TextCode->SetValue(m_Code);
+	m_TextCode->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextCode,0,wxALL|wxEXPAND,5);
+	
+	wxStaticText *LabelInfo = new wxStaticText(Panel,wxID_ANY,GetMsg(MSG_INFO));
+	FlexGridSizer->Add(LabelInfo,0,wxALL|wxALIGN_CENTER_VERTICAL,5);
+	m_TextInfo = new wxTextCtrl(Panel,wxID_ANY,wxEmptyString,wxDefaultPosition,wxSize(TEXT_INFO_WIDTH,TEXT_INFO_HEIGHT),wxTE_MULTILINE);
+	m_TextInfo->SetValue(m_Info);
+	m_TextInfo->SetValidator(m_TextValidator);
+	FlexGridSizer->Add(m_TextInfo,1,wxALL|wxEXPAND,5);
+	
+	wxPanel *Panel1 = new wxPanel(this);
+	Sizer->Add(Panel1,0,wxALL|wxEXPAND,5);
+	wxBoxSizer *Panel1Sizer = new wxBoxSizer(wxHORIZONTAL);
+	Panel1->SetSizer(Panel1Sizer);
+
+	Panel1Sizer->AddStretchSpacer();
+
+	wxButton *ButtonOk = new wxButton(Panel1,wxID_OK,GetMsg(MSG_OK));
+	Panel1Sizer->Add(ButtonOk,0,wxALL,5);
+
+	wxButton *ButtonCancel = new wxButton(Panel1,wxID_CANCEL,GetMsg(MSG_CANCEL));
+	Panel1Sizer->Add(ButtonCancel,0,wxALL,5);
+
 }
 
 
